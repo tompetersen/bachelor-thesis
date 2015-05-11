@@ -1,0 +1,225 @@
+%!TEX encoding = UTF-8 Unicode
+\documentclass[
+    12pt,
+    headings=small,
+    parskip=half,           % Ersetzt manuelles setzten von parskip/parindent.
+    bibliography=totoc,
+    numbers=noenddot,       % Entfernt den letzten Punkt der Kapitelnummern.
+    open=any,               % Kapitel kann auf jeder Seite beginnen.
+%   final                   % Entfernt alle todonotes und den Entwurfstempel.
+    ]{scrreprt}
+
+% ===================================Praeambel==================================
+
+% Kodierung, Sprache, Patches {{{
+\usepackage[T1]{fontenc}    % Ausgabekodierung; ermoeglicht Akzente und Umlaute
+                            %  sowie korrekte Silbentrennung.
+\usepackage[utf8]{inputenc} % Erlaub die direkte Eingabe spezieller Zeichen.
+                            %  Utf8 muss die Eingabekodierung des Editors sein.
+\usepackage[ngerman]{babel} % Deutsche Sprachanpassungen (z.B. Ueberschriften).
+\usepackage{microtype}      % Optimale Randausrichtung und Skalierung.
+\usepackage[
+    babel,
+    ]{csquotes}             % Korrekte Anfuehrungszeichen in der Literaturliste.
+\usepackage{fixltx2e}       % Patches fuer LaTeX2e.
+\usepackage{scrhack}        % Verhindert Warnungen mit aelteren Paketen.
+% }}}
+
+% Schriftarten {{{
+\usepackage{mathptmx}       % Times. Package 'times.sty' is obsolete.
+\usepackage[scaled=.92]{helvet}
+\usepackage{courier}
+% }}}
+
+% Biblatex {{{
+% \usepackage[
+%     style=alphabetic,
+%     backend=biber,
+%     backref=true
+%     ]{biblatex}             % Biblatex mit alphabetischem Style und biber.
+% \bibliography{Literatur.bib}% Dateiname der bib-Datei.
+% }}}
+
+% Dokument- und Texteinstellungen {{{
+\usepackage[
+    a4paper,
+    margin=2.54cm,
+    marginparwidth=2.0cm,
+    footskip=1.0cm
+    ]{geometry}             % Ersetzt 'a4wide'.
+\clubpenalty=10000          % Keine Einzelzeile am Beginn eines Paragraphen
+                            %  (Schusterjungen).
+\widowpenalty=10000         % Keine Einzelzeile am Ende eines Paragraphen
+\displaywidowpenalty=10000  %  (Hurenkinder).
+\usepackage{floatrow}       % Zentriert alle Floats.
+\usepackage{ifdraft}        % Ermoeglicht \ifoptionfinal{true}{false}
+\pagestyle{plain}           % keine Kopfzeilen
+% \sloppy                     % großzügige Formatierungsweise
+\deffootnote{1em}{1em}{\thefootnotemark.\ } % Verbessert Layout mehrzeiliger Fußnoten
+
+\makeatletter
+\AtBeginDocument{%
+    \hypersetup{%
+        pdftitle = {\@title},
+        pdfauthor  = \@author,
+    }
+}
+\makeatother
+% }}}
+
+% Weitere Pakete {{{
+\usepackage{graphicx}       % Einfuegen von Graphiken.
+\usepackage{tabu}           % Einfuegen von Tabellen.
+\usepackage{multirow}       % Tabellenzeilen zusammenfassen.
+\usepackage{multicol}       % Tabellenspalten zusammenfassen.
+\usepackage{booktabs}       % Schönere Tabellen (\toprule\midrule\bottomrule).
+\usepackage[nocut]{thmbox}  % Theorembox bspw. fuer Angreifermodell.
+\usepackage{amsmath}        % Erweiterte Handhabung mathematischer Formeln.
+\usepackage{amssymb}        % Erweiterte mathematische Symbole.
+\usepackage{rotating}
+\usepackage[
+    printonlyused
+    ]{acronym}              % Abkuerzungsverzeichnis.
+\usepackage[
+    colorinlistoftodos,
+    textsize=tiny,          % Notizen und TODOs - mit der todonotes.sty von
+    \ifoptionfinal{disable}{}%  Benjamin Kellermann ist das Package "changebar"
+    ]{todonotes}            %  bereits integriert.
+\usepackage[
+    breaklinks,
+    hidelinks,
+    pdfdisplaydoctitle,
+    pdfpagemode = {UseOutlines},
+    pdfpagelabels,
+    ]{hyperref}             % Sprungmarken im PDF. Laed das URL Paket.
+    \urlstyle{rm}           % Entfernt die Formattierung von URLs.
+\usepackage{breakurl}
+\def\UrlBreaks{\do\/\do-}
+\usepackage{listings}       % Spezielle Umgebung für...
+    \lstset{                %  ...Quelltextformatierung.
+        language=C,
+        breaklines=true,
+        breakatwhitespace=true,
+        frame=L,
+        captionpos=b,
+        xleftmargin=6ex,
+        tabsize=4,
+        numbers=left,
+        numberstyle=\ttfamily\footnotesize,
+        basicstyle=\ttfamily\footnotesize,
+        keywordstyle=\bfseries\color{green!50!black},
+        commentstyle=\itshape\color{magenta!90!black},
+        identifierstyle=\ttfamily,
+        stringstyle=\color{orange!90!black},
+        showstringspaces=false,
+        }
+% }}}
+
+% ===================================Dokument===================================
+
+\title{Bachelorarbeit über TLS (1.3)}
+\author{Tom Petersen}
+% \date{01.01.2015} % falls ein bestimmter Tag eingesetzt werden soll, einfach diese Zeile aktivieren
+
+\begin{document}
+\begin{titlepage}
+\begin{center}\Large
+	Universität Hamburg \par
+	Fachbereich Informatik
+	\vfill
+	Exposé %TODO
+	\vfill
+	\makeatletter
+	{\Large\textsf{\textbf{\@title}}\par}
+	\makeatother
+	\vfill
+	vorgelegt von
+	\par\bigskip
+	\makeatletter
+	{\@author} \par
+	\makeatother
+	geb. am 13. Dezember 1990 in Hannover \par
+	Matrikelnummer 6359640 \par
+	Studiengang Informatik
+	\vfill
+	\makeatletter
+	eingereicht am {\@date}
+	\makeatother
+	\vfill
+	%Betreuer: Dipl.-Inf. Heinz Mustermann \par
+	%Erstgutachter: Prof. Dr.-Ing. Hannes Federrath \par
+	%Zweitgutachter: N.N.
+\end{center}
+\ifoptionfinal{}{
+\begin{tikzpicture}[remember picture, overlay]
+    \node[draw, red, font=\ttfamily\bfseries\Huge, xshift=-50mm, yshift=238mm,
+        rotate=10, text centered, text width=8cm, very thick, rounded
+        corners=4mm] at (current page.south) {Entwurf vom \today};
+\end{tikzpicture}}
+\end{titlepage}
+
+
+\chapter{SSL und TLS - ein Überblick}
+
+SSL (Secure Socket Layer) bzw. TLS\footnote{Im weiteren Verlauf dieser Arbeit wird der Einfachheit lediglich von TLS gesprochen, es ist jedoch ebenso SSL gemeint. Bei etwaigen Unterschieden wird explizit auf diese eingegangen werden.} (Transport Layer Security) ist ein zustandsbehaftetes Protokoll, das auf dem TCP-Protokoll der Transportschicht des TCP/IP-Protokollstapels aufbaut\footnote{Es gibt auch DTLS (Datagram Transport Layer Security), ein auf TLS basierendes Protokoll, dass auch per UDP Daten übertragen kann}. Es bildet also eine Schicht zwischen Transport- und Anwendungsschicht. %, die von TLS jedoch weitgehend unbehelligt bleiben. 
+Viele Protokolle der Anwendungsschicht nutzen TLS zur sicheren Datenübertragung, so beispielsweise HTTPS oder FTPS.
+
+SSL wurde von der Firma Netscape entwickelt und nachdem es starke Verbreitung gefunden hatte, durch die IETF als TLS 1.0 in RFC 2246 standardisiert (TLS 1.0 entspricht hierbei SSL 3.1). Aktuell ist die TLS-Version 1.2 und an Version 1.3 wird gearbeitet. \cite{schmeh09}
+
+Hauptaufgaben von TLS sind Authentifikation der Kommunikationspartner, symmetrische Verschlüsselung der Kommunikation sowie die Sicherstellung der Integrität der übertragenen Nachrichten. Die hierbei verwendeten kryptographischen Verfahren werden erst zu Beginn der Kommunikation festgelegt. 
+\cite{eckert13}
+
+\begin{description}
+	\item[TLS 1.0] RFC 2246 - http://tools.ietf.org/html/rfc2246
+	\item[TLS 1.1] RFC 4346 - http://tools.ietf.org/html/rfc4346
+	\item[TLS 1.2] RFC 5246 - http://tools.ietf.org/html/rfc5246
+	\item[TLS Extensions] RFC 3546 - http://tools.ietf.org/html/rfc3546, \\
+RFC 3466 - http://tools.ietf.org/html/rfc4366, \\
+RFC 6066 - http://tools.ietf.org/html/rfc6066
+	\item[TLS 1.3] Draft - https://tools.ietf.org/html/draft-ietf-tls-tls13-05
+\end{description}
+
+\chapter{Funktionsweise und Teilprotokolle}
+
+\todo{Grafik der TLS-Protokolle}
+
+TLS besteht selbst aus zwei Schichten. In der unteren Schicht befindet sich das \emph{Record-Protokoll}, das die Daten von den Teilprotokollen der oberen Schicht entgegennimmt und je nach aktuell verhandelten krypographischen Funktionen verschlüsselt und signiert\todo{HMAC oder was oder wie}, sowie Anwendungsdaten fragmentiert. 
+
+In der oberen Schicht sind vier Teilprotokolle spezifiziert: \emph{Handshake-, ChangeCipherSpec-, Alert-} und \emph{ApplicationData-Protokoll}.
+
+Das \emph{Handshake-Protokoll} dient zur Vereinbarung kryptographischer Verfahren (CipherSuites\todo{?}) und zur Aushandlung eines Schlüssels für die symmetrische Verschlüsselung der später gesendeten Daten. Der Handshake kann folgendermaßen ablaufen (abhängig von optionalem Clientzertifikat, Preshared Key, erneute Verbindung, ...): 
+
+\todo{als ordentliche Grafik ohne Clientverifikation}
+\begin{itemize}
+\item --> client\_hello mit (verfügbare symmetrische Verschlüsselungsverfahren/kryptographische Hashfunktionen/ Schlüsselaustauschverfahren) und Zufallszahl\_Client
+
+\item <-- server\_hello mit gewählten Verfahren und Zufallszahl\_Server
+
+\item <-- Server Zertifikat (inklusive öffentlichem Schlüssel des Servers, meist nach X.509v3)
+
+\item Client: Zertifikatverifikation
+
+\item --> Generierung und Senden von PreMasterSecret verschlüsselt mit öffent. Schlüssel des Servers (bei RSA) oder Diffie-Hellman-Verfahren
+
+\item Client und Server: aus Zufallszahl\_Client, Zufallszahl\_Server und PreMasterSecret wird das MasterSecret berechnet
+
+\item --> Handshakeabschluss 
+
+\item <-- Handshakeabschluss
+\end{itemize}
+
+
+Das \emph{ChangeCipherSpec-Protokoll} dient dazu, die vereinbarten kryptographischen Verfahren zu ändern. Es enthält lediglich eine Nachricht mit dem Wert 1, die für das Übernehmen der während des Handshakes ausgehandelten Verfahren steht. \cite{eckert13}
+
+Das \emph{Alert-Protokoll} dient dazu, auftretende Fehler oder Warnungen zu versenden, die während des Datenaustausches auftreten. \todo{Übersicht}
+
+Das \emph{ApplicationData-Protokoll} ist zuständig für das Durchreichen von Anwendungsdaten, die von der Anwendungsschicht gesendet werden sollen.\cite{Schneier2006}
+
+\chapter{Ciphersuites}
+
+\chapter{Angriffe}
+
+\bibliography{quellen}
+\bibliographystyle{myalpha}
+
+\end{document}
