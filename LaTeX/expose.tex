@@ -181,31 +181,61 @@ RFC 6066 - http://tools.ietf.org/html/rfc6066
 
 \chapter{Funktionsweise und Teilprotokolle}
 
-\todo{Grafik der TLS-Protokolle}
+\todo{Zum Einstieg grobe Funktionsbeschreibung, evtl. schon mit Grafik über Verbindungsaufbau?, Grafik der TLS-Protokolle}
 
-TLS besteht selbst aus zwei Schichten. In der unteren Schicht befindet sich das \emph{Record-Protokoll}, das die Daten von den Teilprotokollen der oberen Schicht entgegennimmt und je nach aktuell verhandelten krypographischen Funktionen verschlüsselt und signiert\todo{HMAC oder was oder wie}, sowie Anwendungsdaten fragmentiert. 
+\section{Untere Schicht}
+
+TLS besteht selbst aus zwei Schichten. In der unteren Schicht befindet sich das \emph{Record-Protokoll}, das die Daten von den Teilprotokollen der oberen Schicht entgegennimmt, diese Anwendungsdaten fragmentiert (maximale Paketgröße \(2^{14}\) Byte) und optional komprimiert. Danach wird je nach aktuell verhandelten krypographischen Funktionen die Integrität der Daten durch Berechnen und Anhängen eines MACs gesichert und die Nachricht verschlüsselt\footnote{Achtung: hier wird MAC-then-Encrypt angewendet. Laut \cite{AE2000} ist Encrypt-then-MAC vorzuziehen.}. \todo{Nach http://crypto.stackexchange.com/a/224 schlägt Schneier in Cryptography Engineering MAC-then-encrypt aus Gründen der Komplexheit von Encrypt-then-MAC vor. Nachlesen! Gibt es in der Informatik-Bibliothek: T FER 45399} 
+
+Der Mac wird auf die folgende Weise berechnet\footnote{Entnommen aus \cite{eckert13}.}\todo{Ich vermute mal, dass das noch das alte Verfahren ist, das in TLS durch HMAC abgelöst wird. Nachschauen, ebenso SSLCompressed vmtl jetzt anders?}:
+\begin{align*}
+MAC = hash(MAC\_KEY | pad_2 |& \\
+	hash(MAC\_KEY |& pad_1 | seq\_num | SSLCompressed.type |\\
+	SSLCompre&ssed.length | SSLCompressed.fragment))
+\end{align*}
+wobei \(pad_1 = (0x36) \dots (0x36)\) (48 mal für MD5 und 40 mal für SHA) 
+und \(pad_2 = (0x5c) \dots (0x5c)\) (48 mal für MD5 und 40 mal für SHA) gilt. Diese Werte entsprechen ipad und opad aus dem HMAC-Verfahren (\cite{hmac97}).
+
+Der Record-Header enthält Informationen über die verwendete SSL/TLS-Version, den Content-Type (Handshake, Alert, ChangeCipherSpec, ApplicationData) und die Länge des Klartextfragments.
+
+Aus dem nach Ausführung des Handshake-Protokolls (siehe nächsten Abschitt) beidseitig bekannten Master-Secret werden Schlüssel für die Erstellung des MACs sowie für die Kommunikation zwischen Client und Server berechnet (je einer pro Seite). Dazu werden solange Schlüsselblöcke nach dem folgenden Verfahren erstellt, bis alle Schlüssel konstruiert werden können: \todo{Wahrscheinlich auch das hier ein bisschen anders?}
+\begin{align*}
+key\_block = &MD5(ms | SHA('A' | ms | R_C | R_S)) |\\
+	&MD5(ms | SHA('BB' | ms | R_C | R_S)) |\\
+ 	&MD5(ms | SHA('CCC' | ms | R_C | R_S))
+\end{align*}
+
+\section{Obere Schicht}
 
 In der oberen Schicht sind vier Teilprotokolle spezifiziert: \emph{Handshake-, ChangeCipherSpec-, Alert-} und \emph{ApplicationData-Protokoll}.
 
-Das \emph{Handshake-Protokoll} dient zur Vereinbarung kryptographischer Verfahren (CipherSuites\todo{?}) und zur Aushandlung eines Schlüssels für die symmetrische Verschlüsselung der später gesendeten Daten. Der Handshake kann folgendermaßen ablaufen (abhängig von optionalem Clientzertifikat, Preshared Key, erneute Verbindung, ...): 
+Das \emph{Handshake-Protokoll} dient zur Vereinbarung kryptographischer Verfahren und zur Aushandlung eines Schlüssels für die symmetrische Verschlüsselung der später gesendeten Daten. Der Handshake kann folgendermaßen ablaufen (abhängig von optionalem Clientzertifikat, Preshared Key, erneute Verbindung, ...; entnommen aus \cite{eckert13}): 
 
 \todo{als ordentliche Grafik ohne Clientverifikation}
-\begin{itemize}
-\item --> client\_hello mit (verfügbare symmetrische Verschlüsselungsverfahren/kryptographische Hashfunktionen/ Schlüsselaustauschverfahren) und Zufallszahl\_Client
 
-\item <-- server\_hello mit gewählten Verfahren und Zufallszahl\_Server
+\begin{itemize}
+\item --> client\_hello mit \\
+\(H_C = (\)4 Byte Zeitstempel, 28 Byte Zufallszahl, Sitzungsidentifikator (!= Null bei bereits existierender Sitzung), Cipher Suite\()\)
+
+\item <-- server\_hello mit \\
+\(H_S = (\)4 Byte Zeitstempel, 28 Byte Zufallszahl, Sitzungsidentifikator (falls vom Client gewünschte Sitzung bedient werden kann), Cipher Suite, die vom Server unterstützt wird\()\)
 
 \item <-- Server Zertifikat (inklusive öffentlichem Schlüssel des Servers, meist nach X.509v3)
 
 \item Client: Zertifikatverifikation
 
-\item --> Generierung und Senden von PreMasterSecret verschlüsselt mit öffent. Schlüssel des Servers (bei RSA) oder Diffie-Hellman-Verfahren
+\item --> Generierung und Senden von PreMasterSecret (48 Byte) verschlüsselt mit öffent. Schlüssel des Servers (bei RSA) oder Diffie-Hellman-Verfahren
 
-\item Client und Server: aus Zufallszahl\_Client, Zufallszahl\_Server und PreMasterSecret wird das MasterSecret berechnet
+\item Client und Server: aus Zufallszahl des Clients \(R_C \text{ aus } H_C\), Zufallszahl des Servers \(R_S \text{ aus } H_S\) und PreMasterSecret wird das MasterSecret berechnet\todo{so wahrscheinlich < TLS 1.2, danach Pseudozufallsfunktion -> Nachschauen}
+\begin{align*}
+master\_secret = &MD5(Pre | SHA('A' | Pre | R_C | R_S)) |\\
+	&MD5(Pre | SHA('BB' | Pre | R_C | R_S)) |\\
+ 	&MD5(Pre | SHA('CCC' | Pre | R_C | R_S))
+\end{align*}
 
-\item --> Handshakeabschluss 
+\item --> Handshakeabschluss mit MD5 und SHA-MAC über alle bisher ausgetauschten Nachrichten
 
-\item <-- Handshakeabschluss
+\item <-- Handshakeabschluss mit MD5 und SHA-MAC über alle bisher ausgetauschten Nachrichten
 \end{itemize}
 
 
@@ -215,9 +245,21 @@ Das \emph{Alert-Protokoll} dient dazu, auftretende Fehler oder Warnungen zu vers
 
 Das \emph{ApplicationData-Protokoll} ist zuständig für das Durchreichen von Anwendungsdaten, die von der Anwendungsschicht gesendet werden sollen.\cite{Schneier2006}
 
-\chapter{Ciphersuites}
+\section{Sitzungs- und Verbindungskonzept}
+
+TLS erstellt beim ersten Handshake eine Sitzung zwischen Client und Server. Hierbei wird ein Sitzungsidentifikator erstellt, der beim server\_hello mitgesendet wird. Weiterhin wird sich in der Sitzung das Zertifikat des Gegenübers, optional das Kompressionsverfahren, die CipherSpec und das MasterSecret gemerkt.
+
+Ein Client kann nun, wenn er den Sitzungsidentifikator beim client\_hello mitschickt, eine alte Sitzung in Form einer neuen Verbindung wiederaufnehmen oder mehrere Verbindungen parallel aufbauen. Eine Verbindung wird dabei durch Client- und Server-Zufallszahlen \(R_C\) und \(R_S\), die generierten Schlüssel, einen Initialisierungsvektor \todo{Wie wird sich auf den geeinigt? Übertragen? Aus master-secret?} sowie aktuelle Sequenznummern beschrieben.
+
+Beim Verbindungsaufbau kann so ein verkürzter Handshake genutzt werden, bei dem weniger Nachrichten gesendet werden müssen. Es kann dabei auf Neuberechnung des master-secrets, Server- und Client-Validierung und Aushandlung der CipherSpec verzichtet werden.\todo{Grafik des verkürzten Handhakes}
+
+\section{Ciphersuites}
+
+
 
 \chapter{Angriffe}
+
+\section{}
 
 \bibliography{quellen}
 \bibliographystyle{myalpha}
