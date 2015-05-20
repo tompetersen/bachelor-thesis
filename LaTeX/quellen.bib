@@ -17,15 +17,15 @@
 @book{eckert13,
   address = {München},
   author    = {Eckert, Claudia},
-  title     = {IT-Sicherheit - Konzepte, Verfahren, Protokolle {(8.} Aufl.)},
+  title     = {IT-Sicherheit - Konzepte, Verfahren, Protokolle},
   publisher = {Oldenbourg Verlag},
   year      = {2013}
 }
 
-@inproceedings{meyer2013,
-  title={SoK: Lessons Learned From SSL/TLS Attacks},
+@inproceedings{meyer13,
+  title={{SoK: Lessons Learned From SSL/TLS Attacks}},
   author={Meyer, Christopher and Schwenk, Jörg},
-  booktitle={The 14th International Workshop on Information Security Applications (WISA2013)},
+  booktitle={The 14th International Workshop on Information Security Applications},
   year={2013}
 }
 
@@ -45,25 +45,79 @@
   organization = {Internet Engineering Task Force},
   publisher = {IETF},
   series = {Request for Comments},
-  title = {HMAC: Keyed-Hashing for Message Authentication},
+  title = {{HMAC: Keyed-Hashing for Message Authentication}},
   url = {http://tools.ietf.org/html/rfc2104},
   year = 1997
 }
 
-
-
-
-@techreport{pbkdf2000,
-  author = {Kaliski, B.},
-  howpublished = {RFC 2898},
-  type={RFC},
-  number = 2898,
-  organization = {Internet Engineering Task Force},
-  publisher = {IETF},
-  series = {Request for Comments},
-  title = {PKCS \#5: Password-Based Cryptography Specification Version 2.0},
-  url = {http://www.ietf.org/rfc/rfc2898.txt},
-  year = 2000
+@inproceedings{wagner96,
+    author = {Wagner, David and Schneier, Bruce},
+    title = {{Analysis of the SSL 3.0 Protocol}},
+    booktitle = { The Second USENIX Workshop on Electronic Commerce},
+    year = {1996},
+    pages = {29--40},
+    publisher = {USENIX Association}
 }
 
+@inproceedings{bleichenbacher98,
+ author = {Bleichenbacher, Daniel},
+ title = {{Chosen Ciphertext Attacks Against Protocols Based on the RSA Encryption Standard PKCS \#1}},
+ booktitle = {Proceedings of the 18th Annual International Cryptology Conference on Advances in Cryptology},
+ series = {CRYPTO '98},
+ year = {1998},
+ pages = {1--12},
+ publisher = {Springer-Verlag},
+ address = {London, UK},
+} 
 
+@inproceedings{vaudenay02,
+  title={{Security Flaws Induced by CBC Padding - Applications to SSL, IPSEC, WTLS...}},
+  author={Vaudenay, Serge},
+  booktitle={Advances in Cryptology - EUROCRYPT 2002},
+  pages={534--545},
+  year={2002},
+  publisher={Springer}
+}
+
+@inproceedings{canvel03,
+  title={Password Interception in a SSL/TLS Channel},
+  booktitle={Advances in Cryptology - CRYPTO 2003},
+  publisher={Springer},
+  volume={2729},
+  pages={583-599},
+  author={Canvel, Brice and Hiltgen, Alain P. and Vaudenay, Serge and Vuagnoux, Martin},
+  year=2003
+}
+
+@article{paterson13,
+	author = {Al Fardan, N. J.  and Paterson, K. G. },
+	title = {Lucky Thirteen: Breaking the TLS and DTLS Record Protocols},
+	journal ={2014 IEEE Symposium on Security and Privacy},
+	volume = {0},
+	year = {2013},
+	pages = {526-540},
+	publisher = {IEEE Computer Society},
+}
+
+@techreport{bard04,
+    author = {Bard, Gregory V. },
+    title = {Vulnerability of SSL to Chosen-Plaintext Attack},
+    institution = {},
+    year = {2004}
+}
+
+@INPROCEEDINGS{bard06,
+    author = {Bard, Gregory V.},
+    title = {A Challenging But Feasible Blockwise-Adaptive Chosen-Plaintext Attack on SSL},
+    booktitle = {SECRYPT 2006, PROCEEDINGS OF THE INTERNATIONAL CONFERENCE ON SECURITY AND CRYPTOGRAPHY, SET'UBAL},
+    year = {2006},
+    pages = {7--10},
+    publisher = {INSTICC Press}
+}
+
+@article{duong11,
+  title={Here Come The XOR Ninjas},
+  author={Duong, Thai and Rizzo, Juliano},
+  year={2011},
+  publisher={Ekoparty}
+}

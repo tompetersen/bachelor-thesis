@@ -235,7 +235,7 @@ FUNCTION {format.editors}
 FUNCTION {format.title}
 { title empty$
     { "" }
-    { title "t" change.case$ }
+    { title } %{ title "t" change.case$ } % HERE MAYBE ??
   if$
 }
 

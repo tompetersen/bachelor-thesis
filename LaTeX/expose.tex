@@ -117,6 +117,15 @@
 
 % ===================================Dokument===================================
 
+%Commands for protocol messages etc.
+\newcommand{\mastersecret}{master-secret}
+\newcommand{\premastersecret}{pre-master-secret}
+\newcommand{\clienthello}{client-hello}
+\newcommand{\serverhello}{server-hello}
+\newcommand{\finished}{finished}
+\newcommand{\changecipherspec}{Change Cipher Spec}
+
+
 \title{Bachelorarbeit über TLS (1.3)}
 \author{Tom Petersen}
 % \date{01.01.2015} % falls ein bestimmter Tag eingesetzt werden soll, einfach diese Zeile aktivieren
@@ -214,28 +223,32 @@ Das \emph{Handshake-Protokoll} dient zur Vereinbarung kryptographischer Verfahre
 \todo{als ordentliche Grafik ohne Clientverifikation}
 
 \begin{itemize}
-\item --> client\_hello mit \\
+\item -->\clienthello{} mit \\
 \(H_C = (\)4 Byte Zeitstempel, 28 Byte Zufallszahl, Sitzungsidentifikator (!= Null bei bereits existierender Sitzung), Cipher Suite\()\)
 
-\item <-- server\_hello mit \\
+\item <-- \serverhello{} mit \\
 \(H_S = (\)4 Byte Zeitstempel, 28 Byte Zufallszahl, Sitzungsidentifikator (falls vom Client gewünschte Sitzung bedient werden kann), Cipher Suite, die vom Server unterstützt wird\()\)
 
 \item <-- Server Zertifikat (inklusive öffentlichem Schlüssel des Servers, meist nach X.509v3)
 
 \item Client: Zertifikatverifikation
 
-\item --> Generierung und Senden von PreMasterSecret (48 Byte) verschlüsselt mit öffent. Schlüssel des Servers (bei RSA) oder Diffie-Hellman-Verfahren
+\item --> Generierung und Senden von \premastersecret{} (48 Byte) verschlüsselt mit öffent. Schlüssel des Servers (bei RSA) oder Diffie-Hellman-Verfahren
 
-\item Client und Server: aus Zufallszahl des Clients \(R_C \text{ aus } H_C\), Zufallszahl des Servers \(R_S \text{ aus } H_S\) und PreMasterSecret wird das MasterSecret berechnet\todo{so wahrscheinlich < TLS 1.2, danach Pseudozufallsfunktion -> Nachschauen}
+\item Client und Server: aus Zufallszahl des Clients \(R_C \text{ aus } H_C\), Zufallszahl des Servers \(R_S \text{ aus } H_S\) und \premastersecret{} wird das \mastersecret{} berechnet\todo{so wahrscheinlich < TLS 1.2, danach Pseudozufallsfunktion -> Nachschauen}
 \begin{align*}
-master\_secret = &MD5(Pre | SHA('A' | Pre | R_C | R_S)) |\\
+\text{\mastersecret} = &MD5(Pre | SHA('A' | Pre | R_C | R_S)) |\\
 	&MD5(Pre | SHA('BB' | Pre | R_C | R_S)) |\\
  	&MD5(Pre | SHA('CCC' | Pre | R_C | R_S))
 \end{align*}
 
-\item --> Handshakeabschluss mit MD5 und SHA-MAC über alle bisher ausgetauschten Nachrichten
+\item --> \changecipherspec{}-Nachricht (nicht Bestandteil des Handshake-Protokolls -> eigener Record)
 
-\item <-- Handshakeabschluss mit MD5 und SHA-MAC über alle bisher ausgetauschten Nachrichten
+\item --> Handshakeabschluss: \finished{} mit MD5 und SHA-MAC über alle bisher ausgetauschten Nachrichten (mit Ausnahmen)
+
+\item <-- \changecipherspec{}-Nachricht (nicht Bestandteil des Handshake-Protokolls -> eigener Record)
+
+\item <-- Handshakeabschluss: \finished{} mit MD5 und SHA-MAC über alle bisher ausgetauschten Nachrichten (mit Ausnahmen)
 \end{itemize}
 
 
@@ -247,21 +260,98 @@ Das \emph{ApplicationData-Protokoll} ist zuständig für das Durchreichen von An
 
 \section{Sitzungs- und Verbindungskonzept}
 
-TLS erstellt beim ersten Handshake eine Sitzung zwischen Client und Server. Hierbei wird ein Sitzungsidentifikator erstellt, der beim server\_hello mitgesendet wird. Weiterhin wird sich in der Sitzung das Zertifikat des Gegenübers, optional das Kompressionsverfahren, die CipherSpec und das MasterSecret gemerkt.
+TLS erstellt beim ersten Handshake eine Sitzung zwischen Client und Server. Hierbei wird ein Sitzungsidentifikator erstellt, der beim \serverhello{} mitgesendet wird. Weiterhin wird sich in der Sitzung das Zertifikat des Gegenübers, optional das Kompressionsverfahren, die Cipher Suite und das \mastersecret{} gemerkt.
 
-Ein Client kann nun, wenn er den Sitzungsidentifikator beim client\_hello mitschickt, eine alte Sitzung in Form einer neuen Verbindung wiederaufnehmen oder mehrere Verbindungen parallel aufbauen. Eine Verbindung wird dabei durch Client- und Server-Zufallszahlen \(R_C\) und \(R_S\), die generierten Schlüssel, einen Initialisierungsvektor \todo{Wie wird sich auf den geeinigt? Übertragen? Aus master-secret?} sowie aktuelle Sequenznummern beschrieben.
+Ein Client kann nun, wenn er den Sitzungsidentifikator beim \clienthello{} mitschickt, eine alte Sitzung in Form einer neuen Verbindung wiederaufnehmen oder mehrere Verbindungen parallel aufbauen. Eine Verbindung wird dabei durch Client- und Server-Zufallszahlen \(R_C\) und \(R_S\), die generierten Schlüssel, einen Initialisierungsvektor \todo{Wie wird sich auf den geeinigt? Übertragen? Aus \mastersecret{}?} sowie aktuelle Sequenznummern beschrieben.
 
-Beim Verbindungsaufbau kann so ein verkürzter Handshake genutzt werden, bei dem weniger Nachrichten gesendet werden müssen. Es kann dabei auf Neuberechnung des master-secrets, Server- und Client-Validierung und Aushandlung der CipherSpec verzichtet werden.\todo{Grafik des verkürzten Handhakes}
+Beim Verbindungsaufbau kann so ein verkürzter Handshake genutzt werden, bei dem weniger Nachrichten gesendet werden müssen. Es kann dabei auf Neuberechnung des \mastersecret{}, Server- und Client-Validierung und Aushandlung der Cipher Suite verzichtet werden.\todo{Grafik des verkürzten Handhakes}
 
 \section{Ciphersuites}
 
 
 
-\chapter{Angriffe}
+\chapter{Angriffe auf SSL und TLS}
 
-\section{}
+Eine gute Übersicht zu bisherigen Angriffen auf TLS findet sich in \cite{meyer13}. Viele Schwächen früherer Protokollversionen bis SSL 3 sind in \cite{wagner96} zu finden.\todo{JEDEN Angriff auf angreifbare Version und Änderungen in neuen Versionen überprüfen.}
+
+\section{Version Rollbacks [nette Übersetzung?]}
+
+Ein Angreifer kann eine SSL 3-konforme \clienthello{}-Nachricht so modifizieren, dass der Server eine SSL 2-Verbindung aufbaut. So kann der Angreifer alle Schwächen der älteren Protokollversion ausnutzen. Abhilfe schafft die Einbindung der SSL-Version in das per RSA übertragene \premastersecret. 
+
+Ein Schwachpunkt könnte laut \cite{wagner96} immer noch die Wiederaufnahme einer SSL 3-Sitzung durch eine SSL 2-\clienthello{}-Nachricht sein. Dieses sollte in Implementationen verhindert werden.
+
+\section{Ciphersuite Rollback}
+
+Ein für SSL 2.0 bestehender Angriff ermöglichte aktiven Angreifern die während des Handshake-Protokolls übertragenen Listen von unterstützten Cipher Suites zu verändern, so dass schwache kryptographische Verfahren erzwungen werden konnten (oftmals exportgeschwächte Verfahren mit kürzeren Schlüsselängen).
+
+In SSL 3.0 wird dieser Angriff dadurch verhindert, dass die \finished{}-Nachrichten von Client und Server jeweils einen mit dem \mastersecret{} berechneten MAC über die Nachrichten des \emph{Handshake}-Protokolls enthalten, der die Integrität dieser Nachrichten bestätigt.
+
+Eine detaillierte Übersicht ist in \cite{wagner96} zu finden.
+
+\section{Verhindern der \changecipherspec{}-Nachricht}
+
+Im Sonderfall einer SSL-Verbindung, die lediglich die Integrität der Nachrichten schützen soll, aber nicht verschlüsselt, lässt sich ausnutzen, dass der in der \finished{}-Nachricht gesendete MAC die \changecipherspec{}-Nachricht nicht mit einschließt. Dadurch kann ein aktiver Angreifer diese Nachrichten abfangen und nicht weiterleiten, sodass die Verbindungspartner die Integritätsprüfung nicht einsetzen. Ein Angreifer ist so in der Lage, gesendete Nachrichten zu verändern. 
+
+Theoretisch wäre der Angriff unter bestimmten Voraussetzungen und schwacher Kryptographie auch bei verschlüsselten Verbindungen möglich, unter praktischen Gesichtspunkten aber eher unwahrscheinlich.
+
+Die TLS 1.0-Spezifikation verhindert diesen Angriff dadurch, dass sie eine \changecipherspec{}-Nachricht vor der \finished{}-Nachricht explizit vorschreibt.
+
+Details zu diesem Angriff sind in \cite{wagner96} zu finden.
+
+\section{Schwache Cipher Suites}
+
+\section{Bleichenbacher-Angriff und darauf basierende Angriffe}
+
+Daniel Bleichenbacher stellte 1998 in \cite{bleichenbacher98} einen Adaptive Chosen Ciphertext Angriff gegen RSA-basierte Protokolle vor.
+
+Der Angriff basiert auf dem festen Format nach PCKS \#1 formatierter Nachrichten. 
+
+\section{Vaudenay in 2002? Padding Oracle}
+
+In \cite{vaudenay02} beschreibt der Autor einen Angriff zur Erlangung des Klartextes, bei dem das für Blockchiffren nötige Padding im CBC-Modus ausgenutzt wird. Durch das vorgegebene Format des Paddings und da das Padding bei TLS nicht durch den MAC geschützt ist (MAC - then PAD - then Encrypt) ermöglicht es theoretisch in einer relativ kleinen Zahl von Anfragen die Berechnung des Klartextes. Praktisch konnte das Verfahren nicht eingesetzt werden, da SSL 3.0 für Padding- und Entschlüsselungsfehler gleiche Fehlermeldungen ausgibt (TLS 1.0 nicht? \todo{Mal gucken}) und bei Paddingfehlern mit einem decryption\_failed\todo{nachschauen!}-error die Sitzung abbricht.\todo{Begirff: Padding Oracle einbauen}
+%Nichtsdestotrotz bietet die hier beschriebene Methode eine Grundlage für weitere Angriffe.
+
+In \cite{canvel03} beschreiben die Autoren eine Umsetzung des Angriffs auf TLS-gesicherte IMAP-Verbindungen zur Erlangung von Passwörtern. Hierbei wird das Problem ununterscheidbarer und verschlüsselter Fehlermeldungen durch einen Timing-Angriff umgangen. Außerdem bedenken die Autoren das Abbrechen der Sitzung durch Nutzung vieler paralleler Sitzungen mit dem gleichen verschlüsselten Aufruf (wie es bei der Authentifizierung im IMAP-Protokoll der Fall ist).
+
+\section{Lucky Thirteen}
+
+In \cite{paterson13} stellen die Autoren weitere auf \cite{vaudenay02} basierende Angriffe vor, die ebenfalls auf Timing-Attacken zur Erkennung falschen Paddings und mehrere Verbindungen setzen.
+
+\section{Bard - IV? Chosen Plaintext Attacks}
+
+In \cite{bard04} stellt der Autor einen Angriff vor, der die Art ausnutzt, wie die für den CBC-Modus nötigen Initialisierungsvektoren (IV) von TLS bereitgestellt werden. Durch die Nutzung des letzten Ciphertextblocks der letzten Nachricht als IV der neuen Nachricht lässt sich unter bestimmten Vorraussetzungen ein Chosen-Plaintext-Angriff durchführen. Der Autor beschreibt eine Möglichkeit unter Nutzung von Browser-Plugins über HTTPS übertragene Passwörter oder PINs herauszufinden. In \cite{bard06} verbessert der Autor seinen Angriff durch nie Nutzung von Java-Applets anstelle von Browser-Plugins.
+
+Seit TLS 1.1 werden explizite IV vorgeschrieben. Hierzu besteht jede Nachricht aus einem Ciphertextblock mehr als Klartextblöcken. Dieser erste Block bildet den IV für die restliche Verschlüsselung. Da dieser IV nicht vor dem Senden der Nachricht bekannt ist, wird der hier beschriebene Chosen-Plaintext-Angriff verhindert.
+
+\section{BEAST}
+
+In \cite{duong11} und in einem Konferenzbeitrag auf der ekoparty Security Conference 2011 wurde von den Autoren das Tool BEAST vorgestellt, dass die Ideen aus \cite{bard04} aufgreift. Die Autoren erweiterten den Angriff jedoch auf einen sogenannten block-wise chosen-boundary Angriff, bei dem der Angreifer die Lage der Nachricht in den verschlüsselten Blöcken verändern kann. Die Autoren zeigten auch die praktische Umsetzbarkeit am Beispiel des Entschlüsselns einer über HTTPS gesendeten Session-ID.
+% http://www.ekoparty.org/archivo.php
+% http://vnhacker.blogspot.co.uk/2011/09/beast.html
+
+\section{CRIME}
+
+
+
+\section{Poodle}
+
+
+\section{FREAK}
+
+https://freakattack.com/
+
+https://www.smacktls.com/#freak
+
++weakdh.org?
+
+\section{Probleme bei Zertifikatvalidierung und bei CAs}
+
+\section{Diebstahl privater Schlüssel}
+
+
+\chapter{Protokollversion 1.3}
 
 \bibliography{quellen}
-\bibliographystyle{myalpha}
+\bibliographystyle{alpha}
 
 \end{document}
