@@ -117,13 +117,17 @@
 
 % ===================================Dokument===================================
 
+\usepackage{url}
+
 %Commands for protocol messages etc.
-\newcommand{\mastersecret}{master-secret}
-\newcommand{\premastersecret}{pre-master-secret}
-\newcommand{\clienthello}{client-hello}
-\newcommand{\serverhello}{server-hello}
-\newcommand{\finished}{finished}
-\newcommand{\changecipherspec}{Change Cipher Spec}
+\newcommand{\mastersecret}		{master-secret}
+\newcommand{\premastersecret}		{pre-master-secret}
+\newcommand{\clienthello}			{client-hello}
+\newcommand{\serverhello}			{server-hello}
+\newcommand{\finished}				{finished}
+\newcommand{\changecipherspec}	{Change Cipher Spec}
+\newcommand{\badrecordmac}		{bad\_record\_mac}
+\newcommand{\badcertificate}		{bad\_certificate}
 
 
 \title{Bachelorarbeit über TLS (1.3)}
@@ -167,16 +171,30 @@
 \end{tikzpicture}}
 \end{titlepage}
 
+\chapter{Motivation}
+
+TLS ist das wohl am meisten genutzte Sicherheitsprotokoll im Internet. Aus diesem Grund wurde es im Laufe seiner Entwicklung oft untersucht und angegriffen. Dabei sind viele einfache und elegante Angriffe gefunden worden, die zeigen, wie wirksam die kleinsten Schwächen in Protokollen ausgenutzt werden können und das auch scheinbar unbedenkliche Stellen zu Sicherheitslücken führen können. Daher ist TLS auch ein gutes Beispiel für Dinge, die bei der Erstellung eines Protokolls bedacht werden müssen. 
+
+Weiterhin ist TLS ein sehr 
+
+ und verbessert, um diese Angriffe zu verhindern.
+
+
+
+
+\chapter{Richtung der Bachelorarbeit}
+
+
 
 \chapter{SSL und TLS - ein Überblick}
 
-SSL (Secure Socket Layer) bzw. TLS\footnote{Im weiteren Verlauf dieser Arbeit wird der Einfachheit lediglich von TLS gesprochen, es ist jedoch ebenso SSL gemeint. Bei etwaigen Unterschieden wird explizit auf diese eingegangen werden.} (Transport Layer Security) ist ein zustandsbehaftetes Protokoll, das auf dem TCP-Protokoll der Transportschicht des TCP/IP-Protokollstapels aufbaut\footnote{Es gibt auch DTLS (Datagram Transport Layer Security), ein auf TLS basierendes Protokoll, dass auch per UDP Daten übertragen kann}. Es bildet also eine Schicht zwischen Transport- und Anwendungsschicht. %, die von TLS jedoch weitgehend unbehelligt bleiben. 
-Viele Protokolle der Anwendungsschicht nutzen TLS zur sicheren Datenübertragung, so beispielsweise HTTPS oder FTPS.
+SSL (Secure Socket Layer) bzw. TLS\footnote{Im weiteren Verlauf dieser Arbeit wird der Einfachheit halber lediglich von TLS gesprochen. Bei etwaigen Unterschieden wird explizit auf diese eingegangen.} (Transport Layer Security) ist ein zustandsbehaftetes Protokoll, das auf dem TCP-Protokoll der Transportschicht des TCP/IP-Protokollstapels aufbaut\footnote{DTLS (Datagram Transport Layer Security) ist ein auf TLS basierendes Protokoll, dass auch per UDP Daten übertragen kann}. 
 
-SSL wurde von der Firma Netscape entwickelt und nachdem es starke Verbreitung gefunden hatte, durch die IETF als TLS 1.0 in RFC 2246 standardisiert (TLS 1.0 entspricht hierbei SSL 3.1). Aktuell ist die TLS-Version 1.2 und an Version 1.3 wird gearbeitet. \cite{schmeh09}
+Hauptaufgaben von TLS sind Authentifikation der Kommunikationspartner, Verschlüsselung der Kommunikation sowie die Sicherstellung der Integrität der übertragenen Nachrichten. Die hierbei verwendeten kryptographischen Verfahren werden erst zu Beginn der Kommunikation festgelegt. 
 
-Hauptaufgaben von TLS sind Authentifikation der Kommunikationspartner, symmetrische Verschlüsselung der Kommunikation sowie die Sicherstellung der Integrität der übertragenen Nachrichten. Die hierbei verwendeten kryptographischen Verfahren werden erst zu Beginn der Kommunikation festgelegt. 
-\cite{eckert13}
+Viele Protokolle der Anwendungsschicht nutzen TLS zur sicheren Datenübertragung, so beispielsweise HTTPS oder FTPS und auch viele Anwendungen übertragen ihre Daten TLS-gesichert.
+
+SSL wurde von der Firma Netscape entwickelt und nachdem es starke Verbreitung gefunden hatte, durch die IETF als TLS 1.0 standardisiert (TLS 1.0 entspricht SSL 3.1). Aktuell ist die TLS-Version 1.2 und an Version 1.3 wird gearbeitet. \cite{schmeh09}
 
 \begin{description}
 	\item[TLS 1.0] RFC 2246 - http://tools.ietf.org/html/rfc2246
@@ -190,41 +208,61 @@ RFC 6066 - http://tools.ietf.org/html/rfc6066
 
 \chapter{Funktionsweise und Teilprotokolle}
 
+Die Informationen in diesem Abschnitt stammen überwiegend aus der TLS 1.2-Spezifikation(\cite{tls12}\todo{RFC in BibTex}). Für einen ersten Überblick wurde \cite{eckert13} genutzt.
 \todo{Zum Einstieg grobe Funktionsbeschreibung, evtl. schon mit Grafik über Verbindungsaufbau?, Grafik der TLS-Protokolle}
 
-\section{Untere Schicht}
+\section{Record-Protokoll}
 
-TLS besteht selbst aus zwei Schichten. In der unteren Schicht befindet sich das \emph{Record-Protokoll}, das die Daten von den Teilprotokollen der oberen Schicht entgegennimmt, diese Anwendungsdaten fragmentiert (maximale Paketgröße \(2^{14}\) Byte) und optional komprimiert. Danach wird je nach aktuell verhandelten krypographischen Funktionen die Integrität der Daten durch Berechnen und Anhängen eines MACs gesichert und die Nachricht verschlüsselt\footnote{Achtung: hier wird MAC-then-Encrypt angewendet. Laut \cite{AE2000} ist Encrypt-then-MAC vorzuziehen.}. \todo{Nach http://crypto.stackexchange.com/a/224 schlägt Schneier in Cryptography Engineering MAC-then-encrypt aus Gründen der Komplexheit von Encrypt-then-MAC vor. Nachlesen! Gibt es in der Informatik-Bibliothek: T FER 45399} 
+TLS besteht selbst aus zwei Schichten. In der unteren Schicht befindet sich das \emph{Record-Protokoll}, das die Daten von den Teilprotokollen der oberen Schicht entgegennimmt, diese Protokolldaten fragmentiert (maximale Paketgröße \(2^{14}\) Byte) und optional komprimiert. Danach wird je nach aktuell verhandelten krypographischen Funktionen die Integrität der Daten durch Berechnen und Anhängen eines MACs gesichert und die Nachricht verschlüsselt.
+\footnote{Achtung: hier wird MAC-then-Encrypt angewendet. Laut \cite{AE2000} ist Encrypt-then-MAC vorzuziehen. In \cite{krawczyk01} wird dieses Ergebnis bestätigt, aber auch die Sicherheit von authenticate-then-encrypt unter bestimmten Voraussetzungen gezeigt.}. 
+\todo{Nach http://crypto.stackexchange.com/a/224 schlägt Schneier in Cryptography Engineering MAC-then-encrypt aus Gründen der Komplexheit von Encrypt-then-MAC vor. Nachlesen! Gibt es in der Informatik-Bibliothek: T FER 45399} 
 
-Der Mac wird auf die folgende Weise berechnet\footnote{Entnommen aus \cite{eckert13}.}\todo{Ich vermute mal, dass das noch das alte Verfahren ist, das in TLS durch HMAC abgelöst wird. Nachschauen, ebenso SSLCompressed vmtl jetzt anders?}:
-\begin{align*}
-MAC = hash(MAC\_KEY | pad_2 |& \\
-	hash(MAC\_KEY |& pad_1 | seq\_num | SSLCompressed.type |\\
-	SSLCompre&ssed.length | SSLCompressed.fragment))
-\end{align*}
-wobei \(pad_1 = (0x36) \dots (0x36)\) (48 mal für MD5 und 40 mal für SHA) 
-und \(pad_2 = (0x5c) \dots (0x5c)\) (48 mal für MD5 und 40 mal für SHA) gilt. Diese Werte entsprechen ipad und opad aus dem HMAC-Verfahren (\cite{hmac97}).
+Der Mac\todo{Reihenfolge anpassen} wird auf die folgende Weise berechnet:
+\begin{lstlisting}
+MAC(MAC_write_key, seq_num ||
+					TLSCompressed.type ||
+					TLSCompressed.version ||
+					TLSCompressed.length ||
+					TLSCompressed.fragment);
+\end{lstlisting}
+Bei den in TLS verwendeten Cipher Suites wird das HMAC-Verfahren zur Berechnung des MACs genutzt. Details hierzu sind in \cite{hmac97} zu finden. Die für dieses Verfahren verwendete Hashfunktion wird in der Cipher Suite angegeben. Bei SSL 3.0 wurde hier noch eine HMAC-ähnliche Konstruktion verwendet.
 
 Der Record-Header enthält Informationen über die verwendete SSL/TLS-Version, den Content-Type (Handshake, Alert, ChangeCipherSpec, ApplicationData) und die Länge des Klartextfragments.
 
-Aus dem nach Ausführung des Handshake-Protokolls (siehe nächsten Abschitt) beidseitig bekannten Master-Secret werden Schlüssel für die Erstellung des MACs sowie für die Kommunikation zwischen Client und Server berechnet (je einer pro Seite). Dazu werden solange Schlüsselblöcke nach dem folgenden Verfahren erstellt, bis alle Schlüssel konstruiert werden können: \todo{Wahrscheinlich auch das hier ein bisschen anders?}
-\begin{align*}
-key\_block = &MD5(ms | SHA('A' | ms | R_C | R_S)) |\\
-	&MD5(ms | SHA('BB' | ms | R_C | R_S)) |\\
- 	&MD5(ms | SHA('CCC' | ms | R_C | R_S))
-\end{align*}
+Aus dem nach Ausführung des Handshake-Protokolls (siehe nächsten Abschnitt) beidseitig bekannten \mastersecret{} werden Schlüssel für die Erstellung des MACs sowie für die Kommunikation zwischen Client und Server berechnet (also insgesamt vier Schlüssel). Dazu werden solange Schlüsselblöcke nach dem folgenden Verfahren erstellt, bis alle Schlüssel konstruiert werden können. 
 
-\section{Obere Schicht}
+\begin{lstlisting}
+key_block = PRF(SecurityParameters.master_secret,
+                      "key expansion",
+                      SecurityParameters.server_random +
+                      SecurityParameters.client_random);
+\end{lstlisting}
+
+Hierbei werden die folgenden Funktionen genutzt:
+
+\begin{lstlisting}
+PRF(secret, label, seed) = P_hash(secret, label + seed)
+
+P_hash(secret, seed) = HMAC_hash(secret, A(1) + seed) +
+						HMAC_hash(secret, A(2) + seed) +
+						HMAC_hash(secret, A(3) + seed) + ...
+
+A(0) = seed
+A(i) = HMAC_hash(secret, A(i-1))
+\end{lstlisting}
+
+
+\section{Protokolle der oberen Schicht}
 
 In der oberen Schicht sind vier Teilprotokolle spezifiziert: \emph{Handshake-, ChangeCipherSpec-, Alert-} und \emph{ApplicationData-Protokoll}.
 
-Das \emph{Handshake-Protokoll} dient zur Vereinbarung kryptographischer Verfahren und zur Aushandlung eines Schlüssels für die symmetrische Verschlüsselung der später gesendeten Daten. Der Handshake kann folgendermaßen ablaufen (abhängig von optionalem Clientzertifikat, Preshared Key, erneute Verbindung, ...; entnommen aus \cite{eckert13}): 
+Das \emph{Handshake-Protokoll} dient zur Herstellung einer gesicherten Verbindung. Hierbei werden kryptographische Verfahren zwischen den Kommunikationspartnern vereinbart, ihre Identität authentifiziert und ein Schlüssel (das sogenannte \premastersecret{}) für die bereits beschriebene Erstellung der - später während der eigentlichen Kommunikation verwendeten - Schlüssel übertragen oder berechnet. Der Handshake kann folgendermaßen ablaufen (hier illustriert für keine Nutzung einer existierenden Sitzung und kein Clientzertifikat): 
 
 \todo{als ordentliche Grafik ohne Clientverifikation}
 
 \begin{itemize}
 \item -->\clienthello{} mit \\
-\(H_C = (\)4 Byte Zeitstempel, 28 Byte Zufallszahl, Sitzungsidentifikator (!= Null bei bereits existierender Sitzung), Cipher Suite\()\)
+\(H_C = (\)4 Byte Zeitstempel, 28 Byte Zufallszahl, Sitzungsidentifikator (!= Null bei bereits existierender Sitzung), Cipher Suite List\()\)
 
 \item <-- \serverhello{} mit \\
 \(H_S = (\)4 Byte Zeitstempel, 28 Byte Zufallszahl, Sitzungsidentifikator (falls vom Client gewünschte Sitzung bedient werden kann), Cipher Suite, die vom Server unterstützt wird\()\)
@@ -235,38 +273,39 @@ Das \emph{Handshake-Protokoll} dient zur Vereinbarung kryptographischer Verfahre
 
 \item --> Generierung und Senden von \premastersecret{} (48 Byte) verschlüsselt mit öffent. Schlüssel des Servers (bei RSA) oder Diffie-Hellman-Verfahren
 
-\item Client und Server: aus Zufallszahl des Clients \(R_C \text{ aus } H_C\), Zufallszahl des Servers \(R_S \text{ aus } H_S\) und \premastersecret{} wird das \mastersecret{} berechnet\todo{so wahrscheinlich < TLS 1.2, danach Pseudozufallsfunktion -> Nachschauen}
-\begin{align*}
-\text{\mastersecret} = &MD5(Pre | SHA('A' | Pre | R_C | R_S)) |\\
-	&MD5(Pre | SHA('BB' | Pre | R_C | R_S)) |\\
- 	&MD5(Pre | SHA('CCC' | Pre | R_C | R_S))
-\end{align*}
+\item Client und Server: aus Zufallszahl des Clients \(R_C \text{ aus } H_C\), Zufallszahl des Servers \(R_S \text{ aus } H_S\) und \premastersecret{} wird das \mastersecret{} berechnet.
+\begin{lstlisting}
+master_secret = PRF(pre_master_secret, "master secret",
+				ClientHello.random + ServerHello.random)[0..47];
+\end{lstlisting}
 
-\item --> \changecipherspec{}-Nachricht (nicht Bestandteil des Handshake-Protokolls -> eigener Record)
+\item --> \changecipherspec{}-Nachricht (kein Bestandteil des Handshake-Protokolls -> eigener Record)
 
-\item --> Handshakeabschluss: \finished{} mit MD5 und SHA-MAC über alle bisher ausgetauschten Nachrichten (mit Ausnahmen)
+\item --> Handshakeabschluss: \finished{} mit MAC über alle bisher ausgetauschten Handshake-Nachrichten 
+\begin{lstlisting}
+verify_data = PRF(master_secret, finished_label, Hash(handshake_messages)) [0..verify_data_length-1];
+\end{lstlisting}
 
-\item <-- \changecipherspec{}-Nachricht (nicht Bestandteil des Handshake-Protokolls -> eigener Record)
+\item <-- \changecipherspec{}-Nachricht
 
-\item <-- Handshakeabschluss: \finished{} mit MD5 und SHA-MAC über alle bisher ausgetauschten Nachrichten (mit Ausnahmen)
+\item <-- Handshakeabschluss, wie Client-Nachricht
 \end{itemize}
 
+Das \emph{Change Cipher Spec-Protokoll} dient dazu, die vereinbarten kryptographischen Verfahren zu ändern. Es enthält lediglich eine Nachricht mit dem Wert 1, die für das Übernehmen der während des Handshakes ausgehandelten Verfahren steht. 
 
-Das \emph{ChangeCipherSpec-Protokoll} dient dazu, die vereinbarten kryptographischen Verfahren zu ändern. Es enthält lediglich eine Nachricht mit dem Wert 1, die für das Übernehmen der während des Handshakes ausgehandelten Verfahren steht. \cite{eckert13}
+Das \emph{Alert-Protokoll} dient dazu, auftretende Fehler zu versenden, die während des Datenaustausches auftreten. Hierbei kann es sich zum Beispiel um fehlgeschlagene Überprüfung von entschlüsselten Nachrichten (\badrecordmac{}) oder fehlerhafte Zertifikatsüberprüfung (\badcertificate{}) handeln. Unterschieden wird zwischen Fehlern (fatal alert), die sofort zum Schließen der Sitzung führen, und Warnungen(warning alert). Eine Übersicht über alle Fehler findet sich in Abschnitt 7.2 von \cite{tls12}.
 
-Das \emph{Alert-Protokoll} dient dazu, auftretende Fehler oder Warnungen zu versenden, die während des Datenaustausches auftreten. \todo{Übersicht}
-
-Das \emph{ApplicationData-Protokoll} ist zuständig für das Durchreichen von Anwendungsdaten, die von der Anwendungsschicht gesendet werden sollen.\cite{Schneier2006}
+Das \emph{Application Data-Protokoll} ist zuständig für das Durchreichen von Anwendungsdaten, die von der Anwendungsschicht gesendet werden sollen.
 
 \section{Sitzungs- und Verbindungskonzept}
 
 TLS erstellt beim ersten Handshake eine Sitzung zwischen Client und Server. Hierbei wird ein Sitzungsidentifikator erstellt, der beim \serverhello{} mitgesendet wird. Weiterhin wird sich in der Sitzung das Zertifikat des Gegenübers, optional das Kompressionsverfahren, die Cipher Suite und das \mastersecret{} gemerkt.
 
-Ein Client kann nun, wenn er den Sitzungsidentifikator beim \clienthello{} mitschickt, eine alte Sitzung in Form einer neuen Verbindung wiederaufnehmen oder mehrere Verbindungen parallel aufbauen. Eine Verbindung wird dabei durch Client- und Server-Zufallszahlen \(R_C\) und \(R_S\), die generierten Schlüssel, einen Initialisierungsvektor \todo{Wie wird sich auf den geeinigt? Übertragen? Aus \mastersecret{}?} sowie aktuelle Sequenznummern beschrieben.
+Ein Client kann nun, wenn er den Sitzungsidentifikator beim \clienthello{} mitschickt, eine alte Sitzung in Form einer neuen Verbindung wiederaufnehmen oder mehrere Verbindungen parallel aufbauen. Eine Verbindung wird dabei durch Client- und Server-Zufallszahlen \(R_C\) und \(R_S\), die generierten Schlüssel, je nach verwendeten Verschlüsselungsverfahren einen Initialisierungsvektor, sowie aktuelle Sequenznummern beschrieben.
 
 Beim Verbindungsaufbau kann so ein verkürzter Handshake genutzt werden, bei dem weniger Nachrichten gesendet werden müssen. Es kann dabei auf Neuberechnung des \mastersecret{}, Server- und Client-Validierung und Aushandlung der Cipher Suite verzichtet werden.\todo{Grafik des verkürzten Handhakes}
 
-\section{Ciphersuites}
+%\section{Ciphersuites}
 
 
 
@@ -304,7 +343,7 @@ Details zu diesem Angriff sind in \cite{wagner96} zu finden.
 
 Daniel Bleichenbacher stellte 1998 in \cite{bleichenbacher98} einen Adaptive Chosen Ciphertext Angriff gegen RSA-basierte Protokolle vor.
 
-Der Angriff basiert auf dem festen Format nach PCKS \#1 formatierter Nachrichten. 
+Der Angriff basiert auf dem festen Format nach PCKS \#1 formatierter Nachrichten. \todo{Weiter ausformulieren}
 
 \section{Vaudenay in 2002? Padding Oracle}
 
@@ -312,6 +351,8 @@ In \cite{vaudenay02} beschreibt der Autor einen Angriff zur Erlangung des Klarte
 %Nichtsdestotrotz bietet die hier beschriebene Methode eine Grundlage für weitere Angriffe.
 
 In \cite{canvel03} beschreiben die Autoren eine Umsetzung des Angriffs auf TLS-gesicherte IMAP-Verbindungen zur Erlangung von Passwörtern. Hierbei wird das Problem ununterscheidbarer und verschlüsselter Fehlermeldungen durch einen Timing-Angriff umgangen. Außerdem bedenken die Autoren das Abbrechen der Sitzung durch Nutzung vieler paralleler Sitzungen mit dem gleichen verschlüsselten Aufruf (wie es bei der Authentifizierung im IMAP-Protokoll der Fall ist).
+
+%Nicht-Überprüfen des Paddings auch keine Option, siehe https://www.openssl.org/~bodo/tls-cbc.txt (Letzte EMail)
 
 \section{Lucky Thirteen}
 
@@ -331,23 +372,34 @@ In \cite{duong11} und in einem Konferenzbeitrag auf der ekoparty Security Confer
 
 \section{CRIME}
 
-
+Auf der ekoparty Security Conference 2012 stellten die Entdecker des BEAST-Angriff einen weiteren Angriff vor, der die (optionale) Kompression in TLS nutzt, um beispielsweise Cookiedaten zu stehlen. 
+%Kein Paper, Folien hier: https://docs.google.com/presentation/d/11eBmGiHbYcHR9gL5nDyZChu_-lCa2GizeuOfaLU2HOU/edit#slide=id.g1d134dff_1_162
+%http://security.stackexchange.com/questions/19911/crime-how-to-beat-the-beast-successor
 
 \section{Poodle}
 
+In \cite{moeller14} nutzen die Autoren den erneuten Verbindungsversuch mit älteren Protokollversionen wenn der Handshake fehlschlägt (SSL 3.0 Fallback), der in vielen TLS-Implementationen eingesetzt wird. Darauf aufbauend beschreiben sie einen Angriff, der bestehende Schwächen in der RC4-Chiffre\todo{RC4 noch irgendwo unterbringen? Vllt bei den Ciphersuites?} bzw. in der Nicht-Prüfung von Padding im CBC-Modus in SSL 3.0 ausnutzt, um Cookiedaten zu stehlen.
+%https://poodlebleed.com/
 
 \section{FREAK}
 
-https://freakattack.com/
+Eine Gruppe von Pariser Wissenschaftlern entdeckte eine Möglichkeit, wie ein Angreifer die Kommunikationspartner während des Handshakes zur Nutzung schwacher Kryptographie (RSA export cipher suite) bringen kann. Weiterhin zeigten sie in \cite{freak15} die Machbarkeit der Faktorisierung der entsprechenden RSA-Module und die Praxistauglichkeit des Angriffs.
+%https://freakattack.com/
+%https://www.smacktls.com/#freak
+%http://blog.cryptographyengineering.com/2015/03/attack-of-week-freak-or-factoring-nsa.html
 
-https://www.smacktls.com/#freak
+\section{logjam}
 
-+weakdh.org?
+In \cite{logjam15} beschreiben die Autoren mehrere Angriffe gegen die Nutzung von Diffie-Hellman(DH)-Schlüsselaustausch während des TLS Handshakes. Ein Angriff richtet sich gegen kleine DH-Parameter (DHE-EXPORT), ein weiterer nutzt die weite Verbreitung von standardisierten DH-Parametern, um mittels Vorberechnung bestimmter Werte schneller diskrete Logarithmen für beim DH-Verfahren gesendete Nachrichten zu berechnen.
+%weakdh.org
 
-\section{Probleme bei Zertifikatvalidierung und bei CAs}
+\section{Probleme bei Zertifikatvalidierung und bei CAs und Diebstahl privater Schlüssel}
 
-\section{Diebstahl privater Schlüssel}
+Viele Probleme, die in den letzten Jahren aufgetreten sind, betreffen nicht das TLS-Protokoll direkt, sondern die Erstellung und Validierung von (insbesondere) Server-Zertifikaten, und seien deshalb nur am Rande erwähnt. Ein guter Überblick ist in \cite{meyer13} zu finden.
 
+Viele dieser Angriffe richteten sich gegen mangelnde Zertifikatvalidierung in TLS-Implementierungen (keine Validierung, keine Überprüfung des Servernamens, Akzeptanz unsignierter oder abgelaufener Zertifikate, ...) oder wenig Sorgfalt bei der Zertifikaterstellung durch Certificate Authorities (Nutzung von MD5, fehlerhafte Validierung von übermitttelten Servernamen, fehlerhafte Ausgabe von intermediate-Zertifikaten, mangelhaft abgesicherte Server, ...).
+
+Der Vollständigkeit halber sei hier auch noch die notwendige Sicherheit des privaten Serverschlüssels erwähnt. Gelangt ein Angreifer in seinen Besitz, so kann er den Datenverkehr problemlos mitlesen oder verändern.
 
 \chapter{Protokollversion 1.3}
 
