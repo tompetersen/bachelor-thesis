@@ -6,7 +6,7 @@
     bibliography=totoc,
     numbers=noenddot,       % Entfernt den letzten Punkt der Kapitelnummern.
     open=any,               % Kapitel kann auf jeder Seite beginnen.
-%   final                   % Entfernt alle todonotes und den Entwurfstempel.
+   final                   % Entfernt alle todonotes und den Entwurfstempel.
     ]{scrreprt}
 
 % ===================================Praeambel==================================
@@ -130,7 +130,7 @@
 \newcommand{\badcertificate}		{bad\_certificate}
 
 
-\title{Bachelorarbeit über TLS (1.3)}
+\title{Bachelorarbeit TLS (1.3)}
 \author{Tom Petersen}
 % \date{01.01.2015} % falls ein bestimmter Tag eingesetzt werden soll, einfach diese Zeile aktivieren
 
@@ -171,61 +171,60 @@
 \end{tikzpicture}}
 \end{titlepage}
 
-\chapter{Motivation}
+\chapter{Einführung}
 
-TLS ist das wohl am meisten genutzte Sicherheitsprotokoll im Internet. Aus diesem Grund wurde es im Laufe seiner Entwicklung oft untersucht und angegriffen. Dabei sind viele einfache und elegante Angriffe gefunden worden, die zeigen, wie wirksam die kleinsten Schwächen in Protokollen ausgenutzt werden können und das auch scheinbar unbedenkliche Stellen zu Sicherheitslücken führen können. Daher ist TLS auch ein gutes Beispiel für Dinge, die bei der Erstellung eines Protokolls bedacht werden müssen. 
+In diesem Exposé werde ich darauf eingehen, warum ich mich in meiner Bachelorarbeit gerne mit dem TLS-Protokoll befassen würde und eine kurze Einführung in das Thema geben. Zuerst werde ich kurz erklären, was mich dazu motiviert hat, mich mit dem Thema zu befassen, und in welche Richtung eine mögliche Bachelorarbeit gehen könnte.
 
-Weiterhin ist TLS ein sehr 
+Danach folgt eine Übersicht über die Funktionsweise des Protokolls und bisherige Angriffe gegen aktuelle und frühere Versionen des TLS- bzw. SSL-Protokolls.
 
-und verbessert, um diese Angriffe zu verhindern.
+Auf geeignete Literatur bzw. Veröffentlichungen wird an den entsprechenden Stellen der Ausarbeitung eingegangen.
 
+\section{Motivation}
 
+TLS ist das wohl am meisten genutzte Sicherheitsprotokoll im Internet. Aus diesem Grund wurde es im Laufe seiner Entwicklung oft untersucht und angegriffen. Dabei sind viele einfache und elegante Angriffe gefunden worden, die zeigen, wie wirksam die kleinsten Schwächen in Protokollen ausgenutzt werden können, und das auch Entscheidungen in scheinbar unbedenklichen Bereichen zu Sicherheitslücken führen können. 
 
+In den verschiedenen SSL- und TLS-Versionen wurden viele Änderungen vorgenommen, um diese Angriffe zu verhindern. Daher bietet TLS auch gute Beispiele für Dinge, die bei der Erstellung eines Protokolls bedacht werden müssen, und für wirksame Gegenmaßnahmen gegen bestimmte Angriffe.
 
-\chapter{Richtung der Bachelorarbeit}
+\section{Richtung der Bachelorarbeit}
 
+Eine Bachelorarbeit, die sich mit TLS befasst, könnte neben der grundsätzlichen Funktionsweise und einer Übersicht über bisherige Angriffe auf die Änderungen in TLS 1.3 eingehen. Für diese Version liegt ein Draft in 5. Version vom 9. März 2015 vor (\cite{tls13}). 
 
+Auch ein konstruktiver Teil wäre denkbar, der sich mit der Überprüfung von TLS-gesicherten Servern oder der Implementation von Angriffen (oder verwundbaren Systemen) zum Beispiel für die Lehre befassen könnte. 
 
 \chapter{SSL und TLS - ein Überblick}
 
-SSL (Secure Socket Layer) bzw. TLS\footnote{Im weiteren Verlauf dieser Arbeit wird der Einfachheit halber lediglich von TLS gesprochen. Bei etwaigen Unterschieden wird explizit auf diese eingegangen.} (Transport Layer Security) ist ein zustandsbehaftetes Protokoll, das auf dem TCP-Protokoll der Transportschicht des TCP/IP-Protokollstapels aufbaut\footnote{DTLS (Datagram Transport Layer Security) ist ein auf TLS basierendes Protokoll, dass auch per UDP Daten übertragen kann}. 
+Dieser Überblick basiert in großen Teilen auf \cite{schmeh09}.
+
+SSL (Secure Socket Layer) bzw. TLS\footnote{Im weiteren Verlauf dieser Arbeit wird der Einfachheit halber lediglich von TLS gesprochen. Bei etwaigen Unterschieden wird explizit auf diese eingegangen.} (Transport Layer Security) ist ein zustandsbehaftetes Protokoll, das auf dem TCP-Protokoll\footnote{DTLS (Datagram Transport Layer Security) ist ein auf TLS basierendes Protokoll, dass auf UDP aufsetzt.} der Transportschicht des TCP/IP-Protokollstapels aufbaut. 
 
 Hauptaufgaben von TLS sind Authentifikation der Kommunikationspartner, Verschlüsselung der Kommunikation sowie die Sicherstellung der Integrität der übertragenen Nachrichten. Die hierbei verwendeten kryptographischen Verfahren werden erst zu Beginn der Kommunikation festgelegt. 
 
 Viele Protokolle der Anwendungsschicht nutzen TLS zur sicheren Datenübertragung, so beispielsweise HTTPS oder FTPS und auch viele Anwendungen übertragen ihre Daten TLS-gesichert.
 
-SSL wurde von der Firma Netscape entwickelt und nachdem es starke Verbreitung gefunden hatte, durch die IETF als TLS 1.0 standardisiert (TLS 1.0 entspricht SSL 3.1). Aktuell ist die TLS-Version 1.2 und an Version 1.3 wird gearbeitet. \cite{schmeh09}
+SSL wurde von der Firma Netscape entwickelt und nachdem es starke Verbreitung gefunden hatte, durch die IETF als TLS 1.0 standardisiert (TLS 1.0 entspricht SSL 3.1). Aktuell ist die TLS-Version 1.2 und an Version 1.3 wird gearbeitet.
 
+\ifoptionfinal{}{
 \begin{description}
 	\item[TLS 1.0] RFC 2246 - http://tools.ietf.org/html/rfc2246
 	\item[TLS 1.1] RFC 4346 - http://tools.ietf.org/html/rfc4346
 	\item[TLS 1.2] RFC 5246 - http://tools.ietf.org/html/rfc5246
-	\item[TLS Extensions] RFC 3546 - http://tools.ietf.org/html/rfc3546, \\
-RFC 3466 - http://tools.ietf.org/html/rfc4366, \\
-RFC 6066 - http://tools.ietf.org/html/rfc6066
 	\item[TLS 1.3] Draft - https://tools.ietf.org/html/draft-ietf-tls-tls13-05
+	\item[TLS Extensions] Z.B.\\
+		RFC 3546 - http://tools.ietf.org/html/rfc3546, \\
+		RFC 3466 - http://tools.ietf.org/html/rfc4366, \\
+		RFC 6066 - http://tools.ietf.org/html/rfc6066
 \end{description}
+}
 
 \chapter{Funktionsweise und Teilprotokolle}
 
-Die Informationen in diesem Abschnitt stammen überwiegend aus der TLS 1.2-Spezifikation(\cite{tls12}\todo{RFC in BibTex}). Für einen ersten Überblick wurde \cite{eckert13} genutzt.
+Die Informationen in diesem Abschnitt stammen überwiegend aus der TLS 1.2-Spezifikation (\cite{tls12}). Für einen ersten Überblick wurde \cite{eckert13} genutzt.
 \todo{Zum Einstieg grobe Funktionsbeschreibung, evtl. schon mit Grafik über Verbindungsaufbau?, Grafik der TLS-Protokolle}
 
 \section{Record-Protokoll}
 
-TLS besteht selbst aus zwei Schichten. In der unteren Schicht befindet sich das \emph{Record-Protokoll}, das die Daten von den Teilprotokollen der oberen Schicht entgegennimmt, diese Protokolldaten fragmentiert (maximale Paketgröße \(2^{14}\) Byte) und optional komprimiert. Danach wird je nach aktuell verhandelten krypographischen Funktionen die Integrität der Daten durch Berechnen und Anhängen eines MACs gesichert und die Nachricht verschlüsselt.
-\footnote{Achtung: hier wird MAC-then-Encrypt angewendet. Laut \cite{AE2000} ist Encrypt-then-MAC vorzuziehen. In \cite{krawczyk01} wird dieses Ergebnis bestätigt, aber auch die Sicherheit von authenticate-then-encrypt unter bestimmten Voraussetzungen gezeigt.}. 
+TLS besteht aus zwei Schichten. In der unteren Schicht befindet sich das \emph{Record-Protokoll}, das die Daten von den Teilprotokollen der oberen Schicht entgegennimmt, diese Protokolldaten fragmentiert (maximale Paketgröße \(2^{14}\) Byte) und optional komprimiert. Danach wird je nach aktuell verhandelten krypographischen Funktionen die Integrität der Daten durch Berechnen und Anhängen eines MACs gesichert und die Nachricht verschlüsselt\footnote{Achtung: hier wird MAC-then-Encrypt angewendet. Laut \cite{AE2000} ist Encrypt-then-MAC vorzuziehen. In \cite{krawczyk01} wird dieses Ergebnis bestätigt, aber auch die Sicherheit von authenticate-then-encrypt unter bestimmten Voraussetzungen gezeigt.}. 
 \todo{Nach http://crypto.stackexchange.com/a/224 schlägt Schneier in Cryptography Engineering MAC-then-encrypt aus Gründen der Komplexheit von Encrypt-then-MAC vor. Nachlesen! Gibt es in der Informatik-Bibliothek: T FER 45399} 
-
-Der Mac\todo{Reihenfolge anpassen} wird auf die folgende Weise berechnet:
-\begin{lstlisting}
-MAC(MAC_write_key, seq_num ||
-					TLSCompressed.type ||
-					TLSCompressed.version ||
-					TLSCompressed.length ||
-					TLSCompressed.fragment);
-\end{lstlisting}
-Bei den in TLS verwendeten Cipher Suites wird das HMAC-Verfahren zur Berechnung des MACs genutzt. Details hierzu sind in \cite{hmac97} zu finden. Die für dieses Verfahren verwendete Hashfunktion wird in der Cipher Suite angegeben. Bei SSL 3.0 wurde hier noch eine HMAC-ähnliche Konstruktion verwendet.
 
 Der Record-Header enthält Informationen über die verwendete SSL/TLS-Version, den Content-Type (Handshake, Alert, ChangeCipherSpec, ApplicationData) und die Länge des Klartextfragments.
 
@@ -250,6 +249,18 @@ P_hash(secret, seed) = HMAC_hash(secret, A(1) + seed) +
 A(0) = seed
 A(i) = HMAC_hash(secret, A(i-1))
 \end{lstlisting}
+
+Die Integrität der Daten, die aus einem der Protokolle der oberen Schicht an das Rekord-Protokoll gesendet werden, wird zuerstmit einem MAC geschützt. Dieser wird folgendermaßen berechnet:
+\begin{lstlisting}
+MAC(MAC_write_key, seq_num ||
+					TLSCompressed.type ||
+					TLSCompressed.version ||
+					TLSCompressed.length ||
+					TLSCompressed.fragment);
+\end{lstlisting}
+Bei den in TLS verwendeten Cipher Suites wird das HMAC-Verfahren zur Berechnung des MACs genutzt. Details hierzu sind in \cite{hmac97} zu finden. Die für dieses Verfahren verwendete Hashfunktion wird in der Cipher Suite angegeben. Bei SSL 3.0 wurde hier noch eine HMAC-ähnliche Konstruktion verwendet.
+
+Danach wird der Klartext zusammen mit dem MAC optional mit Padding versehen (bei Nutzung von Blockchiffren), verschlüsselt und dann verschickt.
 
 
 \section{Protokolle der oberen Schicht}
@@ -309,11 +320,11 @@ Beim Verbindungsaufbau kann so ein verkürzter Handshake genutzt werden, bei dem
 
 
 
-\chapter{Angriffe auf SSL und TLS}
+\chapter{Angriffe gegen SSL und TLS}
 
 Eine gute Übersicht zu bisherigen Angriffen auf TLS findet sich in \cite{meyer13}. Viele Schwächen früherer Protokollversionen bis SSL 3 sind in \cite{wagner96} zu finden.\todo{JEDEN Angriff auf angreifbare Version und Änderungen in neuen Versionen überprüfen.}
 
-\section{Version Rollbacks [nette Übersetzung?]}
+\section{Version Rollbacks\todo{nette Übersetzung?}}
 
 Ein Angreifer kann eine SSL 3-konforme \clienthello{}-Nachricht so modifizieren, dass der Server eine SSL 2-Verbindung aufbaut. So kann der Angreifer alle Schwächen der älteren Protokollversion ausnutzen. Abhilfe schafft die Einbindung der SSL-Version in das per RSA übertragene \premastersecret. 
 
@@ -337,17 +348,20 @@ Die TLS 1.0-Spezifikation verhindert diesen Angriff dadurch, dass sie eine \chan
 
 Details zu diesem Angriff sind in \cite{wagner96} zu finden.
 
-\section{Schwache Cipher Suites}
+\ifoptionfinal{}{
+	\section{Schwache Cipher Suites}
+	\todo{Tu es! Exportbeschränte Dinge erwähnen}
+}
 
-\section{Bleichenbacher-Angriff und darauf basierende Angriffe}
+\section{Bleichenbacher-Angriff}
 
 Daniel Bleichenbacher stellte 1998 in \cite{bleichenbacher98} einen Adaptive Chosen Ciphertext Angriff gegen RSA-basierte Protokolle vor.
 
 Der Angriff basiert auf dem festen Format nach PCKS \#1 formatierter Nachrichten. \todo{Weiter ausformulieren}
 
-\section{Vaudenay in 2002? Padding Oracle}
+\section{Padding Oracle Angriff}
 
-In \cite{vaudenay02} beschreibt der Autor einen Angriff zur Erlangung des Klartextes, bei dem das für Blockchiffren nötige Padding im CBC-Modus ausgenutzt wird. Durch das vorgegebene Format des Paddings und da das Padding bei TLS nicht durch den MAC geschützt ist (MAC - then PAD - then Encrypt) ermöglicht es theoretisch in einer relativ kleinen Zahl von Anfragen die Berechnung des Klartextes. Praktisch konnte das Verfahren nicht eingesetzt werden, da SSL 3.0 für Padding- und Entschlüsselungsfehler gleiche Fehlermeldungen ausgibt (TLS 1.0 nicht? \todo{Mal gucken}) und bei Paddingfehlern mit einem decryption\_failed\todo{nachschauen!}-error die Sitzung abbricht.\todo{Begirff: Padding Oracle einbauen}
+In \cite{vaudenay02} beschreibt der Autor einen Angriff zur Erlangung des Klartextes, bei dem das für Blockchiffren nötige Padding im CBC-Modus ausgenutzt wird. Durch das vorgegebene Format des Paddings und da das Padding bei TLS nicht durch den MAC geschützt ist (MAC - then PAD - then Encrypt) ermöglicht es theoretisch in einer relativ kleinen Zahl von Anfragen die Berechnung des Klartextes. Praktisch konnte das Verfahren nicht eingesetzt werden, da SSL 3.0 für Padding- und Entschlüsselungsfehler gleiche Fehlermeldungen ausgibt \todo{TLS 1.0 nicht? Mal gucken} und bei Paddingfehlern mit einem decryption\_failed\todo{nachschauen!}-error die Sitzung abbricht.\todo{Begirff: Padding Oracle einbauen}
 %Nichtsdestotrotz bietet die hier beschriebene Methode eine Grundlage für weitere Angriffe.
 
 In \cite{canvel03} beschreiben die Autoren eine Umsetzung des Angriffs auf TLS-gesicherte IMAP-Verbindungen zur Erlangung von Passwörtern. Hierbei wird das Problem ununterscheidbarer und verschlüsselter Fehlermeldungen durch einen Timing-Angriff umgangen. Außerdem bedenken die Autoren das Abbrechen der Sitzung durch Nutzung vieler paralleler Sitzungen mit dem gleichen verschlüsselten Aufruf (wie es bei der Authentifizierung im IMAP-Protokoll der Fall ist).
@@ -358,9 +372,9 @@ In \cite{canvel03} beschreiben die Autoren eine Umsetzung des Angriffs auf TLS-g
 
 In \cite{paterson13} stellen die Autoren weitere auf \cite{vaudenay02} basierende Angriffe vor, die ebenfalls auf Timing-Attacken zur Erkennung falschen Paddings und mehrere Verbindungen setzen.
 
-\section{Bard - IV? Chosen Plaintext Attacks}
+\section{Chosen Plaintext Angriff gegen bekannte IVs}
 
-In \cite{bard04} stellt der Autor einen Angriff vor, der die Art ausnutzt, wie die für den CBC-Modus nötigen Initialisierungsvektoren (IV) von TLS bereitgestellt werden. Durch die Nutzung des letzten Ciphertextblocks der letzten Nachricht als IV der neuen Nachricht lässt sich unter bestimmten Vorraussetzungen ein Chosen-Plaintext-Angriff durchführen. Der Autor beschreibt eine Möglichkeit unter Nutzung von Browser-Plugins über HTTPS übertragene Passwörter oder PINs herauszufinden. In \cite{bard06} verbessert der Autor seinen Angriff durch nie Nutzung von Java-Applets anstelle von Browser-Plugins.
+In \cite{bard04} stellt der Autor einen Angriff vor, der die Art ausnutzt, wie die für den CBC-Modus nötigen Initialisierungsvektoren (IV) von TLS bereitgestellt werden. Durch die Nutzung des letzten Ciphertextblocks der letzten Nachricht als IV der neuen Nachricht lässt sich unter bestimmten Vorraussetzungen ein Chosen-Plaintext-Angriff durchführen. Der Autor beschreibt eine Möglichkeit unter Nutzung von Browser-Plugins über HTTPS übertragene Passwörter oder PINs herauszufinden. In \cite{bard06} verbessert der Autor seinen Angriff durch die Nutzung von Java-Applets anstelle von Browser-Plugins.
 
 Seit TLS 1.1 werden explizite IV vorgeschrieben. Hierzu besteht jede Nachricht aus einem Ciphertextblock mehr als Klartextblöcken. Dieser erste Block bildet den IV für die restliche Verschlüsselung. Da dieser IV nicht vor dem Senden der Nachricht bekannt ist, wird der hier beschriebene Chosen-Plaintext-Angriff verhindert.
 
@@ -393,7 +407,7 @@ Eine Gruppe von Pariser Wissenschaftlern entdeckte eine Möglichkeit, wie ein An
 In \cite{logjam15} beschreiben die Autoren mehrere Angriffe gegen die Nutzung von Diffie-Hellman(DH)-Schlüsselaustausch während des TLS Handshakes. Ein Angriff richtet sich gegen kleine DH-Parameter (DHE-EXPORT), ein weiterer nutzt die weite Verbreitung von standardisierten DH-Parametern, um mittels Vorberechnung bestimmter Werte schneller diskrete Logarithmen für beim DH-Verfahren gesendete Nachrichten zu berechnen.
 %weakdh.org
 
-\section{Probleme bei Zertifikatvalidierung und bei CAs und Diebstahl privater Schlüssel}
+\section{Zertifikate und Verwandtes}
 
 Viele Probleme, die in den letzten Jahren aufgetreten sind, betreffen nicht das TLS-Protokoll direkt, sondern die Erstellung und Validierung von (insbesondere) Server-Zertifikaten, und seien deshalb nur am Rande erwähnt. Ein guter Überblick ist in \cite{meyer13} zu finden.
 
@@ -401,7 +415,7 @@ Viele dieser Angriffe richteten sich gegen mangelnde Zertifikatvalidierung in TL
 
 Der Vollständigkeit halber sei hier auch noch die notwendige Sicherheit des privaten Serverschlüssels erwähnt. Gelangt ein Angreifer in seinen Besitz, so kann er den Datenverkehr problemlos mitlesen oder verändern.
 
-\chapter{Protokollversion 1.3}
+%\chapter{Protokollversion 1.3}
 
 \bibliography{quellen}
 \bibliographystyle{alpha}
