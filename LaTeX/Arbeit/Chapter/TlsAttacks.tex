@@ -1,0 +1,95 @@
+
+\chapter{Angriffe gegen SSL und TLS}
+
+Eine gute Übersicht zu bisherigen Angriffen auf TLS findet sich in \cite{meyer13}. Viele Schwächen früherer Protokollversionen bis SSL 3 sind in \cite{wagner96} zu finden.\todo{JEDEN Angriff auf angreifbare Version und Änderungen in neuen Versionen überprüfen.}
+
+\section{Version Rollbacks\todo{nette Übersetzung?}}
+
+Ein Angreifer kann eine SSL 3-konforme \clienthello{}-Nachricht so modifizieren, dass der Server eine SSL 2-Verbindung aufbaut. So kann der Angreifer alle Schwächen der älteren Protokollversion ausnutzen. Abhilfe schafft die Einbindung der SSL-Version in das per RSA übertragene \premastersecret. 
+
+Ein Schwachpunkt könnte laut \cite{wagner96} immer noch die Wiederaufnahme einer SSL 3-Sitzung durch eine SSL 2-\clienthello{}-Nachricht sein. Dieses sollte in Implementationen verhindert werden.
+
+\section{Ciphersuite Rollback}
+
+Ein für SSL 2.0 bestehender Angriff ermöglichte aktiven Angreifern die während des Handshake-Protokolls übertragenen Listen von unterstützten Cipher Suites zu verändern, so dass schwache kryptographische Verfahren erzwungen werden konnten (oftmals exportgeschwächte Verfahren mit kürzeren Schlüsselängen).
+
+In SSL 3.0 wird dieser Angriff dadurch verhindert, dass die \finished{}-Nachrichten von Client und Server jeweils einen mit dem \mastersecret{} berechneten MAC über die Nachrichten des \emph{Handshake}-Protokolls enthalten, der die Integrität dieser Nachrichten bestätigt.
+
+Eine detaillierte Übersicht ist in \cite{wagner96} zu finden.
+
+\section{Verhindern der \changecipherspec{}-Nachricht}
+
+Im Sonderfall einer SSL-Verbindung, die lediglich die Integrität der Nachrichten schützen soll, aber nicht verschlüsselt, lässt sich ausnutzen, dass der in der \finished{}-Nachricht gesendete MAC die \changecipherspec{}-Nachricht nicht mit einschließt. Dadurch kann ein aktiver Angreifer diese Nachrichten abfangen und nicht weiterleiten, sodass die Verbindungspartner die Integritätsprüfung nicht einsetzen. Ein Angreifer ist so in der Lage, gesendete Nachrichten zu verändern. 
+
+Theoretisch wäre der Angriff unter bestimmten Voraussetzungen und schwacher Kryptographie auch bei verschlüsselten Verbindungen möglich, unter praktischen Gesichtspunkten aber eher unwahrscheinlich.
+
+Die TLS 1.0-Spezifikation verhindert diesen Angriff dadurch, dass sie eine \changecipherspec{}-Nachricht vor der \finished{}-Nachricht explizit vorschreibt.
+
+Details zu diesem Angriff sind in \cite{wagner96} zu finden.
+
+\ifoptionfinal{}{
+	\section{Schwache Cipher Suites}
+	\todo{Tu es! Exportbeschränte Dinge erwähnen}
+}
+
+\section{Bleichenbacher-Angriff}
+
+Daniel Bleichenbacher stellte 1998 in \cite{bleichenbacher98} einen Adaptive Chosen Ciphertext Angriff gegen RSA-basierte Protokolle vor.
+
+Der Angriff basiert auf dem festen Format nach PCKS \#1 formatierter Nachrichten. \todo{Weiter ausformulieren}
+
+\section{Padding Oracle Angriff}
+
+In \cite{vaudenay02} beschreibt der Autor einen Angriff zur Erlangung des Klartextes, bei dem das für Blockchiffren nötige Padding im CBC-Modus ausgenutzt wird. Durch das vorgegebene Format des Paddings und da das Padding bei TLS nicht durch den MAC geschützt ist (MAC - then PAD - then Encrypt) ermöglicht es theoretisch in einer relativ kleinen Zahl von Anfragen die Berechnung des Klartextes. Praktisch konnte das Verfahren nicht eingesetzt werden, da SSL 3.0 für Padding- und Entschlüsselungsfehler gleiche Fehlermeldungen ausgibt \todo{TLS 1.0 nicht? Mal gucken} und bei Paddingfehlern mit einem decryption\_failed\todo{nachschauen!}-error die Sitzung abbricht.\todo{Begirff: Padding Oracle einbauen}
+%Nichtsdestotrotz bietet die hier beschriebene Methode eine Grundlage für weitere Angriffe.
+
+In \cite{canvel03} beschreiben die Autoren eine Umsetzung des Angriffs auf TLS-gesicherte IMAP-Verbindungen zur Erlangung von Passwörtern. Hierbei wird das Problem ununterscheidbarer und verschlüsselter Fehlermeldungen durch einen Timing-Angriff umgangen. Außerdem bedenken die Autoren das Abbrechen der Sitzung durch Nutzung vieler paralleler Sitzungen mit dem gleichen verschlüsselten Aufruf (wie es bei der Authentifizierung im IMAP-Protokoll der Fall ist).
+
+%Nicht-Überprüfen des Paddings auch keine Option, siehe https://www.openssl.org/~bodo/tls-cbc.txt (Letzte EMail)
+
+\section{Lucky Thirteen}
+
+In \cite{paterson13} stellen die Autoren weitere auf \cite{vaudenay02} basierende Angriffe vor, die ebenfalls auf Timing-Attacken zur Erkennung falschen Paddings und mehrere Verbindungen setzen.
+
+\section{Chosen Plaintext Angriff gegen bekannte IVs}
+
+In \cite{bard04} stellt der Autor einen Angriff vor, der die Art ausnutzt, wie die für den CBC-Modus nötigen Initialisierungsvektoren (IV) von TLS bereitgestellt werden. Durch die Nutzung des letzten Ciphertextblocks der letzten Nachricht als IV der neuen Nachricht lässt sich unter bestimmten Vorraussetzungen ein Chosen-Plaintext-Angriff durchführen. Der Autor beschreibt eine Möglichkeit unter Nutzung von Browser-Plugins über HTTPS übertragene Passwörter oder PINs herauszufinden. In \cite{bard06} verbessert der Autor seinen Angriff durch die Nutzung von Java-Applets anstelle von Browser-Plugins.
+
+Seit TLS 1.1 werden explizite IV vorgeschrieben. Hierzu besteht jede Nachricht aus einem Ciphertextblock mehr als Klartextblöcken. Dieser erste Block bildet den IV für die restliche Verschlüsselung. Da dieser IV nicht vor dem Senden der Nachricht bekannt ist, wird der hier beschriebene Chosen-Plaintext-Angriff verhindert.
+
+\section{BEAST}
+
+In \cite{duong11} und in einem Konferenzbeitrag auf der ekoparty Security Conference 2011 wurde von den Autoren das Tool BEAST vorgestellt, dass die Ideen aus \cite{bard04} aufgreift. Die Autoren erweiterten den Angriff jedoch auf einen sogenannten block-wise chosen-boundary Angriff, bei dem der Angreifer die Lage der Nachricht in den verschlüsselten Blöcken verändern kann. Die Autoren zeigten auch die praktische Umsetzbarkeit am Beispiel des Entschlüsselns einer über HTTPS gesendeten Session-ID.
+% http://www.ekoparty.org/archivo.php
+% http://vnhacker.blogspot.co.uk/2011/09/beast.html
+
+\section{CRIME}
+
+Auf der ekoparty Security Conference 2012 stellten die Entdecker des BEAST-Angriff einen weiteren Angriff vor, der die (optionale) Kompression in TLS nutzt, um beispielsweise Cookiedaten zu stehlen. 
+%Kein Paper, Folien hier: https://docs.google.com/presentation/d/11eBmGiHbYcHR9gL5nDyZChu_-lCa2GizeuOfaLU2HOU/edit#slide=id.g1d134dff_1_162
+%http://security.stackexchange.com/questions/19911/crime-how-to-beat-the-beast-successor
+
+\section{Poodle}
+
+In \cite{moeller14} nutzen die Autoren den erneuten Verbindungsversuch mit älteren Protokollversionen wenn der Handshake fehlschlägt (SSL 3.0 Fallback), der in vielen TLS-Implementationen eingesetzt wird. Darauf aufbauend beschreiben sie einen Angriff, der bestehende Schwächen in der RC4-Chiffre \todo{RC4 noch irgendwo unterbringen? Vllt bei den Ciphersuites? http://www.isg.rhul.ac.uk/tls/} bzw. in der Nicht-Prüfung von Padding im CBC-Modus in SSL 3.0 ausnutzt, um Cookiedaten zu stehlen.
+%https://poodlebleed.com/
+
+\section{FREAK}
+
+Eine Gruppe von Pariser Wissenschaftlern entdeckte eine Möglichkeit, wie ein Angreifer die Kommunikationspartner während des Handshakes zur Nutzung schwacher Kryptographie (RSA export cipher suite) bringen kann. Weiterhin zeigten sie in \cite{freak15} die Machbarkeit der Faktorisierung der entsprechenden RSA-Module und die Praxistauglichkeit des Angriffs.
+%https://freakattack.com/
+%https://www.smacktls.com/#freak
+%http://blog.cryptographyengineering.com/2015/03/attack-of-week-freak-or-factoring-nsa.html
+
+\section{logjam}
+
+In \cite{logjam15} beschreiben die Autoren mehrere Angriffe gegen die Nutzung von Diffie-Hellman(DH)-Schlüsselaustausch während des TLS Handshakes. Ein Angriff richtet sich gegen kleine DH-Parameter (DHE-EXPORT), ein weiterer nutzt die weite Verbreitung von standardisierten DH-Parametern, um mittels Vorberechnung bestimmter Werte schneller diskrete Logarithmen für beim DH-Verfahren gesendete Nachrichten zu berechnen.
+%weakdh.org
+
+\section{Zertifikate und Verwandtes}
+
+Viele Probleme, die in den letzten Jahren aufgetreten sind, betreffen nicht das TLS-Protokoll direkt, sondern die Erstellung und Validierung von (insbesondere) Server-Zertifikaten, und seien deshalb nur am Rande erwähnt. Ein guter Überblick ist in \cite{meyer13} zu finden.
+
+Viele dieser Angriffe richteten sich gegen mangelnde Zertifikatvalidierung in TLS-Implementierungen (keine Validierung, keine Überprüfung des Servernamens, Akzeptanz unsignierter oder abgelaufener Zertifikate, ...) oder wenig Sorgfalt bei der Zertifikaterstellung durch Certificate Authorities (Nutzung von MD5, fehlerhafte Validierung von übermitttelten Servernamen, fehlerhafte Ausgabe von intermediate-Zertifikaten, mangelhaft abgesicherte Server, ...).
+
+Der Vollständigkeit halber sei hier auch noch die notwendige Sicherheit des privaten Serverschlüssels erwähnt. Gelangt ein Angreifer in seinen Besitz, so kann er den Datenverkehr problemlos mitlesen oder verändern.

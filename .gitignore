@@ -1,3 +1,5 @@
+# LaTeX
+
 *.aux
 *.out
 *.toc
@@ -6,3 +8,11 @@
 *.synctex.gz
 *.blg
 *.bbl
+
+# Eclipse
+
+.metadata/
+.classpath
+.project
+.settings/
+bin/

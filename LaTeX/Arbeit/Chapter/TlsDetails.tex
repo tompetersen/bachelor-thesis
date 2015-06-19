@@ -1,0 +1,102 @@
+
+\chapter{Funktionsweise und Teilprotokolle}
+
+Die Informationen in diesem Abschnitt stammen überwiegend aus der TLS 1.2-Spezifikation (\cite{tls12}). Für einen ersten Überblick wurde \cite{eckert13} genutzt.
+\todo{Zum Einstieg grobe Funktionsbeschreibung, evtl. schon mit Grafik über Verbindungsaufbau?, Grafik der TLS-Protokolle}
+
+\section{Record-Protokoll}
+
+TLS besteht aus zwei Schichten. In der unteren Schicht befindet sich das \emph{Record-Protokoll}, das die Daten von den Teilprotokollen der oberen Schicht entgegennimmt, diese Protokolldaten fragmentiert (maximale Paketgröße \(2^{14}\) Byte) und optional komprimiert. Danach wird je nach aktuell verhandelten krypographischen Funktionen die Integrität der Daten durch Berechnen und Anhängen eines MACs gesichert und die Nachricht verschlüsselt\footnote{Achtung: hier wird MAC-then-Encrypt angewendet. Laut \cite{AE2000} ist Encrypt-then-MAC vorzuziehen. In \cite{krawczyk01} wird dieses Ergebnis bestätigt, aber auch die Sicherheit von authenticate-then-encrypt unter bestimmten Voraussetzungen gezeigt.}. 
+\todo{Nach http://crypto.stackexchange.com/a/224 schlägt Schneier in Cryptography Engineering MAC-then-encrypt aus Gründen der Komplexheit von Encrypt-then-MAC vor. Nachlesen! Gibt es in der Informatik-Bibliothek: T FER 45399} 
+
+Der Record-Header enthält Informationen über die verwendete SSL/TLS-Version, den Content-Type (Handshake, Alert, ChangeCipherSpec, ApplicationData) und die Länge des Klartextfragments.
+
+Aus dem nach Ausführung des Handshake-Protokolls (siehe nächsten Abschnitt) beidseitig bekannten \mastersecret{} werden Schlüssel für die Erstellung des MACs sowie für die Kommunikation zwischen Client und Server berechnet (also insgesamt vier Schlüssel). Dazu werden solange Schlüsselblöcke nach dem folgenden Verfahren erstellt, bis alle Schlüssel konstruiert werden können. 
+
+\begin{lstlisting}
+key_block = PRF(SecurityParameters.master_secret,
+                      "key expansion",
+                      SecurityParameters.server_random +
+                      SecurityParameters.client_random);
+\end{lstlisting}
+
+Hierbei werden die folgenden Funktionen genutzt:
+
+\begin{lstlisting}
+PRF(secret, label, seed) = P_hash(secret, label + seed)
+
+P_hash(secret, seed) = HMAC_hash(secret, A(1) + seed) +
+						HMAC_hash(secret, A(2) + seed) +
+						HMAC_hash(secret, A(3) + seed) + ...
+
+A(0) = seed
+A(i) = HMAC_hash(secret, A(i-1))
+\end{lstlisting}
+
+Die Integrität der Daten, die aus einem der Protokolle der oberen Schicht an das Rekord-Protokoll gesendet werden, wird zuerstmit einem MAC geschützt. Dieser wird folgendermaßen berechnet:
+\begin{lstlisting}
+MAC(MAC_write_key, seq_num ||
+					TLSCompressed.type ||
+					TLSCompressed.version ||
+					TLSCompressed.length ||
+					TLSCompressed.fragment);
+\end{lstlisting}
+Bei den in TLS verwendeten Cipher Suites wird das HMAC-Verfahren zur Berechnung des MACs genutzt. Details hierzu sind in \cite{hmac97} zu finden. Die für dieses Verfahren verwendete Hashfunktion wird in der Cipher Suite angegeben. Bei SSL 3.0 wurde hier noch eine HMAC-ähnliche Konstruktion verwendet.
+
+Danach wird der Klartext zusammen mit dem MAC optional mit Padding versehen (bei Nutzung von Blockchiffren), verschlüsselt und dann verschickt.
+
+
+\section{Protokolle der oberen Schicht}
+
+In der oberen Schicht sind vier Teilprotokolle spezifiziert: \emph{Handshake-, ChangeCipherSpec-, Alert-} und \emph{ApplicationData-Protokoll}.
+
+Das \emph{Handshake-Protokoll} dient zur Herstellung einer gesicherten Verbindung. Hierbei werden kryptographische Verfahren zwischen den Kommunikationspartnern vereinbart, ihre Identität authentifiziert und ein Schlüssel (das sogenannte \premastersecret{}) für die bereits beschriebene Erstellung der - später während der eigentlichen Kommunikation verwendeten - Schlüssel übertragen oder berechnet. Der Handshake kann folgendermaßen ablaufen (hier illustriert für keine Nutzung einer existierenden Sitzung und kein Clientzertifikat): 
+
+\todo{als ordentliche Grafik ohne Clientverifikation}
+
+\begin{itemize}
+\item -->\clienthello{} mit \\
+\(H_C = (\)4 Byte Zeitstempel, 28 Byte Zufallszahl, Sitzungsidentifikator (!= Null bei bereits existierender Sitzung), Cipher Suite List\()\)
+
+\item <-- \serverhello{} mit \\
+\(H_S = (\)4 Byte Zeitstempel, 28 Byte Zufallszahl, Sitzungsidentifikator (falls vom Client gewünschte Sitzung bedient werden kann), Cipher Suite, die vom Server unterstützt wird\()\)
+
+\item <-- Server Zertifikat (inklusive öffentlichem Schlüssel des Servers, meist nach X.509v3)
+
+\item Client: Zertifikatverifikation
+
+\item --> Generierung und Senden von \premastersecret{} (48 Byte) verschlüsselt mit öffent. Schlüssel des Servers (bei RSA) oder Diffie-Hellman-Verfahren
+
+\item Client und Server: aus Zufallszahl des Clients \(R_C \text{ aus } H_C\), Zufallszahl des Servers \(R_S \text{ aus } H_S\) und \premastersecret{} wird das \mastersecret{} berechnet.
+\begin{lstlisting}
+master_secret = PRF(pre_master_secret, "master secret",
+				ClientHello.random + ServerHello.random)[0..47];
+\end{lstlisting}
+
+\item --> \changecipherspec{}-Nachricht (kein Bestandteil des Handshake-Protokolls -> eigener Record)
+
+\item --> Handshakeabschluss: \finished{} mit MAC über alle bisher ausgetauschten Handshake-Nachrichten 
+\begin{lstlisting}
+verify_data = PRF(master_secret, finished_label, Hash(handshake_messages)) [0..verify_data_length-1];
+\end{lstlisting}
+
+\item <-- \changecipherspec{}-Nachricht
+
+\item <-- Handshakeabschluss, wie Client-Nachricht
+\end{itemize}
+
+Das \emph{Change Cipher Spec-Protokoll} dient dazu, die vereinbarten kryptographischen Verfahren zu ändern. Es enthält lediglich eine Nachricht mit dem Wert 1, die für das Übernehmen der während des Handshakes ausgehandelten Verfahren steht. 
+
+Das \emph{Alert-Protokoll} dient dazu, auftretende Fehler zu versenden, die während des Datenaustausches auftreten. Hierbei kann es sich zum Beispiel um fehlgeschlagene Überprüfung von entschlüsselten Nachrichten (\badrecordmac{}) oder fehlerhafte Zertifikatsüberprüfung (\badcertificate{}) handeln. Unterschieden wird zwischen Fehlern (fatal alert), die sofort zum Schließen der Sitzung führen, und Warnungen(warning alert). Eine Übersicht über alle Fehler findet sich in Abschnitt 7.2 von \cite{tls12}.
+
+Das \emph{Application Data-Protokoll} ist zuständig für das Durchreichen von Anwendungsdaten, die von der Anwendungsschicht gesendet werden sollen.
+
+\section{Sitzungs- und Verbindungskonzept}
+
+TLS erstellt beim ersten Handshake eine Sitzung zwischen Client und Server. Hierbei wird ein Sitzungsidentifikator erstellt, der beim \serverhello{} mitgesendet wird. Weiterhin wird sich in der Sitzung das Zertifikat des Gegenübers, optional das Kompressionsverfahren, die Cipher Suite und das \mastersecret{} gemerkt.
+
+Ein Client kann nun, wenn er den Sitzungsidentifikator beim \clienthello{} mitschickt, eine alte Sitzung in Form einer neuen Verbindung wiederaufnehmen oder mehrere Verbindungen parallel aufbauen. Eine Verbindung wird dabei durch Client- und Server-Zufallszahlen \(R_C\) und \(R_S\), die generierten Schlüssel, je nach verwendeten Verschlüsselungsverfahren einen Initialisierungsvektor, sowie aktuelle Sequenznummern beschrieben.
+
+Beim Verbindungsaufbau kann so ein verkürzter Handshake genutzt werden, bei dem weniger Nachrichten gesendet werden müssen. Es kann dabei auf Neuberechnung des \mastersecret{}, Server- und Client-Validierung und Aushandlung der Cipher Suite verzichtet werden.\todo{Grafik des verkürzten Handhakes}
+
+%\section{Ciphersuites}
