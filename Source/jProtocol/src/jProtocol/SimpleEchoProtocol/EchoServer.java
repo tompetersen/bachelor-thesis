@@ -1,30 +1,29 @@
 package jProtocol.SimpleEchoProtocol;
 
-import jProtocol.CommunicationChannel;
-import jProtocol.ProtocolDataUnit;
 import jProtocol.State;
 import jProtocol.StateMachine;
 
-public class EchoServer extends StateMachine {
+public class EchoServer extends StateMachine<EchoProtocolDataUnit> {
 
 	public final Integer RECEIVE_STATE = 1; 
 	
-	public EchoServer(CommunicationChannel channel) {
+	public EchoServer(EchoCommunicationChannel channel) {
 		super(channel);
 		
-		_states.put(RECEIVE_STATE, new ReceiveState());               
+		_states.put(RECEIVE_STATE, new ReceiveState(this));               
 		setState(RECEIVE_STATE);
 	}
 	
-	private class ReceiveState extends State {
+	private class ReceiveState extends State<EchoProtocolDataUnit> {
+
+		public ReceiveState(EchoServer stateMachine) {
+			super(stateMachine);
+		}
 
 		@Override
-		public void receiveMessage(ProtocolDataUnit pdu) {
-			if (pdu instanceof EchoProtocolDataUnit) { //argh, unschön: Generics bis zum Erbrechen?
+		public void receiveMessage(EchoProtocolDataUnit pdu) {
 				System.out.println("Server: Received request...");
 				sendMessage(pdu);
-			}
 		}
-		
 	}
 }

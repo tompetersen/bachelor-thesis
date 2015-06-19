@@ -1,23 +1,23 @@
 package jProtocol;
 
-public class CommunicationChannel {
+public class CommunicationChannel<T extends ProtocolDataUnit> {
 
-	private StateMachine _client;
-	private StateMachine _server;
+	private StateMachine<T> _client;
+	private StateMachine<T> _server;
 	
 	public CommunicationChannel() {
 		
 	}
 	
-	public void setClient(StateMachine client) {
+	public void setClient(StateMachine<T> client) {
 		_client = client;
 	}
 	
-	public void setServer(StateMachine server) {
+	public void setServer(StateMachine<T> server) {
 		_server = server;
 	}
 	
-	synchronized public void sendMessage(ProtocolDataUnit pdu, StateMachine sender) {
+	synchronized public void sendMessage(T pdu, StateMachine<T> sender) {
 		if (sender == _server) {
 			_client.receiveMessage(pdu);
 		}
