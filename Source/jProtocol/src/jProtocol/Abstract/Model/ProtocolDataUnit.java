@@ -1,4 +1,4 @@
-package jProtocol;
+package jProtocol.Abstract.Model;
 
 public class ProtocolDataUnit {
 

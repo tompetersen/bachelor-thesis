@@ -1,4 +1,4 @@
-package jProtocol;
+package jProtocol.Abstract.Model;
 
 public abstract class State<T extends ProtocolDataUnit> {
 	

@@ -1,7 +1,7 @@
-package jProtocol.SimpleEchoProtocol;
+package jProtocol.SimpleEchoProtocol.Model;
 
-import jProtocol.State;
-import jProtocol.StateMachine;
+import jProtocol.Abstract.Model.State;
+import jProtocol.Abstract.Model.StateMachine;
 
 public class EchoClient extends StateMachine<EchoProtocolDataUnit> {
 
