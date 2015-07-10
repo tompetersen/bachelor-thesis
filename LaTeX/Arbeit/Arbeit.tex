@@ -119,16 +119,7 @@
 
 \usepackage{url}
 
-%Commands for protocol messages etc.
-\newcommand{\mastersecret}		{master-secret}
-\newcommand{\premastersecret}		{pre-master-secret}
-\newcommand{\clienthello}			{client-hello}
-\newcommand{\serverhello}			{server-hello}
-\newcommand{\finished}				{finished}
-\newcommand{\changecipherspec}	{Change Cipher Spec}
-\newcommand{\badrecordmac}		{bad\_record\_mac}
-\newcommand{\badcertificate}		{bad\_certificate}
-
+\input{Chapter/commands.tex}
 
 \title{Funktionsweise, Angriffe und Abwehrmechanismen von SSL/TLS}
 \author{Tom Petersen}
@@ -182,7 +173,7 @@ In dieser Bachelorarbeit soll unter Einbeziehung aktueller Entwicklungen und For
 
 \chapter*{Zusammenfassung}
 
-\todo{Zusammenfassung schreiben}
+\todo{Abstract schreiben}
 
 Für den eiligen Leser sollen auf etwa einer halben, maximal einer Seite die wichtigsten Inhalte, Erkenntnisse, Neuerungen bzw. Ergebnisse der Arbeit beschrieben werden.
 
@@ -197,8 +188,6 @@ Durch eine solche Zusammenfassung (im engl. auch Abstract genannt) am Anfang der
 \input{Chapter/TlsDetails.tex}
 
 \input{Chapter/TlsAttacks.tex}
-
-%TODO \chapter{Protokollversion 1.3}
 
 \bibliography{quellen}
 \bibliographystyle{alpha}
