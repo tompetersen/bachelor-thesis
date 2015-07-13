@@ -3,7 +3,9 @@
 
 Eine gute Übersicht zu bisherigen Angriffen auf TLS findet sich in \cite{meyer13}. Viele Schwächen früherer Protokollversionen bis SSL 3 sind in \cite{wagner96} zu finden.\todo{JEDEN Angriff auf angreifbare Version und Änderungen in neuen Versionen überprüfen.}
 
-\section{Version Rollbacks\todo{nette Übersetzung?}}
+\section{Version Rollback}
+
+\label{sec_version_rollback}
 
 Ein Angreifer kann eine SSL 3-konforme \clienthello{}-Nachricht so modifizieren, dass der Server eine SSL 2-Verbindung aufbaut. So kann der Angreifer alle Schwächen der älteren Protokollversion ausnutzen. Abhilfe schafft die Einbindung der SSL-Version in das per RSA übertragene \premastersecret. 
 

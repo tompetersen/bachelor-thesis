@@ -1,26 +1,42 @@
-%Commands for protocol messages etc.
+% Commands for protocol messages etc.
 
+% Protocols
 \newcommand{\recordprotocol}			{Record Protocol}
 \newcommand{\handshakeprotocol}			{Handshake Protocol}
 \newcommand{\alertprotocol}				{Alert Protocol}
 \newcommand{\changecipherspecprotocol}	{Change Cipher Spec Protocol}
 \newcommand{\applicationdataprotocol}	{Application Data Protocol}
 
-\newcommand{\mastersecret}			{master-secret}
-\newcommand{\premastersecret}		{pre-master-secret}
-\newcommand{\clienthello}			{client-hello}
-\newcommand{\serverhello}			{server-hello}
-\newcommand{\finished}				{finished}
-\newcommand{\changecipherspec}		{Change Cipher Spec}
+% Handshake messages
+\newcommand{\hellorequest}			{HelloRequest}
+\newcommand{\clienthello}			{ClientHello}
+\newcommand{\serverhello}			{ServerHello}
+\newcommand{\servercertificate}		{ServerCertificate}
+\newcommand{\serverkeyexchange}		{ServerKeyExchange}
+\newcommand{\certificaterequest}	{CertificateRequest}
+\newcommand{\serverhellodone}		{ServerHelloDone}
+\newcommand{\clientcertificate}		{ClientCertificate}
+\newcommand{\clientkeyexchange}		{ClientKeyExchange}
+\newcommand{\certificateverify}		{CertificateVerify}
+\newcommand{\changecipherspec}		{ChangeCipherSpec}
+\newcommand{\finished}				{Finished}
+
+% Misc
 \newcommand{\badrecordmac}			{bad\_record\_mac}
 \newcommand{\badcertificate}		{bad\_certificate}
+
+\newcommand{\mastersecret}			{master-secret}
+\newcommand{\premastersecret}		{pre-master-secret}
 
 \newcommand{\ciphersuite}{Cipher-Suite}
 \newcommand{\ciphersuites}{Cipher-Suites}
 
+% Helper
 \newcommand{\datafield}[1]{\textbf{\texttt{#1}}}
+\newcommand{\inquotes}[1]{"#1"}
 
-%Labelformat
+
+% Labelformat
 %\label{fig_XYZ} Abbildungen
 %\label{sec_XYZ} Abschnitte
 %\label{cha_XYZ} Kapitel

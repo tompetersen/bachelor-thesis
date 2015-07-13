@@ -34,6 +34,29 @@ TLS besteht aus zwei Schichten. In der unteren Schicht befindet sich das \record
 
 Der Record-Header enthält Informationen über die verwendete SSL-/TLS-Version, den Content-Type (Handshake, Alert, ChangeCipherSpec, ApplicationData) und die Länge des Klartextfragments.\todo{PDUs einbauen}
 
+
+Die Integrität der Daten, die aus einem der Protokolle der oberen Schicht an das \recordprotocol{} gesendet werden, wird zuerst mit einem MAC geschützt, der folgendermaßen berechnet wird:
+\begin{lstlisting}
+MAC(MAC_write_key, seq_num +
+				   TLSCompressed.type +
+				   TLSCompressed.version +
+				   TLSCompressed.length +
+				   TLSCompressed.fragment);
+\end{lstlisting}
+Bei den in TLS verwendeten \ciphersuites{} wird das HMAC-Verfahren zur Berechnung des MACs genutzt. Details zu diesem Verfahren sind in \cite{hmac97} zu finden. Die hierbei verwendete Hashfunktion wird in der \ciphersuite{} angegeben. Bei SSL 3.0 wurde hier noch eine HMAC-ähnliche Konstruktion verwendet.\todo{In Versionsunterschiede auslagern?}
+
+Danach wird der Klartext zusammen mit dem MAC optional mit Padding versehen (bei Nutzung von Blockchiffren), verschlüsselt und dann verschickt.
+
+
+\section{Berechnung des Schlüsselmaterials}
+
+aus Zufallszahl des Clients \(R_C \text{ aus } H_C\), Zufallszahl des Servers \(R_S \text{ aus } H_S\) und \premastersecret{} wird das \mastersecret{} berechnet.
+\begin{lstlisting}
+master_secret = PRF(pre_master_secret, 
+					"master secret",
+					ClientHello.random + ServerHello.random)[0..47];
+\end{lstlisting}
+
 %TODO: Vielleicht auch ausgliedern in Handshake?
 %----------
 Aus dem nach Ausführung des \handshakeprotocol{} (siehe nächsten Abschnitt) beidseitig bekannten \mastersecret{} werden Schlüssel für die Erstellung des MACs sowie für die Kommunikation zwischen Client und Server berechnet (also insgesamt vier Schlüssel). Dazu werden solange Schlüsselblöcke nach dem folgenden Verfahren erstellt, bis alle Schlüssel konstruiert werden können. 
@@ -58,23 +81,11 @@ A(0) = seed
 A(i) = HMAC_hash(secret, A(i-1))
 \end{lstlisting}
 
-%----------
-
-Die Integrität der Daten, die aus einem der Protokolle der oberen Schicht an das \recordprotocol{} gesendet werden, wird zuerst mit einem MAC geschützt. Dieser wird folgendermaßen berechnet:
-\begin{lstlisting}
-MAC(MAC_write_key, seq_num +
-				   TLSCompressed.type +
-				   TLSCompressed.version +
-				   TLSCompressed.length +
-				   TLSCompressed.fragment);
-\end{lstlisting}
-Bei den in TLS verwendeten \ciphersuites{} wird das HMAC-Verfahren zur Berechnung des MACs genutzt. Details hierzu sind in \cite{hmac97} zu finden. Die für dieses Verfahren verwendete Hashfunktion wird in der \ciphersuite{} angegeben. Bei SSL 3.0 wurde hier noch eine HMAC-ähnliche Konstruktion verwendet.\todo{In Versionsunterschiede auslagern?}
-
-Danach wird der Klartext zusammen mit dem MAC optional mit Padding versehen (bei Nutzung von Blockchiffren), verschlüsselt und dann verschickt.
-
 \section{TLS-Handshake}
 
-Das \handshakeprotocol{} dient zur Herstellung einer gesicherten Verbindung. Hierbei werden kryptographische Verfahren zwischen den Kommunikationspartnern vereinbart, optional ihre Identitäten authentifiziert und ein gemeinsames Geheimnis (das sogenannte \premastersecret{}) für die bereits beschriebene Generierung der während der eigentlichen Kommunikation verwendeten Schlüssel übertragen oder berechnet. Eine Übersicht über die während eines vollständigen Handshakes ausgetauschten Nachrichten bietet Abbildung \ref{fig_complete_handshake}. Im Folgenden werden diese Nachrichten und ihr Aufbau im Detail betrachtet.
+Das \handshakeprotocol{} dient zur Herstellung einer gesicherten Verbindung. Hierbei werden kryptographische Verfahren zwischen den Kommunikationspartnern vereinbart, optional ihre Identitäten authentifiziert und ein gemeinsames Geheimnis (das sogenannte \premastersecret{}) für die bereits beschriebene Generierung der während der eigentlichen Kommunikation verwendeten Schlüssel übertragen oder berechnet. Eine Übersicht über die während eines vollständigen Handshakes ausgetauschten Nachrichten bietet Abbildung \ref{fig_complete_handshake}. 
+
+Im Folgenden werden diese Nachrichten und ihr Aufbau im Detail betrachtet. Nachrichten, die - je nach gewünschten Eigenschaften der Verbindung - optional gesendet werden können, sind mit einem Stern(*) gekennzeichnet.
 
 %TODO:
 % - Übersicht über den Handshake (auf Grafik eingehen)
@@ -107,9 +118,13 @@ Application Data             <------->     Application Data
 
 \subsection*{HelloRequest*}
 
+\begin{lstlisting}
+struct { } HelloRequest;
+\end{lstlisting}
+
+Diese Nachricht kann vom Server gesendet werden, wenn ein neuer Handshake gewünscht wird (beispielsweise um Schlüssel und kryptographische Funktionen während einer Verbindung neu auszuhandeln).
 
 \subsection*{ClientHello}
-Die \clienthello{}-Nachricht hat das folgende Format:
 
 \begin{lstlisting}
 struct {
@@ -127,7 +142,12 @@ struct {
 } ClientHello;
 \end{lstlisting}
 
-Hierbei enthält \datafield{client\_version} die neueste vom Client unterstützte TLS-/SSL-Version (z.B. 3.3 für TLS 1.2). \datafield{random} besteht aus einem 4-Byte großen Zeitstempel (UNIX-Format) und 28 zufälligen Bytes. Die \datafield{session\_id} dient zur Identifikation einer Sitzung. Sie ist bei dem ersten Handshake leer und kann später dazu verwendet werden, bestehende Sitzungen wieder aufzunehmen (vgl. Abschnitt \ref{sec_session_connection}). Die \ciphersuite{}-Liste enthält alle vom Client unterstützten \ciphersuites{} in Reihenfolge seiner Präferenz. Ebenso wird eine Liste von unterstützten Kompressionsalgorithmen übertragen. Optional kann auch eine Liste von gewünschten TLS-Extensions angegeben werden (vgl. refbla\todo{Abschnitt über TLS extensions vgl. TLS1.2 - 7.4.1.4}).
+Hierbei enthält \datafield{client\_version} die neueste vom Client unterstützte TLS-/SSL-Version (z.B. 3.3 für TLS 1.2). 
+\datafield{random} besteht aus einem 4-Byte großen Zeitstempel (UNIX-Format) und 28 zufälligen Bytes. 
+Die \datafield{session\_id} dient zur Identifikation einer Sitzung. Sie ist bei dem ersten Handshake leer und kann später dazu verwendet werden, bestehende Sitzungen wieder aufzunehmen (vgl. Abschnitt \ref{sec_session_connection}). 
+Die \ciphersuite{}-Liste enthält alle vom Client unterstützten \ciphersuites{} in Reihenfolge seiner Präferenz. 
+Ebenso wird eine Liste von unterstützten Kompressionsalgorithmen übertragen. 
+Optional kann auch eine Liste von gewünschten TLS-Extensions angegeben werden (vgl. refbla\todo{Abschnitt über TLS extensions vgl. TLS1.2 - 7.4.1.4}).
 
 \subsection*{ServerHello}
 
@@ -151,43 +171,134 @@ In \datafield{server\_version} steht die höchste Version, die Server und Client
 
 \subsection*{ServerCertificate*}
 
-Server Zertifikat (inklusive öffentlichem Schlüssel des Servers, meist nach X.509v3)
+\begin{lstlisting}
+struct {
+	ASN.1Cert certificate_list<0..2^24-1>;
+} Certificate;
+\end{lstlisting}
+
+In dieser Nachricht sendet der Server seine Zertifikatskette zur Überprüfung seiner Identität. Das erste Zertifikat in der Liste bildet das Serverzertifikat, folgende Zertifikate müssen das jeweils vorhergehende zertifizieren. Der im Zertifikat enthaltene Public Key muss zum ausgehandelten Schlüsselaustausch-Algorithmus passen. Wenn nicht anders ausgehandelt wird für die Zertifikate das X.509v3-Format verwendet.\todo{RFC als Quelle}
 
 \subsection*{ServerKeyExchange*}
 
+\begin{lstlisting}
+struct {
+	select (KeyExchangeAlgorithm) {
+	  case dh_anon:
+	      ServerDHParams params;
+	  case dhe_dss:
+	  case dhe_rsa:
+	      ServerDHParams params;
+	      digitally-signed struct {
+	          opaque client_random[32];
+	          opaque server_random[32];
+	          ServerDHParams params;
+	      } signed_params;
+	  case rsa:
+	  case dh_dss:
+	  case dh_rsa:
+	      struct {} ; /* message is omitted for rsa, dh_dss, and dh_rsa */
+	};
+} ServerKeyExchange;
+\end{lstlisting}
+
+Diese Nachricht wird nur für bestimmte Schlüsselaustausch-Algorithmen gesendet, wenn die \servercertificate{}-Nachricht nicht genügend Informationen zum Austausch des \premastersecret{} bietet (vgl. \clientkeyexchange{}-Nachricht).
+
 \subsection*{CertificateRequest*}
+
+\begin{lstlisting}
+struct {
+	ClientCertificateType certificate_types<1..2^8-1>;
+	SignatureAndHashAlgorithm supported_signature_algorithms<2^16-1>;
+	DistinguishedName certificate_authorities<0..2^16-1>;
+} CertificateRequest;
+\end{lstlisting}
+
+TLS unterstützt optionale Clientauthentifizierung. Mit dieser Nachricht kann der Client vom Server aufgefordert werden ebenfalls ein Zertifikat zu senden. Die \datafield{certificate\_types}-Liste enthält alle Zertifikatarten (z.B. Zertifikat mit RSA-Schlüssel, ...), die vom Server unterstützt werden, und \datafield{supported\_signature\_algorithms} die unterstützten Signaturalgorithmen. In \datafield{certificate\_authorities} kann eine Liste von erwarteten CAs übertragen werden.
 
 \subsection*{ServerHelloDone}
 
+\begin{lstlisting}
+struct { } ServerHelloDone;
+\end{lstlisting}
+
+Mit dieser Nachricht signalisiert der Server das Ende des \serverhello{} und zugehöriger Nachrichten.
+
 \subsection*{ClientCertificate*}
+
+Wenn von dem Server eine Clientauthentifizierung gefordert wurde, kann der Client in dieser Nachricht seine Zertifikatskette senden. Das Format entspricht dem der \servercertificate{}-Nachricht.
 
 \subsection*{ClientKeyExchange}
 
-Generierung und Senden von \premastersecret{} (48 Byte) verschlüsselt mit öffentlichem Schlüssel des Servers (bei RSA) oder Diffie-Hellman-Verfahren
+\begin{lstlisting}
+struct {
+	select (KeyExchangeAlgorithm) {
+	  case rsa:
+	      EncryptedPreMasterSecret;
+	  case dhe_dss:
+	  case dhe_rsa:
+	  case dh_dss:
+	  case dh_rsa:
+	  case dh_anon:
+	      ClientDiffieHellmanPublic;
+	} exchange_keys;
+} ClientKeyExchange;
+\end{lstlisting}
+
+Wenn RSA als Schlüsselaustausch-Algorithmus vereinbart wurde, so wird das \premastersecret{} mit dem Public Key des Servers verschlüsselt und gesendet. Es besteht aus der größten vom Client unterstützten Protokollversion (2 Bytes), um Version-Rollback-Angriffe zu verhindern (siehe Abschnitt \ref{sec_version_rollback}), und 46 zufällig generierten Bytes.
+
+\begin{lstlisting}
+struct {
+	public-key-encrypted PreMasterSecret pre_master_secret;
+} EncryptedPreMasterSecret;
+\end{lstlisting}
+
+Wenn der Schlüsselaustausch per Diffie-Hellman-Verfahren geschieht,...\todo{DH ergänzen, p.61}
+
+\begin{lstlisting}
+struct {
+	select (PublicValueEncoding) {
+	  case implicit: struct { };
+	  case explicit: opaque dh_Yc<1..2^16-1>;
+	} dh_public;
+} ClientDiffieHellmanPublic;
+\end{lstlisting}
 
 \subsection*{CertificateVerify*}
 
-
-\subsection*{...auslagern? }
-
-aus Zufallszahl des Clients \(R_C \text{ aus } H_C\), Zufallszahl des Servers \(R_S \text{ aus } H_S\) und \premastersecret{} wird das \mastersecret{} berechnet.
 \begin{lstlisting}
-master_secret = PRF(pre_master_secret, "master secret",
-				ClientHello.random + ServerHello.random)[0..47];
+struct {
+	digitally-signed struct {
+	   opaque handshake_messages[handshake_messages_length];
+	}
+} CertificateVerify;
 \end{lstlisting}
 
-\subsection*{ChangeCipherSpec**}
+Diese Nachricht wird gesendet, falls ein Clientzertifikat vom Server angefordert wurde. Sie besteht aus einem mit dem Private Key des Clients signierten Hash der bisherigen Handshake-Nachrichten und dient dazu den Client zu authentifizieren.
 
-\changecipherspec{}-Nachricht (kein Bestandteil des Handshake-Protokolls -> eigener Record).
+\subsection*{ChangeCipherSpec}
 
-Das \changecipherspecprotocol{} dient dazu, die vereinbarten kryptographischen Verfahren zu ändern. Es enthält lediglich eine Nachricht mit dem Wert 1, die für das Übernehmen der während des Handshakes ausgehandelten Verfahren steht. 
+Diese Nachricht gehört zum \changecipherspecprotocol{}. Es enthält lediglich diese eine Nachricht mit dem Wert 1. Das Empfangen signalisiert dem Empfänger, dass alle nachfolgend gesendeten Nachrichten mit den ausgehandelten kryptographischen Verfahren und Schlüsseln geschützt werden. Dazu werden read pending state (bei Empfang der Nachricht) und write pending state (nach Senden der Nachricht) in die current states kopiert.\todo{Irgendwo schon erwähnt oder bei der Einführung?}
 
 \subsection*{Finished}
 
-Handshakeabschluss: \finished{} mit MAC über alle bisher ausgetauschten Handshake-Nachrichten 
 \begin{lstlisting}
-verify_data = PRF(master_secret, finished_label, Hash(handshake_messages)) [0..verify_data_length-1];
+struct {
+	opaque verify_data[verify_data_length];
+} Finished;
 \end{lstlisting}
+
+Die \finished{}-Nachricht dient zur Verifikation von erfolgreichem Schlüsselaustausch und Authentifikation. Diese Nachricht ist wie erwähnt die erste, die von den ausgehandelten Verfahren und Schlüsseln geschützt wird, daher kann hier überprüft werden, ob der Handshake erfolgreich verlaufen ist und beiden Kommunikationspartnern die gleichen Informationen vorliegen.
+
+Die Nachricht besteht aus einem Hash über die bisher gesendeten bzw. empfangenen Nachrichten des \handshakeprotocol{}s zusammen mit dem \mastersecret{}:
+
+\begin{lstlisting}
+verify_data = PRF(master_secret, 
+				  finished_label, 
+				  Hash(handshake_messages)) [0..verify_data_length-1];
+\end{lstlisting}
+
+Das \datafield{finished\_label} wird durch \inquotes{client finished} auf der Client- bzw. \inquotes{server finished} auf der Serverseite gebildet. Der Hash wird durch die in der PseudoRandomFunction verwendete Hashfunktion berechnet. \todo{Irgendwo drauf eingehen} \datafield{verify\_data\_length} entspricht, wenn durch die \ciphersuite{} nicht anders vorgegeben, 12 Bytes Länge.
 
 \section{Alert Protocol}
 
@@ -196,7 +307,6 @@ Das \alertprotocol{} dient dazu, auftretende Fehler zu versenden, die während d
 \section{Application Data Protocol}
 
 Das \applicationdataprotocol{} ist zuständig für das Durchreichen von Anwendungsdaten, die von der Anwendungsschicht gesendet werden sollen.
-
 
 \section{Sitzungs- und Verbindungskonzept}
 \label{sec_session_connection}
