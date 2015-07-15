@@ -1,16 +1,19 @@
 \chapter{SSL und TLS - ein Überblick}
 
-\section{Geschichte von TLS}
+SSL (Secure Socket Layer) bzw. TLS\footnote{Im weiteren Verlauf dieser Arbeit wird der Einfachheit halber lediglich von TLS gesprochen. Bei etwaigen Unterschieden wird explizit auf diese eingegangen.} (Transport Layer Security) ist ein zustandsbehaftetes Protokoll, das (meist) auf dem TCP-Protokoll\footnote{DTLS (Datagram Transport Layer Security) ist ein auf TLS basierendes Protokoll, dass auf UDP aufsetzt.} der Transportschicht des TCP/IP-Protokollstapels aufbaut. 
 
-Dieser Überblick basiert in großen Teilen auf \cite{schmeh09}.
+Hauptaufgaben von TLS sind Authentifikation der Kommunikationspartner, Verschlüsselung der Kommunikation sowie die Sicherstellung der Integrität der übertragenen Nachrichten (\cite{meyer14}). Dazu läuft die Kommunikation über TLS in zwei Phasen ab: Zu Beginn wird eine sichere Verbindung durch Festlegung der verwendeten kryptographischen Verfahren und des Schlüsselmaterials hergestellt. Danach können Daten transparent für Anwendungen und auf TLS aufbauende Protokolle über diese Verbindung gesendet werden. Einige Beispiele für solche Protokolle und Anwendungen der Anwendungsschicht, die TLS nutzen, sind:
+\begin{description}
+\item[HTTPS] für die Datenübertragung, zumeist für die Auslieferung von Webseiten genutzt. 
+\item[FTPS] für die Dateiübertragung.
+\item[SMTP] für das Senden und Weiterleiten von E-Mails (als SMTPS oder per STARTTLS\footnote{\label{fn_starttls}SMTPS/IMAPS/POP3S beginnen die TLS-Verbindung bereits direkt nach dem Verbindungsaufbau und laufen, um dieses Verhalten zu erzwingen, über einen anderen Serverport. STARTTLS ist ein Kommando, das nach Verbindungsaufbau gesendet werden kann, um eine TLS-Verbindung zu initiieren.}).
+\item[IMAP] für den Zugriff auf E-Mails auf Mailservern (als IMAPS oder per STARTTLS\textsuperscript{\ref{fn_starttls}}).
+\item[POP3] für den Abruf von E-Mails von Mailservern (als POP3S oder per STARTTLS\textsuperscript{\ref{fn_starttls}}).
+\item[OpenVPN,] eine verbreitete VPN-Software.
+\end{description}
 
-SSL (Secure Socket Layer) bzw. TLS\footnote{Im weiteren Verlauf dieser Arbeit wird der Einfachheit halber lediglich von TLS gesprochen. Bei etwaigen Unterschieden wird explizit auf diese eingegangen.} (Transport Layer Security) ist ein zustandsbehaftetes Protokoll, das auf dem TCP-Protokoll\footnote{DTLS (Datagram Transport Layer Security) ist ein auf TLS basierendes Protokoll, dass auf UDP aufsetzt.} der Transportschicht des TCP/IP-Protokollstapels aufbaut. 
-
-Hauptaufgaben von TLS sind Authentifikation der Kommunikationspartner, Verschlüsselung der Kommunikation sowie die Sicherstellung der Integrität der übertragenen Nachrichten. Die hierbei verwendeten kryptographischen Verfahren werden erst zu Beginn der Kommunikation festgelegt. 
-
-Viele Protokolle der Anwendungsschicht nutzen TLS zur sicheren Datenübertragung, so beispielsweise HTTPS oder FTPS und auch viele Anwendungen übertragen ihre Daten TLS-gesichert.
-
-SSL wurde von der Firma Netscape entwickelt und nachdem es starke Verbreitung gefunden hatte, durch die IETF als TLS 1.0 standardisiert (TLS 1.0 entspricht SSL 3.1). Aktuell ist die TLS-Version 1.2 und an Version 1.3 wird gearbeitet.
+SSL wurde von der Firma Netscape entwickelt und zuerst in ihrem Browser, dem Netscape Navigator, verwendet. Nach mehreren neuen Protokollversionen und nachdem es starke Verbreitung gefunden hatte, wurde es durch die IETF als TLS 1.0 standardisiert (TLS 1.0 entspricht SSL 3.1). Aktuell ist die TLS-Version 1.2 und an Version 1.3 wird gearbeitet.\\
+Inzwischen ist TLS laut \cite{schmeh09} das "`gegenwärtig meistverwendete Verschlüsselungsprotokoll im Internet"'. Gründe hierfür sind dem Autor zufolge insbesondere die leichte Integrierbarkeit in bestehende Strukturen, die im Gegensatz zu IPSec "`deutlich schnörkelloser[e] und einfacher[e]"' Protokollspezifikation und auch die marktreife Verfügbarkeit in den frühen 90er Jahren.
 
 \ifoptionfinal{}{
 \begin{description}
@@ -26,4 +29,3 @@ SSL wurde von der Firma Netscape entwickelt und nachdem es starke Verbreitung ge
 }
 
 \section{Implementierungen}
-
