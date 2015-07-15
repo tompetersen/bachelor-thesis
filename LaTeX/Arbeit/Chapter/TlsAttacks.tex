@@ -1,6 +1,8 @@
 
 \chapter{Angriffe gegen SSL und TLS}
 
+\label{cha_attacks}
+
 Eine gute Übersicht zu bisherigen Angriffen auf TLS findet sich in \cite{meyer13}. Viele Schwächen früherer Protokollversionen bis SSL 3 sind in \cite{wagner96} zu finden.\todo{JEDEN Angriff auf angreifbare Version und Änderungen in neuen Versionen überprüfen.}
 
 \section{Version Rollback}
@@ -55,6 +57,8 @@ In \cite{paterson13} stellen die Autoren weitere auf \cite{vaudenay02} basierend
 
 \section{Chosen Plaintext Angriff gegen bekannte IVs}
 
+\label{sec_known_ivs}
+
 In \cite{bard04} stellt der Autor einen Angriff vor, der die Art ausnutzt, wie die für den CBC-Modus nötigen Initialisierungsvektoren (IV) von TLS bereitgestellt werden. Durch die Nutzung des letzten Ciphertextblocks der letzten Nachricht als IV der neuen Nachricht lässt sich unter bestimmten Voraussetzungen ein Chosen-Plaintext-Angriff durchführen. Der Autor beschreibt eine Möglichkeit unter Nutzung von Browser-Plugins über HTTPS übertragene Passwörter oder PINs herauszufinden. In \cite{bard06} verbessert der Autor seinen Angriff durch die Nutzung von Java-Applets anstelle von Browser-Plugins.
 
 Seit TLS 1.1 werden explizite IV vorgeschrieben. Hierzu besteht jede Nachricht aus einem Ciphertextblock mehr als Klartextblöcken. Dieser erste Block bildet den IV für die restliche Verschlüsselung. Da dieser IV nicht vor dem Senden der Nachricht bekannt ist, wird der hier beschriebene Chosen-Plaintext-Angriff verhindert.
@@ -66,6 +70,8 @@ In \cite{duong11} und in einem Konferenzbeitrag auf der ekoparty Security Confer
 % http://vnhacker.blogspot.co.uk/2011/09/beast.html
 
 \section{CRIME}
+
+\label{sec_attack_crime}
 
 Auf der ekoparty Security Conference 2012 stellten die Entdecker des BEAST-Angriff einen weiteren Angriff vor, der die (optionale) Kompression in TLS nutzt, um beispielsweise Cookiedaten zu stehlen. 
 %Kein Paper, Folien hier: https://docs.google.com/presentation/d/11eBmGiHbYcHR9gL5nDyZChu_-lCa2GizeuOfaLU2HOU/edit#slide=id.g1d134dff_1_162
