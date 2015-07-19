@@ -42,8 +42,12 @@ TLS besteht aus zwei Schichten. In der oberen Schicht sind vier Teilprotokolle s
 
 \section{Record Protocol}
 \todo{Kapitel evtl. hinter den Handshake? Und vorher auf Schlüsselberechnung eingehen?}
-Die zu sendenden Protokolldaten werden von dem \recordprotocol{} fragmentiert (in maximal \(2^{14}\) Byte große Pakete) und optional komprimiert. Danach wird je nach während des Handshakes verhandelten kryptographischen Funktionen (vgl. Abschnitt \ref{sec_tls_handshake}) die Integrität der Daten durch Berechnen und Anhängen eines MACs gesichert und die Nachricht verschlüsselt\footnote{Es wird MAC-then-Encrypt verwendet. Laut \cite{AE2000} ist Encrypt-then-MAC vorzuziehen. In \cite{krawczyk01} wird dieses Ergebnis bestätigt, aber auch die Sicherheit von MAC-then-encrypt unter bestimmten Voraussetzungen gezeigt.}. Auf diese Schritte wird im Folgenden genauer eingegangen.
-\todo{Nach http://crypto.stackexchange.com/a/224 schlägt Schneier in Cryptography Engineering MAC-then-encrypt aus Gründen der Komplexheit von Encrypt-then-MAC vor. Nachlesen! Gibt es in der Informatik-Bibliothek: T FER 45399} 
+Die zu sendenden Protokolldaten werden von dem \recordprotocol{} fragmentiert (in maximal \(2^{14}\) Byte große Pakete) und optional komprimiert. Danach wird je nach während des Handshakes verhandelten kryptographischen Funktionen (vgl. Abschnitt \ref{sec_tls_handshake}) die Integrität der Daten durch Berechnen und Anhängen eines MACs gesichert und die Nachricht danach zusammen mit dem MAC verschlüsselt\footnote{
+Diese Reihenfolge der Operationen wird MAC-then-Encrypt genannt.
+Laut \cite{AE2000} ist Encrypt-then-MAC vorzuziehen.
+In \cite{krawczyk01} wird dieses Ergebnis bestätigt, aber auch die Sicherheit von MAC-then-Encrypt unter bestimmten Voraussetzungen gezeigt.\\
+In \cite{ferguson10} fügen die Autoren hinzu, dass das Erkennen und Verwerfen ungültiger Nachrichten durch Encrypt-then-MAC vereinfacht wird. Auf der anderen Seite erwähnen sie aber auch Vorteile der MAC-then-Encrypt-Reihenfolge: Die Ein- und Ausgabe der MAC-Funktion sind einem Angreifer verborgen, so dass Angriffe gegen den MAC erschwert werden und die Integrität der Nachricht damit besser geschützt ist. Außerdem führen sie das Horton-Prinzip an, wonach eine Authentifikation dessen, was gemeint ist und nicht was gesagt wird, stattfinden sollte. Bei der Erstellung eines Systems muss also abgewogen werden, welche Methode genutzt wird.
+}. Auf diese Schritte wird im Folgenden genauer eingegangen.
 
 Daten, die von einer höheren Schicht entgegengenommen werden, werden zu Beginn in ein \datafield{TLSPlaintext}-Objekt verpackt. 
 
@@ -449,9 +453,9 @@ Application Data              <------->     Application Data
 Eine \ciphersuite{} legt fest, welche Algorithmen zum Schlüsselaustausch, zur Verschlüsselung und zur Berechnung des MACs verwendet werden, sowie welche Eigenschaften(Schlüssellänge, Blocklänge, ...) diese besitzen. In der TLS1.2-Spezifikation (\cite{tls12}) sind 37 \ciphersuites{} festgelegt.
 
 Zum Schlüsselaustausch stehen \monospace{RSA} sowie verschiedene Varianten\footnote{
-	\monospace{DH}: Zertifikat mit festen Diffie-Hellman-Parametern,\\ 
-	\monospace{DHE}: Temporäre Generierung von Parametern für jede Sitzung, \\
-	\monospace{DH\_anon}:  nicht-authentifizierte Parameter
+	\monospace{DH}: Zertifikat mit festen Diffie-Hellman-Parametern\\ 
+	\monospace{DHE}: Temporäre Generierung von DH-Parametern für jede Sitzung \\
+	\monospace{DH\_anon}:  Nicht-authentifizierte DH-Parameter
 } des Diffie-Hellman-Verfahrens zur Verfügung. \\
 Zur Verschlüsselung sind die Stromchiffre \monospace{RC4\_128} sowie die Blockchiffren \monospace{3DES\_EDE\_CBC}, \monospace{AES\_128\_CBC} und \monospace{AES\_256\_CBC} festgelegt. \\
 Zur Berechnung des MACs können \monospace{MD5}, \monospace{SHA1} und \monospace{SHA256} verwendet werden (jeweils wie erwähnt unter Nutzung von HMAC).
@@ -462,7 +466,7 @@ Laut Spezifikation muss zumindest \monospace{TLS\_RSA\_WITH\_AES\_128\_CBC\_SHA}
 
 \section{Frühere SSL-/TLS-Versionen und TLS 1.3}
 
-Im Folgenden soll kurz auf frühere Versionen von TLS/SSL und die entscheidendsten Unterschiede zwischen diesen Versionen eingegangen werden, sowie ein kurzer Blick auf das noch nicht veröffentlichte TLS 1.3 geworfen werden.
+Im Folgenden soll kurz auf frühere Versionen von TLS/SSL und die entscheidendsten Unterschiede zwischen diesen Versionen eingegangen, sowie ein kurzer Blick auf das noch nicht veröffentlichte TLS 1.3 geworfen werden.
 
 \textbf{SSL 1.0} wurde nie veröffentlicht.
 
@@ -476,5 +480,5 @@ In \textbf{TLS 1.1} wurden explizite Initialisierungsvektoren für Blockchiffren
 
 In \textbf{TLS 1.2} wurde der Gebrauch von SHA1 und MD5 in der Pseudo Random Function durch eine \ciphersuite{}-abhängige Hashfunktion ersetzt. Zusätzlich wurde die Unterstützung von AEAD-\ciphersuites{} eingefügt. TLS-Extensions und der Gebrauch von AES als Blockchiffre wurden ergänzt. Außerdem wurden DES und IDEA als Blockchiffren aus der Spezifikation entfernt, die Unterstützung von SSL 2.0 nicht mehr empfohlen und weitere kleine Änderungen vorgenommen (vgl. \cite{tls12}).
 
-\textbf{TLS 1.3} liegt momentan lediglich als Draft vor (\cite{tls13}, Version von Juli 2015]). Die hier dargestellten Informationen stellen lediglich den aktuellen Entwicklungsstand dar und sind daher nicht als endgültig und nur mit Vorsicht zu betrachten. In dem aktuellen Draft wird  Elliptic Curve Cryptography hinzugefügt, die Unterstützung für alle SSL-Versionen und auch Kompression komplett entfernt (wahrscheinlich als Maßnahme gegen den Angriff aus Abschnitt \ref{sec_attack_crime}). Die größte Veränderung ist die komplette Entfernung von Strom- und Blockchiffren im CBC-Modus zur Verschlüsselung. Es werden nur noch AEAD-Chiffren unterstützt, womit auch die separate Berechnung eines MACs entfällt. Außerdem wurde die PRF-Konstruktion durch die Verwendung von HKDF (HMAC-based Key Derivation Function, siehe \cite{krawczyk10}) ersetzt.
+\textbf{TLS 1.3} liegt momentan lediglich als Draft vor (\cite{tls13}, Version von Juli 2015]). Die hier dargestellten Informationen stellen lediglich den aktuellen Entwicklungsstand dar und sind daher nicht als endgültig und nur mit Vorsicht zu betrachten. In dem aktuellen Draft wird  Elliptic Curve Cryptography für das Diffie-Hellman-Verfahren hinzugefügt, die Unterstützung für alle SSL-Versionen und auch Kompression komplett entfernt (wahrscheinlich als Maßnahme gegen den Angriff aus Abschnitt \ref{sec_attack_crime}). Die größte Veränderung ist die komplette Entfernung von Strom- und Blockchiffren im CBC-Modus zur Verschlüsselung. Es werden nur noch AEAD-Chiffren unterstützt, womit auch die separate Berechnung eines MACs entfällt. Außerdem wurde die PRF-Konstruktion durch die Verwendung von HKDF (HMAC-based Key Derivation Function, siehe \cite{krawczyk10}) ersetzt.
 
