@@ -262,7 +262,7 @@ struct {
 } Certificate;
 \end{lstlisting}
 
-In dieser Nachricht sendet der Server seine Zertifikatskette zur Überprüfung seiner Identität. Das erste Zertifikat in der Liste bildet das Serverzertifikat, folgende Zertifikate müssen das jeweils vorhergehende zertifizieren. Der im Zertifikat enthaltene Public Key muss zum ausgehandelten Schlüsselaustausch-Algorithmus passen. Wenn nicht anders ausgehandelt wird für die Zertifikate das X.509v3-Format verwendet.\todo{RFC als Quelle}
+In dieser Nachricht sendet der Server seine Zertifikatskette zur Überprüfung seiner Identität. Das erste Zertifikat in der Liste bildet das Serverzertifikat, folgende Zertifikate müssen das jeweils vorhergehende zertifizieren. Der im Zertifikat enthaltene Public-Key muss zum ausgehandelten Schlüsselaustausch-Algorithmus passen. Wenn nicht anders ausgehandelt wird für die Zertifikate das X.509v3-Format verwendet.\todo{RFC als Quelle}
 
 \subsection*{ServerKeyExchange*}
 
@@ -287,7 +287,11 @@ struct {
 } ServerKeyExchange;
 \end{lstlisting}
 
-Diese Nachricht wird nur für bestimmte Schlüsselaustausch-Algorithmen gesendet, wenn die \servercertificate{}-Nachricht nicht genügend Informationen zum Austausch des \premastersecret{} bietet (vgl. \clientkeyexchange{}-Nachricht).
+Diese Nachricht wird nur für bestimmte Schlüsselaustausch-Verfahren gesendet, wenn die \servercertificate{}-Nachricht nicht genügend Informationen zum Austausch des \premastersecret{} bietet (vgl. \clientkeyexchange{}-Nachricht).
+
+\datafield{ServerDHParams} enthält dabei die öffentlichen Diffie-Hellman-Parameter \(p\) (die prime Ordnung der gewählten Gruppe), \(g\) (einen Erzeuger der Gruppe) und den öffentlichen Schlüssel \(Y_s = g^{X_s} \mod{p}\).
+
+Im Fall von nicht anonymen Diffie-Hellman-Schlüsselaustausch werden diese Parameter mit gewähltem asymmetrischen Verfahren (DSS oder RSA) signiert.
 
 \subsection*{CertificateRequest*}
 
@@ -338,7 +342,7 @@ struct {
 } EncryptedPreMasterSecret;
 \end{lstlisting}
 
-Wenn der Schlüsselaustausch per Diffie-Hellman-Verfahren geschieht,...\todo{DH ergänzen, p.61}
+Wenn der Schlüsselaustausch per Diffie-Hellman-Verfahren geschieht und der Public-Key des Client nicht in seinem Zertifikat enthalten ist (\clientcertificate{}-Nachricht, entspricht dem implicit-Fall), sendet der Client in dieser Nachricht seinen öffentlichen DH-Schlüssel \(Y_c = g^{X_c} \mod{p}\).
 
 \begin{lstlisting}
 struct {
@@ -348,6 +352,8 @@ struct {
 	} dh_public;
 } ClientDiffieHellmanPublic;
 \end{lstlisting}
+
+Das \premastersecret{} wird dann als \(Z=(Y_c)^{X_s} \mod{p}\) auf der Serverseite bzw. \(Z=(Y_s)^{X_c} \mod{p}\) auf der Clientseite berechnet.
 
 \subsection*{CertificateVerify*}
 
@@ -450,7 +456,7 @@ Application Data              <------->     Application Data
 
 \section{\ciphersuites{}}
 
-Eine \ciphersuite{} legt fest, welche Algorithmen zum Schlüsselaustausch, zur Verschlüsselung und zur Berechnung des MACs verwendet werden, sowie welche Eigenschaften(Schlüssellänge, Blocklänge, ...) diese besitzen. In der TLS1.2-Spezifikation (\cite{tls12}) sind 37 \ciphersuites{} festgelegt.
+Eine \ciphersuite{} legt fest, welche Algorithmen zum Schlüsselaustausch, zur Verschlüsselung und zur Berechnung des MACs verwendet werden, sowie welche Eigenschaften(Schlüssellänge, Blocklänge, ...) diese besitzen. In der TLS 1.2-Spezifikation (\cite{tls12}) sind 37 \ciphersuites{} festgelegt.
 
 Zum Schlüsselaustausch stehen \monospace{RSA} sowie verschiedene Varianten\footnote{
 	\monospace{DH}: Zertifikat mit festen Diffie-Hellman-Parametern\\ 
@@ -466,7 +472,7 @@ Laut Spezifikation muss zumindest \monospace{TLS\_RSA\_WITH\_AES\_128\_CBC\_SHA}
 
 \section{Frühere SSL-/TLS-Versionen und TLS 1.3}
 
-Im Folgenden soll kurz auf frühere Versionen von TLS/SSL und die entscheidendsten Unterschiede zwischen diesen Versionen eingegangen, sowie ein kurzer Blick auf das noch nicht veröffentlichte TLS 1.3 geworfen werden.\todo{Vermeidung von SSL 2.0/3.0 mit RFCs erwähnen.}
+Im Folgenden soll kurz auf frühere Versionen von TLS/SSL und die entscheidendsten Unterschiede zwischen diesen Versionen eingegangen, sowie ein kurzer Blick auf das noch nicht veröffentlichte TLS 1.3 geworfen werden.
 
 \textbf{SSL 1.0} wurde nie veröffentlicht.
 
@@ -481,5 +487,18 @@ In \textbf{TLS 1.1} wurden explizite Initialisierungsvektoren für Blockchiffren
 In \textbf{TLS 1.2} wurde der Gebrauch von SHA1 und MD5 in der Pseudo Random Function durch eine \ciphersuite{}-abhängige Hashfunktion ersetzt. Zusätzlich wurde die Unterstützung von AEAD-\ciphersuites{} eingefügt. TLS-Extensions und der Gebrauch von AES als Blockchiffre wurden ergänzt. Außerdem wurden DES und IDEA als Blockchiffren aus der Spezifikation entfernt, die Unterstützung von SSL 2.0 nicht mehr empfohlen und weitere kleine Änderungen vorgenommen (vgl. \cite{tls12}).
 
 \textbf{TLS 1.3} liegt momentan lediglich als Draft vor (\cite{tls13}, Version von Juli 2015]). Die hier dargestellten Informationen stellen lediglich den aktuellen Entwicklungsstand dar und sind daher nicht als endgültig und nur mit Vorsicht zu betrachten. In dem aktuellen Draft wird  Elliptic Curve Cryptography für das Diffie-Hellman-Verfahren hinzugefügt, die Unterstützung für alle SSL-Versionen und auch Kompression komplett entfernt (wahrscheinlich als Maßnahme gegen den Angriff aus Abschnitt \ref{sec_attack_crime}). Die größte Veränderung ist die komplette Entfernung von Strom- und Blockchiffren im CBC-Modus zur Verschlüsselung. Es werden nur noch AEAD-Chiffren unterstützt, womit auch die separate Berechnung eines MACs entfällt. Außerdem wurde die PRF-Konstruktion durch die Verwendung von HKDF (HMAC-based Key Derivation Function, siehe \cite{krawczyk10}) ersetzt.
+
+\ifoptionfinal{}{
+\begin{description}
+	\item[TLS 1.0] RFC 2246 - \url{http://tools.ietf.org/html/rfc2246}
+	\item[TLS 1.1] RFC 4346 - \url{http://tools.ietf.org/html/rfc4346}
+	\item[TLS 1.2] RFC 5246 - \url{http://tools.ietf.org/html/rfc5246}
+	\item[TLS 1.3] Draft -\url{https://tools.ietf.org/html/draft-ietf-tls-tls13-07}
+	\item[TLS Extensions] Z.B.\\
+		RFC 3546 - \url{http://tools.ietf.org/html/rfc3546}, \\
+		RFC 3466 - \url{http://tools.ietf.org/html/rfc4366}, \\
+		RFC 6066 - \url{http://tools.ietf.org/html/rfc6066}
+\end{description}
+}
 
 \todo{https://www.trustworthyinternet.org/ssl-pulse/ - SSL-Versionsverbreitung ergänzen?}

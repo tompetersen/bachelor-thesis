@@ -15,27 +15,15 @@ Hauptaufgaben von TLS sind Authentifikation der Kommunikationspartner, Verschlü
 SSL wurde von der Firma Netscape entwickelt und zuerst in ihrem Browser, dem Netscape Navigator, verwendet. Nach mehreren neuen Protokollversionen und nachdem es starke Verbreitung gefunden hatte, wurde es durch die IETF als TLS 1.0 standardisiert (TLS 1.0 entspricht SSL 3.1). Aktuell ist die TLS-Version 1.2 und an Version 1.3 wird gearbeitet.\\
 Inzwischen ist TLS laut \cite{schmeh09} das "`gegenwärtig meistverwendete Verschlüsselungsprotokoll im Internet"'. Gründe hierfür sind dem Autor zufolge insbesondere die leichte Integrierbarkeit in bestehende Strukturen, die "`[im Gegensatz zu IPSec] deutlich schnörkelloser[e] und einfacher[e]"' Protokollspezifikation und auch die marktreife Verfügbarkeit in den frühen 90er Jahren.
 
-\ifoptionfinal{}{
-\begin{description}
-	\item[TLS 1.0] RFC 2246 - \url{http://tools.ietf.org/html/rfc2246}
-	\item[TLS 1.1] RFC 4346 - \url{http://tools.ietf.org/html/rfc4346}
-	\item[TLS 1.2] RFC 5246 - \url{http://tools.ietf.org/html/rfc5246}
-	\item[TLS 1.3] Draft -\url{https://tools.ietf.org/html/draft-ietf-tls-tls13-07}
-	\item[TLS Extensions] Z.B.\\
-		RFC 3546 - \url{http://tools.ietf.org/html/rfc3546}, \\
-		RFC 3466 - \url{http://tools.ietf.org/html/rfc4366}, \\
-		RFC 6066 - \url{http://tools.ietf.org/html/rfc6066}
-\end{description}
-}
-
 \section{Implementierungen}
 
-OpenSSL
-JSSE (Java)
-SChannel (Microsoft)
-NSS (Firefox?)
-Chrome(?)
+Kurz sollen hier auch noch bestehende Implementierungen von SSL/TLS erwähnt werden, auch wenn der Fokus der Arbeit auf der Protokollspezifikation selber liegt.
 
+Die verbreitetste Implementierung, die unter anderem auch im häufig verwendeten Apache-Webserver genutzt wird, ist OpenSSL, eine Open-Source-Implementierung in C. In Produkten von Microsoft wird die Bibliothek SChannel, in Apple-Anwendungen Secure Transport und in Google Chrome und Mozilla-Produkten NSS verwendet. Auch manche Programmiersprachen bringen eigene Implementierungen mit. Ein Beispiel hierfür ist die Java Secure Socket Extension(JSSE) in Java.
+
+Zusätzlich gibt es viele weitere seltener genutzte Implementierungen wie GnuTLS, PolarSSL, LibreSSL, Amazon s2n, ..., die vollständig neu entwickelt wurden oder als Forks bestehender Implementierungen entstanden sind.
+
+Viele Angriffe auf TLS-gesicherte Verbindungen, die bekannt geworden sind, waren Angriffe auf Implementierungen und nicht auf die Protokollspezifikation selbst (auf diese Angriffe wird in Kapitel \ref{cha_attacks} eingegangen). Ein Beispiel ist der Heartbleed\footnote{http://heartbleed.com/} getaufte Bug in OpenSSL, der es wegen eines Programmierfehlers ermöglichte, Speicherinhalte des Servers auszulesen. Auf solche Angriffe, die lediglich einzelne Implementierungen betreffen, soll im Rahmen dieser Arbeit nicht weiter eingegangen werden.
+
+Eine gelungene Übersicht über bestehende Implementierungen, die tiefer ins Detail geht, ist in \cite{meyer14} zu finden.
 %https://en.wikipedia.org/wiki/Comparison_of_TLS_implementations
-
-Siehe \cite{meyer14};
