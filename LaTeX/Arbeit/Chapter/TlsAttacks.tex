@@ -34,11 +34,6 @@ Alle TLS-Versionen verhindern diesen Angriff dadurch, dass sie eine \changeciphe
 
 Details zu diesem Angriff sind in \cite{wagner96} zu finden.
 
-\ifoptionfinal{}{
-	\section{Schwache Cipher Suites}
-	\todo{Tu es! Exportbeschränte Dinge erwähnen}
-}
-
 \section{Bleichenbacher-Angriff}
 
 Daniel Bleichenbacher stellte 1998 in \cite{bleichenbacher98} einen Adaptive-Chosen-Ciphertext-Angriff gegen RSA-basierte Protokolle vor. Im Fall von SSL wird versucht, das \premastersecret{}, das während des Handshakes RSA-verschlüsselt gesendet werden kann, zu erhalten.
@@ -132,6 +127,8 @@ In \cite{moeller14} nutzen die Autoren den erneuten Verbindungsversuch mit älte
 Von der Unterstützung von SSL 3.0 wird in \cite{deprecate_ssl30} abgeraten.
 
 \section{FREAK}
+
+\label{sec_attack_freak}
 
 Eine Gruppe von Pariser Wissenschaftlern entdeckte eine Möglichkeit, wie ein Angreifer die Kommunikationspartner während des Handshakes zur Nutzung schwacher Kryptographie (RSA export cipher suite) bringen kann. Weiterhin zeigten sie in \cite{freak15} die Machbarkeit der Faktorisierung der entsprechenden RSA-Module und die Praxistauglichkeit des Angriffs.
 %https://freakattack.com/

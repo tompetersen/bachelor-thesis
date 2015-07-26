@@ -232,7 +232,7 @@ Hierbei enthält \datafield{client\_version} die neueste vom Client unterstützt
 Die \datafield{session\_id} dient zur Identifikation einer Sitzung. Sie ist bei dem ersten Handshake leer und kann später dazu verwendet werden, bestehende Sitzungen wieder aufzunehmen (vgl. Abschnitt \ref{sec_session_connection}). 
 Die \ciphersuite{}-Liste enthält alle vom Client unterstützten \ciphersuites{} in Reihenfolge seiner Präferenz. 
 Ebenso wird eine Liste von unterstützten Kompressionsalgorithmen übertragen. 
-Optional kann auch eine Liste von gewünschten TLS-Extensions angegeben werden (vgl. refbla\todo{Abschnitt über TLS extensions vgl. TLS1.2 - 7.4.1.4}).
+Optional kann auch eine Liste von gewünschten TLS-Extensions angegeben werden (vgl. \ref{sec_tls_extensions}).
 
 \subsection*{ServerHello}
 
@@ -462,13 +462,31 @@ Zum Schlüsselaustausch stehen \monospace{RSA} sowie verschiedene Varianten\foot
 	\monospace{DH}: Zertifikat mit festen Diffie-Hellman-Parametern\\ 
 	\monospace{DHE}: Temporäre Generierung von DH-Parametern für jede Sitzung \\
 	\monospace{DH\_anon}:  Nicht-authentifizierte DH-Parameter
-} des Diffie-Hellman-Verfahrens zur Verfügung. \\
-Zur Verschlüsselung sind die Stromchiffre \monospace{RC4\_128} sowie die Blockchiffren \monospace{3DES\_EDE\_CBC}, \monospace{AES\_128\_CBC} und \monospace{AES\_256\_CBC} festgelegt. \\
+} des Diffie-Hellman-Verfahrens zur Verfügung. 
+Zur Verschlüsselung sind die Stromchiffre \monospace{RC4\_128} sowie die Blockchiffren \monospace{3DES\_EDE\_CBC}, \monospace{AES\_128\_CBC} und \monospace{AES\_256\_CBC} festgelegt. 
 Zur Berechnung des MACs können \monospace{MD5}, \monospace{SHA1} und \monospace{SHA256} verwendet werden (jeweils wie erwähnt unter Nutzung von HMAC).
+
+Laut Spezifikation muss zumindest \monospace{TLS\_RSA\_WITH\_AES\_128\_CBC\_SHA} von jeder konformen Implementation angeboten werden.
 
 Einen Sonderfall bildet die \ciphersuite{} \monospace{TLS\_NULL\_WITH\_NULL\_NULL}, die vor der Festlegung der \ciphersuite{} während des Handshakes als Standard festgelegt ist und weder Verschlüsselung noch MAC bietet.
 
-Laut Spezifikation muss zumindest \monospace{TLS\_RSA\_WITH\_AES\_128\_CBC\_SHA} von jeder konformen Implementation angeboten werden.
+Kurz sei hier auch noch erwähnt, dass frühere Versionen (bis TLS 1.1) aufgrund von gesetzlichen Vorschriften zum Export von Kryptographie in den USA \ciphersuites{} enthielten, die durch Nutzung kürzerer Schlüssel leichter zu brechen sein sollten (so genannte export-geschwächte \ciphersuites{}). Diese teilweise noch unterstützten Verfahren führen noch heute zu Angriffe auf SSL/TLS (siehe z.B. den FREAK-Angriff in Abschnitt \ref{sec_attack_freak}).
+
+\section{TLS-Extensions}
+
+\label{sec_tls_extensions}
+
+TLS-Extensions werden dazu genutzt, das Protokoll um zusätzliche Funktionalität zu erweitern. Das Konzept wurde parallel zu TLS entwickelt und mit TLS 1.2 in den Standard aufgenommen.
+
+In der \clienthello{}- und \serverhello{}-Nachricht können sich die Kommunikationspartner auf Extensions einigen, die von beiden Seiten unterstützt werden und im Verlauf der Sitzung genutzt werden können. Jeder Extension-Eintrag wird dabei durch ihren Typ und Extension-spezifische Daten gebildet. 
+\begin{lstlisting}
+struct {
+	ExtensionType extension_type;
+	opaque extension_data<0..2^16-1>;
+} Extension;
+\end{lstlisting}
+
+Beispiele für solche Extensions sind Server Name Indication, die es einem Server erlaubt abhängig vom geforderten Host verschiedene Zertifikate auszuliefern, oder Encrypt-then-MAC, die es erlaubt, die Reihenfolge von Verschlüsselung und Authentifizierung einer Nachricht im \recordprotocol{} zu tauschen. Eine aktuelle Liste registrierter TLS-Extensions wird durch die IANA (Internet Assigned Numbers Authority) bereitgestellt\footnote{http://www.iana.org/assignments/tls-extensiontype-values/tls-extensiontype-values.xhtml}.
 
 \section{Frühere SSL-/TLS-Versionen und TLS 1.3}
 
@@ -486,7 +504,9 @@ In \textbf{TLS 1.1} wurden explizite Initialisierungsvektoren für Blockchiffren
 
 In \textbf{TLS 1.2} wurde der Gebrauch von SHA1 und MD5 in der Pseudo Random Function durch eine \ciphersuite{}-abhängige Hashfunktion ersetzt. Zusätzlich wurde die Unterstützung von AEAD-\ciphersuites{} eingefügt. TLS-Extensions und der Gebrauch von AES als Blockchiffre wurden ergänzt. Außerdem wurden DES und IDEA als Blockchiffren aus der Spezifikation entfernt, die Unterstützung von SSL 2.0 nicht mehr empfohlen und weitere kleine Änderungen vorgenommen (vgl. \cite{tls12}).
 
-\textbf{TLS 1.3} liegt momentan lediglich als Draft vor (\cite{tls13}, Version von Juli 2015]). Die hier dargestellten Informationen stellen lediglich den aktuellen Entwicklungsstand dar und sind daher nicht als endgültig und nur mit Vorsicht zu betrachten. In dem aktuellen Draft wird  Elliptic Curve Cryptography für das Diffie-Hellman-Verfahren hinzugefügt, die Unterstützung für alle SSL-Versionen und auch Kompression komplett entfernt (wahrscheinlich als Maßnahme gegen den Angriff aus Abschnitt \ref{sec_attack_crime}). Die größte Veränderung ist die komplette Entfernung von Strom- und Blockchiffren im CBC-Modus zur Verschlüsselung. Es werden nur noch AEAD-Chiffren unterstützt, womit auch die separate Berechnung eines MACs entfällt. Außerdem wurde die PRF-Konstruktion durch die Verwendung von HKDF (HMAC-based Key Derivation Function, siehe \cite{krawczyk10}) ersetzt.
+\textbf{TLS 1.3} liegt momentan lediglich als Draft vor (\cite{tls13}, Version von Juli 2015]). Die hier dargestellten Informationen stellen also lediglich den aktuellen Entwicklungsstand dar und sind daher nicht als endgültig und nur mit Vorsicht zu betrachten. In dem aktuellen Draft wird Elliptic Curve Cryptography für das Diffie-Hellman-Verfahren hinzugefügt, die Unterstützung für alle SSL-Versionen und auch Kompression komplett entfernt (wahrscheinlich als Maßnahme gegen den Angriff aus Abschnitt \ref{sec_attack_crime}). Die größte Veränderung ist die komplette Entfernung von Strom- und Blockchiffren im CBC-Modus zur Verschlüsselung. Es werden nur noch AEAD-Chiffren unterstützt, womit auch die separate Berechnung eines MACs entfällt. Außerdem wurde die PRF-Konstruktion durch die Verwendung von HKDF (HMAC-based Key Derivation Function, siehe \cite{krawczyk10}) ersetzt.
+
+\todo{https://www.trustworthyinternet.org/ssl-pulse/ - SSL-Versionsverbreitung ergänzen?}
 
 \ifoptionfinal{}{
 \begin{description}
@@ -501,4 +521,3 @@ In \textbf{TLS 1.2} wurde der Gebrauch von SHA1 und MD5 in der Pseudo Random Fun
 \end{description}
 }
 
-\todo{https://www.trustworthyinternet.org/ssl-pulse/ - SSL-Versionsverbreitung ergänzen?}
