@@ -1,5 +1,10 @@
 package jProtocol.tls12.model;
 
+import jProtocol.tls12.model.TlsSecurityParameters.BulkCipherAlgorithm;
+import jProtocol.tls12.model.TlsSecurityParameters.CipherType;
+import jProtocol.tls12.model.TlsSecurityParameters.MacAlgorithm;
+import jProtocol.tls12.model.ciphersuites.TlsCipherSuite_Null;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,7 +16,7 @@ public abstract class TlsCipherSuite {
 		_supportedCipherSuites = new HashMap<Short, TlsCipherSuite>();
 		
 		//TODO: Add cipher suites (maybe automagically)
-		//_supportedCipherSuites.put(key, value)
+		_supportedCipherSuites.put((short) 0, new TlsCipherSuite_Null());
 	}
 	
 	public static TlsCipherSuite cipherSuiteFromValue(short value) {
@@ -36,4 +41,13 @@ public abstract class TlsCipherSuite {
 	public abstract String getName();
 	public abstract short getDefinitionValue();
 	
+	public abstract CipherType getCipherType();
+	public abstract BulkCipherAlgorithm getBulkCipherAlgorithm();
+	public abstract byte getEncryptKeyLength();
+	public abstract byte getBlockLength();
+	public abstract byte getFixedIvLengthLength();
+	public abstract byte getRecordIvLength();
+	public abstract MacAlgorithm getMacAlgorithm();
+	public abstract byte getMacLength();
+	public abstract byte getMacKeyLength();
 }

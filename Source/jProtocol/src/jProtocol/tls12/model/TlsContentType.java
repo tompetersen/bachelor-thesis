@@ -29,10 +29,13 @@ public class TlsContentType {
 				return t;
 			}
 		}
-		throw new IllegalArgumentException();
+		throw new IllegalArgumentException("No ContentType for value " + b + "!");
 	}
 	
 	public static byte valueFromContentType(ContentType type) {
+		if (type == null) {
+			throw new IllegalArgumentException("ContentType must not be null!");
+		}
 		return _types.get(type);
 	}
 }

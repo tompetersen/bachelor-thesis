@@ -1,43 +1,65 @@
 package jProtocol.tls12.model.fragments;
 
 import jProtocol.tls12.model.TlsFragment;
+import jProtocol.tls12.model.ciphersuites.TlsBlockCipherSuite.TlsBlockEncryptionResult;
 
 public class TlsBlockFragment extends TlsFragment {
 
-	private byte[] _iv;
+	private TlsBlockEncryptionResult _encryptionResult;
 	
-	//encrypted
-  //protected byte[] _content
-	private byte[] _mac;
-	private byte[] _padding;
-	private byte _paddingLength;
-	
-	public TlsBlockFragment(byte[] content, byte[] iv) {
-		super(content);
-		
-		_iv = iv;
+	public TlsBlockFragment(TlsBlockEncryptionResult encResult) {
+		_encryptionResult = encResult;
 	}
 
 	@Override
 	public byte[] getBytes() {
-		// TODO Auto-generated method stub
-		return null;
+		return _encryptionResult.result;
 	}
 	
+	/**
+	 * Returns the initialization vector used for the encryption.
+	 * 
+	 * @return the iv
+	 */
 	public byte[] getIv() {
-		return _iv;
+		return _encryptionResult.iv;
 	}
 
+	/**
+	 * Returns the computed MAC for the fragment.
+	 * 
+	 * @return the MAC
+	 */
 	public byte[] getMac() {
-		return _mac;
+		return _encryptionResult.mac;
 	}
 
+	/**
+	 * Returns the computed padding for the fragment.
+	 * 
+	 * @return the padding
+	 */
 	public byte[] getPadding() {
-		return _padding;
+		return _encryptionResult.padding;
 	}
 
+	/**
+	 * Returns the used padding length for the fragment.
+	 * 
+	 * @return the padding length
+	 */
 	public byte getPaddingLength() {
-		return _paddingLength;
+		return _encryptionResult.paddingLength;
+	}
+
+	@Override
+	public int getLength() {
+		return _encryptionResult.result.length;
+	}
+
+	@Override
+	public byte[] getContent() {
+		return _encryptionResult.content;
 	}
 	
 	

@@ -1,24 +1,37 @@
 package jProtocol.tls12.model.fragments;
 
 import jProtocol.tls12.model.TlsFragment;
+import jProtocol.tls12.model.ciphersuites.TlsStreamCipherSuite.TlsStreamEncryptionResult;
 
 public class TlsStreamFragment extends TlsFragment {
 
-	//encrypted
-  //protected byte[] _content
-	private byte[] _mac;
+	private TlsStreamEncryptionResult _encryptionResult;
 	
-	public TlsStreamFragment(byte[] content) {
-		super(content);
+	public TlsStreamFragment(TlsStreamEncryptionResult encResult) {
+		_encryptionResult = encResult;
 	}
 
 	@Override
 	public byte[] getBytes() {
-		// TODO Auto-generated method stub
-		return null;
+		return _encryptionResult.result;
 	}
 	
+	/**
+	 * Returns the computed MAC for the fragment.
+	 * 
+	 * @return the MAC
+	 */
 	public byte[] getMac() {
-		return _mac;
+		return _encryptionResult.mac;
+	}
+
+	@Override
+	public int getLength() {
+		return _encryptionResult.result.length;
+	}
+
+	@Override
+	public byte[] getContent() {
+		return _encryptionResult.content;
 	}
 }

@@ -8,6 +8,12 @@ public class TlsFragmentFactory {
 	
 	private TlsSecurityParameters _securityParameters;
 	
+	/**
+	 * 
+	 * 
+	 * @param plaintext
+	 * @return
+	 */
 	public TlsFragment createFragmentFromPlaintext(TlsPlaintext plaintext) {
 		TlsFragment result = null;
 		

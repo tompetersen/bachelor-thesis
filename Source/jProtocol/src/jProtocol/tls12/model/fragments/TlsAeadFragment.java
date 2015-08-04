@@ -1,28 +1,33 @@
 package jProtocol.tls12.model.fragments;
 
 import jProtocol.tls12.model.TlsFragment;
+import jProtocol.tls12.model.ciphersuites.TlsAeadCipherSuite.TlsAeadEncryptionResult;
 
 public class TlsAeadFragment extends TlsFragment {
 
-	private byte[] _nonceExplicit;
+	private TlsAeadEncryptionResult _encryptionResult;
 	
-	//encrypted
-  //protected byte[] _content
-	
-	public TlsAeadFragment(byte[] content, byte[] nonceExplicit) {
-		super(content);
-		
-		_nonceExplicit = nonceExplicit;
+	public TlsAeadFragment(TlsAeadEncryptionResult encResult) {
+		_encryptionResult = encResult;
 	}
 
 	@Override
 	public byte[] getBytes() {
-		// TODO Auto-generated method stub
-		return null;
+		return _encryptionResult.result;
+	}
+	
+	public byte[] getNonceExplicit() {
+		return _encryptionResult.nonce;
 	}
 
-	public byte[] getNonceExplicit() {
-		return _nonceExplicit;
+	@Override
+	public int getLength() {
+		return _encryptionResult.result.length;
+	}
+
+	@Override
+	public byte[] getContent() {
+		return _encryptionResult.content;
 	}
 
 }
