@@ -40,15 +40,15 @@ public class TlsSecurityParameters {
 	private ConnectionEnd _entity;
 	private PrfAlgorithm _prfAlgorithm;
 	
-	private BulkCipherAlgorithm _bulkCipherAlgorithm;
+	/*private BulkCipherAlgorithm _bulkCipherAlgorithm;
 	private CipherType _cipherType;
 	private byte _encKeyLength;
 	private byte _blockLength;
-	private byte _fixedIvLength;
-	private byte _recordIvLength;
+	private byte _fixedIvLength; //for aead ciphers implicit nonce (see chapter 6.3, p. 26)
+	private byte _recordIvLength; //for block ciphers IVs
 	private MacAlgorithm _macAlgorithm;
 	private byte _macLength;
-	private byte _macKeyLength;
+	private byte _macKeyLength;*/
 	
 	//private CompressionMethod _compressionAlgorithm;
 	private byte[] _masterSecret; //48
@@ -58,39 +58,39 @@ public class TlsSecurityParameters {
 	private TlsCipherSuite _cipherSuite;
 	
 	public BulkCipherAlgorithm getBulkCipherAlgorithm() {
-		return _bulkCipherAlgorithm;
+		return _cipherSuite.getBulkCipherAlgorithm();
 	}
 	
 	public CipherType getCipherType() {
-		return _cipherType;
+		return _cipherSuite.getCipherType();
 	}
 	
 	public byte getEncKeyLength() {
-		return _encKeyLength;
+		return _cipherSuite.getEncryptKeyLength();
 	}
 
 	public byte getBlockLength() {
-		return _blockLength;
+		return _cipherSuite.getBlockLength();
 	}
 
 	public byte getFixedIvLength() {
-		return _fixedIvLength;
+		return _cipherSuite.getFixedIvLength();
 	}
 
 	public byte getRecordIvLength() {
-		return _recordIvLength;
+		return _cipherSuite.getRecordIvLength();
 	}
 
 	public MacAlgorithm getMacAlgorithm() {
-		return _macAlgorithm;
+		return _cipherSuite.getMacAlgorithm();
 	}
 
 	public byte getMacLength() {
-		return _macLength;
+		return _cipherSuite.getMacLength();
 	}
 
 	public byte getMacKeyLength() {
-		return _macKeyLength;
+		return _cipherSuite.getMacKeyLength();
 	}
 	
 	public void setClientRandom(byte[] clientRandom) {
@@ -134,7 +134,16 @@ public class TlsSecurityParameters {
 	}
 	
 	private void computeKeys() {
-		//TODO:
+		int neededKeySize = 2 * this.getEncKeyLength() + 	//encryption keys
+				2 * this.getMacKeyLength() + 				//mac keys
+				2 * this.getFixedIvLength();				//aead implicit nonce
+		
+		byte[] keyBlock = TlsPseudoRandomFunction.prf(_masterSecret, 
+				"key expansion", 
+				TlsPseudoRandomFunction.concatenate(_serverRandom, _clientRandom), 
+				neededKeySize);
+		
+		
 	}
 	
 }

@@ -27,4 +27,9 @@ public abstract class TlsBlockCipherSuite extends TlsCipherSuite {
 		return CipherType.block;
 	}
 
+	@Override
+	public byte getFixedIvLength() {
+		return 0;
+	}
+
 }

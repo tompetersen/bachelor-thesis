@@ -47,5 +47,9 @@ public abstract class TlsAeadCipherSuite extends TlsCipherSuite {
 	public byte getMacKeyLength() {
 		return 0;
 	}
-	
+
+	@Override
+	public byte getRecordIvLength() {
+		return 0;
+	}
 }

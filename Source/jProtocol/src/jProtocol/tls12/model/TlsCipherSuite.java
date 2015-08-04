@@ -12,7 +12,7 @@ public abstract class TlsCipherSuite {
 	
 	private static Map<Short, TlsCipherSuite> _supportedCipherSuites;
 	
-	public TlsCipherSuite() {
+	static {
 		_supportedCipherSuites = new HashMap<Short, TlsCipherSuite>();
 		
 		//TODO: Add cipher suites (maybe automagically)
@@ -45,7 +45,7 @@ public abstract class TlsCipherSuite {
 	public abstract BulkCipherAlgorithm getBulkCipherAlgorithm();
 	public abstract byte getEncryptKeyLength();
 	public abstract byte getBlockLength();
-	public abstract byte getFixedIvLengthLength();
+	public abstract byte getFixedIvLength();
 	public abstract byte getRecordIvLength();
 	public abstract MacAlgorithm getMacAlgorithm();
 	public abstract byte getMacLength();

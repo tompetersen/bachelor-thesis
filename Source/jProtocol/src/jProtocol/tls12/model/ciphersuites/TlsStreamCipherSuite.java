@@ -33,7 +33,7 @@ public abstract class TlsStreamCipherSuite extends TlsCipherSuite {
 	}
 
 	@Override
-	public byte getFixedIvLengthLength() {
+	public byte getFixedIvLength() {
 		return 0;
 	}
 
