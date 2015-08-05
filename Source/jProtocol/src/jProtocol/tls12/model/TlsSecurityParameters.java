@@ -57,6 +57,18 @@ public class TlsSecurityParameters {
 	
 	private TlsCipherSuite _cipherSuite;
 	
+	public TlsSecurityParameters(ConnectionEnd connectionEnd) {
+		_entity = connectionEnd;
+		_prfAlgorithm = PrfAlgorithm.tls_prf_sha256; //used in all TLS 1.2 cipher suites
+	}
+	
+	public void setCipherSuite(TlsCipherSuite cipherSuite) {
+		if (cipherSuite == null) {
+			throw new IllegalArgumentException("Ciphersuite must not be null!");
+		}
+		this._cipherSuite = cipherSuite;
+	}
+	
 	public BulkCipherAlgorithm getBulkCipherAlgorithm() {
 		return _cipherSuite.getBulkCipherAlgorithm();
 	}
@@ -107,13 +119,6 @@ public class TlsSecurityParameters {
 		this._serverRandom = serverRandom;
 	}
 
-	public void setCipherSuite(TlsCipherSuite cipherSuite) {
-		if (cipherSuite == null) {
-			throw new IllegalArgumentException("Ciphersuite must not be null!");
-		}
-		this._cipherSuite = cipherSuite;
-	}
-
 	public void computeMasterSecret(byte[] premastersecret) {
 		if (_clientRandom == null || _serverRandom == null) {
 			throw new RuntimeException("Client and server random values must be set before computing the master secret!");
@@ -129,21 +134,26 @@ public class TlsSecurityParameters {
 				"master secret", 
 				TlsPseudoRandomFunction.concatenate(_clientRandom, _serverRandom), 
 				48);
-		
-		computeKeys();
 	}
-	
-	private void computeKeys() {
-		int neededKeySize = 2 * this.getEncKeyLength() + 	//encryption keys
-				2 * this.getMacKeyLength() + 				//mac keys
-				2 * this.getFixedIvLength();				//aead implicit nonce
-		
-		byte[] keyBlock = TlsPseudoRandomFunction.prf(_masterSecret, 
-				"key expansion", 
-				TlsPseudoRandomFunction.concatenate(_serverRandom, _clientRandom), 
-				neededKeySize);
-		
-		
+
+	public byte[] getMasterSecret() {
+		if (_masterSecret == null) {
+			throw new RuntimeException("Master secret must be computed first!");
+		}
+		return _masterSecret;
 	}
-	
+
+	public byte[] getClientRandom() {
+		if (_clientRandom == null) {
+			throw new RuntimeException("Client random must be set first!");
+		}
+		return _clientRandom;
+	}
+
+	public byte[] getServerRandom() {
+		if (_serverRandom == null) {
+			throw new RuntimeException("Server random must be set first!");
+		}
+		return _serverRandom;
+	}
 }
