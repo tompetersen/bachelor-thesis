@@ -94,6 +94,7 @@ public class ConnectionStateTest {
 	public void testPrivateSetKeys() throws Exception {
 		byte[] testKeyBlock = {2,2,2,2,3,3,3,3,3,3,4,4,4,4,4,4,4,4};
 		
+		//Reflection used to test private method without having to deal with PRF provided values.
 		Method method = TlsConnectionState.class.getDeclaredMethod("setKeys", testKeyBlock.getClass());
 		method.setAccessible(true);
 		method.invoke(_connectionState, testKeyBlock);

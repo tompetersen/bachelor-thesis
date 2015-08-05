@@ -1,5 +1,7 @@
 package jProtocol.tls12.model;
 
+import jProtocol.helper.ByteHelper;
+
 public class TlsConnectionState {
 
 	private TlsSecurityParameters _securityParameters;
@@ -29,7 +31,7 @@ public class TlsConnectionState {
 		
 		byte[] keyBlock = TlsPseudoRandomFunction.prf(_securityParameters.getMasterSecret(), 
 				"key expansion", 
-				TlsPseudoRandomFunction.concatenate(_securityParameters.getClientRandom(), _securityParameters.getServerRandom()), 
+				ByteHelper.concatenate(_securityParameters.getClientRandom(), _securityParameters.getServerRandom()), 
 				neededKeySize);
 		
 		setKeys(keyBlock);

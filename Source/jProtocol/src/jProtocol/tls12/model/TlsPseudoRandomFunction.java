@@ -1,5 +1,7 @@
 package jProtocol.tls12.model;
 
+import jProtocol.helper.ByteHelper;
+
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -19,13 +21,23 @@ import javax.crypto.spec.SecretKeySpec;
  */
 public class TlsPseudoRandomFunction {
 	
+	/**
+	 * Computes random bytes according to the TLS 1.2PRF-SHA256 construction. 
+	 * 
+	 * @param secret the secret used for the computation
+	 * @param label a computation describing label
+	 * @param seed a seed for the computation
+	 * @param neededBytes the number of bytes needed
+	 * 
+	 * @return neededBytes random Bytes
+	 */
 	public static byte[] prf(byte[] secret, String label, byte[] seed, int neededBytes) {
 		if (label == null || secret == null || seed == null) {
 			throw new IllegalArgumentException("Parameters for prf must not be null!");
 		}
 		
 		return p_sha256(secret, 
-						concatenate(label.getBytes(StandardCharsets.US_ASCII), seed), 
+				ByteHelper.concatenate(label.getBytes(StandardCharsets.US_ASCII), seed), 
 						neededBytes);
 	}
 
@@ -36,7 +48,7 @@ public class TlsPseudoRandomFunction {
 		
 		while (computedBytes < neededBytes) {
 			A = hmac_sha256(secret, A);
-			byte[] aAndSeed = concatenate(A, seed);
+			byte[] aAndSeed = ByteHelper.concatenate(A, seed);
 			
 			byte[] step = hmac_sha256(secret, aAndSeed);
 			
@@ -49,13 +61,6 @@ public class TlsPseudoRandomFunction {
 		return result;
 	}
 	
-	public static byte[] concatenate(byte[] a, byte[] b) {
-		byte[] result = new byte[a.length + b.length];
-		System.arraycopy(a, 0, result, 0, a.length);
-		System.arraycopy(b, 0, result, a.length, b.length);
-		return result;
-	}
-
 	private static byte[] hmac_sha256(byte[] key, byte[] data) {
 		Mac sha256_HMAC;
 		try {

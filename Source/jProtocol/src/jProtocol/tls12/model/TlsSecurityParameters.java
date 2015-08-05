@@ -1,5 +1,7 @@
 package jProtocol.tls12.model;
 
+import jProtocol.helper.ByteHelper;
+
 public class TlsSecurityParameters {
 	
 	public enum ConnectionEnd {
@@ -132,7 +134,7 @@ public class TlsSecurityParameters {
 		 */
 		_masterSecret = TlsPseudoRandomFunction.prf(premastersecret, 
 				"master secret", 
-				TlsPseudoRandomFunction.concatenate(_clientRandom, _serverRandom), 
+				ByteHelper.concatenate(_clientRandom, _serverRandom), 
 				48);
 	}
 
