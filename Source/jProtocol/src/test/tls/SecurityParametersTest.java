@@ -3,7 +3,7 @@ package test.tls;
 import jProtocol.tls12.model.TlsCipherSuite;
 import jProtocol.tls12.model.TlsSecurityParameters;
 import jProtocol.tls12.model.TlsSecurityParameters.ConnectionEnd;
-import jProtocol.tls12.model.ciphersuites.TlsCipherSuite_Null;
+import jProtocol.tls12.model.ciphersuites.impl.TlsCipherSuite_NULL_WITH_NULL_NULL;
 import static org.junit.Assert.*;
 
 import org.junit.Before;
@@ -58,7 +58,7 @@ public class SecurityParametersTest {
 	
 	@Test
 	public void testSetCipherSuite() {
-		TlsCipherSuite cs = new TlsCipherSuite_Null();
+		TlsCipherSuite cs = new TlsCipherSuite_NULL_WITH_NULL_NULL();
 		_parameters.setCipherSuite(cs);
 		
 		assertEquals(cs.getCipherType(), _parameters.getCipherType());

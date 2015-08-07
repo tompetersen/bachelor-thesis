@@ -7,6 +7,9 @@ import jProtocol.tls12.model.fragments.TlsStreamFragment;
 public class TlsFragmentFactory {
 	
 	private TlsSecurityParameters _securityParameters;
+	private TlsConnectionState _connectionState;
+	
+	
 	
 	/**
 	 * 

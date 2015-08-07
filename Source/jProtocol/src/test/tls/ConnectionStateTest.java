@@ -38,7 +38,7 @@ public class ConnectionStateTest {
 		}
 
 		@Override
-		public short getDefinitionValue() { return 0; }
+		public short getCode() { return 0; }
 
 		@Override
 		public CipherType getCipherType() { return null; }

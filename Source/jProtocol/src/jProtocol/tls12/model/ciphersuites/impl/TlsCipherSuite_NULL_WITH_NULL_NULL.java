@@ -1,7 +1,8 @@
-package jProtocol.tls12.model.ciphersuites;
+package jProtocol.tls12.model.ciphersuites.impl;
 
 import jProtocol.tls12.model.TlsSecurityParameters.BulkCipherAlgorithm;
 import jProtocol.tls12.model.TlsSecurityParameters.MacAlgorithm;
+import jProtocol.tls12.model.ciphersuites.TlsStreamCipherSuite;
 import jProtocol.tls12.model.exceptions.TlsBadRecordMacException;
 
 /*
@@ -10,7 +11,7 @@ import jProtocol.tls12.model.exceptions.TlsBadRecordMacException;
  * 
  * 6.2.3.1. p.22
  */
-public class TlsCipherSuite_Null extends TlsStreamCipherSuite {
+public class TlsCipherSuite_NULL_WITH_NULL_NULL extends TlsStreamCipherSuite {
 
 	@Override
 	public String getName() {
@@ -18,7 +19,7 @@ public class TlsCipherSuite_Null extends TlsStreamCipherSuite {
 	}
 
 	@Override
-	public short getDefinitionValue() {
+	public short getCode() {
 		return 0x0000;
 	}
 
