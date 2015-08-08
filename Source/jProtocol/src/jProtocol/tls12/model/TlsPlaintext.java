@@ -21,6 +21,14 @@ public class TlsPlaintext {
 		_length = (short) _fragment.length;
 	}
 	
+	public TlsPlaintext(byte[] content, TlsVersion version, ContentType contentType) {
+		_message = null; //TODO: Where to parse the message?
+		_version = version;
+		_contentType = contentType;
+		_fragment = content;
+		_length = (short)content.length;
+	}
+	
 	public ContentType getContentType() {
 		return _contentType;
 	}

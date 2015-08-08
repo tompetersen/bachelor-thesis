@@ -14,7 +14,7 @@ public class TlsContentType {
 	
 	private static Map<ContentType, Byte> _types;
 	
-	public TlsContentType() {
+	static {
 		_types = new HashMap<ContentType, Byte>();
 		
 		_types.put(ContentType.ChangeCipherSpec, 	(byte)20);

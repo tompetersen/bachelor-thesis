@@ -19,7 +19,7 @@ public abstract class TlsAeadCipherSuite extends TlsCipherSuite {
 		public byte[] content;
 		
 		//the encrypted result
-		public byte[] result;
+		public byte[] aeadCiphered;
 	}
 	
 	@Override

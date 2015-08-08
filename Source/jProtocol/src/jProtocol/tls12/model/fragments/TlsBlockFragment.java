@@ -1,18 +1,31 @@
 package jProtocol.tls12.model.fragments;
 
+import jProtocol.helper.ByteHelper;
 import jProtocol.tls12.model.ciphersuites.TlsBlockCipherSuite.TlsBlockEncryptionResult;
 
 public class TlsBlockFragment extends TlsFragment {
 
 	private TlsBlockEncryptionResult _encryptionResult;
+	private byte[] _sentBytes;
 	
 	public TlsBlockFragment(TlsBlockEncryptionResult encResult) {
 		_encryptionResult = encResult;
+		_sentBytes = ByteHelper.concatenate(_encryptionResult.iv, _encryptionResult.blockCiphered);
 	}
 
 	@Override
 	public byte[] getBytes() {
-		return _encryptionResult.result;
+		return _sentBytes;
+	}
+	
+	@Override
+	public int getLength() {
+		return _sentBytes.length;
+	}
+	
+	@Override
+	public byte[] getContent() {
+		return _encryptionResult.content;
 	}
 	
 	/**
@@ -50,17 +63,4 @@ public class TlsBlockFragment extends TlsFragment {
 	public byte getPaddingLength() {
 		return _encryptionResult.paddingLength;
 	}
-
-	@Override
-	public int getLength() {
-		return _encryptionResult.result.length;
-	}
-
-	@Override
-	public byte[] getContent() {
-		return _encryptionResult.content;
-	}
-	
-	
-
 }

@@ -12,7 +12,7 @@ public class TlsStreamFragment extends TlsFragment {
 
 	@Override
 	public byte[] getBytes() {
-		return _encryptionResult.result;
+		return _encryptionResult.streamCiphered;
 	}
 	
 	/**
@@ -26,7 +26,7 @@ public class TlsStreamFragment extends TlsFragment {
 
 	@Override
 	public int getLength() {
-		return _encryptionResult.result.length;
+		return _encryptionResult.streamCiphered.length;
 	}
 
 	@Override

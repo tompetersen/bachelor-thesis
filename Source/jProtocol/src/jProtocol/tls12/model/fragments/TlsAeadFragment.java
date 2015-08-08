@@ -12,7 +12,7 @@ public class TlsAeadFragment extends TlsFragment {
 
 	@Override
 	public byte[] getBytes() {
-		return _encryptionResult.result;
+		return _encryptionResult.aeadCiphered;
 	}
 	
 	public byte[] getNonceExplicit() {
@@ -21,7 +21,7 @@ public class TlsAeadFragment extends TlsFragment {
 
 	@Override
 	public int getLength() {
-		return _encryptionResult.result.length;
+		return _encryptionResult.aeadCiphered.length;
 	}
 
 	@Override

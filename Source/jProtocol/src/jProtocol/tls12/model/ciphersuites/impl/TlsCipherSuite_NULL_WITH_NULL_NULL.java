@@ -1,10 +1,7 @@
 package jProtocol.tls12.model.ciphersuites.impl;
 
-import jProtocol.tls12.model.TlsCiphertext;
-import jProtocol.tls12.model.TlsPlaintext;
 import jProtocol.tls12.model.TlsSecurityParameters.BulkCipherAlgorithm;
 import jProtocol.tls12.model.TlsSecurityParameters.MacAlgorithm;
-import jProtocol.tls12.model.ciphersuites.TlsEncryptionParameters;
 import jProtocol.tls12.model.ciphersuites.TlsStreamCipherSuite;
 import jProtocol.tls12.model.exceptions.TlsBadRecordMacException;
 
@@ -31,7 +28,7 @@ public class TlsCipherSuite_NULL_WITH_NULL_NULL extends TlsStreamCipherSuite {
 		TlsStreamEncryptionResult result = new TlsStreamEncryptionResult();
 		result.content = plaintext;
 		result.mac = null;
-		result.result = plaintext;
+		result.streamCiphered = plaintext;
 		
 		return result;
 	}

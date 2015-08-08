@@ -19,6 +19,10 @@ import javax.crypto.spec.SecretKeySpec;
 /*
  * Cipher Suite string according to:
  * http://docs.oracle.com/javase/7/docs/technotes/guides/security/StandardNames.html#Cipher
+ * 
+ * Other useful material:
+ * http://www.javamex.com/tutorials/cryptography/block_modes_java.shtml
+ * 
  */
 public class TlsCipher {
 

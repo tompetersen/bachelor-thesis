@@ -10,7 +10,8 @@ import org.junit.runners.Suite.SuiteClasses;
 		MacTest.class, 
 		PseudoRandomFunctionTest.class,
 		SecurityParametersTest.class,
-		CipherTest.class
+		CipherTest.class,
+		BlockCipherSuiteTest.class
 		})
 public class AllTests {
 

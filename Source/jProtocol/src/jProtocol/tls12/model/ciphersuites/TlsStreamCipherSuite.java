@@ -13,7 +13,7 @@ public abstract class TlsStreamCipherSuite extends TlsCipherSuite {
 		public byte[] mac;
 		
 		//the encrypted result
-		public byte[] result;
+		public byte[] streamCiphered;
 	}
 	
 	@Override
