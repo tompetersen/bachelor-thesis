@@ -1,10 +1,11 @@
 package jProtocol.tls12.model.ciphersuites.impl;
 
+import jProtocol.tls12.model.TlsCipher;
 import jProtocol.tls12.model.TlsMac;
+import jProtocol.tls12.model.TlsMacParameters;
 import jProtocol.tls12.model.TlsSecurityParameters.BulkCipherAlgorithm;
 import jProtocol.tls12.model.TlsSecurityParameters.MacAlgorithm;
 import jProtocol.tls12.model.ciphersuites.TlsBlockCipherSuite;
-import jProtocol.tls12.model.exceptions.TlsBadRecordMacException;
 
 /*
  *  Cipher Suite definitions
@@ -13,21 +14,26 @@ import jProtocol.tls12.model.exceptions.TlsBadRecordMacException;
 public class TlsCipherSuite_RSA_WITH_AES_128_CBC_SHA extends TlsBlockCipherSuite {
 
 	private TlsMac _mac;
+	private TlsCipher _cipher;
 	
 	public TlsCipherSuite_RSA_WITH_AES_128_CBC_SHA() {
 		_mac = new TlsMac(getMacAlgorithm());
+		_cipher = new TlsCipher(getBulkCipherAlgorithm(), getCipherType());
 	}
 	
 	@Override
-	public TlsBlockEncryptionResult encrypt(byte[] key, byte[] iv, byte[] plaintext) {
-		// TODO Auto-generated method stub
-		return null;
+	public byte[] computeMac(TlsMacParameters parameters) {
+		return _mac.computeTlsMac(parameters);
 	}
 
 	@Override
-	public byte[] decrypt(byte[] key, byte[] iv, byte[] ciphertext) throws TlsBadRecordMacException {
-		// TODO Auto-generated method stub
-		return null;
+	public byte[] encrypt(byte[] key, byte[] iv,  byte[] plaintext) {
+		return _cipher.encrypt(key, iv, plaintext);
+	}
+
+	@Override
+	public byte[] decrypt(byte[] key, byte[] iv, byte[] ciphertext) {
+		return _cipher.decrypt(key, iv, ciphertext);
 	}
 
 	@Override
@@ -74,5 +80,4 @@ public class TlsCipherSuite_RSA_WITH_AES_128_CBC_SHA extends TlsBlockCipherSuite
 	public byte getMacKeyLength() {
 		return (byte)20;
 	}
-
 }

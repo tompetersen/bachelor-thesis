@@ -1,18 +1,24 @@
 package jProtocol.tls12.model;
 
+import jProtocol.tls12.model.TlsSecurityParameters.MacAlgorithm;
+
+import java.nio.ByteBuffer;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
-import jProtocol.tls12.model.TlsSecurityParameters.MacAlgorithm;
-
 public class TlsMac {
 	
 	private String _macString;
 	private Mac _mac;
 
+	/**
+	 * Creates a MAC object for TLS 1.2 specified MAC algorithms.
+	 * 
+	 * @param algorithm the algorithm
+	 */
 	public TlsMac(MacAlgorithm algorithm) {
 		switch (algorithm) {
 		case mac_null:
@@ -45,9 +51,38 @@ public class TlsMac {
 		}
 	}
 
-	public byte[] computeMac(byte[] key, byte[] message) {
+	/**
+	 * Computes a MAC according to the TLS 1.2 specification.
+	 * 
+	 * @param macWriteKey the MAC write key	
+	 * @param parameters the parameters necessary to compute the TLS MAC
+	 * 
+	 * @return the MAC
+	 */
+	public byte[] computeTlsMac(TlsMacParameters parameters) {
+		ByteBuffer b = ByteBuffer.allocate(parameters.fragment.length + 13);
+		
+		b.putLong(parameters.sequenceNumber);	//8
+		b.put(parameters.contentType);			//1
+		b.put(parameters.versionMajor);		//1
+		b.put(parameters.versionMinor);		//1
+		b.putShort(parameters.length);			//2
+		b.put(parameters.fragment);
+		
+		return computeMac(parameters.macWriteKey, b.array());
+	}
+	
+	/**
+	 * Computes a MAC for the message with the used algorithm.
+	 * 
+	 * @param secret the secret	used by the MAC function
+	 * @param message the message
+	 * 
+	 * @return the MAC
+	 */
+	public byte[] computeMac(byte[] secret, byte[] message) {
 		if (_macString != null) {
-			SecretKeySpec secret_key = new SecretKeySpec(key, _macString);
+			SecretKeySpec secret_key = new SecretKeySpec(secret, _macString);
 			try {
 				_mac.init(secret_key);
 			} catch (InvalidKeyException e) {

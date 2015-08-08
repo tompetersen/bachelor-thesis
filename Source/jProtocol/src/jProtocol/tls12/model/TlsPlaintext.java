@@ -1,6 +1,7 @@
 package jProtocol.tls12.model;
 
 import jProtocol.tls12.model.TlsContentType.ContentType;
+import jProtocol.tls12.model.messages.TlsMessage;
 
 public class TlsPlaintext {
 

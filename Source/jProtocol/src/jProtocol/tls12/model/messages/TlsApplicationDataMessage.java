@@ -1,6 +1,5 @@
 package jProtocol.tls12.model.messages;
 
-import jProtocol.tls12.model.TlsMessage;
 import jProtocol.tls12.model.TlsContentType.ContentType;
 
 public class TlsApplicationDataMessage extends TlsMessage {

@@ -1,5 +1,7 @@
 package jProtocol.helper;
 
+import java.nio.ByteBuffer;
+
 public class ByteHelper {
 	
 	/**
@@ -34,6 +36,19 @@ public class ByteHelper {
 		System.arraycopy(b, 0, result, a.length, b.length);
 		
 		return result;
+	}
+	
+	/**
+	 * Creates byte array of bytes of a long variable.
+	 * 
+	 * @param l the long variable
+	 * 
+	 * @return the bytes
+	 */
+	public static byte[] longToBytes(long l) {
+	    ByteBuffer buffer = ByteBuffer.allocate(Long.SIZE);
+	    buffer.putLong(l);
+	    return buffer.array();
 	}
 	
 }

@@ -1,13 +1,17 @@
 package test.tls;
 
 import static org.junit.Assert.*;
-import jProtocol.tls12.model.TlsCipherSuite;
+import jProtocol.tls12.model.TlsCiphertext;
 import jProtocol.tls12.model.TlsConnectionState;
+import jProtocol.tls12.model.TlsPlaintext;
 import jProtocol.tls12.model.TlsSecurityParameters;
 import jProtocol.tls12.model.TlsSecurityParameters.BulkCipherAlgorithm;
 import jProtocol.tls12.model.TlsSecurityParameters.CipherType;
 import jProtocol.tls12.model.TlsSecurityParameters.ConnectionEnd;
 import jProtocol.tls12.model.TlsSecurityParameters.MacAlgorithm;
+import jProtocol.tls12.model.ciphersuites.TlsCipherSuite;
+import jProtocol.tls12.model.ciphersuites.TlsEncryptionParameters;
+import jProtocol.tls12.model.exceptions.TlsBadRecordMacException;
 
 import java.lang.reflect.Method;
 
@@ -57,6 +61,16 @@ public class ConnectionStateTest {
 
 		@Override
 		public byte getMacLength() { return 0; }
+
+		@Override
+		public TlsCiphertext plaintextToCiphertext(TlsPlaintext plaintext, TlsEncryptionParameters parameters) {
+			return null;
+		}
+
+		@Override
+		public TlsPlaintext ciphertextToPlaintext(TlsCiphertext plaintext, TlsEncryptionParameters parameters) throws TlsBadRecordMacException {
+			return null;
+		}
 	}
 	
 	private TlsCipherSuite _cs;

@@ -1,6 +1,5 @@
 package jProtocol.tls12.model.exceptions;
 
-import jProtocol.tls12.model.TlsException;
 
 public class TlsBadRecordMacException extends TlsException {
 

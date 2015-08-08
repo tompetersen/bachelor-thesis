@@ -1,6 +1,7 @@
 package jProtocol.tls12.model.ciphersuites;
 
-import jProtocol.tls12.model.TlsCipherSuite;
+import jProtocol.tls12.model.TlsCiphertext;
+import jProtocol.tls12.model.TlsPlaintext;
 import jProtocol.tls12.model.TlsSecurityParameters.CipherType;
 import jProtocol.tls12.model.TlsSecurityParameters.MacAlgorithm;
 import jProtocol.tls12.model.exceptions.TlsBadRecordMacException;
@@ -19,6 +20,20 @@ public abstract class TlsAeadCipherSuite extends TlsCipherSuite {
 		
 		//the encrypted result
 		public byte[] result;
+	}
+	
+	@Override
+	public TlsCiphertext plaintextToCiphertext(TlsPlaintext plaintext,
+			TlsEncryptionParameters parameters) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public TlsPlaintext ciphertextToPlaintext(TlsCiphertext plaintext,
+			TlsEncryptionParameters parameters) throws TlsBadRecordMacException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 	public abstract TlsAeadEncryptionResult encrypt(byte[] key, byte[] nonce, byte[] plaintext, byte[] additionalData);

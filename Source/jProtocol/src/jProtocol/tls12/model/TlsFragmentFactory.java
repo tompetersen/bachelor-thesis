@@ -2,6 +2,7 @@ package jProtocol.tls12.model;
 
 import jProtocol.tls12.model.fragments.TlsAeadFragment;
 import jProtocol.tls12.model.fragments.TlsBlockFragment;
+import jProtocol.tls12.model.fragments.TlsFragment;
 import jProtocol.tls12.model.fragments.TlsStreamFragment;
 
 public class TlsFragmentFactory {

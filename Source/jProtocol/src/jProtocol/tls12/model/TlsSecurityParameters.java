@@ -1,6 +1,7 @@
 package jProtocol.tls12.model;
 
 import jProtocol.helper.ByteHelper;
+import jProtocol.tls12.model.ciphersuites.TlsCipherSuite;
 
 public class TlsSecurityParameters {
 	

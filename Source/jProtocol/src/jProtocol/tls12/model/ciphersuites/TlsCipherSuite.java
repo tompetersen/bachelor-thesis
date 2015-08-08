@@ -1,9 +1,12 @@
-package jProtocol.tls12.model;
+package jProtocol.tls12.model.ciphersuites;
 
+import jProtocol.tls12.model.TlsCiphertext;
+import jProtocol.tls12.model.TlsPlaintext;
 import jProtocol.tls12.model.TlsSecurityParameters.BulkCipherAlgorithm;
 import jProtocol.tls12.model.TlsSecurityParameters.CipherType;
 import jProtocol.tls12.model.TlsSecurityParameters.MacAlgorithm;
 import jProtocol.tls12.model.ciphersuites.impl.TlsCipherSuite_NULL_WITH_NULL_NULL;
+import jProtocol.tls12.model.exceptions.TlsBadRecordMacException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -42,6 +45,10 @@ public abstract class TlsCipherSuite {
 		}
 		throw new IllegalArgumentException("Value for cipher suite " + cipherSuite.getName() + " not found!");
 	}
+	
+	public abstract TlsCiphertext plaintextToCiphertext(TlsPlaintext plaintext, TlsEncryptionParameters parameters);
+	
+	public abstract TlsPlaintext ciphertextToPlaintext(TlsCiphertext plaintext, TlsEncryptionParameters parameters) throws TlsBadRecordMacException ;
 	
 	/**
 	 * The name equal to the cipher suite name in TLS 1.2 specification.

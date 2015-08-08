@@ -2,6 +2,8 @@ package jProtocol.tls12.model;
 
 import jProtocol.Abstract.Model.ProtocolDataUnit;
 import jProtocol.tls12.model.TlsContentType.ContentType;
+import jProtocol.tls12.model.fragments.TlsFragment;
+import jProtocol.tls12.model.messages.TlsMessage;
 
 public class TlsCiphertext extends ProtocolDataUnit {
 
@@ -12,13 +14,32 @@ public class TlsCiphertext extends ProtocolDataUnit {
 	private short _length; 					//2 bytes
 	private TlsFragment _fragment;
 	
-	public TlsCiphertext(TlsPlaintext plaintext, TlsFragmentFactory fragmentFactory) {
-		_contentType = plaintext.getContentType();
-		_version = plaintext.getVersion();
-		_message = plaintext.getMessage();
-		
-		_fragment = fragmentFactory.createFragmentFromPlaintext(plaintext);
-		_length = (short)_fragment.getLength();
+	public TlsCiphertext(TlsMessage message, TlsVersion version, TlsFragment fragment) {
+		_message = message;
+		_version = version;
+		_contentType = message.getContentType();
+		_fragment = fragment;
+		_length = (short) _fragment.getLength();
+	}
+	
+	public ContentType getContentType() {
+		return _contentType;
+	}
+
+	public TlsVersion getVersion() {
+		return _version;
+	}
+
+	public short getLength() {
+		return _length;
+	}
+
+	public TlsFragment getFragment() {
+		return _fragment;
+	}
+
+	public TlsMessage getMessage() {
+		return _message;
 	}
 	
 }

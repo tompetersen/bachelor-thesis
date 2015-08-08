@@ -1,6 +1,5 @@
 package jProtocol.tls12.model.fragments;
 
-import jProtocol.tls12.model.TlsFragment;
 import jProtocol.tls12.model.ciphersuites.TlsStreamCipherSuite.TlsStreamEncryptionResult;
 
 public class TlsStreamFragment extends TlsFragment {

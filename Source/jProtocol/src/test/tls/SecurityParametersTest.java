@@ -1,8 +1,8 @@
 package test.tls;
 
-import jProtocol.tls12.model.TlsCipherSuite;
 import jProtocol.tls12.model.TlsSecurityParameters;
 import jProtocol.tls12.model.TlsSecurityParameters.ConnectionEnd;
+import jProtocol.tls12.model.ciphersuites.TlsCipherSuite;
 import jProtocol.tls12.model.ciphersuites.impl.TlsCipherSuite_NULL_WITH_NULL_NULL;
 import static org.junit.Assert.*;
 

@@ -3,9 +3,11 @@ package test.tls;
 import static org.junit.Assert.*;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 
 import jProtocol.helper.ByteHelper;
 import jProtocol.tls12.model.TlsMac;
+import jProtocol.tls12.model.TlsMacParameters;
 import jProtocol.tls12.model.TlsSecurityParameters.MacAlgorithm;
 
 import org.junit.Test;
@@ -68,5 +70,21 @@ public class MacTest {
 		byte[] expected = ByteHelper.hexStringToByteArray("b617318655057264e28bc0b6fb378c8ef146be00");
 		
 		assertArrayEquals(mac.computeMac(_key20, _message), expected);
+	}
+	
+	@Test
+	public void testTlsMac() {
+		TlsMac mac = new TlsMac(MacAlgorithm.mac_hmac_sha1);
+		
+		byte[] message = new byte[14];
+		Arrays.fill(message, (byte)0);		
+		
+		byte[] fragment = {0};		
+		TlsMacParameters parameters = new TlsMacParameters(_key20, (long)0, (byte)0, (byte)0, (byte)0, (short)0, fragment);
+		
+		byte[] mac1 = mac.computeTlsMac(parameters); 
+		byte[] mac2 = mac.computeMac(_key20, message);
+		
+		assertArrayEquals(mac1, mac2);
 	}
 }

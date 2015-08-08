@@ -1,4 +1,4 @@
-package jProtocol.tls12.model;
+package jProtocol.tls12.model.fragments;
 
 public abstract class TlsFragment {
 
