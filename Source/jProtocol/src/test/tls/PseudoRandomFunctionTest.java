@@ -3,7 +3,7 @@ package test.tls;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import jProtocol.helper.ByteHelper;
-import jProtocol.tls12.model.TlsPseudoRandomFunction;
+import jProtocol.tls12.model.crypto.TlsPseudoRandomFunction;
 
 import org.junit.Test;
 

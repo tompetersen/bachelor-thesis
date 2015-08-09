@@ -3,7 +3,7 @@ package jProtocol.tls12.model.fragments;
 import jProtocol.helper.ByteHelper;
 import jProtocol.tls12.model.ciphersuites.TlsBlockCipherSuite.TlsBlockEncryptionResult;
 
-public class TlsBlockFragment extends TlsFragment {
+public class TlsBlockFragment implements TlsFragment {
 
 	private TlsBlockEncryptionResult _encryptionResult;
 	private byte[] _sentBytes;

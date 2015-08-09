@@ -5,13 +5,13 @@ import jProtocol.tls12.model.TlsCiphertext;
 import jProtocol.tls12.model.TlsConnectionState;
 import jProtocol.tls12.model.TlsPlaintext;
 import jProtocol.tls12.model.TlsSecurityParameters;
-import jProtocol.tls12.model.TlsSecurityParameters.BulkCipherAlgorithm;
-import jProtocol.tls12.model.TlsSecurityParameters.CipherType;
-import jProtocol.tls12.model.TlsSecurityParameters.ConnectionEnd;
-import jProtocol.tls12.model.TlsSecurityParameters.MacAlgorithm;
 import jProtocol.tls12.model.ciphersuites.TlsCipherSuite;
 import jProtocol.tls12.model.ciphersuites.TlsEncryptionParameters;
 import jProtocol.tls12.model.exceptions.TlsBadRecordMacException;
+import jProtocol.tls12.model.values.TlsBulkCipherAlgorithm;
+import jProtocol.tls12.model.values.TlsCipherType;
+import jProtocol.tls12.model.values.TlsConnectionEnd;
+import jProtocol.tls12.model.values.TlsMacAlgorithm;
 
 import java.lang.reflect.Method;
 
@@ -20,7 +20,7 @@ import org.junit.Test;
 
 public class ConnectionStateTest {
 
-	private class TestCipherSuite extends TlsCipherSuite {
+	private class TestCipherSuite implements TlsCipherSuite {
 		@Override
 		public String getName() {
 			return "TestCipherSuite";
@@ -45,10 +45,10 @@ public class ConnectionStateTest {
 		public short getCode() { return 0; }
 
 		@Override
-		public CipherType getCipherType() { return null; }
+		public TlsCipherType getCipherType() { return null; }
 
 		@Override
-		public BulkCipherAlgorithm getBulkCipherAlgorithm() { return null; }
+		public TlsBulkCipherAlgorithm getBulkCipherAlgorithm() { return null; }
 
 		@Override
 		public byte getBlockLength() { return 0; }
@@ -57,7 +57,7 @@ public class ConnectionStateTest {
 		public byte getRecordIvLength() { return 0; }
 
 		@Override
-		public MacAlgorithm getMacAlgorithm() { return null; }
+		public TlsMacAlgorithm getMacAlgorithm() { return null; }
 
 		@Override
 		public byte getMacLength() { return 0; }
@@ -83,7 +83,7 @@ public class ConnectionStateTest {
 	public void setUp() throws Exception {
 		_cs = new TestCipherSuite();
 		
-		_sp = new TlsSecurityParameters(ConnectionEnd.server);
+		_sp = new TlsSecurityParameters(TlsConnectionEnd.server);
 		_sp.setCipherSuite(_cs);
 		_sp.setClientRandom(_random32);
 		_sp.setServerRandom(_random32);

@@ -1,9 +1,23 @@
 package jProtocol.tls12.model.messages;
 
-import jProtocol.tls12.model.TlsContentType.ContentType;
+import jProtocol.tls12.model.values.TlsContentType.ContentType;
 
-public class TlsApplicationDataMessage extends TlsMessage {
+/*
+ *  Application data messages are carried by the record layer and are 
+ *  fragmented, compressed, and encrypted based on the current connection 
+ *  state. The messages are treated as transparent data to the record 
+ *  layer.
+ *  
+ *  See chapter 10, p. 65 TLS 1.2
+ */
+public class TlsApplicationDataMessage implements TlsMessage {
 
+	private byte[] _content;
+	
+	public TlsApplicationDataMessage(byte[] content) {
+		_content = content;
+	}
+	
 	@Override
 	public ContentType getContentType() {
 		return ContentType.ApplicationData;
@@ -11,8 +25,7 @@ public class TlsApplicationDataMessage extends TlsMessage {
 
 	@Override
 	public byte[] getBytes() {
-		// TODO Auto-generated method stub
-		return null;
+		return _content;
 	}
 	
 }

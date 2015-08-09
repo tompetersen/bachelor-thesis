@@ -1,6 +1,6 @@
-package jProtocol.tls12.model;
+package jProtocol.tls12.model.crypto;
 
-import jProtocol.tls12.model.TlsSecurityParameters.MacAlgorithm;
+import jProtocol.tls12.model.values.TlsMacAlgorithm;
 
 import java.nio.ByteBuffer;
 import java.security.InvalidKeyException;
@@ -19,7 +19,7 @@ public class TlsMac {
 	 * 
 	 * @param algorithm the algorithm
 	 */
-	public TlsMac(MacAlgorithm algorithm) {
+	public TlsMac(TlsMacAlgorithm algorithm) {
 		switch (algorithm) {
 		case mac_null:
 			_macString = null;
@@ -64,8 +64,8 @@ public class TlsMac {
 		
 		b.putLong(parameters.sequenceNumber);	//8
 		b.put(parameters.contentType);			//1
-		b.put(parameters.versionMajor);		//1
-		b.put(parameters.versionMinor);		//1
+		b.put(parameters.versionMajor);			//1
+		b.put(parameters.versionMinor);			//1
 		b.putShort(parameters.length);			//2
 		b.put(parameters.fragment);
 		

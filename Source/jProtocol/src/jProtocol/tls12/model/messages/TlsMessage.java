@@ -1,10 +1,11 @@
 package jProtocol.tls12.model.messages;
 
-import jProtocol.tls12.model.TlsContentType.ContentType;
+import jProtocol.tls12.model.values.TlsContentType.ContentType;
 
-public abstract class TlsMessage {
+public interface TlsMessage {
 	
-	public abstract ContentType getContentType();
-	public abstract byte[] getBytes();
+	public ContentType getContentType();
+	
+	public byte[] getBytes();
 	
 }

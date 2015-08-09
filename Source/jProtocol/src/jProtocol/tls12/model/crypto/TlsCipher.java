@@ -1,7 +1,7 @@
-package jProtocol.tls12.model;
+package jProtocol.tls12.model.crypto;
 
-import jProtocol.tls12.model.TlsSecurityParameters.BulkCipherAlgorithm;
-import jProtocol.tls12.model.TlsSecurityParameters.CipherType;
+import jProtocol.tls12.model.values.TlsBulkCipherAlgorithm;
+import jProtocol.tls12.model.values.TlsCipherType;
 
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
@@ -29,9 +29,9 @@ public class TlsCipher {
 	private String _cipherString;
 	private String _algorithmString;
 	private Cipher _cipher;
-	private CipherType _cipherType;
+	private TlsCipherType _cipherType;
 
-	public TlsCipher(BulkCipherAlgorithm algorithm, CipherType cipherType) {
+	public TlsCipher(TlsBulkCipherAlgorithm algorithm, TlsCipherType cipherType) {
 		_cipherType = cipherType;
 		switch (algorithm) {
 		case cipher_null:

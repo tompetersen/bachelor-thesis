@@ -2,9 +2,7 @@ package test.tls;
 
 import static org.junit.Assert.*;
 import jProtocol.tls12.model.TlsCiphertext;
-import jProtocol.tls12.model.TlsContentType.ContentType;
 import jProtocol.tls12.model.TlsPlaintext;
-import jProtocol.tls12.model.TlsVersion;
 import jProtocol.tls12.model.ciphersuites.TlsBlockCipherSuite;
 import jProtocol.tls12.model.ciphersuites.TlsEncryptionParameters;
 import jProtocol.tls12.model.ciphersuites.impl.TlsCipherSuite_RSA_WITH_AES_128_CBC_SHA;
@@ -13,6 +11,8 @@ import jProtocol.tls12.model.exceptions.TlsBadRecordMacException;
 import jProtocol.tls12.model.exceptions.TlsException;
 import jProtocol.tls12.model.fragments.TlsBlockFragment;
 import jProtocol.tls12.model.messages.TlsMessage;
+import jProtocol.tls12.model.values.TlsVersion;
+import jProtocol.tls12.model.values.TlsContentType.ContentType;
 
 import java.util.Arrays;
 
@@ -21,7 +21,7 @@ import org.junit.Test;
 
 public class BlockCipherSuiteTest {
 
-	private class TlsTestMessage extends TlsMessage {
+	private class TlsTestMessage implements TlsMessage {
 		@Override
 		public ContentType getContentType() {
 			return ContentType.ApplicationData;
@@ -55,7 +55,7 @@ public class BlockCipherSuiteTest {
 	}
 	
 	@Test
-	public void testCiphertextContainsCorrectFragment() {
+	public void testCiphertextContainsCorrectFragmentType() {
 		assertTrue(_ciphertext.getFragment() instanceof TlsBlockFragment);
 	}
 

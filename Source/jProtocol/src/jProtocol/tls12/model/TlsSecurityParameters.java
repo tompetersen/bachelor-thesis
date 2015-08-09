@@ -2,67 +2,36 @@ package jProtocol.tls12.model;
 
 import jProtocol.helper.ByteHelper;
 import jProtocol.tls12.model.ciphersuites.TlsCipherSuite;
+import jProtocol.tls12.model.crypto.TlsPseudoRandomFunction;
+import jProtocol.tls12.model.values.TlsBulkCipherAlgorithm;
+import jProtocol.tls12.model.values.TlsCipherType;
+import jProtocol.tls12.model.values.TlsConnectionEnd;
+import jProtocol.tls12.model.values.TlsMacAlgorithm;
 
 public class TlsSecurityParameters {
 	
-	public enum ConnectionEnd {
-		server,
-		client
-	}
-	
 	public enum PrfAlgorithm {
 		tls_prf_sha256
-	}
-	
-	public enum CipherType {
-		stream,
-		block,
-		aead
-	}
-	
-	public enum BulkCipherAlgorithm {
-		cipher_null,
-		cipher_rc4,
-		cipher_3des,
-		cipher_aes		
-	}
-	
-	public enum MacAlgorithm {
-		mac_null,
-		mac_hmac_md5,
-		mac_hmac_sha1,
-		mac_hmac_sha256,
-		mac_hmac_sha384,
-		mac_hmac_sha512
 	}
 	
 	public enum CompressionMethod {
 		compression_null
 	}
 	
-	private ConnectionEnd _entity;
-	private PrfAlgorithm _prfAlgorithm;
+	private TlsConnectionEnd _entity;
 	
-	/*private BulkCipherAlgorithm _bulkCipherAlgorithm;
-	private CipherType _cipherType;
-	private byte _encKeyLength;
-	private byte _blockLength;
-	private byte _fixedIvLength; //for aead ciphers implicit nonce (see chapter 6.3, p. 26)
-	private byte _recordIvLength; //for block ciphers IVs
-	private MacAlgorithm _macAlgorithm;
-	private byte _macLength;
-	private byte _macKeyLength;*/
-	
+	//private PrfAlgorithm _prfAlgorithm;
 	//private CompressionMethod _compressionAlgorithm;
+	
 	private byte[] _masterSecret; //48
 	private byte[] _clientRandom; //32
 	private byte[] _serverRandom; //32
 	
 	private TlsCipherSuite _cipherSuite;
 	
-	public TlsSecurityParameters(ConnectionEnd connectionEnd) {
+	public TlsSecurityParameters(TlsConnectionEnd connectionEnd) {
 		_entity = connectionEnd;
-		_prfAlgorithm = PrfAlgorithm.tls_prf_sha256; //used in all TLS 1.2 cipher suites
+		//_prfAlgorithm = PrfAlgorithm.tls_prf_sha256; //used in all TLS 1.2 cipher suites
 	}
 	
 	public void setCipherSuite(TlsCipherSuite cipherSuite) {
@@ -72,11 +41,11 @@ public class TlsSecurityParameters {
 		this._cipherSuite = cipherSuite;
 	}
 	
-	public BulkCipherAlgorithm getBulkCipherAlgorithm() {
+	public TlsBulkCipherAlgorithm getBulkCipherAlgorithm() {
 		return _cipherSuite.getBulkCipherAlgorithm();
 	}
 	
-	public CipherType getCipherType() {
+	public TlsCipherType getCipherType() {
 		return _cipherSuite.getCipherType();
 	}
 	
@@ -96,7 +65,7 @@ public class TlsSecurityParameters {
 		return _cipherSuite.getRecordIvLength();
 	}
 
-	public MacAlgorithm getMacAlgorithm() {
+	public TlsMacAlgorithm getMacAlgorithm() {
 		return _cipherSuite.getMacAlgorithm();
 	}
 
@@ -158,5 +127,9 @@ public class TlsSecurityParameters {
 			throw new RuntimeException("Server random must be set first!");
 		}
 		return _serverRandom;
+	}
+
+	public TlsConnectionEnd getEntity() {
+		return _entity;
 	}
 }

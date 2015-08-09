@@ -1,19 +1,19 @@
 package jProtocol.tls12.model.ciphersuites;
 
 import jProtocol.tls12.model.TlsCiphertext;
-import jProtocol.tls12.model.TlsContentType;
-import jProtocol.tls12.model.TlsMacParameters;
 import jProtocol.tls12.model.TlsPlaintext;
-import jProtocol.tls12.model.TlsPseudoRandomNumberGenerator;
-import jProtocol.tls12.model.TlsSecurityParameters.CipherType;
+import jProtocol.tls12.model.crypto.TlsMacParameters;
+import jProtocol.tls12.model.crypto.TlsPseudoRandomNumberGenerator;
 import jProtocol.tls12.model.exceptions.TlsBadPaddingException;
 import jProtocol.tls12.model.exceptions.TlsBadRecordMacException;
 import jProtocol.tls12.model.fragments.TlsBlockFragment;
+import jProtocol.tls12.model.values.TlsCipherType;
+import jProtocol.tls12.model.values.TlsContentType;
 
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 
-public abstract class TlsBlockCipherSuite extends TlsCipherSuite {
+public abstract class TlsBlockCipherSuite implements TlsCipherSuite {
 	
 	public class TlsBlockEncryptionResult {
 		//the plain fields
@@ -120,8 +120,8 @@ public abstract class TlsBlockCipherSuite extends TlsCipherSuite {
 	public abstract byte[] decrypt(byte[] key, byte[] iv, byte[] ciphertext);
 
 	@Override
-	public CipherType getCipherType() {
-		return CipherType.block;
+	public TlsCipherType getCipherType() {
+		return TlsCipherType.block;
 	}
 
 	@Override

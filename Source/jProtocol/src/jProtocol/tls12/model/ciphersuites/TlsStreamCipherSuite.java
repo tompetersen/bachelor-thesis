@@ -2,10 +2,10 @@ package jProtocol.tls12.model.ciphersuites;
 
 import jProtocol.tls12.model.TlsCiphertext;
 import jProtocol.tls12.model.TlsPlaintext;
-import jProtocol.tls12.model.TlsSecurityParameters.CipherType;
 import jProtocol.tls12.model.exceptions.TlsBadRecordMacException;
+import jProtocol.tls12.model.values.TlsCipherType;
 
-public abstract class TlsStreamCipherSuite extends TlsCipherSuite {
+public abstract class TlsStreamCipherSuite implements TlsCipherSuite {
 
 	public class TlsStreamEncryptionResult {
 		//the plain fields	
@@ -35,8 +35,8 @@ public abstract class TlsStreamCipherSuite extends TlsCipherSuite {
 	public abstract byte[] decrypt(byte[] key, byte[] ciphertext) throws TlsBadRecordMacException;
 
 	@Override
-	public CipherType getCipherType() {
-		return CipherType.stream;
+	public TlsCipherType getCipherType() {
+		return TlsCipherType.stream;
 	}
 
 	/*

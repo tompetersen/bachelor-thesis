@@ -1,4 +1,4 @@
-package jProtocol.tls12.model;
+package jProtocol.tls12.model.crypto;
 
 
 public class TlsMacParameters {

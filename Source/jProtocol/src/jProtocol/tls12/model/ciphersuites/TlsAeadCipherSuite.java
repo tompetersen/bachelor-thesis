@@ -2,16 +2,16 @@ package jProtocol.tls12.model.ciphersuites;
 
 import jProtocol.tls12.model.TlsCiphertext;
 import jProtocol.tls12.model.TlsPlaintext;
-import jProtocol.tls12.model.TlsSecurityParameters.CipherType;
-import jProtocol.tls12.model.TlsSecurityParameters.MacAlgorithm;
 import jProtocol.tls12.model.exceptions.TlsBadRecordMacException;
+import jProtocol.tls12.model.values.TlsCipherType;
+import jProtocol.tls12.model.values.TlsMacAlgorithm;
 
 /*
  *  additional_data = seq_num + TLSCompressed.type + TLSCompressed.version + TLSCompressed.length;
  *  
  *  Nonce? explicit, implicit - how to compute?
  */
-public abstract class TlsAeadCipherSuite extends TlsCipherSuite {
+public abstract class TlsAeadCipherSuite implements TlsCipherSuite {
 
 	public class TlsAeadEncryptionResult {
 		//the plain fields
@@ -41,15 +41,15 @@ public abstract class TlsAeadCipherSuite extends TlsCipherSuite {
 	public abstract byte[] decrypt(byte[] key, byte[] nonce, byte[] ciphertext, byte[] additionalData) throws TlsBadRecordMacException;
 
 	@Override
-	public CipherType getCipherType() {
-		return CipherType.aead;
+	public TlsCipherType getCipherType() {
+		return TlsCipherType.aead;
 	}
 	
 	/*
 	 * Implicit authentication of AEAD ciphers requires no explicit MAC.
 	 */
 	@Override
-	public MacAlgorithm getMacAlgorithm() {
+	public TlsMacAlgorithm getMacAlgorithm() {
 		return null;
 	}
 

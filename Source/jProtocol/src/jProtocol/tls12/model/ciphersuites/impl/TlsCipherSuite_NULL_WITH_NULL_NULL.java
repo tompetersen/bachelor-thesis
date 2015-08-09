@@ -1,9 +1,9 @@
 package jProtocol.tls12.model.ciphersuites.impl;
 
-import jProtocol.tls12.model.TlsSecurityParameters.BulkCipherAlgorithm;
-import jProtocol.tls12.model.TlsSecurityParameters.MacAlgorithm;
 import jProtocol.tls12.model.ciphersuites.TlsStreamCipherSuite;
 import jProtocol.tls12.model.exceptions.TlsBadRecordMacException;
+import jProtocol.tls12.model.values.TlsBulkCipherAlgorithm;
+import jProtocol.tls12.model.values.TlsMacAlgorithm;
 
 /*
  * If the cipher suite is TLS_NULL_WITH_NULL_NULL, encryption consists of the identity operation 
@@ -39,7 +39,7 @@ public class TlsCipherSuite_NULL_WITH_NULL_NULL extends TlsStreamCipherSuite {
 	}
 
 	@Override
-	public BulkCipherAlgorithm getBulkCipherAlgorithm() {
+	public TlsBulkCipherAlgorithm getBulkCipherAlgorithm() {
 		return null;
 	}
 
@@ -49,7 +49,7 @@ public class TlsCipherSuite_NULL_WITH_NULL_NULL extends TlsStreamCipherSuite {
 	}
 
 	@Override
-	public MacAlgorithm getMacAlgorithm() {
+	public TlsMacAlgorithm getMacAlgorithm() {
 		return null;
 	}
 

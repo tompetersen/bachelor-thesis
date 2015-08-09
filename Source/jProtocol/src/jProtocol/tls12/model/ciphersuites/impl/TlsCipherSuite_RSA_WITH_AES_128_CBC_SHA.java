@@ -1,11 +1,11 @@
 package jProtocol.tls12.model.ciphersuites.impl;
 
-import jProtocol.tls12.model.TlsCipher;
-import jProtocol.tls12.model.TlsMac;
-import jProtocol.tls12.model.TlsMacParameters;
-import jProtocol.tls12.model.TlsSecurityParameters.BulkCipherAlgorithm;
-import jProtocol.tls12.model.TlsSecurityParameters.MacAlgorithm;
 import jProtocol.tls12.model.ciphersuites.TlsBlockCipherSuite;
+import jProtocol.tls12.model.crypto.TlsCipher;
+import jProtocol.tls12.model.crypto.TlsMac;
+import jProtocol.tls12.model.crypto.TlsMacParameters;
+import jProtocol.tls12.model.values.TlsBulkCipherAlgorithm;
+import jProtocol.tls12.model.values.TlsMacAlgorithm;
 
 /*
  *  Cipher Suite definitions
@@ -47,8 +47,8 @@ public class TlsCipherSuite_RSA_WITH_AES_128_CBC_SHA extends TlsBlockCipherSuite
 	}
 
 	@Override
-	public BulkCipherAlgorithm getBulkCipherAlgorithm() {
-		return BulkCipherAlgorithm.cipher_aes;
+	public TlsBulkCipherAlgorithm getBulkCipherAlgorithm() {
+		return TlsBulkCipherAlgorithm.cipher_aes;
 	}
 
 	@Override
@@ -67,8 +67,8 @@ public class TlsCipherSuite_RSA_WITH_AES_128_CBC_SHA extends TlsBlockCipherSuite
 	}
 
 	@Override
-	public MacAlgorithm getMacAlgorithm() {
-		return MacAlgorithm.mac_hmac_sha1;
+	public TlsMacAlgorithm getMacAlgorithm() {
+		return TlsMacAlgorithm.mac_hmac_sha1;
 	}
 
 	@Override

@@ -1,9 +1,9 @@
 package test.tls;
 
 import jProtocol.tls12.model.TlsSecurityParameters;
-import jProtocol.tls12.model.TlsSecurityParameters.ConnectionEnd;
 import jProtocol.tls12.model.ciphersuites.TlsCipherSuite;
 import jProtocol.tls12.model.ciphersuites.impl.TlsCipherSuite_NULL_WITH_NULL_NULL;
+import jProtocol.tls12.model.values.TlsConnectionEnd;
 import static org.junit.Assert.*;
 
 import org.junit.Before;
@@ -15,7 +15,7 @@ public class SecurityParametersTest {
 	
 	@Before
 	public void setup() {
-		_parameters = new TlsSecurityParameters(ConnectionEnd.server);
+		_parameters = new TlsSecurityParameters(TlsConnectionEnd.server);
 	}
 	
 	@Test

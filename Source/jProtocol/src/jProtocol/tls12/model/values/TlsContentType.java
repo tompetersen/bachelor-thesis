@@ -1,4 +1,4 @@
-package jProtocol.tls12.model;
+package jProtocol.tls12.model.values;
 
 import java.util.HashMap;
 import java.util.Map;

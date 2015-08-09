@@ -1,13 +1,13 @@
 package jProtocol.tls12.model.fragments;
 
-public abstract class TlsFragment {
+public interface TlsFragment {
 
 	/**
 	 * Returns the length of the fragment which will be sent.
 	 * 
 	 * @return the fragment length
 	 */
-	public abstract int getLength();
+	public int getLength();
 	
 	/**
 	 * Returns the bytes which will be sent in the fragment (including 
@@ -15,12 +15,12 @@ public abstract class TlsFragment {
 	 * 
 	 * @return the bytes to be sent
 	 */
-	public abstract byte[] getBytes();
+	public byte[] getBytes();
 
 	/**
 	 * Returns the unencrypted content of the fragment.
 	 * 
 	 * @return the unencrypted content
 	 */
-	public abstract byte[] getContent();	
+	public byte[] getContent();	
 }

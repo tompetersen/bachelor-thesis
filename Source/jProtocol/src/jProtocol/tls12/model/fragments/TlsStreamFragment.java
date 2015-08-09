@@ -2,7 +2,7 @@ package jProtocol.tls12.model.fragments;
 
 import jProtocol.tls12.model.ciphersuites.TlsStreamCipherSuite.TlsStreamEncryptionResult;
 
-public class TlsStreamFragment extends TlsFragment {
+public class TlsStreamFragment implements TlsFragment {
 
 	private TlsStreamEncryptionResult _encryptionResult;
 	

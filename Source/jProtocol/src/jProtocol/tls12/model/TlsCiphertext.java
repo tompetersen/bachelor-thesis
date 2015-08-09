@@ -1,9 +1,10 @@
 package jProtocol.tls12.model;
 
 import jProtocol.Abstract.Model.ProtocolDataUnit;
-import jProtocol.tls12.model.TlsContentType.ContentType;
 import jProtocol.tls12.model.fragments.TlsFragment;
 import jProtocol.tls12.model.messages.TlsMessage;
+import jProtocol.tls12.model.values.TlsVersion;
+import jProtocol.tls12.model.values.TlsContentType.ContentType;
 
 public class TlsCiphertext extends ProtocolDataUnit {
 
