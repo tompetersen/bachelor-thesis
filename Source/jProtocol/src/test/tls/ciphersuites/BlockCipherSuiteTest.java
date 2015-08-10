@@ -1,4 +1,4 @@
-package test.tls;
+package test.tls.ciphersuites;
 
 import static org.junit.Assert.*;
 import jProtocol.tls12.model.TlsCiphertext;

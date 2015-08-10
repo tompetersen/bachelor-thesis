@@ -1,4 +1,4 @@
-package test.tls;
+package test.tls.crypto;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;

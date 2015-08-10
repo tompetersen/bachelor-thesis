@@ -25,6 +25,9 @@ public class TlsServerHelloMessage extends TlsHandshakeMessage {
 		if (serverRandom == null) {
 			throw new IllegalArgumentException("Server random must be set!");
 		}
+		if (sessionId == null) {
+			throw new IllegalArgumentException("SessionID must be set!");
+		}
 		if (cipherSuite == null) {
 			throw new IllegalArgumentException("CipherSuite must be set!");
 		}

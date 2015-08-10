@@ -18,6 +18,11 @@ public class TlsAeadFragment implements TlsFragment {
 		return _sentBytes;
 	}
 	
+	/**
+	 * Returns the explicit nonce used for AEAD encryption.
+	 * 
+	 * @return the explicit nonce
+	 */
 	public byte[] getNonceExplicit() {
 		return _encryptionResult.nonce;
 	}

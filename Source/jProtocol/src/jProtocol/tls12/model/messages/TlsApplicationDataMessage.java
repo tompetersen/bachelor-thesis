@@ -15,6 +15,9 @@ public class TlsApplicationDataMessage implements TlsMessage {
 	private byte[] _content;
 	
 	public TlsApplicationDataMessage(byte[] content) {
+		if (content == null) {
+			throw new IllegalArgumentException("Alert description must not be null!");
+		}
 		_content = content;
 	}
 	
@@ -27,5 +30,4 @@ public class TlsApplicationDataMessage implements TlsMessage {
 	public byte[] getBytes() {
 		return _content;
 	}
-	
 }

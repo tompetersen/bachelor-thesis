@@ -1,9 +1,10 @@
-package test.tls;
+package test.tls.messages.handshake;
 
 import static org.junit.Assert.*;
 import jProtocol.helper.ByteHelper;
 import jProtocol.tls12.model.messages.handshake.TlsHandshakeMessage;
 import jProtocol.tls12.model.values.TlsHandshakeType;
+import jProtocol.tls12.model.values.TlsContentType.ContentType;
 import jProtocol.tls12.model.values.TlsHandshakeType.HandshakeType;
 
 import org.junit.Test;
@@ -64,6 +65,11 @@ public class HandshakeMessageTest {
 		System.arraycopy(bytes, 4, content, 0, bytes.length - 4);;
 		
 		assertArrayEquals(content, _body); 
+	}
+	
+	@Test
+	public void testMessageType() {
+		assertEquals(_testMessage.getContentType(), ContentType.Handshake);
 	}
 
 }

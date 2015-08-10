@@ -26,6 +26,9 @@ public class TlsAlertMessage implements TlsMessage {
 	private boolean _isFatal;
 	
 	public TlsAlertMessage(Alert description, boolean isFatal) {
+		if (description == null) {
+			throw new IllegalArgumentException("Alert description must not be null!");
+		}
 		_description = description;
 		_isFatal = isFatal;
 	}

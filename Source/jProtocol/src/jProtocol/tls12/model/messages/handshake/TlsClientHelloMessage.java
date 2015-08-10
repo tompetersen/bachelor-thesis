@@ -26,6 +26,9 @@ public class TlsClientHelloMessage extends TlsHandshakeMessage {
 		if (clientRandom == null) {
 			throw new IllegalArgumentException("Client random must be set!");
 		}
+		if (sessionId == null) {
+			throw new IllegalArgumentException("Cipher Suites must not be empty!");
+		}
 		if (cipherSuites == null || cipherSuites.size() < 1) {
 			throw new IllegalArgumentException("Cipher Suites must not be empty!");
 		}
