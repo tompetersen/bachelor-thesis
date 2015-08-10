@@ -42,7 +42,7 @@ public class BlockCipherSuiteTest {
 	
 	@Before
 	public void setUp() {
-		TlsVersion version = new TlsVersion((byte)3,(byte)3);
+		TlsVersion version = TlsVersion.getTls12Version();
 		_plaintext = new TlsPlaintext(_testMessage, version);
 		
 		byte[] encKey = new byte[_cipherSuite.getEncryptKeyLength()];
@@ -122,7 +122,7 @@ public class BlockCipherSuiteTest {
 	
 	@Test(expected = TlsBadRecordMacException.class)
 	public void testWrongSequenceNumber() throws TlsBadRecordMacException, TlsBadPaddingException {
-		TlsEncryptionParameters wrongParameters = new TlsEncryptionParameters(1337, _parameters.encryptionWriteKey, _parameters.macWriteKey, null);
+		TlsEncryptionParameters wrongParameters = new TlsEncryptionParameters(1337, _parameters.getEncryptionWriteKey(), _parameters.getMacWriteKey(), null);
 		 _cipherSuite.ciphertextToPlaintext(_ciphertext, wrongParameters);
 	}
 	
@@ -132,7 +132,7 @@ public class BlockCipherSuiteTest {
 		byte[] encKey = new byte[_cipherSuite.getEncryptKeyLength()];
 		Arrays.fill(encKey, (byte)0x23);
 		
-		TlsEncryptionParameters wrongParameters = new TlsEncryptionParameters(0, encKey, _parameters.macWriteKey, null);
+		TlsEncryptionParameters wrongParameters = new TlsEncryptionParameters(0, encKey, _parameters.getMacWriteKey(), null);
 		_cipherSuite.ciphertextToPlaintext(_ciphertext, wrongParameters);
 	}
 	
@@ -141,7 +141,7 @@ public class BlockCipherSuiteTest {
 		byte[] macWriteKey = new byte[_cipherSuite.getMacKeyLength()];
 		Arrays.fill(macWriteKey, (byte)0x34);
 		
-		TlsEncryptionParameters wrongParameters = new TlsEncryptionParameters(0, _parameters.encryptionWriteKey, macWriteKey, null);
+		TlsEncryptionParameters wrongParameters = new TlsEncryptionParameters(0, _parameters.getEncryptionWriteKey(), macWriteKey, null);
 		_cipherSuite.ciphertextToPlaintext(_ciphertext, wrongParameters);
 	}
 }

@@ -32,7 +32,7 @@ public class TlsConnectionState {
 		
 		byte[] keyBlock = TlsPseudoRandomFunction.prf(_securityParameters.getMasterSecret(), 
 				"key expansion", 
-				ByteHelper.concatenate(_securityParameters.getClientRandom(), _securityParameters.getServerRandom()), 
+				ByteHelper.concatenate(_securityParameters.getClientRandom().getBytes(), _securityParameters.getServerRandom().getBytes()), 
 				neededKeySize);
 		
 		setKeys(keyBlock);
@@ -85,47 +85,50 @@ public class TlsConnectionState {
 	}
 
 	public void setSessionId(byte[] sessionId) {
+		if (sessionId.length < 1 || sessionId.length > 32) {
+			throw new IllegalArgumentException("SessionID must have a length between 1 and 32!");
+		}
 		_sessionId = sessionId;
 	}
 
 	public byte[] getClientWriteMacKey() {
 		if (_clientWriteMacKey == null) {
-			throw new RuntimeException("Key must be computed first");
+			throw new RuntimeException("Key must be computed first!");
 		}
 		return _clientWriteMacKey;
 	}
 
 	public byte[] getServerWriteMacKey() {
 		if (_serverWriteMacKey == null) {
-			throw new RuntimeException("Key must be computed first");
+			throw new RuntimeException("Key must be computed first!");
 		}
 		return _serverWriteMacKey;
 	}
 
 	public byte[] getClientWriteEncyrptionKey() {
 		if (_clientWriteEncyrptionKey == null) {
-			throw new RuntimeException("Key must be computed first");
+			throw new RuntimeException("Key must be computed first!");
 		}
 		return _clientWriteEncyrptionKey;
 	}
 
 	public byte[] getServerWriteEncyrptionKey() {
 		if (_serverWriteEncyrptionKey == null) {
-			throw new RuntimeException("Key must be computed first");
+			throw new RuntimeException("Key must be computed first!");
 		}
 		return _serverWriteEncyrptionKey;
 	}
 
 	public byte[] getClientWriteIv() {
 		if (_clientWriteIv == null) {
-			throw new RuntimeException("Key must be computed first");
+			throw new RuntimeException("Key must be computed first!");
 		}
 		return _clientWriteIv;
 	}
 
 	public byte[] getServerWriteIv() {
 		if (_serverWriteIv == null) {
-			throw new RuntimeException("Key must be computed first");
+			throw new RuntimeException("Key must be computed first!");
 		}
 		return _serverWriteIv;
 	}

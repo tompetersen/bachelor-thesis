@@ -39,11 +39,11 @@ public abstract class TlsBlockCipherSuite implements TlsCipherSuite {
 	
 	public TlsCiphertext plaintextToCiphertext(TlsPlaintext plaintext, TlsEncryptionParameters encParam) {
 	//compute mac
-		TlsMacParameters parameters = new TlsMacParameters(encParam.macWriteKey, 
-				encParam.sequenceNumber, 
+		TlsMacParameters parameters = new TlsMacParameters(encParam.getMacWriteKey(), 
+				encParam.getSequenceNumber(), 
 				TlsContentType.valueFromContentType(plaintext.getContentType()), 
-				plaintext.getVersion().majorVersion, 
-				plaintext.getVersion().minorVersion, 
+				plaintext.getVersion().getMajorVersion(), 
+				plaintext.getVersion().getMinorVersion(), 
 				plaintext.getLength(), 
 				plaintext.getFragment());
 		byte[] mac = computeMac(parameters);
@@ -65,7 +65,7 @@ public abstract class TlsBlockCipherSuite implements TlsCipherSuite {
 		byte[] iv = TlsPseudoRandomNumberGenerator.nextBytes(getRecordIvLength());
 		
 	//encrypt
-		byte[] encrypted = encrypt(encParam.encryptionWriteKey, iv, b.array());
+		byte[] encrypted = encrypt(encParam.getEncryptionWriteKey(), iv, b.array());
 		
 		TlsBlockEncryptionResult result = new TlsBlockEncryptionResult(iv, plaintext.getFragment(), mac, padding, (byte)paddingLength, encrypted);
 		TlsCiphertext ciphertext = new TlsCiphertext(plaintext.getMessage(), plaintext.getVersion(), new TlsBlockFragment(result));
@@ -78,7 +78,7 @@ public abstract class TlsBlockCipherSuite implements TlsCipherSuite {
 		byte[] fragmentBytes = ciphertext.getFragment().getBytes();
 		byte[] encrypted = Arrays.copyOfRange(fragmentBytes, getRecordIvLength(), fragmentBytes.length);
 		byte[] iv = Arrays.copyOfRange(fragmentBytes, 0, getRecordIvLength());
-		byte[] decrypted = decrypt(parameters.encryptionWriteKey, iv, encrypted);
+		byte[] decrypted = decrypt(parameters.getEncryptionWriteKey(), iv, encrypted);
 		
 	//padding
 		int paddingLength = decrypted[decrypted.length - 1] & 0xFF; //interpret as unsigned byte
@@ -96,11 +96,11 @@ public abstract class TlsBlockCipherSuite implements TlsCipherSuite {
 		}
 		
 	//check mac
-		TlsMacParameters macParams = new TlsMacParameters(parameters.macWriteKey, 
-				parameters.sequenceNumber, 
+		TlsMacParameters macParams = new TlsMacParameters(parameters.getMacWriteKey(), 
+				parameters.getSequenceNumber(), 
 				TlsContentType.valueFromContentType(ciphertext.getContentType()), 
-				ciphertext.getVersion().majorVersion, 
-				ciphertext.getVersion().minorVersion, 
+				ciphertext.getVersion().getMajorVersion(), 
+				ciphertext.getVersion().getMinorVersion(), 
 				(short)content.length, 
 				content);
 		byte[] computedMac = computeMac(macParams);

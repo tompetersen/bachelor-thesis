@@ -7,11 +7,12 @@ import jProtocol.tls12.model.values.TlsBulkCipherAlgorithm;
 import jProtocol.tls12.model.values.TlsCipherType;
 import jProtocol.tls12.model.values.TlsConnectionEnd;
 import jProtocol.tls12.model.values.TlsMacAlgorithm;
+import jProtocol.tls12.model.values.TlsRandom;
 
 public class TlsSecurityParameters {
 	
 	public enum PrfAlgorithm {
-		tls_prf_sha256
+		tls_prf_sha256 //used in all TLS 1.2 cipher suites
 	}
 	
 	public enum CompressionMethod {
@@ -19,74 +20,99 @@ public class TlsSecurityParameters {
 	}
 	
 	private TlsConnectionEnd _entity;
+	private TlsCipherSuite _cipherSuite;
 	
 	//private PrfAlgorithm _prfAlgorithm;
 	//private CompressionMethod _compressionAlgorithm;
 	
 	private byte[] _masterSecret; //48
-	private byte[] _clientRandom; //32
-	private byte[] _serverRandom; //32
-	
-	private TlsCipherSuite _cipherSuite;
+	private TlsRandom _clientRandom; //32
+	private TlsRandom _serverRandom; //32
 	
 	public TlsSecurityParameters(TlsConnectionEnd connectionEnd) {
 		_entity = connectionEnd;
-		//_prfAlgorithm = PrfAlgorithm.tls_prf_sha256; //used in all TLS 1.2 cipher suites
 	}
 	
 	public void setCipherSuite(TlsCipherSuite cipherSuite) {
 		if (cipherSuite == null) {
 			throw new IllegalArgumentException("Ciphersuite must not be null!");
 		}
-		this._cipherSuite = cipherSuite;
+		_cipherSuite = cipherSuite;
 	}
 	
 	public TlsBulkCipherAlgorithm getBulkCipherAlgorithm() {
+		if (_cipherSuite == null) {
+			throw new RuntimeException("Cipher Suite must be set first!");
+		}
 		return _cipherSuite.getBulkCipherAlgorithm();
 	}
 	
 	public TlsCipherType getCipherType() {
+		if (_cipherSuite == null) {
+			throw new RuntimeException("Cipher Suite must be set first!");
+		}
 		return _cipherSuite.getCipherType();
 	}
 	
 	public byte getEncKeyLength() {
+		if (_cipherSuite == null) {
+			throw new RuntimeException("Cipher Suite must be set first!");
+		}
 		return _cipherSuite.getEncryptKeyLength();
 	}
 
 	public byte getBlockLength() {
+		if (_cipherSuite == null) {
+			throw new RuntimeException("Cipher Suite must be set first!");
+		}
 		return _cipherSuite.getBlockLength();
 	}
 
 	public byte getFixedIvLength() {
+		if (_cipherSuite == null) {
+			throw new RuntimeException("Cipher Suite must be set first!");
+		}
 		return _cipherSuite.getFixedIvLength();
 	}
 
 	public byte getRecordIvLength() {
+		if (_cipherSuite == null) {
+			throw new RuntimeException("Cipher Suite must be set first!");
+		}
 		return _cipherSuite.getRecordIvLength();
 	}
 
 	public TlsMacAlgorithm getMacAlgorithm() {
+		if (_cipherSuite == null) {
+			throw new RuntimeException("Cipher Suite must be set first!");
+		}
 		return _cipherSuite.getMacAlgorithm();
 	}
 
 	public byte getMacLength() {
+		if (_cipherSuite == null) {
+			throw new RuntimeException("Cipher Suite must be set first!");
+		}
 		return _cipherSuite.getMacLength();
 	}
 
 	public byte getMacKeyLength() {
+		if (_cipherSuite == null) {
+			throw new RuntimeException("Cipher Suite must be set first!");
+		}
 		return _cipherSuite.getMacKeyLength();
 	}
 	
-	public void setClientRandom(byte[] clientRandom) {
-		if (clientRandom == null || clientRandom.length != 32) {
-			throw new IllegalArgumentException("Invalid client random value! Must be 32 bytes long!");
+	public void setClientRandom(TlsRandom clientRandom) {
+		if (clientRandom == null) {
+			throw new IllegalArgumentException("Invalid client random value! Must not be null!");
 		}
 		this._clientRandom = clientRandom;
 	}
 
-	public void setServerRandom(byte[] serverRandom) {
-		if (serverRandom == null || serverRandom.length != 32) {
-			throw new IllegalArgumentException("Invalid server random value! Must be 32 bytes long!");
+	public void setServerRandom(TlsRandom serverRandom) {
+		if (serverRandom == null) {
+			throw new IllegalArgumentException("Invalid server random value! Must not be null!");
 		}
 		this._serverRandom = serverRandom;
 	}
@@ -104,7 +130,7 @@ public class TlsSecurityParameters {
 		 */
 		_masterSecret = TlsPseudoRandomFunction.prf(premastersecret, 
 				"master secret", 
-				ByteHelper.concatenate(_clientRandom, _serverRandom), 
+				ByteHelper.concatenate(_clientRandom.getBytes(), _serverRandom.getBytes()), 
 				48);
 	}
 
@@ -115,14 +141,14 @@ public class TlsSecurityParameters {
 		return _masterSecret;
 	}
 
-	public byte[] getClientRandom() {
+	public TlsRandom getClientRandom() {
 		if (_clientRandom == null) {
 			throw new RuntimeException("Client random must be set first!");
 		}
 		return _clientRandom;
 	}
 
-	public byte[] getServerRandom() {
+	public TlsRandom getServerRandom() {
 		if (_serverRandom == null) {
 			throw new RuntimeException("Server random must be set first!");
 		}

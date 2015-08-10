@@ -24,14 +24,14 @@ import javax.crypto.spec.SecretKeySpec;
  * http://www.javamex.com/tutorials/cryptography/block_modes_java.shtml
  * 
  */
-public class TlsCipher {
+public class TlsSymmetricCipher {
 
 	private String _cipherString;
 	private String _algorithmString;
 	private Cipher _cipher;
 	private TlsCipherType _cipherType;
 
-	public TlsCipher(TlsBulkCipherAlgorithm algorithm, TlsCipherType cipherType) {
+	public TlsSymmetricCipher(TlsBulkCipherAlgorithm algorithm, TlsCipherType cipherType) {
 		_cipherType = cipherType;
 		switch (algorithm) {
 		case cipher_null:

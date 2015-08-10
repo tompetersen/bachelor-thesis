@@ -11,7 +11,8 @@ import org.junit.runners.Suite.SuiteClasses;
 		PseudoRandomFunctionTest.class,
 		SecurityParametersTest.class,
 		CipherTest.class,
-		BlockCipherSuiteTest.class
+		BlockCipherSuiteTest.class,
+		HandshakeMessageTest.class
 		})
 public class AllTests {
 

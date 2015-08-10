@@ -14,8 +14,12 @@ public abstract class StateMachine<T extends ProtocolDataUnit> {
 	}
 	
 	public void setState(Integer state) {
+		_currentState.onLeave();
+		
 		State<T> newState = _states.get(state);
 		_currentState = newState;
+		
+		_currentState.onEnter();
 	}
 	
 	public void receiveMessage(T pdu) {

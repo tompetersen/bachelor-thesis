@@ -6,7 +6,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 import jProtocol.helper.ByteHelper;
-import jProtocol.tls12.model.crypto.TlsCipher;
+import jProtocol.tls12.model.crypto.TlsSymmetricCipher;
 import jProtocol.tls12.model.values.TlsBulkCipherAlgorithm;
 import jProtocol.tls12.model.values.TlsCipherType;
 
@@ -15,12 +15,12 @@ import org.junit.Test;
 
 public class CipherTest {
 
-	private TlsCipher _blockCipher;
+	private TlsSymmetricCipher _blockCipher;
 	
 	
 	@Before
 	public void setUp() {
-		_blockCipher = new TlsCipher(TlsBulkCipherAlgorithm.cipher_aes, TlsCipherType.block);
+		_blockCipher = new TlsSymmetricCipher(TlsBulkCipherAlgorithm.cipher_aes, TlsCipherType.block);
 	}
 	
 	@Test

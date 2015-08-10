@@ -12,6 +12,7 @@ import jProtocol.tls12.model.values.TlsBulkCipherAlgorithm;
 import jProtocol.tls12.model.values.TlsCipherType;
 import jProtocol.tls12.model.values.TlsConnectionEnd;
 import jProtocol.tls12.model.values.TlsMacAlgorithm;
+import jProtocol.tls12.model.values.TlsRandom;
 
 import java.lang.reflect.Method;
 
@@ -76,7 +77,8 @@ public class ConnectionStateTest {
 	private TlsCipherSuite _cs;
 	private TlsSecurityParameters _sp;
 	private TlsConnectionState _connectionState;
-	private byte[] _random32 = new byte[32];
+	private byte[] _random28 = new byte[28];
+	private TlsRandom _tlsRandom = new TlsRandom(0, _random28);
 	private byte[] _random48 = new byte[48];
 	
 	@Before
@@ -85,8 +87,8 @@ public class ConnectionStateTest {
 		
 		_sp = new TlsSecurityParameters(TlsConnectionEnd.server);
 		_sp.setCipherSuite(_cs);
-		_sp.setClientRandom(_random32);
-		_sp.setServerRandom(_random32);
+		_sp.setClientRandom(_tlsRandom);
+		_sp.setServerRandom(_tlsRandom);
 		_sp.computeMasterSecret(_random48);
 		
 		_connectionState = new TlsConnectionState(_sp);
