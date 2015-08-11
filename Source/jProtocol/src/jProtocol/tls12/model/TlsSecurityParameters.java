@@ -2,7 +2,10 @@ package jProtocol.tls12.model;
 
 import jProtocol.helper.ByteHelper;
 import jProtocol.tls12.model.ciphersuites.TlsCipherSuite;
+import jProtocol.tls12.model.ciphersuites.TlsEncryptionParameters;
 import jProtocol.tls12.model.crypto.TlsPseudoRandomFunction;
+import jProtocol.tls12.model.exceptions.TlsBadPaddingException;
+import jProtocol.tls12.model.exceptions.TlsBadRecordMacException;
 import jProtocol.tls12.model.values.TlsBulkCipherAlgorithm;
 import jProtocol.tls12.model.values.TlsCipherType;
 import jProtocol.tls12.model.values.TlsConnectionEnd;
@@ -38,6 +41,33 @@ public class TlsSecurityParameters {
 			throw new IllegalArgumentException("Ciphersuite must not be null!");
 		}
 		_cipherSuite = cipherSuite;
+	}
+	
+	/**
+	 * Transforms a TLSPlaintext to a TLSCiphertext. The Message will be MACed and 
+	 * encrypted according to the used ciphersuite.
+	 * 
+	 * @param plaintext the TLSPlaintext
+	 * @param parameters the encryption parameters used to encrypt
+	 * 
+	 * @return the TLSCiphertext
+	 */
+	public TlsCiphertext plaintextToCiphertext(TlsPlaintext plaintext, TlsEncryptionParameters parameters) {
+		return _cipherSuite.plaintextToCiphertext(plaintext, parameters);
+	}
+	
+	/**
+	 * Transforms a TLSCiphertext to a TLSPlaintext. The Message will be decrypted and 
+	 * the MAC will be checked according to the used ciphersuite.
+	 * 
+	 * @param ciphertext the TLSCiphertext
+	 * @param parameters the encryption parameters used to decrypt
+	 * 
+	 * @return the TlsPlaintext
+	 */
+	public TlsPlaintext ciphertextToPlaintext(TlsCiphertext ciphertext, TlsEncryptionParameters parameters) 
+			throws TlsBadRecordMacException, TlsBadPaddingException {
+		return _cipherSuite.ciphertextToPlaintext(ciphertext, parameters);
 	}
 	
 	public TlsBulkCipherAlgorithm getBulkCipherAlgorithm() {

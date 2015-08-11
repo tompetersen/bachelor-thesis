@@ -2,6 +2,8 @@ package jProtocol.tls12.model;
 
 import jProtocol.helper.ByteHelper;
 import jProtocol.tls12.model.crypto.TlsPseudoRandomFunction;
+import jProtocol.tls12.model.values.TlsSessionId;
+import jProtocol.tls12.model.values.TlsVersion;
 
 public class TlsConnectionState {
 
@@ -14,12 +16,16 @@ public class TlsConnectionState {
 	private byte[] _clientWriteIv;
 	private byte[] _serverWriteIv;
 	
-	private long _sequenceNumber;
-	private byte[] _sessionId;
+	private long _clientSequenceNumber;
+	private long _serverSequenceNumber;
+	private TlsSessionId _sessionId;
+	
+	private TlsVersion _version;
 	
 	public TlsConnectionState(TlsSecurityParameters securityParameters) {
 		_securityParameters = securityParameters;
-		_sequenceNumber = 0;
+		_clientSequenceNumber = 0;
+		_serverSequenceNumber = 0;
 	}
 	
 	public void computeKeys() {
@@ -72,23 +78,48 @@ public class TlsConnectionState {
 		pos += writeIvLength;
 	}
 	
-	public long getSequenceNumber() {
-		return _sequenceNumber;
+	public long getClientSequenceNumber() {
+		return _clientSequenceNumber;
 	}
 	
-	public void increaseSequenceNumber() {
-		_sequenceNumber ++;
+	public void increaseClientSequenceNumber() {
+		_clientSequenceNumber++;
+	}
+	
+	public long getServerSequenceNumber() {
+		return _serverSequenceNumber;
+	}
+	
+	public void increaseServerSequenceNumber() {
+		_serverSequenceNumber++;
 	}
 
-	public byte[] getSessionId() {
+	public TlsSessionId getSessionId() {
+		if (_sessionId == null) {
+			throw new RuntimeException("SessionID must be set first!");
+		}
 		return _sessionId;
 	}
 
-	public void setSessionId(byte[] sessionId) {
-		if (sessionId.length < 1 || sessionId.length > 32) {
-			throw new IllegalArgumentException("SessionID must have a length between 1 and 32!");
+	public void setSessionId(TlsSessionId sessionId) {
+		if (sessionId == null) {
+			throw new IllegalArgumentException("SessionID must be set!");
 		}
 		_sessionId = sessionId;
+	}
+
+	public TlsVersion getVersion() {
+		if (_version == null) {
+			throw new RuntimeException("Version must be set first!");
+		}
+		return _version;
+	}
+
+	public void setVersion(TlsVersion version) {
+		if (version == null) {
+			throw new IllegalArgumentException("Version must be set!");
+		}
+		_version = version;
 	}
 
 	public byte[] getClientWriteMacKey() {
@@ -105,14 +136,14 @@ public class TlsConnectionState {
 		return _serverWriteMacKey;
 	}
 
-	public byte[] getClientWriteEncyrptionKey() {
+	public byte[] getClientWriteEncryptionKey() {
 		if (_clientWriteEncyrptionKey == null) {
 			throw new RuntimeException("Key must be computed first!");
 		}
 		return _clientWriteEncyrptionKey;
 	}
 
-	public byte[] getServerWriteEncyrptionKey() {
+	public byte[] getServerWriteEncryptionKey() {
 		if (_serverWriteEncyrptionKey == null) {
 			throw new RuntimeException("Key must be computed first!");
 		}

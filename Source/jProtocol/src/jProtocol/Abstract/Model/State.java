@@ -14,12 +14,8 @@ public abstract class State<T extends ProtocolDataUnit> {
 	
 	public abstract void receiveMessage(T pdu);
 	
-	public void onEnter() {
-		
-	}
+	public void onEnter() {};
 	
-	public void onLeave() {
-		
-	}
+	public void onLeave() {};
 	
 }

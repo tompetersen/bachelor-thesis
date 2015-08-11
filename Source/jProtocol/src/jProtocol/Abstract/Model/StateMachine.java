@@ -6,11 +6,15 @@ import java.util.Map;
 public abstract class StateMachine<T extends ProtocolDataUnit> {
 	
 	private State<T> _currentState;
-	protected Map<Integer, State<T>> _states = new HashMap<Integer, State<T>>();
+	private Map<Integer, State<T>> _states = new HashMap<Integer, State<T>>();
 	private CommunicationChannel<T> _channel;
 	
 	public StateMachine(CommunicationChannel<T> channel) {
 		_channel = channel;
+	}
+	
+	public void addState(Integer stateNumber, State<T> state) {
+		_states.put(stateNumber, state);
 	}
 	
 	public void setState(Integer state) {

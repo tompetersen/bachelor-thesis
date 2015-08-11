@@ -121,8 +121,8 @@ public class ConnectionStateTest {
 		
 		assertArrayEquals(_connectionState.getClientWriteMacKey(), expectedMacKeys);
 		assertArrayEquals(_connectionState.getServerWriteMacKey(), expectedMacKeys);
-		assertArrayEquals(_connectionState.getClientWriteEncyrptionKey(), expectedEcryptionKeys);
-		assertArrayEquals(_connectionState.getServerWriteEncyrptionKey(), expectedEcryptionKeys);
+		assertArrayEquals(_connectionState.getClientWriteEncryptionKey(), expectedEcryptionKeys);
+		assertArrayEquals(_connectionState.getServerWriteEncryptionKey(), expectedEcryptionKeys);
 		assertArrayEquals(_connectionState.getClientWriteIv(), expectedIvs);
 		assertArrayEquals(_connectionState.getServerWriteIv(), expectedIvs);
 	}

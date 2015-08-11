@@ -10,7 +10,7 @@ public class EchoServer extends StateMachine<EchoProtocolDataUnit> {
 	public EchoServer(EchoCommunicationChannel channel) {
 		super(channel);
 		
-		_states.put(RECEIVE_STATE, new ReceiveState(this));               
+		addState(RECEIVE_STATE, new ReceiveState(this));               
 		setState(RECEIVE_STATE);
 	}
 	

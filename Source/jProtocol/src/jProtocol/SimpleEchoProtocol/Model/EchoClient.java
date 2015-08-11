@@ -13,8 +13,8 @@ public class EchoClient extends StateMachine<EchoProtocolDataUnit> {
 	public EchoClient(EchoCommunicationChannel channel) {
 		super(channel);
 
-		_states.put(RECEIVE_STATE, new ReceiveState(this));
-		_states.put(SEND_STATE, new SendState(this));
+		addState(RECEIVE_STATE, new ReceiveState(this));
+		addState(SEND_STATE, new SendState(this));
 		setState(SEND_STATE);
 	}
 

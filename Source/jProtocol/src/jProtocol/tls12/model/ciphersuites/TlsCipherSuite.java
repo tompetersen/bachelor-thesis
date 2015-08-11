@@ -15,9 +15,28 @@ import jProtocol.tls12.model.values.TlsMacAlgorithm;
  */
 public interface TlsCipherSuite {
 	
+	/**
+	 * Transforms a TLSPlaintext to a TLSCiphertext. The Message will be MACed and 
+	 * encrypted according to the used ciphersuite.
+	 * 
+	 * @param plaintext the TLSPlaintext
+	 * @param parameters the encryption parameters used to encrypt
+	 * 
+	 * @return the TLSCiphertext
+	 */
 	public TlsCiphertext plaintextToCiphertext(TlsPlaintext plaintext, TlsEncryptionParameters parameters);
 	
-	public TlsPlaintext ciphertextToPlaintext(TlsCiphertext plaintext, TlsEncryptionParameters parameters) throws TlsBadRecordMacException, TlsBadPaddingException ;
+	/**
+	 * Transforms a TLSCiphertext to a TLSPlaintext. The Message will be decrypted and 
+	 * the MAC will be checked according to the used ciphersuite.
+	 * 
+	 * @param ciphertext the TLSCiphertext
+	 * @param parameters the encryption parameters used to decrypt
+	 * 
+	 * @return the TlsPlaintext
+	 */
+	public TlsPlaintext ciphertextToPlaintext(TlsCiphertext ciphertext, TlsEncryptionParameters parameters) 
+			throws TlsBadRecordMacException, TlsBadPaddingException;
 	
 	/**
 	 * The name equal to the cipher suite name in TLS 1.2 specification.
