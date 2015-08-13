@@ -17,13 +17,18 @@ public abstract class StateMachine<T extends ProtocolDataUnit> {
 		_states.put(stateNumber, state);
 	}
 	
-	public void setState(Integer state) {
-		_currentState.onLeave();
-		
-		State<T> newState = _states.get(state);
-		_currentState = newState;
-		
-		_currentState.onEnter();
+	public void setState(Integer state, State<T> sender) {
+		if (sender == _currentState) {
+			_currentState.onLeave();
+			
+			State<T> newState = _states.get(state);
+			_currentState = newState;
+			
+			_currentState.onEnter();
+		}
+		else {
+			throw new RuntimeException("Only current state is allowed to set state!");
+		}
 	}
 	
 	public void receiveMessage(T pdu) {

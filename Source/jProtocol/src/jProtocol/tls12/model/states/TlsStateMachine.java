@@ -6,30 +6,37 @@ import jProtocol.tls12.model.TlsCiphertext;
 import jProtocol.tls12.model.TlsConnectionState;
 import jProtocol.tls12.model.TlsPlaintext;
 import jProtocol.tls12.model.TlsSecurityParameters;
+import jProtocol.tls12.model.ciphersuites.TlsCipherSuite;
 import jProtocol.tls12.model.ciphersuites.TlsEncryptionParameters;
 import jProtocol.tls12.model.exceptions.TlsBadPaddingException;
 import jProtocol.tls12.model.exceptions.TlsBadRecordMacException;
 import jProtocol.tls12.model.states.server.TlsInitialServerState;
 import jProtocol.tls12.model.values.TlsConnectionEnd;
+import jProtocol.tls12.model.values.TlsRandom;
+import jProtocol.tls12.model.values.TlsSessionId;
 import jProtocol.tls12.model.values.TlsVersion;
+
+import java.util.List;
 
 public class TlsStateMachine extends StateMachine<TlsCiphertext> {
 
 	public static final int INITIAL_SERVER_STATE = 1;
+	public static final int RECEIVED_CLIENT_HELLO_STATE = 2;
+	public static final int WAITING_FOR_CLIENT_KEY_EXCHANGE_STATE = 3;
 	
 	public static final int RECEIVED_UNEXPECTED_MESSAGE_STATE = 410;
 	public static final int RECEIVED_BAD_RECORD_MESSAGE_STATE = 420;
 	
 	private boolean _isServer;
-	private TlsSecurityParameters _parameters;
+	private TlsSecurityParameters _securityParameters;
 	private TlsConnectionState _connectionState;
 	
 	public TlsStateMachine(CommunicationChannel<TlsCiphertext> channel, TlsConnectionEnd entity) {
 		super(channel);
 		
 		_isServer = (entity == TlsConnectionEnd.server);
-		_parameters = new TlsSecurityParameters(entity);
-		_connectionState = new TlsConnectionState(_parameters);
+		_securityParameters = new TlsSecurityParameters(entity);
+		_connectionState = new TlsConnectionState(_securityParameters);
 		
 		createStates();
 	}
@@ -55,7 +62,7 @@ public class TlsStateMachine extends StateMachine<TlsCiphertext> {
 		
 		TlsEncryptionParameters encryptionParameters = new TlsEncryptionParameters(seqNum, encKey, macKey, iv);
 		
-		return _parameters.plaintextToCiphertext(plaintext, encryptionParameters);
+		return _securityParameters.plaintextToCiphertext(plaintext, encryptionParameters);
 	}
 	
 	/**
@@ -75,11 +82,63 @@ public class TlsStateMachine extends StateMachine<TlsCiphertext> {
 		
 		TlsEncryptionParameters encryptionParameters = new TlsEncryptionParameters(seqNum, encKey, macKey, iv);
 		
-		return _parameters.ciphertextToPlaintext(ciphertext, encryptionParameters);
+		return _securityParameters.ciphertextToPlaintext(ciphertext, encryptionParameters);
 	}
 	
 	public TlsVersion getVersion() {
 		return _connectionState.getVersion();
 	}
+	
+	public void setVersion(TlsVersion version) {
+		if (isSupportedVersion(version)) {
+			_connectionState.setVersion(version);
+		}
+		else {
+			_connectionState.setVersion(getHighestSupportedVersion());
+		}
+	}
+	
+	public boolean isSupportedVersion(TlsVersion version) {
+		//TODO: version check?
+		return version.equals(TlsVersion.getTls12Version());
+	}
+	
+	public TlsVersion getHighestSupportedVersion() {
+		//TODO: supportedVersions
+		return TlsVersion.getTls12Version();
+	}
+	
+	public void setClientRandom(TlsRandom random) {
+		_securityParameters.setClientRandom(random);
+	}
 
+	public void setServerRandom(TlsRandom random) {
+		_securityParameters.setServerRandom(random);
+	}
+	
+	public boolean canPerformAbbreviatedHandshakeForSessionId(TlsSessionId sessionId) {
+		//TODO
+		return false;
+	}
+
+	public void setSessionId(TlsSessionId sessionId) {
+		_connectionState.setSessionId(sessionId);
+	}
+	
+	public TlsSessionId getSessionId() {
+		return _connectionState.getSessionId();
+	}
+	
+	public void setCipherSuiteFromList(List<TlsCipherSuite> list) {
+		if (list == null || list.isEmpty()) {
+			throw new IllegalArgumentException("Cipher suite list must not be null or empty!");
+		}
+		//TODO: Choose Cipher suite
+		_securityParameters.setCipherSuite(list.get(0));
+	}
+	
+	public TlsCipherSuite getCipherSuite() {
+		return _securityParameters.getCipherSuite();
+	}
+	
 }

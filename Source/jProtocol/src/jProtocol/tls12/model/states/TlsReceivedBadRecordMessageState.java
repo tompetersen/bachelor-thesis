@@ -16,6 +16,12 @@ public class TlsReceivedBadRecordMessageState extends TlsState {
 	}
 
 	@Override
+	public boolean expectedTlsMessage(TlsMessage message) {
+		//catch all incoming messages
+		return true;
+	}
+	
+	@Override
 	public void onEnter() {
 		super.onEnter();
 		
@@ -24,5 +30,4 @@ public class TlsReceivedBadRecordMessageState extends TlsState {
 		
 		//setState(TlsStateMachine.INITIAL_SERVER_STATE);
 	}
-
 }

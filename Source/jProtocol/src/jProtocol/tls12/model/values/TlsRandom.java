@@ -7,6 +7,21 @@ public class TlsRandom {
 	private byte[] _gmt;
 	private byte[] _random;
 	
+	/**
+	 * Creates a TlsRandom object with the current time set as gmtUnixTime.
+	 * 
+	 * @param random 28 random bytes
+	 */
+	public TlsRandom(byte[] random) {
+		this((int) (System.currentTimeMillis() / 1000L), random);
+	}
+	
+	/**
+	 * Creates a TlsRandom object from time and random value.
+	 * 
+	 * @param gmtUnixTime the time in standard UNIX format (seconds since 1.1.1970). TLS does not require correctly set clocks.
+	 * @param random 28 random bytes
+	 */
 	public TlsRandom(int gmtUnixTime, byte[] random) {
 		if (random == null || random.length != 28) {
 			throw new IllegalArgumentException("Random.random must be 28 bytes long!");

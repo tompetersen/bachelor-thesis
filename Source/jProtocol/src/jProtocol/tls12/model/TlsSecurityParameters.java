@@ -43,6 +43,13 @@ public class TlsSecurityParameters {
 		_cipherSuite = cipherSuite;
 	}
 	
+	public TlsCipherSuite getCipherSuite() {
+		if (_cipherSuite == null) {
+			throw new RuntimeException("Ciphersuite must be set first!");
+		}
+		return _cipherSuite;
+	}
+	
 	/**
 	 * Transforms a TLSPlaintext to a TLSCiphertext. The Message will be MACed and 
 	 * encrypted according to the used ciphersuite.

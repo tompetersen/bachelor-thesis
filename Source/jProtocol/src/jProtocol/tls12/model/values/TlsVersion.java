@@ -21,4 +21,25 @@ public class TlsVersion {
 	public byte getMajorVersion() {
 		return _majorVersion;
 	}
+
+	@Override
+	public int hashCode() {
+		return _majorVersion * 10 + _minorVersion;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (!(obj instanceof TlsVersion))
+			return false;
+		TlsVersion other = (TlsVersion) obj;
+		if (_majorVersion != other._majorVersion)
+			return false;
+		if (_minorVersion != other._minorVersion)
+			return false;
+		return true;
+	}
 }
