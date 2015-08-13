@@ -2,7 +2,7 @@ package test.tls.messages;
 
 import static org.junit.Assert.assertEquals;
 import jProtocol.tls12.model.messages.TlsChangeCipherSpecMessage;
-import jProtocol.tls12.model.values.TlsContentType.ContentType;
+import jProtocol.tls12.model.values.TlsContentType;
 
 import org.junit.Test;
 
@@ -26,7 +26,7 @@ public class ChangeCipherSpecMessageTest {
 
 	@Test
 	public void testMessageType() {
-		assertEquals(_testMessage.getContentType(), ContentType.ChangeCipherSpec);
+		assertEquals(_testMessage.getContentType(), TlsContentType.ChangeCipherSpec);
 	}
 
 }

@@ -1,6 +1,6 @@
 package jProtocol.tls12.model.messages.handshake;
 
-import jProtocol.tls12.model.values.TlsHandshakeType.HandshakeType;
+import jProtocol.tls12.model.values.TlsHandshakeType;
 
 public class TlsHelloRequestMessage extends TlsHandshakeMessage {
 
@@ -9,8 +9,8 @@ public class TlsHelloRequestMessage extends TlsHandshakeMessage {
 	 */
 	
 	@Override
-	public HandshakeType getHandshakeType() {
-		return HandshakeType.hello_request;
+	public TlsHandshakeType getHandshakeType() {
+		return TlsHandshakeType.hello_request;
 	}
 
 	@Override

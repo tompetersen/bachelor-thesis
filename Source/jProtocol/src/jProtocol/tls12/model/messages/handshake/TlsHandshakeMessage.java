@@ -1,12 +1,11 @@
 package jProtocol.tls12.model.messages.handshake;
 
-import java.nio.ByteBuffer;
-
 import jProtocol.helper.ByteHelper;
 import jProtocol.tls12.model.messages.TlsMessage;
+import jProtocol.tls12.model.values.TlsContentType;
 import jProtocol.tls12.model.values.TlsHandshakeType;
-import jProtocol.tls12.model.values.TlsContentType.ContentType;
-import jProtocol.tls12.model.values.TlsHandshakeType.HandshakeType;
+
+import java.nio.ByteBuffer;
 
 /*
 struct {
@@ -28,16 +27,16 @@ struct {
  */
 public abstract class TlsHandshakeMessage implements TlsMessage {
 
-	public abstract HandshakeType getHandshakeType();
+	public abstract TlsHandshakeType getHandshakeType();
 	
 	@Override
-	public ContentType getContentType() {
-		return ContentType.Handshake;
+	public TlsContentType getContentType() {
+		return TlsContentType.Handshake;
 	}
 
 	@Override
 	public byte[] getBytes() {
-		byte msgType = TlsHandshakeType.valueFromHandshakeType(getHandshakeType()); //1 
+		byte msgType = getHandshakeType().getValue(); //1 
 		byte[] body = getBodyBytes();
 		int length = body.length; //3
 		

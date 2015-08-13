@@ -8,7 +8,6 @@ import jProtocol.tls12.model.exceptions.TlsBadPaddingException;
 import jProtocol.tls12.model.exceptions.TlsBadRecordMacException;
 import jProtocol.tls12.model.fragments.TlsBlockFragment;
 import jProtocol.tls12.model.values.TlsCipherType;
-import jProtocol.tls12.model.values.TlsContentType;
 
 import java.nio.ByteBuffer;
 import java.util.Arrays;
@@ -41,7 +40,7 @@ public abstract class TlsBlockCipherSuite implements TlsCipherSuite {
 	//compute mac
 		TlsMacParameters parameters = new TlsMacParameters(encParam.getMacWriteKey(), 
 				encParam.getSequenceNumber(), 
-				TlsContentType.valueFromContentType(plaintext.getContentType()), 
+				plaintext.getContentType().getValue(), 
 				plaintext.getVersion().getMajorVersion(), 
 				plaintext.getVersion().getMinorVersion(), 
 				plaintext.getLength(), 
@@ -98,7 +97,7 @@ public abstract class TlsBlockCipherSuite implements TlsCipherSuite {
 	//check mac
 		TlsMacParameters macParams = new TlsMacParameters(parameters.getMacWriteKey(), 
 				parameters.getSequenceNumber(), 
-				TlsContentType.valueFromContentType(ciphertext.getContentType()), 
+				ciphertext.getContentType().getValue(), 
 				ciphertext.getVersion().getMajorVersion(), 
 				ciphertext.getVersion().getMinorVersion(), 
 				(short)content.length, 

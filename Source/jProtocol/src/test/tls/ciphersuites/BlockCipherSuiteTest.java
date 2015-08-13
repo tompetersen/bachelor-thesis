@@ -1,6 +1,8 @@
 package test.tls.ciphersuites;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import jProtocol.tls12.model.TlsCiphertext;
 import jProtocol.tls12.model.TlsPlaintext;
 import jProtocol.tls12.model.ciphersuites.TlsBlockCipherSuite;
@@ -11,8 +13,8 @@ import jProtocol.tls12.model.exceptions.TlsBadRecordMacException;
 import jProtocol.tls12.model.exceptions.TlsException;
 import jProtocol.tls12.model.fragments.TlsBlockFragment;
 import jProtocol.tls12.model.messages.TlsMessage;
+import jProtocol.tls12.model.values.TlsContentType;
 import jProtocol.tls12.model.values.TlsVersion;
-import jProtocol.tls12.model.values.TlsContentType.ContentType;
 
 import java.util.Arrays;
 
@@ -23,8 +25,8 @@ public class BlockCipherSuiteTest {
 
 	private class TlsTestMessage implements TlsMessage {
 		@Override
-		public ContentType getContentType() {
-			return ContentType.ApplicationData;
+		public TlsContentType getContentType() {
+			return TlsContentType.ApplicationData;
 		}
 
 		@Override

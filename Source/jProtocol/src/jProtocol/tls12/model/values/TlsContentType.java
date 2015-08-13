@@ -3,28 +3,25 @@ package jProtocol.tls12.model.values;
 import java.util.HashMap;
 import java.util.Map;
 
-public class TlsContentType {
-	
-	public enum ContentType {
+public enum TlsContentType {
 		ChangeCipherSpec,
 		Alert,
 		Handshake,
-		ApplicationData		
-	}
+		ApplicationData;
 	
-	private static Map<ContentType, Byte> _types;
+	private static Map<TlsContentType, Byte> _types;
 	
 	static {
-		_types = new HashMap<ContentType, Byte>();
+		_types = new HashMap<TlsContentType, Byte>();
 		
-		_types.put(ContentType.ChangeCipherSpec, 	(byte)20);
-		_types.put(ContentType.Alert, 				(byte)21);
-		_types.put(ContentType.Handshake, 			(byte)22);
-		_types.put(ContentType.ApplicationData, 	(byte)23);
+		_types.put(TlsContentType.ChangeCipherSpec, 	(byte)20);
+		_types.put(TlsContentType.Alert, 				(byte)21);
+		_types.put(TlsContentType.Handshake, 			(byte)22);
+		_types.put(TlsContentType.ApplicationData, 	(byte)23);
 	}
 	
-	public static ContentType contentTypeFromValue(byte b) {
-		for (ContentType t : ContentType.values()) {
+	public static TlsContentType contentTypeFromValue(byte b) {
+		for (TlsContentType t : TlsContentType.values()) {
 			if (b == _types.get(t)) {
 				return t;
 			}
@@ -32,10 +29,7 @@ public class TlsContentType {
 		throw new IllegalArgumentException("No ContentType for value " + b + "!");
 	}
 	
-	public static byte valueFromContentType(ContentType type) {
-		if (type == null) {
-			throw new IllegalArgumentException("ContentType must not be null!");
-		}
-		return _types.get(type);
+	public byte getValue() {
+		return _types.get(this);
 	}
 }

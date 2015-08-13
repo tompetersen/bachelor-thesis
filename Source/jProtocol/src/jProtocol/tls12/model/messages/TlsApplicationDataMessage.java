@@ -1,6 +1,6 @@
 package jProtocol.tls12.model.messages;
 
-import jProtocol.tls12.model.values.TlsContentType.ContentType;
+import jProtocol.tls12.model.values.TlsContentType;
 
 /*
  *  Application data messages are carried by the record layer and are 
@@ -22,8 +22,8 @@ public class TlsApplicationDataMessage implements TlsMessage {
 	}
 	
 	@Override
-	public ContentType getContentType() {
-		return ContentType.ApplicationData;
+	public TlsContentType getContentType() {
+		return TlsContentType.ApplicationData;
 	}
 
 	@Override

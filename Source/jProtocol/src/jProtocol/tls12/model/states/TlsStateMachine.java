@@ -14,8 +14,8 @@ import jProtocol.tls12.model.messages.TlsMessage;
 import jProtocol.tls12.model.messages.handshake.TlsHandshakeMessage;
 import jProtocol.tls12.model.states.server.TlsInitialServerState;
 import jProtocol.tls12.model.values.TlsConnectionEnd;
-import jProtocol.tls12.model.values.TlsContentType.ContentType;
-import jProtocol.tls12.model.values.TlsHandshakeType.HandshakeType;
+import jProtocol.tls12.model.values.TlsContentType;
+import jProtocol.tls12.model.values.TlsHandshakeType;
 import jProtocol.tls12.model.values.TlsRandom;
 import jProtocol.tls12.model.values.TlsSessionId;
 import jProtocol.tls12.model.values.TlsVersion;
@@ -188,9 +188,9 @@ public class TlsStateMachine extends StateMachine<TlsCiphertext> {
 	
 	private boolean isValidVerifyMessage(TlsMessage message) {
 		//TODO: maybe more checks, like already contains message, ...
-		if (message.getContentType() == ContentType.Handshake){
+		if (message.getContentType() == TlsContentType.Handshake){
 			TlsHandshakeMessage m = (TlsHandshakeMessage)message;
-			if (m.getHandshakeType() != HandshakeType.finished && m.getHandshakeType() != HandshakeType.hello_request) {
+			if (m.getHandshakeType() != TlsHandshakeType.finished && m.getHandshakeType() != TlsHandshakeType.hello_request) {
 				return true;
 			}
 		}

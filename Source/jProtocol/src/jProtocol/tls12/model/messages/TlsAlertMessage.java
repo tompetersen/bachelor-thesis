@@ -1,8 +1,7 @@
 package jProtocol.tls12.model.messages;
 
-import jProtocol.tls12.model.values.TlsAlertDescription;
-import jProtocol.tls12.model.values.TlsAlertDescription.Alert;
-import jProtocol.tls12.model.values.TlsContentType.ContentType;
+import jProtocol.tls12.model.values.TlsAlert;
+import jProtocol.tls12.model.values.TlsContentType;
 
 /*
  * struct {
@@ -22,10 +21,10 @@ import jProtocol.tls12.model.values.TlsContentType.ContentType;
  */
 public class TlsAlertMessage implements TlsMessage {
 
-	private Alert _description;
+	private TlsAlert _description;
 	private boolean _isFatal;
 	
-	public TlsAlertMessage(Alert description, boolean isFatal) {
+	public TlsAlertMessage(TlsAlert description, boolean isFatal) {
 		if (description == null) {
 			throw new IllegalArgumentException("Alert description must not be null!");
 		}
@@ -34,14 +33,14 @@ public class TlsAlertMessage implements TlsMessage {
 	}
 	
 	@Override
-	public ContentType getContentType() {
-		return ContentType.Alert;
+	public TlsContentType getContentType() {
+		return TlsContentType.Alert;
 	}
 
 	@Override
 	public byte[] getBytes() {
 		byte level = (byte) (_isFatal ? 2 : 1); 
-		byte description = TlsAlertDescription.valueFromAlert(_description);
+		byte description = _description.getValue();
 		byte[] result = {level, description}; 
 		
 		return result;

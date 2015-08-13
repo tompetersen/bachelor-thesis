@@ -1,8 +1,6 @@
 package test.tls.messages.handshake;
 
-import static org.junit.Assert.assertEquals;
 import jProtocol.tls12.model.messages.handshake.TlsHandshakeMessage;
-import jProtocol.tls12.model.values.TlsHandshakeType.HandshakeType;
 
 import org.junit.Before;
 import org.junit.Test;

@@ -2,7 +2,7 @@ package jProtocol.tls12.model.states.alert;
 
 import jProtocol.tls12.model.messages.TlsAlertMessage;
 import jProtocol.tls12.model.states.TlsStateMachine;
-import jProtocol.tls12.model.values.TlsAlertDescription.Alert;
+import jProtocol.tls12.model.values.TlsAlert;
 
 public class TlsReceivedUnexpectedMessageState extends TlsAlertState {
 
@@ -12,7 +12,7 @@ public class TlsReceivedUnexpectedMessageState extends TlsAlertState {
 	
 	@Override
 	public TlsAlertMessage getAlertMessageToSend() {
-		return new TlsAlertMessage(Alert.unexpected_message, true);
+		return new TlsAlertMessage(TlsAlert.unexpected_message, true);
 	}
 
 }

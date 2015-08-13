@@ -1,6 +1,6 @@
 package jProtocol.tls12.model.messages;
 
-import jProtocol.tls12.model.values.TlsContentType.ContentType;
+import jProtocol.tls12.model.values.TlsContentType;
 
 
 /*
@@ -13,8 +13,8 @@ import jProtocol.tls12.model.values.TlsContentType.ContentType;
 public class TlsChangeCipherSpecMessage implements TlsMessage {
 
 	@Override
-	public ContentType getContentType() {
-		return ContentType.ChangeCipherSpec;
+	public TlsContentType getContentType() {
+		return TlsContentType.ChangeCipherSpec;
 	}
 
 	@Override

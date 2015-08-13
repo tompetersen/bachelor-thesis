@@ -1,27 +1,27 @@
 package test.tls.messages.handshake;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 import jProtocol.helper.ByteHelper;
 import jProtocol.tls12.model.messages.handshake.TlsHandshakeMessage;
+import jProtocol.tls12.model.values.TlsContentType;
 import jProtocol.tls12.model.values.TlsHandshakeType;
-import jProtocol.tls12.model.values.TlsContentType.ContentType;
-import jProtocol.tls12.model.values.TlsHandshakeType.HandshakeType;
 
 import org.junit.Test;
 
 public class HandshakeMessageTest {
 
 	private class HandshakeTestMessage extends TlsHandshakeMessage {
-		private HandshakeType _type;
+		private TlsHandshakeType _type;
 		private byte[] _body;
 		
-		public HandshakeTestMessage(HandshakeType type, byte[] body) {
+		public HandshakeTestMessage(TlsHandshakeType type, byte[] body) {
 			_type = type;
 			_body = body;
 		}
 
 		@Override
-		public HandshakeType getHandshakeType() {
+		public TlsHandshakeType getHandshakeType() {
 			return _type;
 		}
 
@@ -31,7 +31,7 @@ public class HandshakeMessageTest {
 		}
 	}
 	
-	private HandshakeType _handshakeType = HandshakeType.client_hello;
+	private TlsHandshakeType _handshakeType = TlsHandshakeType.client_hello;
 	private byte[] _body = {3,1,4,1,5};
 	private TlsHandshakeMessage _testMessage = new HandshakeTestMessage(_handshakeType, _body);
 	
@@ -46,7 +46,7 @@ public class HandshakeMessageTest {
 	public void testGetBytesHandshakeTypeField() {
 		byte[] bytes = _testMessage.getBytes();
 		
-		assertEquals(bytes[0], TlsHandshakeType.valueFromHandshakeType(_handshakeType)); 
+		assertEquals(bytes[0], _handshakeType.getValue()); 
 	}
 	
 	@Test
@@ -69,7 +69,7 @@ public class HandshakeMessageTest {
 	
 	@Test
 	public void testMessageType() {
-		assertEquals(_testMessage.getContentType(), ContentType.Handshake);
+		assertEquals(_testMessage.getContentType(), TlsContentType.Handshake);
 	}
 
 }

@@ -1,12 +1,12 @@
 package jProtocol.tls12.model.messages.handshake;
 
-import java.nio.ByteBuffer;
-
 import jProtocol.tls12.model.ciphersuites.TlsCipherSuite;
-import jProtocol.tls12.model.values.TlsHandshakeType.HandshakeType;
+import jProtocol.tls12.model.values.TlsHandshakeType;
 import jProtocol.tls12.model.values.TlsRandom;
 import jProtocol.tls12.model.values.TlsSessionId;
 import jProtocol.tls12.model.values.TlsVersion;
+
+import java.nio.ByteBuffer;
 
 public class TlsServerHelloMessage extends TlsHandshakeMessage {
 
@@ -39,8 +39,8 @@ public class TlsServerHelloMessage extends TlsHandshakeMessage {
 	}
 	
 	@Override
-	public HandshakeType getHandshakeType() {
-		return HandshakeType.server_hello;
+	public TlsHandshakeType getHandshakeType() {
+		return TlsHandshakeType.server_hello;
 	}
 
 	@Override

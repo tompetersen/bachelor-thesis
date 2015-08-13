@@ -6,5 +6,5 @@ public enum TlsKeyExchangeAlgorithm {
 	dh_anon, 
 	rsa, 
 	dh_dss, 
-	dh_rsa
+	dh_rsa;
 }

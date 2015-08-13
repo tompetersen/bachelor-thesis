@@ -1,12 +1,13 @@
 package test.tls.messages.handshake;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 import jProtocol.helper.ByteHelper;
 import jProtocol.tls12.model.ciphersuites.TlsCipherSuite;
 import jProtocol.tls12.model.ciphersuites.impl.TlsCipherSuite_RSA_WITH_AES_128_CBC_SHA;
 import jProtocol.tls12.model.messages.handshake.TlsClientHelloMessage;
 import jProtocol.tls12.model.messages.handshake.TlsHandshakeMessage;
-import jProtocol.tls12.model.values.TlsHandshakeType.HandshakeType;
+import jProtocol.tls12.model.values.TlsHandshakeType;
 import jProtocol.tls12.model.values.TlsRandom;
 import jProtocol.tls12.model.values.TlsSessionId;
 import jProtocol.tls12.model.values.TlsVersion;
@@ -134,7 +135,7 @@ public class ClientHelloMessageTest {
 	
 	@Test
 	public void testHandshakeType() {
-		assertEquals(HandshakeType.client_hello, _testMessage.getHandshakeType());
+		assertEquals(TlsHandshakeType.client_hello, _testMessage.getHandshakeType());
 	}
 
 }

@@ -7,7 +7,7 @@ import jProtocol.tls12.model.ciphersuites.TlsCipherSuite;
 import jProtocol.tls12.model.ciphersuites.impl.TlsCipherSuite_RSA_WITH_AES_128_CBC_SHA;
 import jProtocol.tls12.model.messages.handshake.TlsHandshakeMessage;
 import jProtocol.tls12.model.messages.handshake.TlsServerHelloMessage;
-import jProtocol.tls12.model.values.TlsHandshakeType.HandshakeType;
+import jProtocol.tls12.model.values.TlsHandshakeType;
 import jProtocol.tls12.model.values.TlsRandom;
 import jProtocol.tls12.model.values.TlsSessionId;
 import jProtocol.tls12.model.values.TlsVersion;
@@ -117,7 +117,7 @@ public class ServerHelloMessageTest {
 	
 	@Test
 	public void testHandshakeType() {
-		assertEquals(_testMessage.getHandshakeType(), HandshakeType.server_hello);
+		assertEquals(_testMessage.getHandshakeType(), TlsHandshakeType.server_hello);
 	}
 
 

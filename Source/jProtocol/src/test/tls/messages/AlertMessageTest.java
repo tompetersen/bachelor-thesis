@@ -2,15 +2,14 @@ package test.tls.messages;
 
 import static org.junit.Assert.assertEquals;
 import jProtocol.tls12.model.messages.TlsAlertMessage;
-import jProtocol.tls12.model.values.TlsAlertDescription;
-import jProtocol.tls12.model.values.TlsAlertDescription.Alert;
-import jProtocol.tls12.model.values.TlsContentType.ContentType;
+import jProtocol.tls12.model.values.TlsAlert;
+import jProtocol.tls12.model.values.TlsContentType;
 
 import org.junit.Test;
 
 public class AlertMessageTest {
 
-	private Alert _alertType = Alert.bad_record_mac;
+	private TlsAlert _alertType = TlsAlert.bad_record_mac;
 	private boolean _isFatal = true;
 	private TlsAlertMessage _testMessage = new TlsAlertMessage(_alertType, _isFatal);
 	
@@ -25,7 +24,7 @@ public class AlertMessageTest {
 	public void testGetBytesAlertTypeField() {
 		byte[] bytes = _testMessage.getBytes();
 		
-		assertEquals(bytes[1], TlsAlertDescription.valueFromAlert(_alertType)); 
+		assertEquals(bytes[1],_alertType.getValue()); 
 	}
 	
 	@Test
@@ -43,6 +42,6 @@ public class AlertMessageTest {
 
 	@Test
 	public void testMessageType() {
-		assertEquals(_testMessage.getContentType(), ContentType.Alert);
+		assertEquals(_testMessage.getContentType(), TlsContentType.Alert);
 	}
 }

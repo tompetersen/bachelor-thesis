@@ -1,7 +1,7 @@
 package jProtocol.tls12.model.messages.handshake;
 
 import jProtocol.tls12.model.ciphersuites.TlsCipherSuite;
-import jProtocol.tls12.model.values.TlsHandshakeType.HandshakeType;
+import jProtocol.tls12.model.values.TlsHandshakeType;
 import jProtocol.tls12.model.values.TlsRandom;
 import jProtocol.tls12.model.values.TlsSessionId;
 import jProtocol.tls12.model.values.TlsVersion;
@@ -40,8 +40,8 @@ public class TlsClientHelloMessage extends TlsHandshakeMessage {
 	}
 	
 	@Override
-	public HandshakeType getHandshakeType() {
-		return HandshakeType.client_hello;
+	public TlsHandshakeType getHandshakeType() {
+		return TlsHandshakeType.client_hello;
 	}
 
 	@Override

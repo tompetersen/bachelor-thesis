@@ -2,7 +2,7 @@ package jProtocol.tls12.model.messages.handshake;
 
 import jProtocol.helper.ByteHelper;
 import jProtocol.tls12.model.values.TlsCertificate;
-import jProtocol.tls12.model.values.TlsHandshakeType.HandshakeType;
+import jProtocol.tls12.model.values.TlsHandshakeType;
 
 import java.nio.ByteBuffer;
 import java.util.List;
@@ -16,8 +16,8 @@ public class TlsCertificateMessage extends TlsHandshakeMessage {
 	}
 
 	@Override
-	public HandshakeType getHandshakeType() {
-		return HandshakeType.certificate;
+	public TlsHandshakeType getHandshakeType() {
+		return TlsHandshakeType.certificate;
 	}
 
 	@Override

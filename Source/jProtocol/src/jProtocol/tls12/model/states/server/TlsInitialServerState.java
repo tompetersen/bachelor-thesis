@@ -4,7 +4,7 @@ import jProtocol.tls12.model.messages.TlsMessage;
 import jProtocol.tls12.model.messages.handshake.TlsClientHelloMessage;
 import jProtocol.tls12.model.states.TlsState;
 import jProtocol.tls12.model.states.TlsStateMachine;
-import jProtocol.tls12.model.values.TlsHandshakeType.HandshakeType;
+import jProtocol.tls12.model.values.TlsHandshakeType;
 
 public class TlsInitialServerState extends TlsState {
 
@@ -34,6 +34,6 @@ public class TlsInitialServerState extends TlsState {
 
 	@Override
 	public boolean expectedTlsMessage(TlsMessage message) {
-		return isHandshakeMessageOfType(message, HandshakeType.client_hello);
+		return isHandshakeMessageOfType(message, TlsHandshakeType.client_hello);
 	}
 }

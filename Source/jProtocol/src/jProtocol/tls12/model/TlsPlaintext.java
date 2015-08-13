@@ -1,14 +1,14 @@
 package jProtocol.tls12.model;
 
 import jProtocol.tls12.model.messages.TlsMessage;
+import jProtocol.tls12.model.values.TlsContentType;
 import jProtocol.tls12.model.values.TlsVersion;
-import jProtocol.tls12.model.values.TlsContentType.ContentType;
 
 public class TlsPlaintext {
 
 	private TlsMessage _message;
 	
-	private ContentType _contentType; 		//1 byte
+	private TlsContentType _contentType; 		//1 byte
 	private TlsVersion _version; 			//2 bytes
 	//Necessary?
 	private short _length; 					//2 bytes
@@ -22,7 +22,7 @@ public class TlsPlaintext {
 		_length = (short) _fragment.length;
 	}
 	
-	public TlsPlaintext(byte[] content, TlsVersion version, ContentType contentType) {
+	public TlsPlaintext(byte[] content, TlsVersion version, TlsContentType contentType) {
 		_message = null; //TODO: Where to parse the message?
 		_version = version;
 		_contentType = contentType;
@@ -30,7 +30,7 @@ public class TlsPlaintext {
 		_length = (short)content.length;
 	}
 	
-	public ContentType getContentType() {
+	public TlsContentType getContentType() {
 		return _contentType;
 	}
 

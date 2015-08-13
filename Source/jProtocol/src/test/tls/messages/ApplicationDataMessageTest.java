@@ -3,7 +3,7 @@ package test.tls.messages;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import jProtocol.tls12.model.messages.TlsApplicationDataMessage;
-import jProtocol.tls12.model.values.TlsContentType.ContentType;
+import jProtocol.tls12.model.values.TlsContentType;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -39,7 +39,7 @@ public class ApplicationDataMessageTest {
 
 	@Test
 	public void testMessageType() {
-		assertEquals(_testMessage.getContentType(), ContentType.ApplicationData);
+		assertEquals(_testMessage.getContentType(), TlsContentType.ApplicationData);
 	}
 
 }

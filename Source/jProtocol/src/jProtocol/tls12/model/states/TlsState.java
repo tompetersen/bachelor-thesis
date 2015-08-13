@@ -8,8 +8,8 @@ import jProtocol.tls12.model.exceptions.TlsBadRecordMacException;
 import jProtocol.tls12.model.messages.TlsAlertMessage;
 import jProtocol.tls12.model.messages.TlsMessage;
 import jProtocol.tls12.model.messages.handshake.TlsHandshakeMessage;
-import jProtocol.tls12.model.values.TlsContentType.ContentType;
-import jProtocol.tls12.model.values.TlsHandshakeType.HandshakeType;
+import jProtocol.tls12.model.values.TlsContentType;
+import jProtocol.tls12.model.values.TlsHandshakeType;
 
 public abstract class TlsState extends State<TlsCiphertext> {
 	
@@ -83,19 +83,19 @@ public abstract class TlsState extends State<TlsCiphertext> {
 		_stateMachine.setState(state, this);
 	}
 	
-	public boolean isHandshakeMessageOfType(TlsMessage m, HandshakeType type) {
-		return (m.getContentType() == ContentType.Handshake) && (((TlsHandshakeMessage)m).getHandshakeType() == type);
+	public boolean isHandshakeMessageOfType(TlsMessage m, TlsHandshakeType type) {
+		return (m.getContentType() == TlsContentType.Handshake) && (((TlsHandshakeMessage)m).getHandshakeType() == type);
 	}
 	
 	public boolean isChangeCipherSpecMessage(TlsMessage m) {
-		return (m.getContentType() == ContentType.ChangeCipherSpec);
+		return (m.getContentType() == TlsContentType.ChangeCipherSpec);
 	}
 	
 	public boolean isAlertMessage(TlsMessage m) {
-		return (m.getContentType() == ContentType.Alert);
+		return (m.getContentType() == TlsContentType.Alert);
 	}
 	
 	public boolean isApplicationDataMessage(TlsMessage m) {
-		return (m.getContentType() == ContentType.ApplicationData);
+		return (m.getContentType() == TlsContentType.ApplicationData);
 	}
 }

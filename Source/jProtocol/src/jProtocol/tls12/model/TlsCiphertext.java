@@ -3,14 +3,14 @@ package jProtocol.tls12.model;
 import jProtocol.Abstract.Model.ProtocolDataUnit;
 import jProtocol.tls12.model.fragments.TlsFragment;
 import jProtocol.tls12.model.messages.TlsMessage;
+import jProtocol.tls12.model.values.TlsContentType;
 import jProtocol.tls12.model.values.TlsVersion;
-import jProtocol.tls12.model.values.TlsContentType.ContentType;
 
 public class TlsCiphertext extends ProtocolDataUnit {
 
 	private TlsMessage _message;
 	
-	private ContentType _contentType; 		//1 byte
+	private TlsContentType _contentType; 		//1 byte
 	private TlsVersion _version; 			//2 bytes
 	private short _length; 					//2 bytes
 	private TlsFragment _fragment;
@@ -23,7 +23,7 @@ public class TlsCiphertext extends ProtocolDataUnit {
 		_length = (short) _fragment.getLength();
 	}
 	
-	public ContentType getContentType() {
+	public TlsContentType getContentType() {
 		return _contentType;
 	}
 
