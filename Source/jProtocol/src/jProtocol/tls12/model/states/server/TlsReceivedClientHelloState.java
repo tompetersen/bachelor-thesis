@@ -4,6 +4,7 @@ import jProtocol.tls12.model.crypto.TlsPseudoRandomNumberGenerator;
 import jProtocol.tls12.model.messages.TlsMessage;
 import jProtocol.tls12.model.messages.handshake.TlsCertificateMessage;
 import jProtocol.tls12.model.messages.handshake.TlsServerHelloMessage;
+import jProtocol.tls12.model.messages.handshake.TlsServerKeyExchangeMessage;
 import jProtocol.tls12.model.states.TlsState;
 import jProtocol.tls12.model.states.TlsStateMachine;
 import jProtocol.tls12.model.values.TlsCertificate;
@@ -32,14 +33,15 @@ public class TlsReceivedClientHelloState extends TlsState {
 	private void sendServerHello() {
 		byte[] randomBytes = TlsPseudoRandomNumberGenerator.nextBytes(28);
 		TlsRandom random = new TlsRandom(randomBytes);
-		_stateMachine.setServerRandom(random);
+		_stateMachine.setPendingServerRandom(random);
 		
 		TlsMessage serverHelloMessage = new TlsServerHelloMessage(
 				_stateMachine.getVersion(), 
 				random, 
-				_stateMachine.getSessionId(), 
-				_stateMachine.getCipherSuite());
+				_stateMachine.getPendingSessionId(), 
+				_stateMachine.getPendingCipherSuite());
 		
+		_stateMachine.addHandshakeMessageForVerifyData(serverHelloMessage);
 		sendTlsMessage(serverHelloMessage);
 	}
 	
@@ -50,11 +52,18 @@ public class TlsReceivedClientHelloState extends TlsState {
 		
 		TlsMessage message = new TlsCertificateMessage(certList);
 		
+		_stateMachine.addHandshakeMessageForVerifyData(message);
 		sendTlsMessage(message);
 	}
 	
 	private void sendServerKeyExchange() {
 		//TODO: Send for DHE_RSA, ...
+		if (false) {
+			TlsMessage message = new TlsServerKeyExchangeMessage();
+			
+			_stateMachine.addHandshakeMessageForVerifyData(message);
+			sendTlsMessage(message);
+		}
 	}
 	
 	@Override

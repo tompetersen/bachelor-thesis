@@ -16,6 +16,10 @@ public class TlsWaitingForClientKeyExchangeState extends TlsState {
 	public void receivedTlsMessage(TlsMessage message) {
 		TlsClientKeyExchangeMessage clientKeyExchangeMessage = (TlsClientKeyExchangeMessage)message;
 		//TODO: whatever...
+		
+		_stateMachine.addHandshakeMessageForVerifyData(message);
+		
+		setState(TlsStateMachine.WAITING_FOR_CHANGE_CIPHER_SPEC_STATE);
 	}
 
 	@Override

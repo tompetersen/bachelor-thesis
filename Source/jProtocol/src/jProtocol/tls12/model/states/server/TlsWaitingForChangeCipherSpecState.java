@@ -8,19 +8,18 @@ public class TlsWaitingForChangeCipherSpecState extends TlsState {
 
 	public TlsWaitingForChangeCipherSpecState(TlsStateMachine stateMachine) {
 		super(stateMachine);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
 	public boolean expectedTlsMessage(TlsMessage message) {
-		// TODO Auto-generated method stub
-		return false;
+		return isChangeCipherSpecMessage(message);
 	}
 
 	@Override
 	public void receivedTlsMessage(TlsMessage message) {
-		// TODO Auto-generated method stub
-
+		_stateMachine.changeToPendingState();
+		
+		setState(TlsStateMachine.WAITING_FOR_FINISHED_STATE);
 	}
 
 }

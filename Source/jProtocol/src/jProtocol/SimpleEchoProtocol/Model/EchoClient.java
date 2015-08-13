@@ -15,6 +15,7 @@ public class EchoClient extends StateMachine<EchoProtocolDataUnit> {
 
 		addState(RECEIVE_STATE, new ReceiveState(this));
 		addState(SEND_STATE, new SendState(this));
+		
 		setState(SEND_STATE);
 	}
 

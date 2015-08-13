@@ -9,6 +9,7 @@ import jProtocol.tls12.model.exceptions.TlsBadRecordMacException;
 import jProtocol.tls12.model.values.TlsBulkCipherAlgorithm;
 import jProtocol.tls12.model.values.TlsCipherType;
 import jProtocol.tls12.model.values.TlsConnectionEnd;
+import jProtocol.tls12.model.values.TlsKeyExchangeAlgorithm;
 import jProtocol.tls12.model.values.TlsMacAlgorithm;
 import jProtocol.tls12.model.values.TlsRandom;
 
@@ -131,6 +132,13 @@ public class TlsSecurityParameters {
 			throw new RuntimeException("Cipher Suite must be set first!");
 		}
 		return _cipherSuite.getMacLength();
+	}
+	
+	public TlsKeyExchangeAlgorithm getKeyExchangeAlgorithm() {
+		if (_cipherSuite == null) {
+			throw new RuntimeException("Cipher Suite must be set first!");
+		}
+		return _cipherSuite.getKeyExchangeAlgorithm();
 	}
 
 	public byte getMacKeyLength() {

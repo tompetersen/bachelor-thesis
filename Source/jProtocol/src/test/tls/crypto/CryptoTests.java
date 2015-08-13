@@ -7,7 +7,8 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses({ CipherTest.class, 
 		MacTest.class, 
-		PseudoRandomFunctionTest.class 
+		PseudoRandomFunctionTest.class,
+		HashTest.class
 		})
 public class CryptoTests {
 

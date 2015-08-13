@@ -3,6 +3,7 @@ package jProtocol.tls12.model.ciphersuites.impl;
 import jProtocol.tls12.model.ciphersuites.TlsStreamCipherSuite;
 import jProtocol.tls12.model.exceptions.TlsBadRecordMacException;
 import jProtocol.tls12.model.values.TlsBulkCipherAlgorithm;
+import jProtocol.tls12.model.values.TlsKeyExchangeAlgorithm;
 import jProtocol.tls12.model.values.TlsMacAlgorithm;
 
 /*
@@ -61,5 +62,10 @@ public class TlsCipherSuite_NULL_WITH_NULL_NULL extends TlsStreamCipherSuite {
 	@Override
 	public byte getMacKeyLength() {
 		return 0;
+	}
+
+	@Override
+	public TlsKeyExchangeAlgorithm getKeyExchangeAlgorithm() {
+		return null;
 	}
 }

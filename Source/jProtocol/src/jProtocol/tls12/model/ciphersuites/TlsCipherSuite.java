@@ -6,6 +6,7 @@ import jProtocol.tls12.model.exceptions.TlsBadPaddingException;
 import jProtocol.tls12.model.exceptions.TlsBadRecordMacException;
 import jProtocol.tls12.model.values.TlsBulkCipherAlgorithm;
 import jProtocol.tls12.model.values.TlsCipherType;
+import jProtocol.tls12.model.values.TlsKeyExchangeAlgorithm;
 import jProtocol.tls12.model.values.TlsMacAlgorithm;
 
 /*
@@ -114,4 +115,11 @@ public interface TlsCipherSuite {
 	 * @return the MAC key length in bytes or 0 for AEAD cipher suites
 	 */
 	public byte getMacKeyLength();
+	
+	/**
+	 * The key exchange algorithm (dhe_dss, dhe_rsa, dh_anon, rsa, dh_dss, dh_rsa) used in the cipher suite. 
+	 * 
+	 * @return the key exchange algorithm
+	 */
+	public TlsKeyExchangeAlgorithm getKeyExchangeAlgorithm();
 }

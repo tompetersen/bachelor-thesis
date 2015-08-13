@@ -1,13 +1,17 @@
 package jProtocol.tls12.model;
 
 import jProtocol.helper.ByteHelper;
+import jProtocol.tls12.model.crypto.TlsHash;
 import jProtocol.tls12.model.crypto.TlsPseudoRandomFunction;
 import jProtocol.tls12.model.values.TlsSessionId;
 import jProtocol.tls12.model.values.TlsVersion;
 
 public class TlsConnectionState {
 
+	private static final int VERIFY_DATA_LENGTH = 12;
+	
 	private TlsSecurityParameters _securityParameters;
+	private TlsHash _hash;
 	
 	private byte[] _clientWriteMacKey;
 	private byte[] _serverWriteMacKey;
@@ -22,10 +26,16 @@ public class TlsConnectionState {
 	
 	private TlsVersion _version;
 	
+	private byte[] _currentHandshakeMessages;
+	
 	public TlsConnectionState(TlsSecurityParameters securityParameters) {
 		_securityParameters = securityParameters;
+		
+		_hash = new TlsHash();
+		
 		_clientSequenceNumber = 0;
 		_serverSequenceNumber = 0;
+		_currentHandshakeMessages = new byte[0];
 	}
 	
 	public void computeKeys() {
@@ -114,6 +124,10 @@ public class TlsConnectionState {
 		}
 		return _version;
 	}
+	
+	public boolean hasVersion() {
+		return (_version == null);
+	}
 
 	public void setVersion(TlsVersion version) {
 		if (version == null) {
@@ -162,6 +176,28 @@ public class TlsConnectionState {
 			throw new RuntimeException("Key must be computed first!");
 		}
 		return _serverWriteIv;
+	}
+	
+	public void addHandshakeMessageBytes(byte[] message) {
+		_currentHandshakeMessages = ByteHelper.concatenate(_currentHandshakeMessages, message);
+	}
+	
+	public byte[] getFinishedVerifyDataForServer() {
+		byte[] verifyData = TlsPseudoRandomFunction.prf(_securityParameters.getMasterSecret(),
+				"server finished",
+				_hash.hash(_currentHandshakeMessages), 
+				VERIFY_DATA_LENGTH);
+		
+		return verifyData;
+	}
+	
+	public byte[] getFinishedVerifyDataForClient() {
+		byte[] verifyData = TlsPseudoRandomFunction.prf(_securityParameters.getMasterSecret(),
+				"client finished",
+				_hash.hash(_currentHandshakeMessages), 
+				VERIFY_DATA_LENGTH);
+		
+		return verifyData;
 	}
 	
 }

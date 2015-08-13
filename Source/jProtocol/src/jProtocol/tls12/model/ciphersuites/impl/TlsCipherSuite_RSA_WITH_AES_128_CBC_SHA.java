@@ -5,6 +5,7 @@ import jProtocol.tls12.model.crypto.TlsSymmetricCipher;
 import jProtocol.tls12.model.crypto.TlsMac;
 import jProtocol.tls12.model.crypto.TlsMacParameters;
 import jProtocol.tls12.model.values.TlsBulkCipherAlgorithm;
+import jProtocol.tls12.model.values.TlsKeyExchangeAlgorithm;
 import jProtocol.tls12.model.values.TlsMacAlgorithm;
 
 /*
@@ -79,5 +80,10 @@ public class TlsCipherSuite_RSA_WITH_AES_128_CBC_SHA extends TlsBlockCipherSuite
 	@Override
 	public byte getMacKeyLength() {
 		return (byte)20;
+	}
+
+	@Override
+	public TlsKeyExchangeAlgorithm getKeyExchangeAlgorithm() {
+		return TlsKeyExchangeAlgorithm.rsa;
 	}
 }

@@ -4,10 +4,11 @@ import jProtocol.tls12.model.values.TlsHandshakeType.HandshakeType;
 
 public class TlsFinishedMessage extends TlsHandshakeMessage {
 
-	public byte[] _verifiedData;
+	private byte[] _verifyData;
 	
 	public TlsFinishedMessage(byte[] verifiedData) {
-		_verifiedData = verifiedData;
+		//TODO: length check
+		_verifyData = verifiedData;
 	}
 
 	@Override
@@ -17,8 +18,11 @@ public class TlsFinishedMessage extends TlsHandshakeMessage {
 
 	@Override
 	public byte[] getBodyBytes() {
-		// TODO Auto-generated method stub
-		return null;
+		return _verifyData; //Fixed length VERIFY_DATA_LENGTH, therefore no length field needed
+	}
+
+	public byte[] getVerifyData() {
+		return _verifyData;
 	}
 
 }

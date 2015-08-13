@@ -1,12 +1,13 @@
-package jProtocol.tls12.model.states;
+package jProtocol.tls12.model.states.alert;
 
 import jProtocol.tls12.model.messages.TlsAlertMessage;
 import jProtocol.tls12.model.messages.TlsMessage;
-import jProtocol.tls12.model.values.TlsAlertDescription.Alert;
+import jProtocol.tls12.model.states.TlsState;
+import jProtocol.tls12.model.states.TlsStateMachine;
 
-public class TlsReceivedUnexpectedMessageState extends TlsState {
+public abstract class TlsAlertState extends TlsState {
 
-	public TlsReceivedUnexpectedMessageState(TlsStateMachine stateMachine) {
+	public TlsAlertState(TlsStateMachine stateMachine) {
 		super(stateMachine);
 	}
 
@@ -17,7 +18,7 @@ public class TlsReceivedUnexpectedMessageState extends TlsState {
 
 	@Override
 	public boolean expectedTlsMessage(TlsMessage message) {
-		// catch all incoming messages
+		//catch all incoming messages
 		return true;
 	}
 	
@@ -25,10 +26,11 @@ public class TlsReceivedUnexpectedMessageState extends TlsState {
 	public void onEnter() {
 		super.onEnter();
 		
-		TlsAlertMessage message = new TlsAlertMessage(Alert.unexpected_message, true);
-		sendTlsMessage(message);
+		sendTlsMessage(getAlertMessageToSend());
 		
 		//setState(TlsStateMachine.INITIAL_SERVER_STATE);
 	}
+	
+	public abstract TlsAlertMessage getAlertMessageToSend();
 
 }

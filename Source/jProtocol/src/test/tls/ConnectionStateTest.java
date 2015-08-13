@@ -11,6 +11,7 @@ import jProtocol.tls12.model.exceptions.TlsBadRecordMacException;
 import jProtocol.tls12.model.values.TlsBulkCipherAlgorithm;
 import jProtocol.tls12.model.values.TlsCipherType;
 import jProtocol.tls12.model.values.TlsConnectionEnd;
+import jProtocol.tls12.model.values.TlsKeyExchangeAlgorithm;
 import jProtocol.tls12.model.values.TlsMacAlgorithm;
 import jProtocol.tls12.model.values.TlsRandom;
 
@@ -62,6 +63,9 @@ public class ConnectionStateTest {
 
 		@Override
 		public byte getMacLength() { return 0; }
+		
+		@Override
+		public TlsKeyExchangeAlgorithm getKeyExchangeAlgorithm() { return null; }
 
 		@Override
 		public TlsCiphertext plaintextToCiphertext(TlsPlaintext plaintext, TlsEncryptionParameters parameters) {
@@ -72,6 +76,8 @@ public class ConnectionStateTest {
 		public TlsPlaintext ciphertextToPlaintext(TlsCiphertext plaintext, TlsEncryptionParameters parameters) throws TlsBadRecordMacException {
 			return null;
 		}
+
+		
 	}
 	
 	private TlsCipherSuite _cs;

@@ -20,15 +20,16 @@ public class TlsInitialServerState extends TlsState {
 			//TODO: Abbreviated Handshake
 		}
 		setClientHelloMessageValues(chm);
+		_stateMachine.addHandshakeMessageForVerifyData(message);
 		
 		setState(TlsStateMachine.RECEIVED_CLIENT_HELLO_STATE);
 	}
 	
 	private void setClientHelloMessageValues(TlsClientHelloMessage chm) {
-		_stateMachine.setClientRandom(chm.getClientRandom());
-		_stateMachine.setSessionId(chm.getSessionId());	
-		_stateMachine.setCipherSuiteFromList(chm.getCipherSuites());	
-		_stateMachine.setVersion(chm.getClientVersion());
+		_stateMachine.setPendingClientRandom(chm.getClientRandom());
+		_stateMachine.setPendingSessionId(chm.getSessionId());	
+		_stateMachine.setPendingCipherSuiteFromList(chm.getCipherSuites());	
+		_stateMachine.setPendingVersion(chm.getClientVersion());
 	}
 
 	@Override
