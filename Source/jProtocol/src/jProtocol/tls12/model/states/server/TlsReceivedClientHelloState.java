@@ -27,7 +27,7 @@ public class TlsReceivedClientHelloState extends TlsState {
 		sendServerCertificate();
 		sendServerKeyExchange();
 		
-		setState(TlsStateMachine.WAITING_FOR_CLIENT_KEY_EXCHANGE_STATE);
+		setState(TlsStateMachine.SERVER_IS_WAITING_FOR_CLIENT_KEY_EXCHANGE_STATE);
 	}
 	
 	private void sendServerHello() {
@@ -58,7 +58,8 @@ public class TlsReceivedClientHelloState extends TlsState {
 	
 	private void sendServerKeyExchange() {
 		//TODO: Send for DHE_RSA, ...
-		if (false) {
+		boolean needsServerkeyExchangeMessage = false;
+		if (needsServerkeyExchangeMessage) {
 			TlsMessage message = new TlsServerKeyExchangeMessage();
 			
 			_stateMachine.addHandshakeMessageForVerifyData(message);

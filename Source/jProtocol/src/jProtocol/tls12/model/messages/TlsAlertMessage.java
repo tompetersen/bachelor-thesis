@@ -21,14 +21,14 @@ import jProtocol.tls12.model.values.TlsContentType;
  */
 public class TlsAlertMessage implements TlsMessage {
 
-	private TlsAlert _description;
+	private TlsAlert _alert;
 	private boolean _isFatal;
 	
 	public TlsAlertMessage(TlsAlert description, boolean isFatal) {
 		if (description == null) {
 			throw new IllegalArgumentException("Alert description must not be null!");
 		}
-		_description = description;
+		_alert = description;
 		_isFatal = isFatal;
 	}
 	
@@ -40,10 +40,18 @@ public class TlsAlertMessage implements TlsMessage {
 	@Override
 	public byte[] getBytes() {
 		byte level = (byte) (_isFatal ? 2 : 1); 
-		byte description = _description.getValue();
+		byte description = _alert.getValue();
 		byte[] result = {level, description}; 
 		
 		return result;
+	}
+
+	public TlsAlert getAlert() {
+		return _alert;
+	}
+
+	public boolean isFatal() {
+		return _isFatal;
 	}
 	
 }

@@ -2,8 +2,9 @@ package jProtocol.tls12.model.ciphersuites;
 
 import jProtocol.tls12.model.ciphersuites.impl.TlsCipherSuite_NULL_WITH_NULL_NULL;
 import jProtocol.tls12.model.ciphersuites.impl.TlsCipherSuite_RSA_WITH_AES_128_CBC_SHA;
-
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class TlsCipherSuiteRegistry {
@@ -37,5 +38,9 @@ public class TlsCipherSuiteRegistry {
 			}
 		}
 		throw new IllegalArgumentException("Value for cipher suite " + cipherSuite.getName() + " not found!");
+	}
+	
+	public List<TlsCipherSuite> allCipherSuites() {
+		return new ArrayList<TlsCipherSuite>(_supportedCipherSuites.values());
 	}
 }

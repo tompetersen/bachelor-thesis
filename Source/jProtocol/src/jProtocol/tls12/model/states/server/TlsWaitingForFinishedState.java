@@ -22,7 +22,7 @@ public class TlsWaitingForFinishedState extends TlsState {
 		TlsFinishedMessage finishedMessage = (TlsFinishedMessage)message;
 
 		if (_stateMachine.isCorrectVerifyData(finishedMessage.getVerifyData())) {
-			setState(TlsStateMachine.RECEIVED_FINISHED_STATE);
+			setState(TlsStateMachine.SERVER_RECEIVED_FINISHED_STATE);
 		}
 		else {
 			setState(TlsStateMachine.DECRYPT_ERROR_OCCURED_STATE);

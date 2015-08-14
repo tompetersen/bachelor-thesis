@@ -6,7 +6,7 @@ public class TlsSessionId {
 	
 	public TlsSessionId(byte[] sessionId) {
 		if (sessionId == null) {
-			throw new IllegalArgumentException("SessionID must be set!");
+			sessionId = new byte[0];
 		}
 		if (sessionId.length < 0 || sessionId.length > 32) {
 			throw new IllegalArgumentException("SessionID must be empty or 1 to 32 bytes long!");

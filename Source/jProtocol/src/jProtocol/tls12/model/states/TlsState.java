@@ -8,6 +8,7 @@ import jProtocol.tls12.model.exceptions.TlsBadRecordMacException;
 import jProtocol.tls12.model.messages.TlsAlertMessage;
 import jProtocol.tls12.model.messages.TlsMessage;
 import jProtocol.tls12.model.messages.handshake.TlsHandshakeMessage;
+import jProtocol.tls12.model.values.TlsAlert;
 import jProtocol.tls12.model.values.TlsContentType;
 import jProtocol.tls12.model.values.TlsHandshakeType;
 
@@ -91,8 +92,8 @@ public abstract class TlsState extends State<TlsCiphertext> {
 		return (m.getContentType() == TlsContentType.ChangeCipherSpec);
 	}
 	
-	public boolean isAlertMessage(TlsMessage m) {
-		return (m.getContentType() == TlsContentType.Alert);
+	public boolean isAlertMessageOfType(TlsMessage m, TlsAlert alert) {
+		return (m.getContentType() == TlsContentType.Alert) && (((TlsAlertMessage)m).getAlert() == alert);
 	}
 	
 	public boolean isApplicationDataMessage(TlsMessage m) {

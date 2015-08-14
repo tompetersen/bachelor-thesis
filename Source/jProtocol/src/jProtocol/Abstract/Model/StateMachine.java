@@ -35,6 +35,23 @@ public abstract class StateMachine<T extends ProtocolDataUnit> {
 		}
 	}
 	
+	public State<T> getCurrentState() {
+		return _currentState;
+	}
+	
+	public boolean isCurrentState(Integer state) {
+		return _currentState.equals(stateForValue(state));
+	}
+	
+	private State<T> stateForValue(int value) {
+		for (int i : _states.keySet()) {
+			if (i == value) {
+				return _states.get(i);
+			}
+		}
+		throw new IllegalArgumentException("State for value " + value + " not found!");
+	}
+	
 	public void receiveMessage(T pdu) {
 		_currentState.receiveMessage(pdu);
 	}

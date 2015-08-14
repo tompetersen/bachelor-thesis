@@ -22,7 +22,7 @@ public class TlsInitialServerState extends TlsState {
 		setClientHelloMessageValues(chm);
 		_stateMachine.addHandshakeMessageForVerifyData(message);
 		
-		setState(TlsStateMachine.RECEIVED_CLIENT_HELLO_STATE);
+		setState(TlsStateMachine.SERVER_RECEIVED_CLIENT_HELLO_STATE);
 	}
 	
 	private void setClientHelloMessageValues(TlsClientHelloMessage chm) {

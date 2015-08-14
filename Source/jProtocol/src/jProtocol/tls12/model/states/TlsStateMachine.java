@@ -7,11 +7,14 @@ import jProtocol.tls12.model.TlsConnectionState;
 import jProtocol.tls12.model.TlsPlaintext;
 import jProtocol.tls12.model.TlsSecurityParameters;
 import jProtocol.tls12.model.ciphersuites.TlsCipherSuite;
+import jProtocol.tls12.model.ciphersuites.TlsCipherSuiteRegistry;
 import jProtocol.tls12.model.ciphersuites.TlsEncryptionParameters;
 import jProtocol.tls12.model.exceptions.TlsBadPaddingException;
 import jProtocol.tls12.model.exceptions.TlsBadRecordMacException;
 import jProtocol.tls12.model.messages.TlsMessage;
 import jProtocol.tls12.model.messages.handshake.TlsHandshakeMessage;
+import jProtocol.tls12.model.states.client.TlsInitialClientState;
+import jProtocol.tls12.model.states.server.TlsConnectionEstablishedState;
 import jProtocol.tls12.model.states.server.TlsInitialServerState;
 import jProtocol.tls12.model.values.TlsConnectionEnd;
 import jProtocol.tls12.model.values.TlsContentType;
@@ -19,20 +22,32 @@ import jProtocol.tls12.model.values.TlsHandshakeType;
 import jProtocol.tls12.model.values.TlsRandom;
 import jProtocol.tls12.model.values.TlsSessionId;
 import jProtocol.tls12.model.values.TlsVersion;
-
 import java.util.List;
 
 public class TlsStateMachine extends StateMachine<TlsCiphertext> {
 
-	public static final int INITIAL_SERVER_STATE = 1;
-	public static final int RECEIVED_CLIENT_HELLO_STATE = 2;
-	public static final int WAITING_FOR_CLIENT_KEY_EXCHANGE_STATE = 3;
-	public static final int WAITING_FOR_CHANGE_CIPHER_SPEC_STATE = 4;
-	public static final int WAITING_FOR_FINISHED_STATE = 5;
-	public static final int RECEIVED_FINISHED_STATE = 6;
+	//Server
+	public static final int SERVER_INITIAL_STATE = 1;
+	public static final int SERVER_RECEIVED_CLIENT_HELLO_STATE = 2;
+	public static final int SERVER_IS_WAITING_FOR_CLIENT_KEY_EXCHANGE_STATE = 3;
+	public static final int SERVER_IS_WAITING_FOR_CHANGE_CIPHER_SPEC_STATE = 4;
+	public static final int SERVER_IS_WAITING_FOR_FINISHED_STATE = 5;
+	public static final int SERVER_RECEIVED_FINISHED_STATE = 6;
 	
+	//Client
+	public static final int CLIENT_INITIAL_STATE = 51;
+	public static final int CLIENT_IS_WAITING_FOR_SERVER_HELLO_STATE = 52;
+	public static final int CLIENT_IS_WAITING_FOR_CERTIFICATE_STATE = 53;
+	public static final int CLIENT_IS_WAITING_FOR_SERVER_KEY_EXCHANGE_STATE = 54;
+	public static final int CLIENT_IS_WAITING_FOR_SERVER_HELLO_DONE_STATE = 55;
+	public static final int CLIENT_RECEIVED_SERVER_HELLO_DONE_STATE = 56;
+	
+	//Common
 	public static final int CONNECTION_ESTABLISHED_STATE = 200;
+	public static final int RECEIVED_CLOSE_NOTIFY_STATE = 400;
+	public static final int WAITING_FOR_CLOSE_NOTIFY_STATE = 401;
 	
+	//Alert
 	public static final int RECEIVED_UNEXPECTED_MESSAGE_STATE = 410;
 	public static final int RECEIVED_BAD_RECORD_MESSAGE_STATE = 420;
 	public static final int DECRYPT_ERROR_OCCURED_STATE = 451;
@@ -44,6 +59,7 @@ public class TlsStateMachine extends StateMachine<TlsCiphertext> {
 	private TlsSecurityParameters _pendingSecurityParameters;
 	private TlsConnectionState _pendingConnectionState;
 	
+	private TlsCipherSuiteRegistry _cipherSuiteRegistry;
 	
 	public TlsStateMachine(CommunicationChannel<TlsCiphertext> channel, TlsConnectionEnd entity) {
 		super(channel);
@@ -52,16 +68,17 @@ public class TlsStateMachine extends StateMachine<TlsCiphertext> {
 		
 		_currentSecurityParameters = new TlsSecurityParameters(entity);
 		_currentConnectionState = new TlsConnectionState(_currentSecurityParameters);
-		
 		_pendingSecurityParameters = new TlsSecurityParameters(entity);
 		_pendingConnectionState = new TlsConnectionState(_pendingSecurityParameters);
+		
+		_cipherSuiteRegistry = new TlsCipherSuiteRegistry();
 		
 		createStates();
 	}
 	
 	private void createStates() {
 		//TODO: So oder anders?
-		addState(INITIAL_SERVER_STATE, new TlsInitialServerState(this));
+		addState(SERVER_INITIAL_STATE, new TlsInitialServerState(this));
 	}
 	
 	/**
@@ -72,7 +89,7 @@ public class TlsStateMachine extends StateMachine<TlsCiphertext> {
 	 * 
 	 * @return the TLSCiphertext
 	 */
-	public TlsCiphertext plaintextToCiphertext(TlsPlaintext plaintext) {
+	TlsCiphertext plaintextToCiphertext(TlsPlaintext plaintext) {
 		byte[] encKey = _isServer ? _currentConnectionState.getServerWriteEncryptionKey() : _currentConnectionState.getClientWriteEncryptionKey();
 		byte[] macKey = _isServer ? _currentConnectionState.getServerWriteMacKey() : _currentConnectionState.getClientWriteMacKey();
 		byte[] iv = _isServer ? _currentConnectionState.getServerWriteIv() : _currentConnectionState.getClientWriteIv();
@@ -91,7 +108,7 @@ public class TlsStateMachine extends StateMachine<TlsCiphertext> {
 	 * 
 	 * @return the TlsPlaintext
 	 */
-	public TlsPlaintext ciphertextToPlaintext(TlsCiphertext ciphertext) 
+	TlsPlaintext ciphertextToPlaintext(TlsCiphertext ciphertext) 
 			throws TlsBadRecordMacException, TlsBadPaddingException {
 		byte[] encKey = _isServer ? _currentConnectionState.getClientWriteEncryptionKey() : _currentConnectionState.getServerWriteEncryptionKey();
 		byte[] macKey = _isServer ? _currentConnectionState.getClientWriteMacKey() : _currentConnectionState.getServerWriteMacKey();
@@ -165,11 +182,19 @@ public class TlsStateMachine extends StateMachine<TlsCiphertext> {
 			throw new IllegalArgumentException("Cipher suite list must not be null or empty!");
 		}
 		//TODO: Choose Cipher suite
-		_pendingSecurityParameters.setCipherSuite(list.get(0));
+		setPendingCipherSuite(list.get(0));
+	}
+	
+	public void setPendingCipherSuite(TlsCipherSuite cipherSuite) {
+		_pendingSecurityParameters.setCipherSuite(cipherSuite);
 	}
 	
 	public TlsCipherSuite getPendingCipherSuite() {
 		return _pendingSecurityParameters.getCipherSuite();
+	}
+	
+	public List<TlsCipherSuite> allCipherSuites() {
+		return _cipherSuiteRegistry.allCipherSuites();
 	}
 	
 	public void changeToPendingState() {
@@ -207,5 +232,25 @@ public class TlsStateMachine extends StateMachine<TlsCiphertext> {
 		byte[] result = _isServer ? _currentConnectionState.getFinishedVerifyDataForServer() : _currentConnectionState.getFinishedVerifyDataForClient();
 		
 		return result;
+	}
+	
+	public void openConnection() {
+		if (isCurrentState(CLIENT_INITIAL_STATE)) {
+			TlsInitialClientState state = (TlsInitialClientState)getCurrentState();
+			state.openConnection();
+		}
+		else {
+			throw new RuntimeException("Open connection can only be called on an client in its initial state!");
+		}
+	}
+	
+	public void closeConnection() {
+		if (isCurrentState(CONNECTION_ESTABLISHED_STATE)) {
+			TlsConnectionEstablishedState state = (TlsConnectionEstablishedState)getCurrentState();
+			state.closeConnection();
+		}
+		else {
+			throw new RuntimeException("Close connection can only be called on an established connection!");
+		}
 	}
 }

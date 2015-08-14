@@ -37,6 +37,11 @@ public class TlsSecurityParameters {
 		_entity = connectionEnd;
 	}
 	
+	/**
+	 * Sets the cipher suite.
+	 * 
+	 * @param cipherSuite the cipher suite. Must not be null.
+	 */
 	public void setCipherSuite(TlsCipherSuite cipherSuite) {
 		if (cipherSuite == null) {
 			throw new IllegalArgumentException("Ciphersuite must not be null!");
@@ -44,6 +49,11 @@ public class TlsSecurityParameters {
 		_cipherSuite = cipherSuite;
 	}
 	
+	/**
+	 * Returns the current cipher suite, which must have been set before. 
+	 * 
+	 * @return the current cipher suite
+	 */
 	public TlsCipherSuite getCipherSuite() {
 		if (_cipherSuite == null) {
 			throw new RuntimeException("Ciphersuite must be set first!");
