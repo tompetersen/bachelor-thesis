@@ -21,6 +21,10 @@ public class TlsApplicationDataMessage implements TlsMessage {
 		_content = content;
 	}
 	
+	public byte[] getContent() {
+		return _content;
+	}
+
 	@Override
 	public TlsContentType getContentType() {
 		return TlsContentType.ApplicationData;

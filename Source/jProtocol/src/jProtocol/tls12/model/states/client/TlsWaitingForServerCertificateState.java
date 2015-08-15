@@ -20,7 +20,7 @@ public class TlsWaitingForServerCertificateState extends TlsState {
 	@Override
 	public void receivedTlsMessage(TlsMessage message) {
 		TlsCertificateMessage certMessage = (TlsCertificateMessage)message;
-		//TODO: ...
+		//TODO: Certificate
 		
 		boolean needsServerKeyExchangemessage = false;
 		if (needsServerKeyExchangemessage) {

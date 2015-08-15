@@ -15,7 +15,7 @@ public class TlsWaitingForClientKeyExchangeState extends TlsState {
 	@Override
 	public void receivedTlsMessage(TlsMessage message) {
 		TlsClientKeyExchangeMessage clientKeyExchangeMessage = (TlsClientKeyExchangeMessage)message;
-		//TODO: whatever...
+		//TODO: ClientKeyExchange...
 		
 		_stateMachine.addHandshakeMessageForVerifyData(message);
 		

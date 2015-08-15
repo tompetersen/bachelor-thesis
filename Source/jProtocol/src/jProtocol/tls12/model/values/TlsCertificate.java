@@ -6,6 +6,7 @@ public class TlsCertificate {
 
 	private String _certificateContent;
 	
+	
 	public static TlsCertificate generateCertificate() {
 		return new TlsCertificate("CERTIFICATE");
 	}

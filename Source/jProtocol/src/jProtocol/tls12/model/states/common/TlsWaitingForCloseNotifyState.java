@@ -1,4 +1,4 @@
-package jProtocol.tls12.model.states.server;
+package jProtocol.tls12.model.states.common;
 
 import jProtocol.tls12.model.messages.TlsMessage;
 import jProtocol.tls12.model.states.TlsState;
@@ -13,7 +13,7 @@ public class TlsWaitingForCloseNotifyState extends TlsState {
 
 	@Override
 	public boolean expectedTlsMessage(TlsMessage message) {
-		/*  TODO: 
+		/*  TODO: close notify
 		 *  Unless some other fatal alert has been transmitted, each party is 
 		 *  required to send a close_notify alert before closing the write side 
 		 *  of the connection. 

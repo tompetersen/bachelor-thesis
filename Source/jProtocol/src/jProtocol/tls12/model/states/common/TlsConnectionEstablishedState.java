@@ -1,4 +1,4 @@
-package jProtocol.tls12.model.states.server;
+package jProtocol.tls12.model.states.common;
 
 import jProtocol.tls12.model.messages.TlsAlertMessage;
 import jProtocol.tls12.model.messages.TlsApplicationDataMessage;
@@ -29,11 +29,16 @@ public class TlsConnectionEstablishedState extends TlsState{
 	}
 
 	private void processApplicationData(TlsApplicationDataMessage m) {
-		//TODO: ApplicationDataProcessing
+		_stateMachine.receivedData(m.getContent());
 	}
 	
 	private void closeNotifyAlertReceived() {
 		setState(TlsStateMachine.RECEIVED_CLOSE_NOTIFY_STATE);
+	}
+	
+	public void sendApplicationData(byte[] data) {
+		TlsApplicationDataMessage message = new TlsApplicationDataMessage(data);
+		sendTlsMessage(message);
 	}
 	
 	public void closeConnection() {

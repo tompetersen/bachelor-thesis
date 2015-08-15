@@ -2,8 +2,11 @@ package jProtocol.Abstract.Model;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Observable;
 
-public abstract class StateMachine<T extends ProtocolDataUnit> {
+public abstract class StateMachine<T extends ProtocolDataUnit> extends Observable {
+	
+	public class StateMachineEvent {};
 	
 	private State<T> _currentState;
 	private Map<Integer, State<T>> _states = new HashMap<Integer, State<T>>();
@@ -58,5 +61,10 @@ public abstract class StateMachine<T extends ProtocolDataUnit> {
 	
 	public void sendMessage(T pdu) {
 		_channel.sendMessage(pdu, this);
+	}
+	
+	public void notifyStateMachineObservers(StateMachineEvent event) {
+		setChanged();
+		notifyObservers(event);
 	}
 }

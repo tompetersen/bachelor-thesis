@@ -14,7 +14,7 @@ import jProtocol.tls12.model.exceptions.TlsBadRecordMacException;
 import jProtocol.tls12.model.messages.TlsMessage;
 import jProtocol.tls12.model.messages.handshake.TlsHandshakeMessage;
 import jProtocol.tls12.model.states.client.TlsInitialClientState;
-import jProtocol.tls12.model.states.server.TlsConnectionEstablishedState;
+import jProtocol.tls12.model.states.common.TlsConnectionEstablishedState;
 import jProtocol.tls12.model.states.server.TlsInitialServerState;
 import jProtocol.tls12.model.values.TlsConnectionEnd;
 import jProtocol.tls12.model.values.TlsContentType;
@@ -25,7 +25,27 @@ import jProtocol.tls12.model.values.TlsVersion;
 import java.util.List;
 
 public class TlsStateMachine extends StateMachine<TlsCiphertext> {
+	
+	public enum TlsStateMachineEventType {
+		connection_established,
+		connection_error,
+		received_data,
+		connection_closed
+	}
+	
+	public class TlsStateMachineEvent extends StateMachineEvent {
+		private TlsStateMachineEventType _eventType;
 
+		public TlsStateMachineEvent(TlsStateMachineEventType eventType) {
+			super();
+			_eventType = eventType;
+		}
+
+		public TlsStateMachineEventType getEventType() {
+			return _eventType;
+		}
+	}
+	
 	//Server
 	public static final int SERVER_INITIAL_STATE = 1;
 	public static final int SERVER_RECEIVED_CLIENT_HELLO_STATE = 2;
@@ -41,6 +61,8 @@ public class TlsStateMachine extends StateMachine<TlsCiphertext> {
 	public static final int CLIENT_IS_WAITING_FOR_SERVER_KEY_EXCHANGE_STATE = 54;
 	public static final int CLIENT_IS_WAITING_FOR_SERVER_HELLO_DONE_STATE = 55;
 	public static final int CLIENT_RECEIVED_SERVER_HELLO_DONE_STATE = 56;
+	public static final int CLIENT_IS_WAITING_FOR_CHANGE_CIPHER_SPEC_STATE = 57;
+	public static final int CLIENT_IS_WAITING_FOR_FINISHED_STATE = 58;
 	
 	//Common
 	public static final int CONNECTION_ESTABLISHED_STATE = 200;
@@ -165,7 +187,7 @@ public class TlsStateMachine extends StateMachine<TlsCiphertext> {
 	}
 	
 	public boolean canPerformAbbreviatedHandshakeForSessionId(TlsSessionId sessionId) {
-		//TODO
+		//TODO: Abbreviated Handshakes
 		return false;
 	}
 
@@ -234,6 +256,10 @@ public class TlsStateMachine extends StateMachine<TlsCiphertext> {
 		return result;
 	}
 	
+	/*
+	 * Public methods
+	 */
+	
 	public void openConnection() {
 		if (isCurrentState(CLIENT_INITIAL_STATE)) {
 			TlsInitialClientState state = (TlsInitialClientState)getCurrentState();
@@ -252,5 +278,19 @@ public class TlsStateMachine extends StateMachine<TlsCiphertext> {
 		else {
 			throw new RuntimeException("Close connection can only be called on an established connection!");
 		}
+	}
+	
+	public void sendData(byte[] data) {
+		if (isCurrentState(TlsStateMachine.CONNECTION_ESTABLISHED_STATE)) {
+			TlsConnectionEstablishedState state = (TlsConnectionEstablishedState)getCurrentState();
+			state.sendApplicationData(data);
+		}
+		else {
+			throw new RuntimeException("Connection must be established to send data!");
+		}
+	}
+	
+	public void receivedData(byte[] data) {
+		notifyStateMachineObservers(new TlsStateMachineEvent(TlsStateMachineEventType.received_data));
 	}
 }

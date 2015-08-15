@@ -28,7 +28,7 @@ public class TlsWaitingForServerHelloState extends TlsState {
 			setState(TlsStateMachine.CLIENT_IS_WAITING_FOR_CERTIFICATE_STATE);
 		}
 		else {
-			//TODO: abbreviated
+			//TODO: abbreviated handshake
 		}
 	}
 
@@ -38,7 +38,7 @@ public class TlsWaitingForServerHelloState extends TlsState {
 			_stateMachine.setPendingVersion(version);
 		}
 		else {
-			//TODO: ...
+			//TODO: no supported version
 		}
 		_stateMachine.setPendingServerRandom(message.getServerRandom());
 		_stateMachine.setPendingSessionId(message.getSessionId());

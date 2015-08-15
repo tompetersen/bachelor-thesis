@@ -1,4 +1,4 @@
-package jProtocol.tls12.model.states.server;
+package jProtocol.tls12.model.states.common;
 
 import jProtocol.tls12.model.messages.TlsAlertMessage;
 import jProtocol.tls12.model.messages.TlsMessage;
