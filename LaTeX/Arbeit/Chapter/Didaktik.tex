@@ -1,22 +1,33 @@
 \chapter{TLS in der Lehre}
 
-Stichworte
+\section{Warum eignet sich TLS bzw. warum sollte man sich überhaupt damit befassen?}
 
 \begin{itemize}
 	\item "'einfaches"' Protokoll, das gut zur Erklärung einzelner Verfahren dienen kann (Record-Protocol für vertrauliche und authentifizierte Nachrichtenübertragung, Handshake zur Schlüsselaushandlung, ...)
-	\item Schwerpunkte für die Lehre setzen
 	\item Viele Angriffe, die Abwehrmaßnahmen und auch "'Prinzip des schwächsten Kettenglieds"' deutlich machen (CBC-IV, Padding, MAC-then-Encrypt)
 	\item weite Verbreitung -> notwendiges Verständnis
-	\item Familien von Angriffen betrachten?
 \end{itemize}
 
-Informatik-Didaktik, Anforderungen an Visualisierungen, ... -> Methodik erläutern
+\section{Fundamentale Ideen / Schwerpunkte für die Lehre}
+
+Was ist das? -> Im kleineren Rahmen für TLS (wahrscheinlich nicht ganz treffender Begriff, aber es geht um die Richtung)
+
+Was könnte hier erwähnt werden?
 
 \begin{itemize}
-\item Ludger Humbert, Didaktik der Informatik, Stuttgart: Teubner, 2005
-\item Sigried Schubert/Andreas Schwill, Didaktik der Informatik, Heidelberg/Berlin: Spektrum, 2004
-\item Hilbert Meyer, Unterrichtsmethoden, 2 Bände, Berlin: Cornelsen, 11.Aufl. 2005
+	\item Hybride Kryptosysteme (Symmetrisch und asymmetrisch) und Problem des Schlüsselaustausches
+	\item Familien von Angriffen betrachten?\\
+	- Timing/Seitenkanal-Angriffe: Bleichenbacher und weitere\\
+	- Replay-Angriffe: Sequenznummer
+	\item Krypto-Standardvorgehen und Probleme, wenn man dagegen verstößt: Zufällige IVs in CBC, MAC-then-encrypt, ...
+	\item Probleme in \inquotes{unerwarteten} Bereichen: Komprimierung, ...
 \end{itemize}
+
+Überleitung zu Tool
+
+\section{Lernen durch Visualisierung/Exploration}
+
+Erklärung best practices, ...
 
 Vllt. auch E-Learning?
 
