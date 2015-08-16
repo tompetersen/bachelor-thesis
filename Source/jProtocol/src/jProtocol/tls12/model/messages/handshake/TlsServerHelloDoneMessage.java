@@ -9,6 +9,10 @@ public class TlsServerHelloDoneMessage extends TlsHandshakeMessage {
 	 struct { } ServerHelloDone;
 	 */
 	
+	public TlsServerHelloDoneMessage() {
+		super();
+	}
+	
 	public TlsServerHelloDoneMessage(byte[] unparsedContent) throws TlsDecodeErrorException {
 		super(unparsedContent);
 

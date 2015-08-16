@@ -8,6 +8,10 @@ public class TlsHelloRequestMessage extends TlsHandshakeMessage {
 	/*
 	 *  struct { } HelloRequest;
 	 */
+	
+	public TlsHelloRequestMessage() {
+		super();
+	}
 
 	public TlsHelloRequestMessage(byte[] unparsedContent) throws TlsDecodeErrorException {
 		super(unparsedContent);

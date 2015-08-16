@@ -1,5 +1,6 @@
 package jProtocol.tls12.model.states.client;
 
+import jProtocol.helper.MyLogger;
 import jProtocol.tls12.model.messages.TlsMessage;
 import jProtocol.tls12.model.messages.handshake.TlsCertificateMessage;
 import jProtocol.tls12.model.states.TlsState;
@@ -21,6 +22,9 @@ public class TlsWaitingForServerCertificateState extends TlsState {
 	@Override
 	public void receivedTlsMessage(TlsMessage message) {
 		TlsCertificateMessage certMessage = (TlsCertificateMessage)message;
+		
+		MyLogger.info("Received Server Certificate!");
+		
 		//TODO: Certificate
 		
 		boolean needsServerKeyExchangemessage = false;

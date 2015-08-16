@@ -1,5 +1,6 @@
 package jProtocol.tls12.model.states.client;
 
+import jProtocol.helper.MyLogger;
 import jProtocol.tls12.model.messages.TlsMessage;
 import jProtocol.tls12.model.states.TlsState;
 import jProtocol.tls12.model.states.TlsStateMachine;
@@ -19,6 +20,7 @@ public class TlsWaitingForServerKeyExchangeState extends TlsState {
 
 	@Override
 	public void receivedTlsMessage(TlsMessage message) {
+		MyLogger.info("Received Server Key exchange!");
 		// TODO Server key exchange for DHE_RSA
 		
 		setTlsState(TlsStateType.CLIENT_IS_WAITING_FOR_SERVER_HELLO_DONE_STATE);

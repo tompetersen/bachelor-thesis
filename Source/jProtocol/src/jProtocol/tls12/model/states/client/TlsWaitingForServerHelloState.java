@@ -1,5 +1,6 @@
 package jProtocol.tls12.model.states.client;
 
+import jProtocol.helper.MyLogger;
 import jProtocol.tls12.model.messages.TlsMessage;
 import jProtocol.tls12.model.messages.handshake.TlsServerHelloMessage;
 import jProtocol.tls12.model.states.TlsState;
@@ -22,6 +23,8 @@ public class TlsWaitingForServerHelloState extends TlsState {
 	@Override
 	public void receivedTlsMessage(TlsMessage message) {
 		TlsServerHelloMessage serverHello = (TlsServerHelloMessage)message;
+		
+		MyLogger.info("Received Server Hello!");
 		
 		boolean fullHandshake = true;
 		if (fullHandshake) {

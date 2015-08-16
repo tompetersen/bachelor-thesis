@@ -29,9 +29,9 @@ public class TlsInitialClientState extends TlsState {
 	}
 	
 	public void openConnection() {
-		sendClientHelloMessage();
-		
 		setTlsState(TlsStateType.CLIENT_IS_WAITING_FOR_SERVER_HELLO_STATE);
+		
+		sendClientHelloMessage();
 	}
 	
 	private void sendClientHelloMessage() {

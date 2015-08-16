@@ -28,25 +28,25 @@ public class TlsReceivedServerHelloDoneState extends TlsState {
 	public void onEnter() {
 		super.onEnter();
 		
+		setTlsState(TlsStateType.CLIENT_IS_WAITING_FOR_CHANGE_CIPHER_SPEC_STATE);
+		
 		sendClientKeyExchangeMessage();
 		sendChangeCipherSpecMessage();
 		sendFinishedMessage();
-		
-		setTlsState(TlsStateType.CLIENT_IS_WAITING_FOR_CHANGE_CIPHER_SPEC_STATE);
 	}
 	
 	private void sendClientKeyExchangeMessage() {
 		//TODO: KeyExchange
 	}
+
+	private void sendChangeCipherSpecMessage() {
+		TlsMessage message = new TlsChangeCipherSpecMessage();
+		sendTlsMessage(message);
+	}
 	
 	private void sendFinishedMessage() {
 		TlsVerifyData verifyData = _stateMachine.getVerifyDataToSend();
 		TlsFinishedMessage message = new TlsFinishedMessage(verifyData);
-		sendTlsMessage(message);
-	}
-
-	private void sendChangeCipherSpecMessage() {
-		TlsMessage message = new TlsChangeCipherSpecMessage();
 		sendTlsMessage(message);
 	}
 }

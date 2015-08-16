@@ -25,7 +25,7 @@ public abstract class TlsMessage {
 		TlsMessage result = null;
 		switch (contentType) {
 		case Handshake:
-			TlsHandshakeMessage.parseHandshakeMessage(unparsedContent, registry);
+			result = TlsHandshakeMessage.parseHandshakeMessage(unparsedContent, registry);
 			break;
 		case ChangeCipherSpec:
 			result = new TlsChangeCipherSpecMessage(unparsedContent);

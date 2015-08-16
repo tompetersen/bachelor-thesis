@@ -12,6 +12,7 @@ import test.tls.messages.MessageTests;
 @SuiteClasses({ 
 		ConnectionStateTest.class, 
 		SecurityParametersTest.class,
+		CiphertextTest.class,
 		MessageTests.class,
 		CryptoTests.class,
 		CiphersuiteTests.class

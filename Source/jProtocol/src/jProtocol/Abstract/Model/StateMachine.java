@@ -36,7 +36,7 @@ public abstract class StateMachine<T extends ProtocolDataUnit> extends Observabl
 			setState(state);
 		}
 		else {
-			throw new RuntimeException("Only current state is allowed to set state!");
+			throw new RuntimeException("Only current state [" + _currentState.toString() + "] is allowed to set state!");
 		}
 	}
 	

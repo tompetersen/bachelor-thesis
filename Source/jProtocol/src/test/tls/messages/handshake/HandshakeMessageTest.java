@@ -6,7 +6,6 @@ import jProtocol.helper.ByteHelper;
 import jProtocol.tls12.model.messages.handshake.TlsHandshakeMessage;
 import jProtocol.tls12.model.values.TlsContentType;
 import jProtocol.tls12.model.values.TlsHandshakeType;
-
 import org.junit.Test;
 
 public class HandshakeMessageTest {

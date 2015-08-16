@@ -74,7 +74,8 @@ public class TlsPlaintext {
 		_fragment = new byte[fragmentLength];
 		System.arraycopy(decryptedBytes, 5, _fragment, 0, fragmentLength);
 		
-		_message = TlsMessage.parseTlsMessage(_fragment, _contentType, registry);
+		TlsMessage message = TlsMessage.parseTlsMessage(_fragment, _contentType, registry);
+		_message = message;
 	}
 	
 	public TlsContentType getContentType() {

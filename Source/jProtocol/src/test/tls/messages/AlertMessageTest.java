@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import jProtocol.tls12.model.messages.TlsAlertMessage;
 import jProtocol.tls12.model.values.TlsAlert;
 import jProtocol.tls12.model.values.TlsContentType;
-
 import org.junit.Test;
 
 public class AlertMessageTest {

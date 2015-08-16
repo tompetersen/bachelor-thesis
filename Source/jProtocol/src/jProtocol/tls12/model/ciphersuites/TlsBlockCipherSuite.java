@@ -78,6 +78,7 @@ public abstract class TlsBlockCipherSuite implements TlsCipherSuite {
 		if (ciphertextBytes.length <= TlsPlaintext.RECORD_HEADER_LENGTH) {
 			throw new TlsDecodeErrorException("Ciphertext contains not enough information for record header and fragment!");
 		}
+		
 		byte[] headerBytes = new byte[TlsPlaintext.RECORD_HEADER_LENGTH];
 		System.arraycopy(ciphertextBytes, 0, headerBytes, 0, TlsPlaintext.RECORD_HEADER_LENGTH);
 		byte[] fragmentBytes = new byte[ciphertextBytes.length - TlsPlaintext.RECORD_HEADER_LENGTH];

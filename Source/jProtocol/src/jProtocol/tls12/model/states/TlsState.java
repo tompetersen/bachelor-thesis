@@ -103,4 +103,9 @@ public abstract class TlsState extends State<TlsCiphertext> {
 	public boolean isApplicationDataMessage(TlsMessage m) {
 		return (m.getContentType() == TlsContentType.ApplicationData);
 	}
+
+	@Override
+	public String toString() {
+		return this.getClass().getSimpleName();
+	}
 }

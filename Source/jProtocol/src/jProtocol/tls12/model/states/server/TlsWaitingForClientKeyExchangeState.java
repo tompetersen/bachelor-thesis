@@ -1,5 +1,6 @@
 package jProtocol.tls12.model.states.server;
 
+import jProtocol.helper.MyLogger;
 import jProtocol.tls12.model.messages.TlsMessage;
 import jProtocol.tls12.model.messages.handshake.TlsClientKeyExchangeMessage;
 import jProtocol.tls12.model.states.TlsState;
@@ -16,6 +17,8 @@ public class TlsWaitingForClientKeyExchangeState extends TlsState {
 	@Override
 	public void receivedTlsMessage(TlsMessage message) {
 		TlsClientKeyExchangeMessage clientKeyExchangeMessage = (TlsClientKeyExchangeMessage)message;
+		
+		MyLogger.info("Received Client Key Exchange!");
 		//TODO: ClientKeyExchange...
 		
 		_stateMachine.addHandshakeMessageForVerifyData(message);

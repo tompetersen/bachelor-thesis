@@ -3,7 +3,6 @@ package test.tls.messages;
 import static org.junit.Assert.assertEquals;
 import jProtocol.tls12.model.messages.TlsChangeCipherSpecMessage;
 import jProtocol.tls12.model.values.TlsContentType;
-
 import org.junit.Test;
 
 public class ChangeCipherSpecMessageTest {
