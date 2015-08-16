@@ -6,13 +6,23 @@ Zugrundeliegend: Gemeinsamkeit von Protokollen, Erweiterbarkeit/Pluginfähigkeit
 
 Warum Java? (UHH als Einstieg-> für alle verständlich und auch erweiterbar, ...)
 
-Welche TLS-Version? Oder SSL 2.0? Aus welchen Gründen?
+Welche TLS-Version? Oder SSL 2.0? Aus welchen Gründen? (1.2, aktuell, demonstriert Funktionsweise und Verhinderung von Angriffen; zum \inquotes{Durchklicken} von Angriffen wäre SSL schöner.
 
-Welche Dinge werden betrachtet, welche ausgelassen (zB Extensions, Zertifikatvalidierung, ...), aus welchen Gründen?
+Welche Dinge werden betrachtet, welche ausgelassen (Extensions, Zertifikatvalidierung, ...), aus welchen Gründen?
+
+Ausgelassen:
+\begin{itemize}
+\item TLS-Extensions
+\item Zertifikatsvalidierung, PKI und Verwandtes
+\item Komprimierung
+\item eingeschränkte Anzahl von CipherSuites (und Schlüsselaustausch)
+\item Ältere Versionen
+\item Clientauthentifizierung
+\end{itemize}
 
 \section{Implementation notes}
 
-Analyse (Rückgriff auf Didaktik-Kapitel), Entwurf (UML ist toll, Automatenmodelle, ...), Implementierung, Tests, ...
+Analyse (Rückgriff auf Didaktik-Kapitel), Entwurf (UML ist toll, Automatenmodelle, ...), Implementierung, Tests, Evaluation...
 
 Probleme/Schwierigkeiten bei der Umsetzung, ...
 

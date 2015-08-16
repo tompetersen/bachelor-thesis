@@ -137,17 +137,17 @@ Eine Gruppe von Pariser Wissenschaftlern entdeckte eine Möglichkeit, wie ein An
 %https://www.smacktls.com/#freak
 %http://blog.cryptographyengineering.com/2015/03/attack-of-week-freak-or-factoring-nsa.html
 
-Der Angriff beruht auf Fehlern in TLS-Implementierungen, die schwache RSA-Schlüssel vom Server akzeptieren, selbst wenn sie die \ciphersuites nicht anbieten.
+Der Angriff beruht auf Fehlern in TLS-Implementierungen, die schwache RSA-Schlüssel vom Server akzeptieren, selbst wenn sie die \ciphersuites{} nicht anbieten.
 
 \section{logjam}
 
-In \cite{logjam15} beschreiben die Autoren mehrere Angriffe gegen die Nutzung von Diffie-Hellman(DH)-Schlüsselaustausch während des TLS Handshakes. Ein Angriff richtet sich gegen kleine DH-Parameter (DHE-EXPORT), ein weiterer nutzt die weite Verbreitung von standardisierten DH-Parametern, um mittels Vorberechnung bestimmter Werte schneller diskrete Logarithmen für beim DH-Verfahren gesendete Nachrichten zu berechnen.
+In \cite{logjam15} beschreiben die Autoren mehrere Angriffe gegen die Nutzung von Diffie-Hellman-Schlüsselaustausch während des TLS Handshakes. Ein Angriff richtet sich gegen kleine DH-Parameter (DHE-EXPORT), ein weiterer nutzt die weite Verbreitung von standardisierten DH-Parametern, um mittels Vorberechnung bestimmter Werte schneller diskrete Logarithmen für beim DH-Verfahren gesendete Nachrichten zu berechnen.
 %weakdh.org
 
 \section{Zertifikate und Verwandtes}
 
 Viele Probleme, die in den letzten Jahren aufgetreten sind, betreffen nicht das TLS-Protokoll direkt, sondern die Erstellung und Validierung von (insbesondere) Server-Zertifikaten, und seien deshalb nur am Rande erwähnt. Ein guter Überblick ist in \cite{meyer13} zu finden.
 
-Viele dieser Angriffe richteten sich gegen mangelnde Zertifikatvalidierung in TLS-Implementierungen (keine Validierung, keine Überprüfung des Servernamens, Akzeptanz unsignierter oder abgelaufener Zertifikate, ...) oder wenig Sorgfalt bei der Zertifikaterstellung durch Certificate Authorities (Nutzung von MD5, fehlerhafte Validierung von übermittelten Servernamen, fehlerhafte Ausgabe von intermediate-Zertifikaten, mangelhaft abgesicherte Server, ...).
+Oftmals richteten sich diese Angriffe gegen mangelnde Zertifikatvalidierung in TLS-Implementierungen (keine Validierung, keine Überprüfung des Servernamens, Akzeptanz unsignierter oder abgelaufener Zertifikate, ...) oder wenig Sorgfalt bei der Zertifikaterstellung durch Certificate Authorities (Nutzung von MD5, fehlerhafte Validierung von übermittelten Servernamen, fehlerhafte Ausgabe von intermediate-Zertifikaten, mangelhaft abgesicherte Server, ...).
 
 Der Vollständigkeit halber sei hier auch noch die notwendige Sicherheit des privaten Serverschlüssels erwähnt. Gelangt ein Angreifer in seinen Besitz, so kann er den Datenverkehr problemlos mitlesen oder verändern.
