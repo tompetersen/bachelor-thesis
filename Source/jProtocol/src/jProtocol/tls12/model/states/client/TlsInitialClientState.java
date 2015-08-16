@@ -6,6 +6,7 @@ import jProtocol.tls12.model.messages.TlsMessage;
 import jProtocol.tls12.model.messages.handshake.TlsClientHelloMessage;
 import jProtocol.tls12.model.states.TlsState;
 import jProtocol.tls12.model.states.TlsStateMachine;
+import jProtocol.tls12.model.states.TlsStateMachine.TlsStateType;
 import jProtocol.tls12.model.values.TlsRandom;
 import jProtocol.tls12.model.values.TlsSessionId;
 import jProtocol.tls12.model.values.TlsVersion;
@@ -30,7 +31,7 @@ public class TlsInitialClientState extends TlsState {
 	public void openConnection() {
 		sendClientHelloMessage();
 		
-		setState(TlsStateMachine.CLIENT_IS_WAITING_FOR_SERVER_HELLO_STATE);
+		setTlsState(TlsStateType.CLIENT_IS_WAITING_FOR_SERVER_HELLO_STATE);
 	}
 	
 	private void sendClientHelloMessage() {

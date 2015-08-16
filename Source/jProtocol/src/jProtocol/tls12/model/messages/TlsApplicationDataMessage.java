@@ -1,5 +1,7 @@
 package jProtocol.tls12.model.messages;
 
+import jProtocol.tls12.model.exceptions.TlsDecodeErrorException;
+import jProtocol.tls12.model.values.TlsApplicationData;
 import jProtocol.tls12.model.values.TlsContentType;
 
 /*
@@ -10,19 +12,25 @@ import jProtocol.tls12.model.values.TlsContentType;
  *  
  *  See chapter 10, p. 65 TLS 1.2
  */
-public class TlsApplicationDataMessage implements TlsMessage {
+public class TlsApplicationDataMessage extends TlsMessage {
 
-	private byte[] _content;
+	private TlsApplicationData _applicationData;
 	
-	public TlsApplicationDataMessage(byte[] content) {
-		if (content == null) {
-			throw new IllegalArgumentException("Alert description must not be null!");
+	public TlsApplicationDataMessage(TlsApplicationData applicationData) {
+		if (applicationData == null) {
+			throw new IllegalArgumentException("Application data must not be null!");
 		}
-		_content = content;
+		_applicationData = applicationData;
 	}
 	
-	public byte[] getContent() {
-		return _content;
+	public TlsApplicationDataMessage(byte[] unparsedContent) throws TlsDecodeErrorException {
+		super(unparsedContent);
+		
+		_applicationData = new TlsApplicationData(unparsedContent);
+	}
+	
+	public TlsApplicationData getApplicationData() {
+		return _applicationData;
 	}
 
 	@Override
@@ -32,6 +40,6 @@ public class TlsApplicationDataMessage implements TlsMessage {
 
 	@Override
 	public byte[] getBytes() {
-		return _content;
+		return _applicationData.getBytes();
 	}
 }

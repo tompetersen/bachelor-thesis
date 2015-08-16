@@ -10,20 +10,19 @@ import jProtocol.tls12.model.ciphersuites.TlsEncryptionParameters;
 import jProtocol.tls12.model.ciphersuites.impl.TlsCipherSuite_RSA_WITH_AES_128_CBC_SHA;
 import jProtocol.tls12.model.exceptions.TlsBadPaddingException;
 import jProtocol.tls12.model.exceptions.TlsBadRecordMacException;
+import jProtocol.tls12.model.exceptions.TlsDecodeErrorException;
 import jProtocol.tls12.model.exceptions.TlsException;
 import jProtocol.tls12.model.fragments.TlsBlockFragment;
 import jProtocol.tls12.model.messages.TlsMessage;
 import jProtocol.tls12.model.values.TlsContentType;
 import jProtocol.tls12.model.values.TlsVersion;
-
 import java.util.Arrays;
-
 import org.junit.Before;
 import org.junit.Test;
 
 public class BlockCipherSuiteTest {
 
-	private class TlsTestMessage implements TlsMessage {
+	private class TlsTestMessage extends TlsMessage {
 		@Override
 		public TlsContentType getContentType() {
 			return TlsContentType.ApplicationData;
@@ -116,21 +115,21 @@ public class BlockCipherSuiteTest {
 	}
 	
 	@Test
-	public void testCiphertextToPlaintext() throws TlsBadRecordMacException, TlsBadPaddingException {
+	public void testCiphertextToPlaintext() throws TlsBadRecordMacException, TlsBadPaddingException, TlsDecodeErrorException {
 		TlsPlaintext plaintext = _cipherSuite.ciphertextToPlaintext(_ciphertext, _parameters);
 		
 		assertArrayEquals(plaintext.getFragment(), _testMessage.getBytes());
 	}
 	
 	@Test(expected = TlsBadRecordMacException.class)
-	public void testWrongSequenceNumber() throws TlsBadRecordMacException, TlsBadPaddingException {
+	public void testWrongSequenceNumber() throws TlsBadRecordMacException, TlsBadPaddingException, TlsDecodeErrorException {
 		TlsEncryptionParameters wrongParameters = new TlsEncryptionParameters(1337, _parameters.getEncryptionWriteKey(), _parameters.getMacWriteKey(), null);
 		 _cipherSuite.ciphertextToPlaintext(_ciphertext, wrongParameters);
 	}
 	
 	@Test(expected = TlsException.class)
 	//Could be bad padding or bad record mac
-	public void testWrongEncryptionWriteKey() throws TlsBadRecordMacException, TlsBadPaddingException {
+	public void testWrongEncryptionWriteKey() throws TlsBadRecordMacException, TlsBadPaddingException, TlsDecodeErrorException {
 		byte[] encKey = new byte[_cipherSuite.getEncryptKeyLength()];
 		Arrays.fill(encKey, (byte)0x23);
 		
@@ -139,7 +138,7 @@ public class BlockCipherSuiteTest {
 	}
 	
 	@Test(expected = TlsBadRecordMacException.class)
-	public void testWrongMacWriteKey() throws TlsBadRecordMacException, TlsBadPaddingException {
+	public void testWrongMacWriteKey() throws TlsBadRecordMacException, TlsBadPaddingException, TlsDecodeErrorException {
 		byte[] macWriteKey = new byte[_cipherSuite.getMacKeyLength()];
 		Arrays.fill(macWriteKey, (byte)0x34);
 		

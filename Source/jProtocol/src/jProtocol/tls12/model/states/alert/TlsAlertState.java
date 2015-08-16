@@ -28,7 +28,7 @@ public abstract class TlsAlertState extends TlsState {
 		
 		sendTlsMessage(getAlertMessageToSend());
 		
-		//setState(TlsStateMachine.INITIAL_SERVER_STATE);
+		//setTlsState(TlsStateType.INITIAL_SERVER_STATE);
 	}
 	
 	public abstract TlsAlertMessage getAlertMessageToSend();

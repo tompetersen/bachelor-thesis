@@ -33,7 +33,7 @@ public class TlsReceivedCloseNotifyState extends TlsState {
 		TlsAlertMessage message = new TlsAlertMessage(TlsAlert.close_notify, false);
 		sendTlsMessage(message);
 		
-		//TODO:setState(TlsStateMachine.INITIAL_SERVER_STATE)
+		//TODO:setTlsState(TlsStateType.INITIAL_SERVER_STATE)
 	}
 	
 	

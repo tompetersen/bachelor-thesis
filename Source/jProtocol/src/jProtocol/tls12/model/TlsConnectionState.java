@@ -120,7 +120,9 @@ public class TlsConnectionState {
 
 	public TlsVersion getVersion() {
 		if (_version == null) {
-			throw new RuntimeException("Version must be set first!");
+			//TODO: tls version
+			return TlsVersion.getTls12Version();
+			//throw new RuntimeException("Version must be set first!");
 		}
 		return _version;
 	}

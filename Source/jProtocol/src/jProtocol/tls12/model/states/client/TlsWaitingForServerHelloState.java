@@ -4,6 +4,7 @@ import jProtocol.tls12.model.messages.TlsMessage;
 import jProtocol.tls12.model.messages.handshake.TlsServerHelloMessage;
 import jProtocol.tls12.model.states.TlsState;
 import jProtocol.tls12.model.states.TlsStateMachine;
+import jProtocol.tls12.model.states.TlsStateMachine.TlsStateType;
 import jProtocol.tls12.model.values.TlsHandshakeType;
 import jProtocol.tls12.model.values.TlsVersion;
 
@@ -25,7 +26,7 @@ public class TlsWaitingForServerHelloState extends TlsState {
 		boolean fullHandshake = true;
 		if (fullHandshake) {
 			setServerHelloValues(serverHello);
-			setState(TlsStateMachine.CLIENT_IS_WAITING_FOR_CERTIFICATE_STATE);
+			setTlsState(TlsStateType.CLIENT_IS_WAITING_FOR_CERTIFICATE_STATE);
 		}
 		else {
 			//TODO: abbreviated handshake

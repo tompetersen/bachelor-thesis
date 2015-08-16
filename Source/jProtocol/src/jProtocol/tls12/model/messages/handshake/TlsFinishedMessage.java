@@ -1,14 +1,21 @@
 package jProtocol.tls12.model.messages.handshake;
 
+import jProtocol.tls12.model.exceptions.TlsDecodeErrorException;
 import jProtocol.tls12.model.values.TlsHandshakeType;
+import jProtocol.tls12.model.values.TlsVerifyData;
 
 public class TlsFinishedMessage extends TlsHandshakeMessage {
 
-	private byte[] _verifyData;
+	private TlsVerifyData _verifyData;
 	
-	public TlsFinishedMessage(byte[] verifiedData) {
+	public TlsFinishedMessage(TlsVerifyData verifyData) {
 		//TODO: length check
-		_verifyData = verifiedData;
+		_verifyData = verifyData;
+	}
+
+	public TlsFinishedMessage(byte[] unparsedContent) throws TlsDecodeErrorException {
+		super(unparsedContent);
+		// TODO  Parsing
 	}
 
 	@Override
@@ -18,10 +25,10 @@ public class TlsFinishedMessage extends TlsHandshakeMessage {
 
 	@Override
 	public byte[] getBodyBytes() {
-		return _verifyData; //Fixed length VERIFY_DATA_LENGTH, therefore no length field needed
+		return _verifyData.getBytes(); //Fixed length VERIFY_DATA_LENGTH, therefore no length field needed
 	}
 
-	public byte[] getVerifyData() {
+	public TlsVerifyData getVerifyData() {
 		return _verifyData;
 	}
 

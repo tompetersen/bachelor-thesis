@@ -5,6 +5,8 @@ import jProtocol.tls12.model.messages.TlsMessage;
 import jProtocol.tls12.model.messages.handshake.TlsFinishedMessage;
 import jProtocol.tls12.model.states.TlsState;
 import jProtocol.tls12.model.states.TlsStateMachine;
+import jProtocol.tls12.model.states.TlsStateMachine.TlsStateType;
+import jProtocol.tls12.model.values.TlsVerifyData;
 
 public class TlsReceivedServerHelloDoneState extends TlsState {
 
@@ -30,7 +32,7 @@ public class TlsReceivedServerHelloDoneState extends TlsState {
 		sendChangeCipherSpecMessage();
 		sendFinishedMessage();
 		
-		setState(TlsStateMachine.CLIENT_IS_WAITING_FOR_CHANGE_CIPHER_SPEC_STATE);
+		setTlsState(TlsStateType.CLIENT_IS_WAITING_FOR_CHANGE_CIPHER_SPEC_STATE);
 	}
 	
 	private void sendClientKeyExchangeMessage() {
@@ -38,7 +40,7 @@ public class TlsReceivedServerHelloDoneState extends TlsState {
 	}
 	
 	private void sendFinishedMessage() {
-		byte[] verifyData = _stateMachine.getVerifyDataToSend();
+		TlsVerifyData verifyData = _stateMachine.getVerifyDataToSend();
 		TlsFinishedMessage message = new TlsFinishedMessage(verifyData);
 		sendTlsMessage(message);
 	}

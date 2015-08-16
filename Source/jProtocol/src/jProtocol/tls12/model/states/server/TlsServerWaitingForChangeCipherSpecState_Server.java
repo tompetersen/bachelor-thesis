@@ -3,10 +3,11 @@ package jProtocol.tls12.model.states.server;
 import jProtocol.tls12.model.messages.TlsMessage;
 import jProtocol.tls12.model.states.TlsState;
 import jProtocol.tls12.model.states.TlsStateMachine;
+import jProtocol.tls12.model.states.TlsStateMachine.TlsStateType;
 
-public class TlsWaitingForChangeCipherSpecState extends TlsState {
+public class TlsServerWaitingForChangeCipherSpecState_Server extends TlsState {
 
-	public TlsWaitingForChangeCipherSpecState(TlsStateMachine stateMachine) {
+	public TlsServerWaitingForChangeCipherSpecState_Server(TlsStateMachine stateMachine) {
 		super(stateMachine);
 	}
 
@@ -19,7 +20,7 @@ public class TlsWaitingForChangeCipherSpecState extends TlsState {
 	public void receivedTlsMessage(TlsMessage message) {
 		_stateMachine.changeToPendingState();
 		
-		setState(TlsStateMachine.SERVER_IS_WAITING_FOR_FINISHED_STATE);
+		setTlsState(TlsStateType.SERVER_IS_WAITING_FOR_FINISHED_STATE);
 	}
 
 }

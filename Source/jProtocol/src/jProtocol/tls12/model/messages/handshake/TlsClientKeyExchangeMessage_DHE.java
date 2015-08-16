@@ -8,6 +8,11 @@ public class TlsClientKeyExchangeMessage_DHE extends TlsClientKeyExchangeMessage
 		_yc = dhClientPublicValue;
 	}
 
+	public TlsClientKeyExchangeMessage_DHE() {
+		super();
+		// TODO  Parsing
+	}
+
 	@Override
 	public byte[] getBodyBytes() {
 		return _yc;

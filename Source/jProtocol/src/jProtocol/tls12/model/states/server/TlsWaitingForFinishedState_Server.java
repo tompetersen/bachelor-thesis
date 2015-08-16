@@ -4,11 +4,12 @@ import jProtocol.tls12.model.messages.TlsMessage;
 import jProtocol.tls12.model.messages.handshake.TlsFinishedMessage;
 import jProtocol.tls12.model.states.TlsState;
 import jProtocol.tls12.model.states.TlsStateMachine;
+import jProtocol.tls12.model.states.TlsStateMachine.TlsStateType;
 import jProtocol.tls12.model.values.TlsHandshakeType;
 
-public class TlsWaitingForFinishedState extends TlsState {
+public class TlsWaitingForFinishedState_Server extends TlsState {
 
-	public TlsWaitingForFinishedState(TlsStateMachine stateMachine) {
+	public TlsWaitingForFinishedState_Server(TlsStateMachine stateMachine) {
 		super(stateMachine);
 	}
 
@@ -22,10 +23,10 @@ public class TlsWaitingForFinishedState extends TlsState {
 		TlsFinishedMessage finishedMessage = (TlsFinishedMessage)message;
 
 		if (_stateMachine.isCorrectVerifyData(finishedMessage.getVerifyData())) {
-			setState(TlsStateMachine.SERVER_RECEIVED_FINISHED_STATE);
+			setTlsState(TlsStateType.SERVER_RECEIVED_FINISHED_STATE);
 		}
 		else {
-			setState(TlsStateMachine.DECRYPT_ERROR_OCCURED_STATE);
+			setTlsState(TlsStateType.DECRYPT_ERROR_OCCURED_STATE);
 		}
 	}
 

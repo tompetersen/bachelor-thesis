@@ -6,9 +6,9 @@ import jProtocol.tls12.model.crypto.TlsMacParameters;
 import jProtocol.tls12.model.crypto.TlsPseudoRandomNumberGenerator;
 import jProtocol.tls12.model.exceptions.TlsBadPaddingException;
 import jProtocol.tls12.model.exceptions.TlsBadRecordMacException;
+import jProtocol.tls12.model.exceptions.TlsDecodeErrorException;
 import jProtocol.tls12.model.fragments.TlsBlockFragment;
 import jProtocol.tls12.model.values.TlsCipherType;
-
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 
@@ -72,7 +72,7 @@ public abstract class TlsBlockCipherSuite implements TlsCipherSuite {
 		return ciphertext;
 	}
 	
-	public TlsPlaintext ciphertextToPlaintext(TlsCiphertext ciphertext,  TlsEncryptionParameters parameters) throws TlsBadRecordMacException, TlsBadPaddingException {
+	public TlsPlaintext ciphertextToPlaintext(TlsCiphertext ciphertext,  TlsEncryptionParameters parameters) throws TlsBadRecordMacException, TlsBadPaddingException, TlsDecodeErrorException {
 	//decrypt	
 		byte[] fragmentBytes = ciphertext.getFragment().getBytes();
 		byte[] encrypted = Arrays.copyOfRange(fragmentBytes, getRecordIvLength(), fragmentBytes.length);
@@ -109,7 +109,7 @@ public abstract class TlsBlockCipherSuite implements TlsCipherSuite {
 		}
 		
 		//TODO: Ohje, wie geschummelt -> nicht mehr ganz so...
-		return new TlsPlaintext(content, ciphertext.getVersion(), ciphertext.getContentType());
+		return new TlsPlaintext(content);
 	}
 	
 	public abstract byte[] computeMac(TlsMacParameters parameters);

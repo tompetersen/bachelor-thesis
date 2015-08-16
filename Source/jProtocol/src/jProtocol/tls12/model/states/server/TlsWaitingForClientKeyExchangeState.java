@@ -4,6 +4,7 @@ import jProtocol.tls12.model.messages.TlsMessage;
 import jProtocol.tls12.model.messages.handshake.TlsClientKeyExchangeMessage;
 import jProtocol.tls12.model.states.TlsState;
 import jProtocol.tls12.model.states.TlsStateMachine;
+import jProtocol.tls12.model.states.TlsStateMachine.TlsStateType;
 import jProtocol.tls12.model.values.TlsHandshakeType;
 
 public class TlsWaitingForClientKeyExchangeState extends TlsState {
@@ -19,7 +20,7 @@ public class TlsWaitingForClientKeyExchangeState extends TlsState {
 		
 		_stateMachine.addHandshakeMessageForVerifyData(message);
 		
-		setState(TlsStateMachine.SERVER_IS_WAITING_FOR_CHANGE_CIPHER_SPEC_STATE);
+		setTlsState(TlsStateType.SERVER_IS_WAITING_FOR_CHANGE_CIPHER_SPEC_STATE);
 	}
 
 	@Override

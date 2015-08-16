@@ -5,9 +5,11 @@ import jProtocol.tls12.model.TlsCiphertext;
 import jProtocol.tls12.model.TlsPlaintext;
 import jProtocol.tls12.model.exceptions.TlsBadPaddingException;
 import jProtocol.tls12.model.exceptions.TlsBadRecordMacException;
+import jProtocol.tls12.model.exceptions.TlsDecodeErrorException;
 import jProtocol.tls12.model.messages.TlsAlertMessage;
 import jProtocol.tls12.model.messages.TlsMessage;
 import jProtocol.tls12.model.messages.handshake.TlsHandshakeMessage;
+import jProtocol.tls12.model.states.TlsStateMachine.TlsStateType;
 import jProtocol.tls12.model.values.TlsAlert;
 import jProtocol.tls12.model.values.TlsContentType;
 import jProtocol.tls12.model.values.TlsHandshakeType;
@@ -28,9 +30,13 @@ public abstract class TlsState extends State<TlsCiphertext> {
 		try {
 			plaintext = _stateMachine.ciphertextToPlaintext(ciphertext);
 		} catch (TlsBadRecordMacException e) {
-			setState(TlsStateMachine.RECEIVED_BAD_RECORD_MESSAGE_STATE);
+			setTlsState(TlsStateType.RECEIVED_BAD_RECORD_MESSAGE_STATE);
 		} catch (TlsBadPaddingException e) {
-			setState(TlsStateMachine.RECEIVED_BAD_RECORD_MESSAGE_STATE);
+			setTlsState(TlsStateType.RECEIVED_BAD_RECORD_MESSAGE_STATE);
+		}
+		catch (TlsDecodeErrorException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		
 		TlsMessage message = plaintext.getMessage();
@@ -42,7 +48,7 @@ public abstract class TlsState extends State<TlsCiphertext> {
 			handleAlertMessage((TlsAlertMessage)message);
 		}
 		else {
-			setState(TlsStateMachine.RECEIVED_UNEXPECTED_MESSAGE_STATE);
+			setTlsState(TlsStateType.RECEIVED_UNEXPECTED_MESSAGE_STATE);
 		}
 	}
 	
@@ -80,8 +86,8 @@ public abstract class TlsState extends State<TlsCiphertext> {
 	 * 
 	 * @param state the state describing value (TlsStateMachine.TLS_STATE)
 	 */
-	public void setState(int state) {
-		_stateMachine.setState(state, this);
+	public void setTlsState(TlsStateType type) {
+		_stateMachine.setTlsState(type, this);
 	}
 	
 	public boolean isHandshakeMessageOfType(TlsMessage m, TlsHandshakeType type) {

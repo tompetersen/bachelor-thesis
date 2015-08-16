@@ -1,5 +1,6 @@
 package jProtocol.tls12.model.messages;
 
+import jProtocol.tls12.model.exceptions.TlsDecodeErrorException;
 import jProtocol.tls12.model.values.TlsAlert;
 import jProtocol.tls12.model.values.TlsContentType;
 
@@ -19,7 +20,7 @@ import jProtocol.tls12.model.values.TlsContentType;
    failed connection.  Thus, any connection terminated with a fatal
    alert MUST NOT be resumed.
  */
-public class TlsAlertMessage implements TlsMessage {
+public class TlsAlertMessage extends TlsMessage {
 
 	private TlsAlert _alert;
 	private boolean _isFatal;
@@ -32,6 +33,31 @@ public class TlsAlertMessage implements TlsMessage {
 		_isFatal = isFatal;
 	}
 	
+	public TlsAlertMessage(byte[] unparsedContent) throws TlsDecodeErrorException {
+		super(unparsedContent);
+		
+		if (unparsedContent.length != 2) {
+			throw new TlsDecodeErrorException("Alert message must be 2 bytes long!");
+		}
+		
+		if (unparsedContent[0] == 1) {
+			_isFatal = false;
+		}
+		else if (unparsedContent[0] == 2) {
+			_isFatal = true;
+		}
+		else {
+			throw new TlsDecodeErrorException("First byte must be 1 (warning) or 2 (fatal)!");
+		}
+		
+		try {
+			_alert = TlsAlert.alertFromValue(unparsedContent[1]);
+		} 
+		catch (IllegalArgumentException e) {
+			throw new TlsDecodeErrorException("Alert message must have valid alert description byte!");
+		}
+	}
+
 	@Override
 	public TlsContentType getContentType() {
 		return TlsContentType.Alert;

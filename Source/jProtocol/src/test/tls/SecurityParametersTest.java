@@ -20,7 +20,7 @@ public class SecurityParametersTest {
 	
 	@Before
 	public void setup() {
-		_parameters = new TlsSecurityParameters(TlsConnectionEnd.server);
+		_parameters = new TlsSecurityParameters(TlsConnectionEnd.server, null);
 		Arrays.fill(_random28, (byte)0x11);
 		_tlsRandom = new TlsRandom(0x115599CC, _random28);
 	}

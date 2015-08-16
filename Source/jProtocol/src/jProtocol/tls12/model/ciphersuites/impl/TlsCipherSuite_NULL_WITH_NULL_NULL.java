@@ -28,7 +28,7 @@ public class TlsCipherSuite_NULL_WITH_NULL_NULL extends TlsStreamCipherSuite {
 	public TlsStreamEncryptionResult encrypt(byte[] key, byte[] plaintext) {
 		TlsStreamEncryptionResult result = new TlsStreamEncryptionResult();
 		result.content = plaintext;
-		result.mac = null;
+		result.mac = new byte[0];
 		result.streamCiphered = plaintext;
 		
 		return result;

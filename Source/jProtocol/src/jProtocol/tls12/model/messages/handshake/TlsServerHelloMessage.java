@@ -1,11 +1,11 @@
 package jProtocol.tls12.model.messages.handshake;
 
 import jProtocol.tls12.model.ciphersuites.TlsCipherSuite;
+import jProtocol.tls12.model.exceptions.TlsDecodeErrorException;
 import jProtocol.tls12.model.values.TlsHandshakeType;
 import jProtocol.tls12.model.values.TlsRandom;
 import jProtocol.tls12.model.values.TlsSessionId;
 import jProtocol.tls12.model.values.TlsVersion;
-
 import java.nio.ByteBuffer;
 
 public class TlsServerHelloMessage extends TlsHandshakeMessage {
@@ -38,6 +38,11 @@ public class TlsServerHelloMessage extends TlsHandshakeMessage {
 		_cipherSuite = cipherSuite;
 	}
 	
+	public TlsServerHelloMessage(byte[] unparsedContent) throws TlsDecodeErrorException {
+		super(unparsedContent);
+		// TODO Parsing
+	}
+
 	@Override
 	public TlsHandshakeType getHandshakeType() {
 		return TlsHandshakeType.server_hello;

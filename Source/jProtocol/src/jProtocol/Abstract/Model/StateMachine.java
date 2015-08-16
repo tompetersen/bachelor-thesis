@@ -21,7 +21,9 @@ public abstract class StateMachine<T extends ProtocolDataUnit> extends Observabl
 	}
 	
 	protected void setState(Integer state) {
-		_currentState.onLeave();
+		if (_currentState != null) {
+			_currentState.onLeave();
+		}
 		
 		State<T> newState = _states.get(state);
 		_currentState = newState;

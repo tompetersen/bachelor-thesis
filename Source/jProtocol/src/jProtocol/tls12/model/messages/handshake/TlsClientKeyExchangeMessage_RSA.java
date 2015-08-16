@@ -8,6 +8,11 @@ public class TlsClientKeyExchangeMessage_RSA extends TlsClientKeyExchangeMessage
 		_encPreMasterSecret = rsaEncryptedPremasterSecret;
 	}
 
+	public TlsClientKeyExchangeMessage_RSA() {
+		super();
+		// TODO  Parsing
+	}
+
 	@Override
 	public byte[] getBodyBytes() {
 		//TODO: number of bytes of length field? 

@@ -3,6 +3,8 @@ package jProtocol.tls12.model.ciphersuites;
 import jProtocol.tls12.model.TlsCiphertext;
 import jProtocol.tls12.model.TlsPlaintext;
 import jProtocol.tls12.model.exceptions.TlsBadRecordMacException;
+import jProtocol.tls12.model.exceptions.TlsDecodeErrorException;
+import jProtocol.tls12.model.fragments.TlsStreamFragment;
 import jProtocol.tls12.model.values.TlsCipherType;
 
 public abstract class TlsStreamCipherSuite implements TlsCipherSuite {
@@ -19,15 +21,21 @@ public abstract class TlsStreamCipherSuite implements TlsCipherSuite {
 	@Override
 	public TlsCiphertext plaintextToCiphertext(TlsPlaintext plaintext,
 			TlsEncryptionParameters parameters) {
-		// TODO Auto-generated method stub
-		return null;
+		// TODO currently just used for TLS_NULL_WITH_NULL_NULL -> implement if necessary
+		TlsStreamFragment fragment = new TlsStreamFragment(encrypt(parameters.getEncryptionWriteKey(), plaintext.getFragment()))
+		; 
+		return new TlsCiphertext(plaintext.getMessage(),
+				plaintext.getVersion(),
+				fragment);
 	}
 
 	@Override
-	public TlsPlaintext ciphertextToPlaintext(TlsCiphertext plaintext,
-			TlsEncryptionParameters parameters) throws TlsBadRecordMacException {
-		// TODO Auto-generated method stub
-		return null;
+	public TlsPlaintext ciphertextToPlaintext(TlsCiphertext ciphertext,
+			TlsEncryptionParameters parameters) throws TlsBadRecordMacException, TlsDecodeErrorException {
+		// TODO currently just used for TLS_NULL_WITH_NULL_NULL -> implement if necessary
+
+		byte[] content = decrypt(parameters.getEncryptionWriteKey(), ciphertext.getFragment().getBytes());
+		return new TlsPlaintext(content);
 	}
 	
 	public abstract TlsStreamEncryptionResult encrypt(byte[] key, byte[] plaintext);

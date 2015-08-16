@@ -1,9 +1,9 @@
 package jProtocol.tls12.model.messages.handshake;
 
 import jProtocol.helper.ByteHelper;
+import jProtocol.tls12.model.exceptions.TlsDecodeErrorException;
 import jProtocol.tls12.model.values.TlsCertificate;
 import jProtocol.tls12.model.values.TlsHandshakeType;
-
 import java.nio.ByteBuffer;
 import java.util.List;
 
@@ -13,6 +13,11 @@ public class TlsCertificateMessage extends TlsHandshakeMessage {
 	
 	public TlsCertificateMessage(List<TlsCertificate> certificates) {
 		_certificates = certificates;
+	}
+	
+	public TlsCertificateMessage(byte[] unparsedContent) throws TlsDecodeErrorException {
+		super(unparsedContent);
+		// TODO Parsing
 	}
 
 	@Override

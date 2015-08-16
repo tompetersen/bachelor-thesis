@@ -43,4 +43,8 @@ public class TlsCipherSuiteRegistry {
 	public List<TlsCipherSuite> allCipherSuites() {
 		return new ArrayList<TlsCipherSuite>(_supportedCipherSuites.values());
 	}
+	
+	public TlsCipherSuite getNullCipherSuite() {
+		return cipherSuiteFromValue((short) 0);
+	}
 }

@@ -3,8 +3,8 @@ package test.tls.messages;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import jProtocol.tls12.model.messages.TlsApplicationDataMessage;
+import jProtocol.tls12.model.values.TlsApplicationData;
 import jProtocol.tls12.model.values.TlsContentType;
-
 import org.junit.Before;
 import org.junit.Test;
 
@@ -15,7 +15,7 @@ public class ApplicationDataMessageTest {
 	
 	@Before
 	public void setUp() {
-		_testMessage = new TlsApplicationDataMessage(_content);
+		_testMessage = new TlsApplicationDataMessage(new TlsApplicationData(_content));
 	}
 	
 	@Test
@@ -34,7 +34,7 @@ public class ApplicationDataMessageTest {
 	
 	@Test(expected = IllegalArgumentException.class)
 	public void testInvalidParameters() {
-		new TlsApplicationDataMessage(null); 
+		new TlsApplicationDataMessage((TlsApplicationData)null); 
 	}
 
 	@Test

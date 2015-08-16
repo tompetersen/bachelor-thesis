@@ -7,9 +7,9 @@ import jProtocol.tls12.model.messages.handshake.TlsServerHelloMessage;
 import jProtocol.tls12.model.messages.handshake.TlsServerKeyExchangeMessage;
 import jProtocol.tls12.model.states.TlsState;
 import jProtocol.tls12.model.states.TlsStateMachine;
+import jProtocol.tls12.model.states.TlsStateMachine.TlsStateType;
 import jProtocol.tls12.model.values.TlsCertificate;
 import jProtocol.tls12.model.values.TlsRandom;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,7 +27,7 @@ public class TlsReceivedClientHelloState extends TlsState {
 		sendServerCertificate();
 		sendServerKeyExchange();
 		
-		setState(TlsStateMachine.SERVER_IS_WAITING_FOR_CLIENT_KEY_EXCHANGE_STATE);
+		setTlsState(TlsStateType.SERVER_IS_WAITING_FOR_CLIENT_KEY_EXCHANGE_STATE);
 	}
 	
 	private void sendServerHello() {

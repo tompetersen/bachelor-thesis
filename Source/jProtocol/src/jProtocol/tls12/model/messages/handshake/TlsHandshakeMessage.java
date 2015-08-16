@@ -1,10 +1,10 @@
 package jProtocol.tls12.model.messages.handshake;
 
 import jProtocol.helper.ByteHelper;
+import jProtocol.tls12.model.exceptions.TlsDecodeErrorException;
 import jProtocol.tls12.model.messages.TlsMessage;
 import jProtocol.tls12.model.values.TlsContentType;
 import jProtocol.tls12.model.values.TlsHandshakeType;
-
 import java.nio.ByteBuffer;
 
 /*
@@ -25,7 +25,65 @@ struct {
      } body;
  } Handshake;
  */
-public abstract class TlsHandshakeMessage implements TlsMessage {
+public abstract class TlsHandshakeMessage extends TlsMessage {
+	
+	public static TlsHandshakeMessage parseHandshakeMessage(byte[] unparsedContent) throws TlsDecodeErrorException {
+		TlsHandshakeType type;
+		try {
+			type = TlsHandshakeType.handshakeTypeFromValue(unparsedContent[0]);
+		}
+		catch (IllegalArgumentException e) {
+			throw new TlsDecodeErrorException("First Handshake message byte must provide a valid handshake type!");
+		}
+		
+		//TODO: parse length field
+		
+		TlsHandshakeMessage result = null;
+		
+		switch (type) {
+		case client_hello:
+			result = new TlsClientHelloMessage(unparsedContent);
+			break;
+		case certificate:
+			result = new TlsCertificateMessage(unparsedContent);
+			break;
+		case certificate_request:
+			result = new TlsCertificateRequestMessage(unparsedContent);
+			break;
+		case certificate_verify:
+			result = new TlsCertificateVerifyMessage(unparsedContent);
+			break;
+		case client_key_exchange:
+			//TODO static client key exchange parsing method
+			//result = new TlsClientKeyExchangeMessage(unparsedContent);
+			break;
+		case finished:
+			result = new TlsFinishedMessage(unparsedContent);
+			break;
+		case hello_request:
+			result = new TlsHelloRequestMessage(unparsedContent);
+			break;
+		case server_hello:
+			result = new TlsServerHelloMessage(unparsedContent);
+			break;
+		case server_hello_done:
+			result = new TlsServerHelloDoneMessage(unparsedContent);
+			break;
+		case server_key_exchange:
+			result = new TlsServerKeyExchangeMessage(unparsedContent);
+			break;
+		}
+		
+		return result;
+	}
+	
+	public TlsHandshakeMessage() {
+		super();
+	}
+
+	public TlsHandshakeMessage(byte[] unparsedContent) throws TlsDecodeErrorException {
+		super(unparsedContent);
+	}
 
 	public abstract TlsHandshakeType getHandshakeType();
 	

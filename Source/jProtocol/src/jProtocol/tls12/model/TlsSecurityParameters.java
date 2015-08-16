@@ -6,6 +6,7 @@ import jProtocol.tls12.model.ciphersuites.TlsEncryptionParameters;
 import jProtocol.tls12.model.crypto.TlsPseudoRandomFunction;
 import jProtocol.tls12.model.exceptions.TlsBadPaddingException;
 import jProtocol.tls12.model.exceptions.TlsBadRecordMacException;
+import jProtocol.tls12.model.exceptions.TlsDecodeErrorException;
 import jProtocol.tls12.model.values.TlsBulkCipherAlgorithm;
 import jProtocol.tls12.model.values.TlsCipherType;
 import jProtocol.tls12.model.values.TlsConnectionEnd;
@@ -23,7 +24,7 @@ public class TlsSecurityParameters {
 		compression_null
 	}
 	
-	private TlsConnectionEnd _entity;
+	private TlsConnectionEnd _connectionEnd;
 	private TlsCipherSuite _cipherSuite;
 	
 	//private PrfAlgorithm _prfAlgorithm;
@@ -33,8 +34,9 @@ public class TlsSecurityParameters {
 	private TlsRandom _clientRandom; //32
 	private TlsRandom _serverRandom; //32
 	
-	public TlsSecurityParameters(TlsConnectionEnd connectionEnd) {
-		_entity = connectionEnd;
+	public TlsSecurityParameters(TlsConnectionEnd connectionEnd, TlsCipherSuite initialCipherSuite) {
+		_connectionEnd = connectionEnd;
+		_cipherSuite = initialCipherSuite;
 	}
 	
 	/**
@@ -82,9 +84,13 @@ public class TlsSecurityParameters {
 	 * @param parameters the encryption parameters used to decrypt
 	 * 
 	 * @return the TlsPlaintext
+	 * 
+	 * @throws TlsBadRecordMacException when the message has an invalid MAC
+	 * @throws TlsBadPaddingException when decryption of the messages fails beacuse of invalid padding
+	 * @throws TlsDecodeErrorException when the message itself can not be decoded properly
 	 */
 	public TlsPlaintext ciphertextToPlaintext(TlsCiphertext ciphertext, TlsEncryptionParameters parameters) 
-			throws TlsBadRecordMacException, TlsBadPaddingException {
+			throws TlsBadRecordMacException, TlsBadPaddingException, TlsDecodeErrorException {
 		return _cipherSuite.ciphertextToPlaintext(ciphertext, parameters);
 	}
 	
@@ -211,6 +217,6 @@ public class TlsSecurityParameters {
 	}
 
 	public TlsConnectionEnd getEntity() {
-		return _entity;
+		return _connectionEnd;
 	}
 }

@@ -5,7 +5,9 @@ import jProtocol.tls12.model.messages.TlsApplicationDataMessage;
 import jProtocol.tls12.model.messages.TlsMessage;
 import jProtocol.tls12.model.states.TlsState;
 import jProtocol.tls12.model.states.TlsStateMachine;
+import jProtocol.tls12.model.states.TlsStateMachine.TlsStateType;
 import jProtocol.tls12.model.values.TlsAlert;
+import jProtocol.tls12.model.values.TlsApplicationData;
 
 public class TlsConnectionEstablishedState extends TlsState{
 
@@ -29,14 +31,15 @@ public class TlsConnectionEstablishedState extends TlsState{
 	}
 
 	private void processApplicationData(TlsApplicationDataMessage m) {
-		_stateMachine.receivedData(m.getContent());
+		//TODO: increase sequence number
+		_stateMachine.receivedData(m.getApplicationData());
 	}
 	
 	private void closeNotifyAlertReceived() {
-		setState(TlsStateMachine.RECEIVED_CLOSE_NOTIFY_STATE);
+		setTlsState(TlsStateType.RECEIVED_CLOSE_NOTIFY_STATE);
 	}
 	
-	public void sendApplicationData(byte[] data) {
+	public void sendApplicationData(TlsApplicationData data) {
 		TlsApplicationDataMessage message = new TlsApplicationDataMessage(data);
 		sendTlsMessage(message);
 	}
@@ -45,7 +48,7 @@ public class TlsConnectionEstablishedState extends TlsState{
 		TlsAlertMessage message = new TlsAlertMessage(TlsAlert.close_notify, false);
 		sendTlsMessage(message);
 		
-		setState(TlsStateMachine.WAITING_FOR_CLOSE_NOTIFY_STATE);
+		setTlsState(TlsStateType.WAITING_FOR_CLOSE_NOTIFY_STATE);
 	}
 	
 }

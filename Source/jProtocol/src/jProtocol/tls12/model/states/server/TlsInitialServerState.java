@@ -4,6 +4,7 @@ import jProtocol.tls12.model.messages.TlsMessage;
 import jProtocol.tls12.model.messages.handshake.TlsClientHelloMessage;
 import jProtocol.tls12.model.states.TlsState;
 import jProtocol.tls12.model.states.TlsStateMachine;
+import jProtocol.tls12.model.states.TlsStateMachine.TlsStateType;
 import jProtocol.tls12.model.values.TlsHandshakeType;
 
 public class TlsInitialServerState extends TlsState {
@@ -22,7 +23,7 @@ public class TlsInitialServerState extends TlsState {
 		setClientHelloMessageValues(chm);
 		_stateMachine.addHandshakeMessageForVerifyData(message);
 		
-		setState(TlsStateMachine.SERVER_RECEIVED_CLIENT_HELLO_STATE);
+		setTlsState(TlsStateType.SERVER_RECEIVED_CLIENT_HELLO_STATE);
 	}
 	
 	private void setClientHelloMessageValues(TlsClientHelloMessage chm) {

@@ -91,7 +91,7 @@ public class ConnectionStateTest {
 	public void setUp() throws Exception {
 		_cs = new TestCipherSuite();
 		
-		_sp = new TlsSecurityParameters(TlsConnectionEnd.server);
+		_sp = new TlsSecurityParameters(TlsConnectionEnd.server, _cs);
 		_sp.setCipherSuite(_cs);
 		_sp.setClientRandom(_tlsRandom);
 		_sp.setServerRandom(_tlsRandom);

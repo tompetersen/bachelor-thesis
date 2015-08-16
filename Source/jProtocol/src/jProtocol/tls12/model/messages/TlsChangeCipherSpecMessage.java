@@ -1,5 +1,6 @@
 package jProtocol.tls12.model.messages;
 
+import jProtocol.tls12.model.exceptions.TlsDecodeErrorException;
 import jProtocol.tls12.model.values.TlsContentType;
 
 
@@ -10,14 +11,22 @@ import jProtocol.tls12.model.values.TlsContentType;
  *  
  *  See chapter 7.1, p. 27 TLS 1.2
  */
-public class TlsChangeCipherSpecMessage implements TlsMessage {
+public class TlsChangeCipherSpecMessage extends TlsMessage {
 
-	@Override
+	public TlsChangeCipherSpecMessage() {};
+	
+	public TlsChangeCipherSpecMessage(byte[] unparsedContent) throws TlsDecodeErrorException {
+		super(unparsedContent);
+
+		if (unparsedContent.length != 1 || unparsedContent[0] != 1) {
+			throw new TlsDecodeErrorException("Invalid change cipher spec body - Should be single byte with value 1!");
+		}
+	}
+
 	public TlsContentType getContentType() {
 		return TlsContentType.ChangeCipherSpec;
 	}
 
-	@Override
 	public byte[] getBytes() {
 		byte[] messageBytes = {1};
 		return messageBytes;

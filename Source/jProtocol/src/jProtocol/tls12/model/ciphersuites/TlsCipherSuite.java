@@ -4,6 +4,7 @@ import jProtocol.tls12.model.TlsCiphertext;
 import jProtocol.tls12.model.TlsPlaintext;
 import jProtocol.tls12.model.exceptions.TlsBadPaddingException;
 import jProtocol.tls12.model.exceptions.TlsBadRecordMacException;
+import jProtocol.tls12.model.exceptions.TlsDecodeErrorException;
 import jProtocol.tls12.model.values.TlsBulkCipherAlgorithm;
 import jProtocol.tls12.model.values.TlsCipherType;
 import jProtocol.tls12.model.values.TlsKeyExchangeAlgorithm;
@@ -35,9 +36,13 @@ public interface TlsCipherSuite {
 	 * @param parameters the encryption parameters used to decrypt
 	 * 
 	 * @return the TlsPlaintext
+	 *
+	 * @throws TlsBadRecordMacException when the message has an invalid MAC
+	 * @throws TlsBadPaddingException when decryption of the messages fails beacuse of invalid padding
+	 * @throws TlsDecodeErrorException when the message itself can not be decoded properly
 	 */
 	public TlsPlaintext ciphertextToPlaintext(TlsCiphertext ciphertext, TlsEncryptionParameters parameters) 
-			throws TlsBadRecordMacException, TlsBadPaddingException;
+			throws TlsBadRecordMacException, TlsBadPaddingException, TlsDecodeErrorException;
 	
 	/**
 	 * The name equal to the cipher suite name in TLS 1.2 specification.
