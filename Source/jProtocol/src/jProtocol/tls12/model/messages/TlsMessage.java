@@ -1,5 +1,6 @@
 package jProtocol.tls12.model.messages;
 
+import jProtocol.tls12.model.ciphersuites.TlsCipherSuiteRegistry;
 import jProtocol.tls12.model.exceptions.TlsDecodeErrorException;
 import jProtocol.tls12.model.messages.handshake.TlsHandshakeMessage;
 import jProtocol.tls12.model.values.TlsContentType;
@@ -16,7 +17,7 @@ public abstract class TlsMessage {
 	 * 
 	 * @throws TlsDecodeErrorException when a message could not be successfully decoded
 	 */
-	public static TlsMessage parseTlsMessage(byte[] unparsedContent, TlsContentType contentType) throws TlsDecodeErrorException {
+	public static TlsMessage parseTlsMessage(byte[] unparsedContent, TlsContentType contentType, TlsCipherSuiteRegistry registry) throws TlsDecodeErrorException {
 		if (contentType == null) {
 			throw new IllegalArgumentException("Content type must not be null!");
 		}
@@ -24,7 +25,7 @@ public abstract class TlsMessage {
 		TlsMessage result = null;
 		switch (contentType) {
 		case Handshake:
-			TlsHandshakeMessage.parseHandshakeMessage(unparsedContent);
+			TlsHandshakeMessage.parseHandshakeMessage(unparsedContent, registry);
 			break;
 		case ChangeCipherSpec:
 			result = new TlsChangeCipherSpecMessage(unparsedContent);

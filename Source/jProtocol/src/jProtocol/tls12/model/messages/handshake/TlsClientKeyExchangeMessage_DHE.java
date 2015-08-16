@@ -2,6 +2,15 @@ package jProtocol.tls12.model.messages.handshake;
 
 public class TlsClientKeyExchangeMessage_DHE extends TlsClientKeyExchangeMessage {
 
+	/*
+	  struct {
+          select (PublicValueEncoding) {
+              case implicit: struct { };
+              case explicit: opaque dh_Yc<1..2^16-1>;
+          } dh_public;
+      } ClientDiffieHellmanPublic;
+	 */
+	
 	private byte[] _yc;
 	
 	public TlsClientKeyExchangeMessage_DHE(byte[] dhClientPublicValue) {
@@ -10,7 +19,7 @@ public class TlsClientKeyExchangeMessage_DHE extends TlsClientKeyExchangeMessage
 
 	public TlsClientKeyExchangeMessage_DHE() {
 		super();
-		// TODO  Parsing
+		// TODO Parsing
 	}
 
 	@Override

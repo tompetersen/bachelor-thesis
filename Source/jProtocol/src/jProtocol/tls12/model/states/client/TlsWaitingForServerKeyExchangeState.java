@@ -19,7 +19,7 @@ public class TlsWaitingForServerKeyExchangeState extends TlsState {
 
 	@Override
 	public void receivedTlsMessage(TlsMessage message) {
-		// TODO Auto-generated method stub
+		// TODO Server key exchange for DHE_RSA
 		
 		setTlsState(TlsStateType.CLIENT_IS_WAITING_FOR_SERVER_HELLO_DONE_STATE);
 	}

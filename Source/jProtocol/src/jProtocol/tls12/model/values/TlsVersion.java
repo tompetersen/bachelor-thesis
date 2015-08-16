@@ -9,7 +9,12 @@ public class TlsVersion {
 		return new TlsVersion((byte) 3,(byte) 3);
 	}
 	
-	private TlsVersion(byte major, byte minor) {
+	public TlsVersion(byte major, byte minor) {
+		//TODO: version check!
+		if (major != 3 || minor != 3) {
+			throw new IllegalArgumentException("Unsupported TLS version [" + major + "," + minor + "]!" );
+		}
+		
 		_majorVersion = major;
 		_minorVersion = minor;
 	}

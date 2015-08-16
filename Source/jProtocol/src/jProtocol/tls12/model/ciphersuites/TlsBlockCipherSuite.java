@@ -1,5 +1,6 @@
 package jProtocol.tls12.model.ciphersuites;
 
+import jProtocol.helper.ByteHelper;
 import jProtocol.tls12.model.TlsCiphertext;
 import jProtocol.tls12.model.TlsPlaintext;
 import jProtocol.tls12.model.crypto.TlsMacParameters;
@@ -55,8 +56,8 @@ public abstract class TlsBlockCipherSuite implements TlsCipherSuite {
 
 	//create plaintext
 		ByteBuffer b = ByteBuffer.allocate(plaintext.getLength() + mac.length + padding.length + 1);
-		b.put(mac);
 		b.put(plaintext.getFragment());
+		b.put(mac);
 		b.put(padding);
 		b.put((byte)paddingLength);
 	
@@ -72,9 +73,25 @@ public abstract class TlsBlockCipherSuite implements TlsCipherSuite {
 		return ciphertext;
 	}
 	
-	public TlsPlaintext ciphertextToPlaintext(TlsCiphertext ciphertext,  TlsEncryptionParameters parameters) throws TlsBadRecordMacException, TlsBadPaddingException, TlsDecodeErrorException {
-	//decrypt	
-		byte[] fragmentBytes = ciphertext.getFragment().getBytes();
+	public TlsPlaintext ciphertextToPlaintext(TlsCiphertext ciphertext,  TlsEncryptionParameters parameters, TlsCipherSuiteRegistry registry) throws TlsBadRecordMacException, TlsBadPaddingException, TlsDecodeErrorException {
+		byte[] ciphertextBytes = ciphertext.getBytes();
+		if (ciphertextBytes.length <= TlsPlaintext.RECORD_HEADER_LENGTH) {
+			throw new TlsDecodeErrorException("Ciphertext contains not enough information for record header and fragment!");
+		}
+		byte[] headerBytes = new byte[TlsPlaintext.RECORD_HEADER_LENGTH];
+		System.arraycopy(ciphertextBytes, 0, headerBytes, 0, TlsPlaintext.RECORD_HEADER_LENGTH);
+		byte[] fragmentBytes = new byte[ciphertextBytes.length - TlsPlaintext.RECORD_HEADER_LENGTH];
+		System.arraycopy(ciphertextBytes, TlsPlaintext.RECORD_HEADER_LENGTH, fragmentBytes, 0, fragmentBytes.length);
+		
+	//check length field	
+		byte[] recordLengthBytes = {headerBytes[3], headerBytes[4]};
+		int recordLength = ByteHelper.twoByteArrayToInt(recordLengthBytes);
+		
+		if (recordLength != ciphertextBytes.length - TlsPlaintext.RECORD_HEADER_LENGTH) {
+			throw new TlsDecodeErrorException("Message contains invalid fragment length!");
+		}
+		
+	//decrypt
 		byte[] encrypted = Arrays.copyOfRange(fragmentBytes, getRecordIvLength(), fragmentBytes.length);
 		byte[] iv = Arrays.copyOfRange(fragmentBytes, 0, getRecordIvLength());
 		byte[] decrypted = decrypt(parameters.getEncryptionWriteKey(), iv, encrypted);
@@ -85,8 +102,8 @@ public abstract class TlsBlockCipherSuite implements TlsCipherSuite {
 			throw new TlsBadPaddingException("Padding length invalid!");
 		}
 		byte[] padding = Arrays.copyOfRange(decrypted, decrypted.length - paddingLength - 1, decrypted.length - 1);
-		byte[] content = Arrays.copyOfRange(decrypted, getMacLength(), decrypted.length - paddingLength - 1);
-		byte[] mac = Arrays.copyOfRange(decrypted, 0, getMacLength());
+		byte[] mac = Arrays.copyOfRange(decrypted, decrypted.length - paddingLength - 1 - getMacLength(), decrypted.length - paddingLength - 1);
+		byte[] decryptedFragment = Arrays.copyOfRange(decrypted, 0, decrypted.length - paddingLength - 1 - getMacLength());
 
 		for (int i = 0; i < padding.length; i++) {
 			if (padding[i] != paddingLength) {
@@ -100,16 +117,21 @@ public abstract class TlsBlockCipherSuite implements TlsCipherSuite {
 				ciphertext.getContentType().getValue(), 
 				ciphertext.getVersion().getMajorVersion(), 
 				ciphertext.getVersion().getMinorVersion(), 
-				(short)content.length, 
-				content);
+				(short)decryptedFragment.length, 
+				decryptedFragment);
 		byte[] computedMac = computeMac(macParams);
 		
 		if (!Arrays.equals(mac, computedMac)) {
 			throw new TlsBadRecordMacException("Record check failed!");
 		}
 		
-		//TODO: Ohje, wie geschummelt -> nicht mehr ganz so...
-		return new TlsPlaintext(content);
+	//set correct length for fragment in plaintext
+		int newLength = decryptedFragment.length;
+		byte[] lengthBytes = ByteHelper.intToTwoByteArray(newLength);
+		headerBytes[3] = lengthBytes[0];
+		headerBytes[4] = lengthBytes[1];
+		
+		return new TlsPlaintext(ByteHelper.concatenate(headerBytes, decryptedFragment), registry);
 	}
 	
 	public abstract byte[] computeMac(TlsMacParameters parameters);

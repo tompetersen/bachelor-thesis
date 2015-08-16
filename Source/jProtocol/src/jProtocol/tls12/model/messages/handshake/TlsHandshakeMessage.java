@@ -1,33 +1,35 @@
 package jProtocol.tls12.model.messages.handshake;
 
 import jProtocol.helper.ByteHelper;
+import jProtocol.tls12.model.ciphersuites.TlsCipherSuiteRegistry;
 import jProtocol.tls12.model.exceptions.TlsDecodeErrorException;
 import jProtocol.tls12.model.messages.TlsMessage;
 import jProtocol.tls12.model.values.TlsContentType;
 import jProtocol.tls12.model.values.TlsHandshakeType;
 import java.nio.ByteBuffer;
 
-/*
-struct {
-     HandshakeType msg_type;    // handshake type 
-     uint24 length;             // bytes in message 
-     select (HandshakeType) {
-         case hello_request:       HelloRequest;
-         case client_hello:        ClientHello;
-         case server_hello:        ServerHello;
-         case certificate:         Certificate;
-         case server_key_exchange: ServerKeyExchange;
-         case certificate_request: CertificateRequest;
-         case server_hello_done:   ServerHelloDone;
-         case certificate_verify:  CertificateVerify;
-         case client_key_exchange: ClientKeyExchange;
-         case finished:            Finished;
-     } body;
- } Handshake;
- */
 public abstract class TlsHandshakeMessage extends TlsMessage {
+
+	/*
+	struct {
+	     HandshakeType msg_type;    // handshake type 
+	     uint24 length;             // bytes in message 
+	     select (HandshakeType) {
+	         case hello_request:       HelloRequest;
+	         case client_hello:        ClientHello;
+	         case server_hello:        ServerHello;
+	         case certificate:         Certificate;
+	         case server_key_exchange: ServerKeyExchange;
+	         case certificate_request: CertificateRequest;
+	         case server_hello_done:   ServerHelloDone;
+	         case certificate_verify:  CertificateVerify;
+	         case client_key_exchange: ClientKeyExchange;
+	         case finished:            Finished;
+	     } body;
+	 } Handshake;
+	 */
 	
-	public static TlsHandshakeMessage parseHandshakeMessage(byte[] unparsedContent) throws TlsDecodeErrorException {
+	public static TlsHandshakeMessage parseHandshakeMessage(byte[] unparsedContent, TlsCipherSuiteRegistry registry) throws TlsDecodeErrorException {
 		TlsHandshakeType type;
 		try {
 			type = TlsHandshakeType.handshakeTypeFromValue(unparsedContent[0]);
@@ -36,41 +38,49 @@ public abstract class TlsHandshakeMessage extends TlsMessage {
 			throw new TlsDecodeErrorException("First Handshake message byte must provide a valid handshake type!");
 		}
 		
-		//TODO: parse length field
+		byte[]lengthBytes = new byte[3];
+		System.arraycopy(unparsedContent, 1, lengthBytes, 0, 3);
+		int length = ByteHelper.threeByteArrayToInt(lengthBytes);
+		
+		if (unparsedContent.length - 4 != length) {
+			throw new TlsDecodeErrorException("Invalid length field in Handshake message!");
+		}
+		
+		byte[] unparsedMessageBody = new byte[length];
+		System.arraycopy(unparsedContent, 4, unparsedMessageBody, 0, length);
 		
 		TlsHandshakeMessage result = null;
-		
 		switch (type) {
 		case client_hello:
-			result = new TlsClientHelloMessage(unparsedContent);
+			result = new TlsClientHelloMessage(unparsedMessageBody, registry);
 			break;
 		case certificate:
-			result = new TlsCertificateMessage(unparsedContent);
+			result = new TlsCertificateMessage(unparsedMessageBody);
 			break;
 		case certificate_request:
-			result = new TlsCertificateRequestMessage(unparsedContent);
+			result = new TlsCertificateRequestMessage(unparsedMessageBody);
 			break;
 		case certificate_verify:
-			result = new TlsCertificateVerifyMessage(unparsedContent);
+			result = new TlsCertificateVerifyMessage(unparsedMessageBody);
 			break;
 		case client_key_exchange:
 			//TODO static client key exchange parsing method
-			//result = new TlsClientKeyExchangeMessage(unparsedContent);
+			//result = new TlsClientKeyExchangeMessage(unparsedMessageBody);
 			break;
 		case finished:
-			result = new TlsFinishedMessage(unparsedContent);
+			result = new TlsFinishedMessage(unparsedMessageBody);
 			break;
 		case hello_request:
-			result = new TlsHelloRequestMessage(unparsedContent);
+			result = new TlsHelloRequestMessage(unparsedMessageBody);
 			break;
 		case server_hello:
-			result = new TlsServerHelloMessage(unparsedContent);
+			result = new TlsServerHelloMessage(unparsedMessageBody, registry);
 			break;
 		case server_hello_done:
-			result = new TlsServerHelloDoneMessage(unparsedContent);
+			result = new TlsServerHelloDoneMessage(unparsedMessageBody);
 			break;
 		case server_key_exchange:
-			result = new TlsServerKeyExchangeMessage(unparsedContent);
+			result = new TlsServerKeyExchangeMessage(unparsedMessageBody);
 			break;
 		}
 		
@@ -81,8 +91,14 @@ public abstract class TlsHandshakeMessage extends TlsMessage {
 		super();
 	}
 
-	public TlsHandshakeMessage(byte[] unparsedContent) throws TlsDecodeErrorException {
-		super(unparsedContent);
+	/**
+	 * Constructor for TLS handshake messages.
+	 * 
+	 * @param unparsedMessageBody the unparsed body of a handshake message
+	 * @throws TlsDecodeErrorException when errors (like invalid length fields, invalid values, ...) occur during decoding
+	 */
+	public TlsHandshakeMessage(byte[] unparsedMessageBody) throws TlsDecodeErrorException {
+		super(unparsedMessageBody);
 	}
 
 	public abstract TlsHandshakeType getHandshakeType();

@@ -186,7 +186,7 @@ public class TlsStateMachine extends StateMachine<TlsCiphertext> {
 	 * @throws TlsDecodeErrorException 
 	 */
 	TlsPlaintext ciphertextToPlaintext(TlsCiphertext ciphertext) throws TlsBadRecordMacException, TlsBadPaddingException, TlsDecodeErrorException {	
-		return _currentSecurityParameters.ciphertextToPlaintext(ciphertext, getEncryptionParameters());
+		return _currentSecurityParameters.ciphertextToPlaintext(ciphertext, getEncryptionParameters(), _cipherSuiteRegistry);
 	}
 	
 	private TlsEncryptionParameters getEncryptionParameters() {
@@ -327,10 +327,13 @@ public class TlsStateMachine extends StateMachine<TlsCiphertext> {
 		setState(stateType.getType());
 	}
 	
+	public void resetConnection() {
+		//TODO: reset connection
+	}
+	
 	/*
 	 * Public methods
 	 */
-	
 	public void openConnection() {
 		if (isCurrentState(TlsStateType.CLIENT_INITIAL_STATE.getType())) {
 			TlsInitialClientState state = (TlsInitialClientState)getCurrentState();

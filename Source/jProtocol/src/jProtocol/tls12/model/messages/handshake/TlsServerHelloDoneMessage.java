@@ -6,11 +6,15 @@ import jProtocol.tls12.model.values.TlsHandshakeType;
 public class TlsServerHelloDoneMessage extends TlsHandshakeMessage {
 	
 	/*
-	 *  struct { } ServerHelloDone;
+	 struct { } ServerHelloDone;
 	 */
+	
 	public TlsServerHelloDoneMessage(byte[] unparsedContent) throws TlsDecodeErrorException {
 		super(unparsedContent);
-		// TODO Parsing
+
+		if (unparsedContent.length > 0) {
+			throw new TlsDecodeErrorException("Server hello done message should have no content!");
+		}
 	}
 	
 	@Override

@@ -2,6 +2,12 @@ package jProtocol.tls12.model.messages.handshake;
 
 public class TlsClientKeyExchangeMessage_RSA extends TlsClientKeyExchangeMessage {
 
+	/*
+	 struct {
+          public-key-encrypted PreMasterSecret pre_master_secret;
+      } EncryptedPreMasterSecret;
+	 */
+	
 	private byte[] _encPreMasterSecret;
 
 	public TlsClientKeyExchangeMessage_RSA(byte[] rsaEncryptedPremasterSecret) {
@@ -10,7 +16,7 @@ public class TlsClientKeyExchangeMessage_RSA extends TlsClientKeyExchangeMessage
 
 	public TlsClientKeyExchangeMessage_RSA() {
 		super();
-		// TODO  Parsing
+		// TODO Parsing
 	}
 
 	@Override

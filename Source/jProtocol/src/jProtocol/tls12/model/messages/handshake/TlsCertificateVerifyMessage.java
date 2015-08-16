@@ -5,6 +5,14 @@ import jProtocol.tls12.model.values.TlsHandshakeType;
 
 public class TlsCertificateVerifyMessage extends TlsHandshakeMessage {
 
+	/*
+	  struct {
+           digitally-signed struct {
+               opaque handshake_messages[handshake_messages_length];
+           }
+      } CertificateVerify;
+	 */
+	
 	//TODO: Used for authenticated client -> Implement if necessary
 	public TlsCertificateVerifyMessage() {
 
@@ -12,7 +20,7 @@ public class TlsCertificateVerifyMessage extends TlsHandshakeMessage {
 
 	public TlsCertificateVerifyMessage(byte[] unparsedContent) throws TlsDecodeErrorException {
 		super(unparsedContent);
-		// TODO  Parsing
+		// TODO Parsing for authenticated client -> Implement if necessary
 	}
 
 	@Override

@@ -33,10 +33,8 @@ public abstract class TlsState extends State<TlsCiphertext> {
 			setTlsState(TlsStateType.RECEIVED_BAD_RECORD_MESSAGE_STATE);
 		} catch (TlsBadPaddingException e) {
 			setTlsState(TlsStateType.RECEIVED_BAD_RECORD_MESSAGE_STATE);
-		}
-		catch (TlsDecodeErrorException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (TlsDecodeErrorException e) {
+			setTlsState(TlsStateType.DECODE_ERROR_OCCURED_STATE);
 		}
 		
 		TlsMessage message = plaintext.getMessage();

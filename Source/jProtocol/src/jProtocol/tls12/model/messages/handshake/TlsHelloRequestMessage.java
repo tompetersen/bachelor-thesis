@@ -11,7 +11,10 @@ public class TlsHelloRequestMessage extends TlsHandshakeMessage {
 
 	public TlsHelloRequestMessage(byte[] unparsedContent) throws TlsDecodeErrorException {
 		super(unparsedContent);
-		// TODO  Parsing
+
+		if (unparsedContent.length > 0) {
+			throw new TlsDecodeErrorException("Server hello done message should have no content!");
+		}
 	}
 	
 	@Override

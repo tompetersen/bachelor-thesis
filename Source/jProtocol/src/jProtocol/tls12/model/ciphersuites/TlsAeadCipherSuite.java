@@ -25,14 +25,13 @@ public abstract class TlsAeadCipherSuite implements TlsCipherSuite {
 	@Override
 	public TlsCiphertext plaintextToCiphertext(TlsPlaintext plaintext,
 			TlsEncryptionParameters parameters) {
-		// TODO Auto-generated method stub
+		// TODO AEAD plaintextToCiphertext
 		return null;
 	}
 
 	@Override
-	public TlsPlaintext ciphertextToPlaintext(TlsCiphertext plaintext,
-			TlsEncryptionParameters parameters) throws TlsBadRecordMacException {
-		// TODO Auto-generated method stub
+	public TlsPlaintext ciphertextToPlaintext(TlsCiphertext plaintext, TlsEncryptionParameters parameters, TlsCipherSuiteRegistry registry) throws TlsBadRecordMacException {
+		// TODO AEAD ciphertextToPlaintext
 		return null;
 	}
 	

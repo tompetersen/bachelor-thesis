@@ -34,6 +34,7 @@ public interface TlsCipherSuite {
 	 * 
 	 * @param ciphertext the TLSCiphertext
 	 * @param parameters the encryption parameters used to decrypt
+	 * @param registry the cipher suite registry
 	 * 
 	 * @return the TlsPlaintext
 	 *
@@ -41,7 +42,7 @@ public interface TlsCipherSuite {
 	 * @throws TlsBadPaddingException when decryption of the messages fails beacuse of invalid padding
 	 * @throws TlsDecodeErrorException when the message itself can not be decoded properly
 	 */
-	public TlsPlaintext ciphertextToPlaintext(TlsCiphertext ciphertext, TlsEncryptionParameters parameters) 
+	public TlsPlaintext ciphertextToPlaintext(TlsCiphertext ciphertext, TlsEncryptionParameters parameters, TlsCipherSuiteRegistry registry) 
 			throws TlsBadRecordMacException, TlsBadPaddingException, TlsDecodeErrorException;
 	
 	/**

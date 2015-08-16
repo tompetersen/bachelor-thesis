@@ -8,7 +8,6 @@ public class TlsAsymmetricCipher {
 	 * http://docs.oracle.com/javase/7/docs/technotes/guides/security/crypto/CryptoSpec.html#DH2Ex
 	 */
 	public TlsAsymmetricCipher() {
-		// TODO Auto-generated constructor stub
 	}
 
 }

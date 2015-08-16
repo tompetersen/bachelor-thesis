@@ -6,16 +6,29 @@ import jProtocol.tls12.model.values.TlsVerifyData;
 
 public class TlsFinishedMessage extends TlsHandshakeMessage {
 
+	/*
+	 struct {
+          opaque verify_data[verify_data_length];
+      } Finished;
+	 */
+	
 	private TlsVerifyData _verifyData;
 	
 	public TlsFinishedMessage(TlsVerifyData verifyData) {
-		//TODO: length check
+		if (verifyData == null) {
+			throw new IllegalArgumentException("Verify data must be set!");
+		}
 		_verifyData = verifyData;
 	}
 
 	public TlsFinishedMessage(byte[] unparsedContent) throws TlsDecodeErrorException {
 		super(unparsedContent);
-		// TODO  Parsing
+
+		if (unparsedContent.length != TlsVerifyData.VERIFY_DATA_LENGTH) {
+			throw new TlsDecodeErrorException("Verify data must be " + TlsVerifyData.VERIFY_DATA_LENGTH + " bytes long!");
+		}
+		
+		_verifyData = new TlsVerifyData(unparsedContent);
 	}
 
 	@Override

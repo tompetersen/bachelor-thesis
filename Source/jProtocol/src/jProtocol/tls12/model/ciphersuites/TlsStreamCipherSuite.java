@@ -30,12 +30,11 @@ public abstract class TlsStreamCipherSuite implements TlsCipherSuite {
 	}
 
 	@Override
-	public TlsPlaintext ciphertextToPlaintext(TlsCiphertext ciphertext,
-			TlsEncryptionParameters parameters) throws TlsBadRecordMacException, TlsDecodeErrorException {
+	public TlsPlaintext ciphertextToPlaintext(TlsCiphertext ciphertext, TlsEncryptionParameters parameters, TlsCipherSuiteRegistry registry) throws TlsBadRecordMacException, TlsDecodeErrorException {
 		// TODO currently just used for TLS_NULL_WITH_NULL_NULL -> implement if necessary
 
 		byte[] content = decrypt(parameters.getEncryptionWriteKey(), ciphertext.getFragment().getBytes());
-		return new TlsPlaintext(content);
+		return new TlsPlaintext(content, registry);
 	}
 	
 	public abstract TlsStreamEncryptionResult encrypt(byte[] key, byte[] plaintext);

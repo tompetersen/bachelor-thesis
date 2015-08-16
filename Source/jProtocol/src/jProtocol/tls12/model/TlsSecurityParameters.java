@@ -2,6 +2,7 @@ package jProtocol.tls12.model;
 
 import jProtocol.helper.ByteHelper;
 import jProtocol.tls12.model.ciphersuites.TlsCipherSuite;
+import jProtocol.tls12.model.ciphersuites.TlsCipherSuiteRegistry;
 import jProtocol.tls12.model.ciphersuites.TlsEncryptionParameters;
 import jProtocol.tls12.model.crypto.TlsPseudoRandomFunction;
 import jProtocol.tls12.model.exceptions.TlsBadPaddingException;
@@ -82,6 +83,7 @@ public class TlsSecurityParameters {
 	 * 
 	 * @param ciphertext the TLSCiphertext
 	 * @param parameters the encryption parameters used to decrypt
+	 * @param registry the cipher suite registry
 	 * 
 	 * @return the TlsPlaintext
 	 * 
@@ -89,9 +91,9 @@ public class TlsSecurityParameters {
 	 * @throws TlsBadPaddingException when decryption of the messages fails beacuse of invalid padding
 	 * @throws TlsDecodeErrorException when the message itself can not be decoded properly
 	 */
-	public TlsPlaintext ciphertextToPlaintext(TlsCiphertext ciphertext, TlsEncryptionParameters parameters) 
+	public TlsPlaintext ciphertextToPlaintext(TlsCiphertext ciphertext, TlsEncryptionParameters parameters, TlsCipherSuiteRegistry registry) 
 			throws TlsBadRecordMacException, TlsBadPaddingException, TlsDecodeErrorException {
-		return _cipherSuite.ciphertextToPlaintext(ciphertext, parameters);
+		return _cipherSuite.ciphertextToPlaintext(ciphertext, parameters, registry);
 	}
 	
 	public TlsBulkCipherAlgorithm getBulkCipherAlgorithm() {

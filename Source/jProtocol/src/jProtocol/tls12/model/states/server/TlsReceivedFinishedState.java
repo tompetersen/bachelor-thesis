@@ -37,7 +37,7 @@ public class TlsReceivedFinishedState extends TlsState {
 			setTlsState(TlsStateType.CONNECTION_ESTABLISHED_STATE);
 		}
 		else {
-			//TODO: abbrev. handshake
+			//TODO: abbreviated handshake
 		}
 	}
 	

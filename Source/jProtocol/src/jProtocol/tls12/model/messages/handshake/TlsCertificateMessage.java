@@ -9,6 +9,12 @@ import java.util.List;
 
 public class TlsCertificateMessage extends TlsHandshakeMessage {
 
+	/*
+	  struct {
+          ASN.1Cert certificate_list<0..2^24-1>;
+      } Certificate;
+	 */
+	
 	private List<TlsCertificate> _certificates;
 	
 	public TlsCertificateMessage(List<TlsCertificate> certificates) {

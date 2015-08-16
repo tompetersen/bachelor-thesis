@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 import jProtocol.tls12.model.TlsCiphertext;
 import jProtocol.tls12.model.TlsPlaintext;
 import jProtocol.tls12.model.ciphersuites.TlsBlockCipherSuite;
+import jProtocol.tls12.model.ciphersuites.TlsCipherSuiteRegistry;
 import jProtocol.tls12.model.ciphersuites.TlsEncryptionParameters;
 import jProtocol.tls12.model.ciphersuites.impl.TlsCipherSuite_RSA_WITH_AES_128_CBC_SHA;
 import jProtocol.tls12.model.exceptions.TlsBadPaddingException;
@@ -30,7 +31,7 @@ public class BlockCipherSuiteTest {
 
 		@Override
 		public byte[] getBytes() {
-			byte[] test = {3,1,4,1,5,9,2,6,5,35,9};
+			byte[] test = {3,1,4,1,5,9,2,6,5,-42,23};
 			return test;
 		}
 	}
@@ -40,6 +41,7 @@ public class BlockCipherSuiteTest {
 	private TlsPlaintext _plaintext;
 	private TlsEncryptionParameters _parameters;
 	private TlsCiphertext _ciphertext;
+	private TlsCipherSuiteRegistry _cipherSuiteRegistry = new TlsCipherSuiteRegistry();
 	
 	@Before
 	public void setUp() {
@@ -116,7 +118,7 @@ public class BlockCipherSuiteTest {
 	
 	@Test
 	public void testCiphertextToPlaintext() throws TlsBadRecordMacException, TlsBadPaddingException, TlsDecodeErrorException {
-		TlsPlaintext plaintext = _cipherSuite.ciphertextToPlaintext(_ciphertext, _parameters);
+		TlsPlaintext plaintext = _cipherSuite.ciphertextToPlaintext(_ciphertext, _parameters, _cipherSuiteRegistry);
 		
 		assertArrayEquals(plaintext.getFragment(), _testMessage.getBytes());
 	}
@@ -124,7 +126,7 @@ public class BlockCipherSuiteTest {
 	@Test(expected = TlsBadRecordMacException.class)
 	public void testWrongSequenceNumber() throws TlsBadRecordMacException, TlsBadPaddingException, TlsDecodeErrorException {
 		TlsEncryptionParameters wrongParameters = new TlsEncryptionParameters(1337, _parameters.getEncryptionWriteKey(), _parameters.getMacWriteKey(), null);
-		 _cipherSuite.ciphertextToPlaintext(_ciphertext, wrongParameters);
+		 _cipherSuite.ciphertextToPlaintext(_ciphertext, wrongParameters, _cipherSuiteRegistry);
 	}
 	
 	@Test(expected = TlsException.class)
@@ -134,7 +136,7 @@ public class BlockCipherSuiteTest {
 		Arrays.fill(encKey, (byte)0x23);
 		
 		TlsEncryptionParameters wrongParameters = new TlsEncryptionParameters(0, encKey, _parameters.getMacWriteKey(), null);
-		_cipherSuite.ciphertextToPlaintext(_ciphertext, wrongParameters);
+		_cipherSuite.ciphertextToPlaintext(_ciphertext, wrongParameters, _cipherSuiteRegistry);
 	}
 	
 	@Test(expected = TlsBadRecordMacException.class)
@@ -143,6 +145,6 @@ public class BlockCipherSuiteTest {
 		Arrays.fill(macWriteKey, (byte)0x34);
 		
 		TlsEncryptionParameters wrongParameters = new TlsEncryptionParameters(0, _parameters.getEncryptionWriteKey(), macWriteKey, null);
-		_cipherSuite.ciphertextToPlaintext(_ciphertext, wrongParameters);
+		_cipherSuite.ciphertextToPlaintext(_ciphertext, wrongParameters, _cipherSuiteRegistry);
 	}
 }
