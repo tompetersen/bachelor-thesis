@@ -15,7 +15,7 @@ public abstract class TlsMessage {
 	 * 
 	 * @return the parsed messages
 	 * 
-	 * @throws TlsDecodeErrorException when a message could not be successfully decoded
+	 * @throws TlsDecodeErrorException if a message could not be successfully decoded
 	 */
 	public static TlsMessage parseTlsMessage(byte[] unparsedContent, TlsContentType contentType, TlsCipherSuiteRegistry registry) throws TlsDecodeErrorException {
 		if (contentType == null) {
@@ -47,7 +47,7 @@ public abstract class TlsMessage {
 	 * 
 	 * @param unparsedContent the raw content (not including ContentType, Protocol Version, length field)
 	 * 
-	 * @throws TlsDecodeErrorException when a message could not be successfully decoded
+	 * @throws TlsDecodeErrorException if a message could not be successfully decoded
 	 */
 	public TlsMessage(byte[] unparsedContent) throws TlsDecodeErrorException {
 		if (unparsedContent == null) {

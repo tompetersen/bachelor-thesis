@@ -24,7 +24,7 @@ public class TlsInitialServerState extends TlsState {
 			//TODO: Abbreviated Handshake
 		}
 		setClientHelloMessageValues(chm);
-		_stateMachine.addHandshakeMessageForVerifyData(message);
+		_stateMachine.addHandshakeMessageForVerifyData(chm);
 		
 		setTlsState(TlsStateType.SERVER_RECEIVED_CLIENT_HELLO_STATE);
 	}

@@ -1,5 +1,7 @@
 package jProtocol.tls12.model.messages.handshake;
 
+import jProtocol.tls12.model.values.TlsRsaEncryptedPreMasterSecret;
+
 public class TlsClientKeyExchangeMessage_RSA extends TlsClientKeyExchangeMessage {
 
 	/*
@@ -8,13 +10,13 @@ public class TlsClientKeyExchangeMessage_RSA extends TlsClientKeyExchangeMessage
       } EncryptedPreMasterSecret;
 	 */
 	
-	private byte[] _encPreMasterSecret;
+	private TlsRsaEncryptedPreMasterSecret _encPreMasterSecret;
 
-	public TlsClientKeyExchangeMessage_RSA(byte[] rsaEncryptedPremasterSecret) {
+	public TlsClientKeyExchangeMessage_RSA(TlsRsaEncryptedPreMasterSecret rsaEncryptedPremasterSecret) {
 		_encPreMasterSecret = rsaEncryptedPremasterSecret;
 	}
 
-	public TlsClientKeyExchangeMessage_RSA() {
+	public TlsClientKeyExchangeMessage_RSA(byte[] unparsedContent) {
 		super();
 		// TODO Parsing
 	}
@@ -23,10 +25,10 @@ public class TlsClientKeyExchangeMessage_RSA extends TlsClientKeyExchangeMessage
 	public byte[] getBodyBytes() {
 		//TODO: number of bytes of length field? 
 		//http://stackoverflow.com/questions/11505547/how-calculate-size-of-rsa-cipher-text-using-key-size-clear-text-length
-		return _encPreMasterSecret;
+		return _encPreMasterSecret.getPreMasterSecret();
 	}
 
-	public byte[] getRsaEncryptedPreMasterSecret() {
+	public TlsRsaEncryptedPreMasterSecret getRsaEncryptedPreMasterSecret() {
 		return _encPreMasterSecret;
 	}
 }

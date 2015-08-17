@@ -9,6 +9,7 @@ import jProtocol.tls12.model.TlsSecurityParameters;
 import jProtocol.tls12.model.ciphersuites.TlsCipherSuite;
 import jProtocol.tls12.model.ciphersuites.TlsCipherSuiteRegistry;
 import jProtocol.tls12.model.ciphersuites.TlsEncryptionParameters;
+import jProtocol.tls12.model.crypto.TlsRsaCipher;
 import jProtocol.tls12.model.exceptions.TlsBadPaddingException;
 import jProtocol.tls12.model.exceptions.TlsBadRecordMacException;
 import jProtocol.tls12.model.exceptions.TlsDecodeErrorException;
@@ -116,6 +117,7 @@ public class TlsStateMachine extends StateMachine<TlsCiphertext> {
 	private TlsConnectionState _pendingConnectionState;
 	
 	private TlsCipherSuiteRegistry _cipherSuiteRegistry;
+	private TlsRsaCipher _rsaCipher;
 	
 	public TlsStateMachine(CommunicationChannel<TlsCiphertext> channel, TlsConnectionEnd entity) {
 		super(channel);
@@ -249,6 +251,10 @@ public class TlsStateMachine extends StateMachine<TlsCiphertext> {
 		_pendingSecurityParameters.setServerRandom(random);
 	}
 	
+	public void computePendingMasterSecret(byte[] preMasterSecret) {
+		_pendingSecurityParameters.computeMasterSecret(preMasterSecret);
+	}
+	
 	public boolean canPerformAbbreviatedHandshakeForSessionId(TlsSessionId sessionId) {
 		//TODO: Abbreviated Handshakes
 		return false;
@@ -282,12 +288,16 @@ public class TlsStateMachine extends StateMachine<TlsCiphertext> {
 		return _cipherSuiteRegistry.allCipherSuites();
 	}
 	
+	/**
+	 * Sets the pending state (Security parameters and connection state) as current state.
+	 * Should be called after receiving the change cipher spec message.
+	 */
 	public void changeToPendingState() {
 		_currentConnectionState = _pendingConnectionState;
 		_currentSecurityParameters = _pendingSecurityParameters;
 	}
 	
-	public void addHandshakeMessageForVerifyData(TlsMessage message) {
+	public void addHandshakeMessageForVerifyData(TlsHandshakeMessage message) {
 		if (isValidVerifyMessage(message)) {
 			_pendingConnectionState.addHandshakeMessageBytes(message.getBytes());
 		}
@@ -296,15 +306,10 @@ public class TlsStateMachine extends StateMachine<TlsCiphertext> {
 		}
 	}
 	
-	private boolean isValidVerifyMessage(TlsMessage message) {
+	private boolean isValidVerifyMessage(TlsHandshakeMessage message) {
 		//TODO: maybe more checks, like already contains message, ...
-		if (message.getContentType() == TlsContentType.Handshake){
-			TlsHandshakeMessage m = (TlsHandshakeMessage)message;
-			if (m.getHandshakeType() != TlsHandshakeType.finished && m.getHandshakeType() != TlsHandshakeType.hello_request) {
-				return true;
-			}
-		}
-		return false;
+		TlsHandshakeType type = message.getHandshakeType();
+		return type != TlsHandshakeType.finished && type != TlsHandshakeType.hello_request;
 	}
 	
 	public boolean isCorrectVerifyData(TlsVerifyData verifyData) {
@@ -331,6 +336,17 @@ public class TlsStateMachine extends StateMachine<TlsCiphertext> {
 		//TODO: reset connection
 	}
 	
+	public TlsRsaCipher getRsaCipher() {
+		if (_rsaCipher == null) {
+			throw new RuntimeException("RSA Cipher must be set first!");
+		}
+		return _rsaCipher;
+	}
+
+	public void setRsaCipher(TlsRsaCipher rsaCipher) {
+		_rsaCipher = rsaCipher;
+	}
+
 	/*
 	 * Public methods
 	 */
@@ -340,7 +356,7 @@ public class TlsStateMachine extends StateMachine<TlsCiphertext> {
 			state.openConnection();
 		}
 		else {
-			throw new RuntimeException("Open connection can only be called on an client in its initial state!");
+			throw new RuntimeException("Open connection can only be called on a client in its initial state!");
 		}
 	}
 	

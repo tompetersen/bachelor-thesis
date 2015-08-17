@@ -16,7 +16,7 @@ public class TlsCertificateMessage extends TlsHandshakeMessage {
 	 */
 	
 	private List<TlsCertificate> _certificates;
-	
+
 	public TlsCertificateMessage(List<TlsCertificate> certificates) {
 		_certificates = certificates;
 	}
@@ -49,4 +49,7 @@ public class TlsCertificateMessage extends TlsHandshakeMessage {
 		return b.array();
 	}
 
+	public List<TlsCertificate> getCertificates() {
+		return _certificates;
+	}
 }

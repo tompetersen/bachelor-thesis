@@ -87,9 +87,9 @@ public class TlsSecurityParameters {
 	 * 
 	 * @return the TlsPlaintext
 	 * 
-	 * @throws TlsBadRecordMacException when the message has an invalid MAC
-	 * @throws TlsBadPaddingException when decryption of the messages fails beacuse of invalid padding
-	 * @throws TlsDecodeErrorException when the message itself can not be decoded properly
+	 * @throws TlsBadRecordMacException if the message has an invalid MAC
+	 * @throws TlsBadPaddingException if decryption of the messages fails beacuse of invalid padding
+	 * @throws TlsDecodeErrorException if the message itself can not be decoded properly
 	 */
 	public TlsPlaintext ciphertextToPlaintext(TlsCiphertext ciphertext, TlsEncryptionParameters parameters, TlsCipherSuiteRegistry registry) 
 			throws TlsBadRecordMacException, TlsBadPaddingException, TlsDecodeErrorException {

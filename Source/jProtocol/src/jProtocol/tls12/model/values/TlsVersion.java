@@ -1,5 +1,6 @@
 package jProtocol.tls12.model.values;
 
+
 public class TlsVersion {
 	
 	private byte _minorVersion;
@@ -25,6 +26,11 @@ public class TlsVersion {
 
 	public byte getMajorVersion() {
 		return _majorVersion;
+	}
+	
+	public byte[] getBytes() {
+		byte[] result = {_majorVersion, _minorVersion};
+		return result;
 	}
 
 	@Override

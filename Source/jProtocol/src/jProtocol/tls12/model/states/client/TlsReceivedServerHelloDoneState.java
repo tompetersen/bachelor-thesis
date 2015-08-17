@@ -1,12 +1,19 @@
 package jProtocol.tls12.model.states.client;
 
+import jProtocol.helper.ByteHelper;
+import jProtocol.tls12.model.crypto.TlsPseudoRandomNumberGenerator;
+import jProtocol.tls12.model.exceptions.TlsAsymmetricOperationException;
 import jProtocol.tls12.model.messages.TlsChangeCipherSpecMessage;
 import jProtocol.tls12.model.messages.TlsMessage;
+import jProtocol.tls12.model.messages.handshake.TlsClientKeyExchangeMessage_RSA;
 import jProtocol.tls12.model.messages.handshake.TlsFinishedMessage;
 import jProtocol.tls12.model.states.TlsState;
 import jProtocol.tls12.model.states.TlsStateMachine;
 import jProtocol.tls12.model.states.TlsStateMachine.TlsStateType;
+import jProtocol.tls12.model.values.TlsKeyExchangeAlgorithm;
+import jProtocol.tls12.model.values.TlsRsaEncryptedPreMasterSecret;
 import jProtocol.tls12.model.values.TlsVerifyData;
+import jProtocol.tls12.model.values.TlsVersion;
 
 public class TlsReceivedServerHelloDoneState extends TlsState {
 
@@ -36,7 +43,27 @@ public class TlsReceivedServerHelloDoneState extends TlsState {
 	}
 	
 	private void sendClientKeyExchangeMessage() {
-		//TODO: KeyExchange
+		TlsKeyExchangeAlgorithm algorithm = _stateMachine.getPendingCipherSuite().getKeyExchangeAlgorithm();
+		
+		if (algorithm == TlsKeyExchangeAlgorithm.rsa) {
+			TlsVersion version = _stateMachine.getVersion(); 
+			byte[] preMasterSecret = ByteHelper.concatenate(version.getBytes(), TlsPseudoRandomNumberGenerator.nextBytes(46));
+			_stateMachine.computePendingMasterSecret(preMasterSecret);
+			
+			byte[] encryptedPreMasterSecretBytes;
+			try {
+				encryptedPreMasterSecretBytes = _stateMachine.getRsaCipher().encrypt(preMasterSecret);
+				TlsRsaEncryptedPreMasterSecret encPreMasterSecret = new TlsRsaEncryptedPreMasterSecret(encryptedPreMasterSecretBytes);
+				TlsClientKeyExchangeMessage_RSA message = new TlsClientKeyExchangeMessage_RSA(encPreMasterSecret);
+				sendTlsMessage(message);
+			}
+			catch (TlsAsymmetricOperationException e) {
+				setTlsState(TlsStateType.DECRYPT_ERROR_OCCURED_STATE);
+			}
+		}
+		else {
+			throw new RuntimeException("Key exchange algorithm [" + algorithm.toString() + "] not implemented yet!");
+		}
 	}
 
 	private void sendChangeCipherSpecMessage() {

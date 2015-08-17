@@ -95,7 +95,7 @@ public abstract class TlsHandshakeMessage extends TlsMessage {
 	 * Constructor for TLS handshake messages.
 	 * 
 	 * @param unparsedMessageBody the unparsed body of a handshake message
-	 * @throws TlsDecodeErrorException when errors (like invalid length fields, invalid values, ...) occur during decoding
+	 * @throws TlsDecodeErrorException if errors (like invalid length fields, invalid values, ...) occur during decoding
 	 */
 	public TlsHandshakeMessage(byte[] unparsedMessageBody) throws TlsDecodeErrorException {
 		super(unparsedMessageBody);

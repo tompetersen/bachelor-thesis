@@ -1,8 +1,10 @@
 package jProtocol.tls12.model.states.server;
 
 import jProtocol.tls12.model.crypto.TlsPseudoRandomNumberGenerator;
+import jProtocol.tls12.model.crypto.TlsRsaCipher;
 import jProtocol.tls12.model.messages.TlsMessage;
 import jProtocol.tls12.model.messages.handshake.TlsCertificateMessage;
+import jProtocol.tls12.model.messages.handshake.TlsHandshakeMessage;
 import jProtocol.tls12.model.messages.handshake.TlsServerHelloDoneMessage;
 import jProtocol.tls12.model.messages.handshake.TlsServerHelloMessage;
 import jProtocol.tls12.model.messages.handshake.TlsServerKeyExchangeMessage;
@@ -37,7 +39,7 @@ public class TlsReceivedClientHelloState extends TlsState {
 		TlsRandom random = new TlsRandom(randomBytes);
 		_stateMachine.setPendingServerRandom(random);
 		
-		TlsMessage serverHelloMessage = new TlsServerHelloMessage(
+		TlsHandshakeMessage serverHelloMessage = new TlsServerHelloMessage(
 				_stateMachine.getVersion(), 
 				random, 
 				_stateMachine.getPendingSessionId(), 
@@ -48,11 +50,14 @@ public class TlsReceivedClientHelloState extends TlsState {
 	}
 	
 	private void sendServerCertificate() {
-		TlsCertificate certificate = TlsCertificate.generateCertificate();
+		TlsRsaCipher rsaCipher = new TlsRsaCipher();
+		_stateMachine.setRsaCipher(rsaCipher);
+		
+		TlsCertificate certificate = TlsCertificate.generateRsaCertificate(rsaCipher.getEncodedPublicKey());
 		List<TlsCertificate> certList = new ArrayList<>();
 		certList.add(certificate);
 		
-		TlsMessage message = new TlsCertificateMessage(certList);
+		TlsHandshakeMessage message = new TlsCertificateMessage(certList);
 		
 		_stateMachine.addHandshakeMessageForVerifyData(message);
 		sendTlsMessage(message);
@@ -62,7 +67,7 @@ public class TlsReceivedClientHelloState extends TlsState {
 		//TODO: Send for DHE_RSA, ...
 		boolean needsServerkeyExchangeMessage = false;
 		if (needsServerkeyExchangeMessage) {
-			TlsMessage message = new TlsServerKeyExchangeMessage();
+			TlsHandshakeMessage message = new TlsServerKeyExchangeMessage();
 			
 			_stateMachine.addHandshakeMessageForVerifyData(message);
 			sendTlsMessage(message);
