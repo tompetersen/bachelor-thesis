@@ -72,7 +72,7 @@ public class ConnectionStateTest {
 		}
 
 		@Override
-		public TlsPlaintext ciphertextToPlaintext(TlsCiphertext plaintext, TlsEncryptionParameters parameters, TlsCipherSuiteRegistry registry) throws TlsBadRecordMacException {
+		public TlsPlaintext ciphertextToPlaintext(TlsCiphertext plaintext, TlsEncryptionParameters parameters, TlsCipherSuiteRegistry registry, TlsKeyExchangeAlgorithm algorithm) throws TlsBadRecordMacException {
 			return null;
 		}
 
@@ -96,12 +96,12 @@ public class ConnectionStateTest {
 		_sp.setServerRandom(_tlsRandom);
 		_sp.computeMasterSecret(_random48);
 		
-		_connectionState = new TlsConnectionState(_sp);
+		_connectionState = new TlsConnectionState();
 	}
 
 	@Test
 	public void testGetClientWriteMacKey() {
-		_connectionState.computeKeys();
+		_connectionState.computeKeys(_sp);
 		
 		assertNotNull(_connectionState.getClientWriteMacKey());
 	}
@@ -116,9 +116,9 @@ public class ConnectionStateTest {
 		byte[] testKeyBlock = {2,2,2,2,3,3,3,3,3,3,4,4,4,4,4,4,4,4};
 		
 		//Reflection used to test private method without having to deal with PRF provided values.
-		Method method = TlsConnectionState.class.getDeclaredMethod("setKeys", testKeyBlock.getClass());
+		Method method = TlsConnectionState.class.getDeclaredMethod("setKeys", testKeyBlock.getClass(), TlsSecurityParameters.class);
 		method.setAccessible(true);
-		method.invoke(_connectionState, testKeyBlock);
+		method.invoke(_connectionState, testKeyBlock, _sp);
 	
 		byte[] expectedMacKeys = {2,2};
 		byte[] expectedEcryptionKeys = {3,3,3};

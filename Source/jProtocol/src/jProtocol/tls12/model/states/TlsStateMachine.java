@@ -2,6 +2,7 @@ package jProtocol.tls12.model.states;
 
 import jProtocol.Abstract.Model.CommunicationChannel;
 import jProtocol.Abstract.Model.StateMachine;
+import jProtocol.helper.MyLogger;
 import jProtocol.tls12.model.TlsCiphertext;
 import jProtocol.tls12.model.TlsConnectionState;
 import jProtocol.tls12.model.TlsPlaintext;
@@ -13,7 +14,6 @@ import jProtocol.tls12.model.crypto.TlsRsaCipher;
 import jProtocol.tls12.model.exceptions.TlsBadPaddingException;
 import jProtocol.tls12.model.exceptions.TlsBadRecordMacException;
 import jProtocol.tls12.model.exceptions.TlsDecodeErrorException;
-import jProtocol.tls12.model.messages.TlsMessage;
 import jProtocol.tls12.model.messages.handshake.TlsHandshakeMessage;
 import jProtocol.tls12.model.states.alert.TlsDecodeErrorOccuredState;
 import jProtocol.tls12.model.states.alert.TlsDecryptErrorOccuredState;
@@ -38,12 +38,14 @@ import jProtocol.tls12.model.states.server.TlsWaitingForClientKeyExchangeState;
 import jProtocol.tls12.model.states.server.TlsWaitingForFinishedState_Server;
 import jProtocol.tls12.model.values.TlsApplicationData;
 import jProtocol.tls12.model.values.TlsConnectionEnd;
-import jProtocol.tls12.model.values.TlsContentType;
 import jProtocol.tls12.model.values.TlsHandshakeType;
+import jProtocol.tls12.model.values.TlsKeyExchangeAlgorithm;
 import jProtocol.tls12.model.values.TlsRandom;
 import jProtocol.tls12.model.values.TlsSessionId;
 import jProtocol.tls12.model.values.TlsVerifyData;
 import jProtocol.tls12.model.values.TlsVersion;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.List;
 
 public class TlsStateMachine extends StateMachine<TlsCiphertext> {
@@ -125,9 +127,9 @@ public class TlsStateMachine extends StateMachine<TlsCiphertext> {
 		_cipherSuiteRegistry = new TlsCipherSuiteRegistry();
 		
 		_currentSecurityParameters = new TlsSecurityParameters(entity, _cipherSuiteRegistry.getNullCipherSuite());
-		_currentConnectionState = new TlsConnectionState(_currentSecurityParameters);
+		_currentConnectionState = new TlsConnectionState();
 		_pendingSecurityParameters = new TlsSecurityParameters(entity, _cipherSuiteRegistry.getNullCipherSuite());
-		_pendingConnectionState = new TlsConnectionState(_pendingSecurityParameters);
+		_pendingConnectionState = new TlsConnectionState();
 		
 		createStates();
 		
@@ -175,7 +177,7 @@ public class TlsStateMachine extends StateMachine<TlsCiphertext> {
 	 * @return the TLSCiphertext
 	 */
 	TlsCiphertext plaintextToCiphertext(TlsPlaintext plaintext) {
-		return _currentSecurityParameters.plaintextToCiphertext(plaintext, getEncryptionParameters());
+		return _currentSecurityParameters.plaintextToCiphertext(plaintext, getEncryptionParameters(false));
 	}
 	
 	/**
@@ -188,20 +190,23 @@ public class TlsStateMachine extends StateMachine<TlsCiphertext> {
 	 * @throws TlsDecodeErrorException 
 	 */
 	TlsPlaintext ciphertextToPlaintext(TlsCiphertext ciphertext) throws TlsBadRecordMacException, TlsBadPaddingException, TlsDecodeErrorException {	
-		return _currentSecurityParameters.ciphertextToPlaintext(ciphertext, getEncryptionParameters(), _cipherSuiteRegistry);
+		TlsKeyExchangeAlgorithm algorithm = (_pendingSecurityParameters != null) ? _pendingSecurityParameters.getKeyExchangeAlgorithm() : null;
+		return _currentSecurityParameters.ciphertextToPlaintext(ciphertext, getEncryptionParameters(true), _cipherSuiteRegistry, algorithm);
 	}
 	
-	private TlsEncryptionParameters getEncryptionParameters() {
+	private TlsEncryptionParameters getEncryptionParameters(boolean isReceiving) {
 		byte[] encKey = null;
 		byte[] macKey = null;
 		byte[] iv = null;
 		long seqNum = 0;
 		
+		boolean needsServerValue = (_isServer && !isReceiving) || (!_isServer && isReceiving); 
+		
 		if (_currentSecurityParameters.getCipherSuite() != _cipherSuiteRegistry.getNullCipherSuite()) {
-			encKey = _isServer ? _currentConnectionState.getServerWriteEncryptionKey() : _currentConnectionState.getClientWriteEncryptionKey();
-			macKey = _isServer ? _currentConnectionState.getServerWriteMacKey() : _currentConnectionState.getClientWriteMacKey();
-			iv = _isServer ? _currentConnectionState.getServerWriteIv() : _currentConnectionState.getClientWriteIv();
-			seqNum = _isServer ? _currentConnectionState.getServerSequenceNumber() : _currentConnectionState.getClientSequenceNumber();
+			encKey = needsServerValue ? _currentConnectionState.getServerWriteEncryptionKey() : _currentConnectionState.getClientWriteEncryptionKey();
+			macKey = needsServerValue ? _currentConnectionState.getServerWriteMacKey() : 		_currentConnectionState.getClientWriteMacKey();
+			iv = 	 needsServerValue ? _currentConnectionState.getServerWriteIv() : 			_currentConnectionState.getClientWriteIv();
+			seqNum = needsServerValue ? _currentConnectionState.getServerSequenceNumber() : 	_currentConnectionState.getClientSequenceNumber();
 		}
 		
 		return new TlsEncryptionParameters(seqNum, encKey, macKey, iv);
@@ -253,6 +258,7 @@ public class TlsStateMachine extends StateMachine<TlsCiphertext> {
 	
 	public void computePendingMasterSecret(byte[] preMasterSecret) {
 		_pendingSecurityParameters.computeMasterSecret(preMasterSecret);
+		_pendingConnectionState.computeKeys(_pendingSecurityParameters);
 	}
 	
 	public boolean canPerformAbbreviatedHandshakeForSessionId(TlsSessionId sessionId) {
@@ -299,7 +305,7 @@ public class TlsStateMachine extends StateMachine<TlsCiphertext> {
 	
 	public void addHandshakeMessageForVerifyData(TlsHandshakeMessage message) {
 		if (isValidVerifyMessage(message)) {
-			_pendingConnectionState.addHandshakeMessageBytes(message.getBytes());
+			_pendingConnectionState.addHandshakeMessageBytes(message);
 		}
 		else {
 			throw new IllegalArgumentException("Messages in verification data must be handshake messages not equal to hello request or finished!");
@@ -313,13 +319,19 @@ public class TlsStateMachine extends StateMachine<TlsCiphertext> {
 	}
 	
 	public boolean isCorrectVerifyData(TlsVerifyData verifyData) {
-		byte[] expected = _isServer ? _currentConnectionState.getFinishedVerifyDataForClient() : _currentConnectionState.getFinishedVerifyDataForServer();
+		byte[] masterSecret = _currentSecurityParameters.getMasterSecret();
 		
-		return expected.equals(verifyData.getBytes());
+		byte[] expected = _isServer ? 	_currentConnectionState.getFinishedVerifyDataForClient(masterSecret) : 
+										_currentConnectionState.getFinishedVerifyDataForServer(masterSecret);
+		
+		return  Arrays.equals(expected, verifyData.getBytes());
 	}
 	
 	public TlsVerifyData getVerifyDataToSend() {
-		byte[] bytes = _isServer ? _currentConnectionState.getFinishedVerifyDataForServer() : _currentConnectionState.getFinishedVerifyDataForClient();
+		byte[] masterSecret = _currentSecurityParameters.getMasterSecret();
+		
+		byte[] bytes = _isServer ? 	_currentConnectionState.getFinishedVerifyDataForServer(masterSecret) : 
+									_currentConnectionState.getFinishedVerifyDataForClient(masterSecret);
 		
 		return new TlsVerifyData(bytes);
 	}
@@ -381,6 +393,8 @@ public class TlsStateMachine extends StateMachine<TlsCiphertext> {
 	}
 	
 	public void receivedData(TlsApplicationData data) {
+		MyLogger.info((_isServer ? "Server" : "Client") + " received Data: " + new String(data.getBytes(), StandardCharsets.US_ASCII));
+		
 		notifyStateMachineObservers(new TlsStateMachineEvent(TlsStateMachineEventType.received_data));
 	}
 }

@@ -3,14 +3,16 @@ package jProtocol.tls12.model;
 import jProtocol.helper.ByteHelper;
 import jProtocol.tls12.model.crypto.TlsHash;
 import jProtocol.tls12.model.crypto.TlsPseudoRandomFunction;
+import jProtocol.tls12.model.messages.handshake.TlsHandshakeMessage;
 import jProtocol.tls12.model.values.TlsSessionId;
 import jProtocol.tls12.model.values.TlsVersion;
+import java.util.List;
+import java.util.ArrayList;
 
 public class TlsConnectionState {
 
 	private static final int VERIFY_DATA_LENGTH = 12;
 	
-	private TlsSecurityParameters _securityParameters;
 	private TlsHash _hash;
 	
 	private byte[] _clientWriteMacKey;
@@ -26,38 +28,36 @@ public class TlsConnectionState {
 	
 	private TlsVersion _version;
 	
-	private byte[] _currentHandshakeMessages;
+	private List<TlsHandshakeMessage> _currentHandshakeMessages;
 	
-	public TlsConnectionState(TlsSecurityParameters securityParameters) {
-		_securityParameters = securityParameters;
-		
+	public TlsConnectionState() {
 		_hash = new TlsHash();
 		
 		_clientSequenceNumber = 0;
 		_serverSequenceNumber = 0;
-		_currentHandshakeMessages = new byte[0];
+		_currentHandshakeMessages = new ArrayList<>();
 	}
 	
-	public void computeKeys() {
+	public void computeKeys(TlsSecurityParameters securityParameters) {
 		/*
 		 * Computation according to chapter 6.3 (p. 26) TLS 1.2
 		 */
-		int neededKeySize = 2 * _securityParameters.getEncKeyLength() + 	//encryption keys
-				2 * _securityParameters.getMacKeyLength() + 				//mac keys
-				2 * _securityParameters.getFixedIvLength();					//aead implicit nonce
+		int neededKeySize = 2 * securityParameters.getEncKeyLength() + 	//encryption keys
+				2 * securityParameters.getMacKeyLength() + 				//mac keys
+				2 * securityParameters.getFixedIvLength();					//aead implicit nonce
 		
-		byte[] keyBlock = TlsPseudoRandomFunction.prf(_securityParameters.getMasterSecret(), 
+		byte[] keyBlock = TlsPseudoRandomFunction.prf(securityParameters.getMasterSecret(), 
 				"key expansion", 
-				ByteHelper.concatenate(_securityParameters.getClientRandom().getBytes(), _securityParameters.getServerRandom().getBytes()), 
+				ByteHelper.concatenate(securityParameters.getClientRandom().getBytes(), securityParameters.getServerRandom().getBytes()), 
 				neededKeySize);
 		
-		setKeys(keyBlock);
+		setKeys(keyBlock, securityParameters);
 	}
 	
-	private void setKeys(byte[] keyBlock) {
+	private void setKeys(byte[] keyBlock, TlsSecurityParameters securityParameters) {
 		int pos = 0;
 		
-		byte macLength = _securityParameters.getMacKeyLength();
+		byte macLength = securityParameters.getMacKeyLength();
 		
 		_clientWriteMacKey = new byte[macLength];
 		System.arraycopy(keyBlock, pos, _clientWriteMacKey, 0, macLength);
@@ -67,7 +67,7 @@ public class TlsConnectionState {
 		System.arraycopy(keyBlock, pos, _serverWriteMacKey, 0, macLength);
 		pos += macLength;
 		
-		byte encKeyLength = _securityParameters.getEncKeyLength();
+		byte encKeyLength = securityParameters.getEncKeyLength();
 		
 		_clientWriteEncyrptionKey = new byte[encKeyLength]; 
 		System.arraycopy(keyBlock, pos, _clientWriteEncyrptionKey, 0, encKeyLength);
@@ -77,7 +77,7 @@ public class TlsConnectionState {
 		System.arraycopy(keyBlock, pos, _serverWriteEncyrptionKey, 0, encKeyLength);
 		pos += encKeyLength;
 		
-		byte writeIvLength = _securityParameters.getFixedIvLength();
+		byte writeIvLength = securityParameters.getFixedIvLength();
 		
 		_clientWriteIv = new byte[writeIvLength]; 
 		System.arraycopy(keyBlock, pos, _clientWriteIv, 0, writeIvLength);
@@ -180,23 +180,33 @@ public class TlsConnectionState {
 		return _serverWriteIv;
 	}
 	
-	public void addHandshakeMessageBytes(byte[] message) {
-		_currentHandshakeMessages = ByteHelper.concatenate(_currentHandshakeMessages, message);
+	public void addHandshakeMessageBytes(TlsHandshakeMessage message) {
+		_currentHandshakeMessages.add(message);
 	}
 	
-	public byte[] getFinishedVerifyDataForServer() {
-		byte[] verifyData = TlsPseudoRandomFunction.prf(_securityParameters.getMasterSecret(),
+	private byte[] getBytesFromHandshakeMessages() {
+		byte[] result = new byte[0];
+		
+		for (TlsHandshakeMessage message : _currentHandshakeMessages) {
+			result = ByteHelper.concatenate(result, message.getBytes());
+		}
+		
+		return result;
+	}
+	
+	public byte[] getFinishedVerifyDataForServer(byte[] masterSecret) {
+		byte[] verifyData = TlsPseudoRandomFunction.prf(masterSecret,
 				"server finished",
-				_hash.hash(_currentHandshakeMessages), 
+				_hash.hash(getBytesFromHandshakeMessages()), 
 				VERIFY_DATA_LENGTH);
 		
 		return verifyData;
 	}
 	
-	public byte[] getFinishedVerifyDataForClient() {
-		byte[] verifyData = TlsPseudoRandomFunction.prf(_securityParameters.getMasterSecret(),
+	public byte[] getFinishedVerifyDataForClient(byte[] masterSecret) {
+		byte[] verifyData = TlsPseudoRandomFunction.prf(masterSecret,
 				"client finished",
-				_hash.hash(_currentHandshakeMessages), 
+				_hash.hash(getBytesFromHandshakeMessages()), 
 				VERIFY_DATA_LENGTH);
 		
 		return verifyData;

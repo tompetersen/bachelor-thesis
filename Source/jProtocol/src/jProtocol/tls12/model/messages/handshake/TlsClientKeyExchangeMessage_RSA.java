@@ -1,5 +1,7 @@
 package jProtocol.tls12.model.messages.handshake;
 
+import jProtocol.helper.ByteHelper;
+import jProtocol.tls12.model.exceptions.TlsDecodeErrorException;
 import jProtocol.tls12.model.values.TlsRsaEncryptedPreMasterSecret;
 
 public class TlsClientKeyExchangeMessage_RSA extends TlsClientKeyExchangeMessage {
@@ -10,22 +12,51 @@ public class TlsClientKeyExchangeMessage_RSA extends TlsClientKeyExchangeMessage
       } EncryptedPreMasterSecret;
 	 */
 	
+	/* Following http://tools.ietf.org/html/rfc3447#section-7.2.1
+	 * RSAES-PKCS1-V1_5-ENCRYPT ((n, e), M)
+	 * Input: 
+	 * (n, e)   recipient's RSA public key (k denotes the length in octets 
+	 * 			of the modulus n) 
+	 * M        message to be encrypted, an octet string of length mLen, 
+	 * 			where mLen <= k - 11 
+	 * Output: 
+	 * C        ciphertext, an octet string of length k
+	 */
+	private static final int LENGTH_FIELD_LENGTH = 2;
+	
 	private TlsRsaEncryptedPreMasterSecret _encPreMasterSecret;
 
 	public TlsClientKeyExchangeMessage_RSA(TlsRsaEncryptedPreMasterSecret rsaEncryptedPremasterSecret) {
 		_encPreMasterSecret = rsaEncryptedPremasterSecret;
 	}
 
-	public TlsClientKeyExchangeMessage_RSA(byte[] unparsedContent) {
+	public TlsClientKeyExchangeMessage_RSA(byte[] unparsedMessageContent) throws TlsDecodeErrorException {
 		super();
-		// TODO Parsing
+
+		int unparsedLength = unparsedMessageContent.length; 
+		
+		if (unparsedLength <= LENGTH_FIELD_LENGTH) {
+			throw new TlsDecodeErrorException("RSA client key exchange message contains not enough information!");
+		}
+		
+		byte[] lengthBytes = {unparsedMessageContent[0], unparsedMessageContent[1]};
+		int length = ByteHelper.twoByteArrayToInt(lengthBytes);
+		
+		if (unparsedLength != length + LENGTH_FIELD_LENGTH) {
+			throw new TlsDecodeErrorException("Invalid length field in RSA client key exchange message!");
+		}
+		
+		byte[] premastersecret = new byte[length];
+		System.arraycopy(unparsedMessageContent, LENGTH_FIELD_LENGTH, premastersecret, 0, length);
+		
+		_encPreMasterSecret = new TlsRsaEncryptedPreMasterSecret(premastersecret);
 	}
 
 	@Override
 	public byte[] getBodyBytes() {
-		//TODO: number of bytes of length field? 
-		//http://stackoverflow.com/questions/11505547/how-calculate-size-of-rsa-cipher-text-using-key-size-clear-text-length
-		return _encPreMasterSecret.getPreMasterSecret();
+		byte[] encPreMasterSecretBytes = _encPreMasterSecret.getPreMasterSecret();
+		byte[] lengthBytes = ByteHelper.intToTwoByteArray(encPreMasterSecretBytes.length); 
+		return ByteHelper.concatenate(lengthBytes, encPreMasterSecretBytes);
 	}
 
 	public TlsRsaEncryptedPreMasterSecret getRsaEncryptedPreMasterSecret() {

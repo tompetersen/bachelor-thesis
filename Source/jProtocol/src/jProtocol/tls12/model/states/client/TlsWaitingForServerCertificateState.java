@@ -24,6 +24,7 @@ public class TlsWaitingForServerCertificateState extends TlsState {
 	@Override
 	public void receivedTlsMessage(TlsMessage message) {
 		TlsCertificateMessage certMessage = (TlsCertificateMessage)message;
+		_stateMachine.addHandshakeMessageForVerifyData(certMessage);
 		
 		MyLogger.info("Received Server Certificate!");
 		

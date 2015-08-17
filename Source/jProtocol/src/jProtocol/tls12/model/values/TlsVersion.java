@@ -53,4 +53,9 @@ public class TlsVersion {
 			return false;
 		return true;
 	}
+
+	@Override
+	public String toString() {
+		return "TlsVersion[" + _minorVersion + ", " + _majorVersion + "]";
+	}
 }

@@ -10,6 +10,7 @@ import jProtocol.tls12.model.exceptions.TlsBadRecordMacException;
 import jProtocol.tls12.model.exceptions.TlsDecodeErrorException;
 import jProtocol.tls12.model.fragments.TlsBlockFragment;
 import jProtocol.tls12.model.values.TlsCipherType;
+import jProtocol.tls12.model.values.TlsKeyExchangeAlgorithm;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 
@@ -73,7 +74,7 @@ public abstract class TlsBlockCipherSuite implements TlsCipherSuite {
 		return ciphertext;
 	}
 	
-	public TlsPlaintext ciphertextToPlaintext(TlsCiphertext ciphertext,  TlsEncryptionParameters parameters, TlsCipherSuiteRegistry registry) throws TlsBadRecordMacException, TlsBadPaddingException, TlsDecodeErrorException {
+	public TlsPlaintext ciphertextToPlaintext(TlsCiphertext ciphertext,  TlsEncryptionParameters parameters, TlsCipherSuiteRegistry registry, TlsKeyExchangeAlgorithm algorithm) throws TlsBadRecordMacException, TlsBadPaddingException, TlsDecodeErrorException {
 		byte[] ciphertextBytes = ciphertext.getBytes();
 		if (ciphertextBytes.length <= TlsPlaintext.RECORD_HEADER_LENGTH) {
 			throw new TlsDecodeErrorException("Ciphertext contains not enough information for record header and fragment!");
@@ -132,7 +133,7 @@ public abstract class TlsBlockCipherSuite implements TlsCipherSuite {
 		headerBytes[3] = lengthBytes[0];
 		headerBytes[4] = lengthBytes[1];
 		
-		return new TlsPlaintext(ByteHelper.concatenate(headerBytes, decryptedFragment), registry);
+		return new TlsPlaintext(ByteHelper.concatenate(headerBytes, decryptedFragment), registry, algorithm);
 	}
 	
 	public abstract byte[] computeMac(TlsMacParameters parameters);
@@ -151,4 +152,8 @@ public abstract class TlsBlockCipherSuite implements TlsCipherSuite {
 		return 0;
 	}
 
+	@Override
+	public String toString() {
+		return "TlsBlockCipherSuite [" + getName() + " - " + getCode() + "]";
+	}
 }

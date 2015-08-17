@@ -23,6 +23,7 @@ public class TlsWaitingForServerHelloState extends TlsState {
 	@Override
 	public void receivedTlsMessage(TlsMessage message) {
 		TlsServerHelloMessage serverHello = (TlsServerHelloMessage)message;
+		_stateMachine.addHandshakeMessageForVerifyData(serverHello);
 		
 		MyLogger.info("Received Server Hello!");
 		

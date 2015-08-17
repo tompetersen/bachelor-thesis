@@ -159,4 +159,9 @@ public class TlsServerHelloMessage extends TlsHandshakeMessage {
 		return _cipherSuite;
 	}
 
+	@Override
+	public String toString() {
+		return "TlsServerHelloMessage [serverVersion=" + _serverVersion + ", serverRandom=" + _serverRandom + ", sessionId=" + _sessionId + ", cipherSuite=" + _cipherSuite + "]";
+	}
+
 }

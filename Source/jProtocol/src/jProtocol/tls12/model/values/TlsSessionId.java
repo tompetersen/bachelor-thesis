@@ -1,5 +1,7 @@
 package jProtocol.tls12.model.values;
 
+import java.util.Arrays;
+
 public class TlsSessionId {
 
 	private byte[] _sessionId;
@@ -26,5 +28,9 @@ public class TlsSessionId {
 	public boolean isEmpty() {
 		return _sessionId.length == 0;
 	}
-	
+
+	@Override
+	public String toString() {
+		return "TlsSessionId[" + Arrays.toString(_sessionId) + "]";
+	}
 }

@@ -4,6 +4,7 @@ import jProtocol.tls12.model.TlsCiphertext;
 import jProtocol.tls12.model.TlsPlaintext;
 import jProtocol.tls12.model.exceptions.TlsBadRecordMacException;
 import jProtocol.tls12.model.values.TlsCipherType;
+import jProtocol.tls12.model.values.TlsKeyExchangeAlgorithm;
 import jProtocol.tls12.model.values.TlsMacAlgorithm;
 
 /*
@@ -30,7 +31,7 @@ public abstract class TlsAeadCipherSuite implements TlsCipherSuite {
 	}
 
 	@Override
-	public TlsPlaintext ciphertextToPlaintext(TlsCiphertext plaintext, TlsEncryptionParameters parameters, TlsCipherSuiteRegistry registry) throws TlsBadRecordMacException {
+	public TlsPlaintext ciphertextToPlaintext(TlsCiphertext plaintext, TlsEncryptionParameters parameters, TlsCipherSuiteRegistry registry, TlsKeyExchangeAlgorithm algorithm) throws TlsBadRecordMacException {
 		// TODO AEAD ciphertextToPlaintext
 		return null;
 	}

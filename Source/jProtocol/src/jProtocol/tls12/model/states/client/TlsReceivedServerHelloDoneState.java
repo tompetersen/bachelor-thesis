@@ -50,25 +50,32 @@ public class TlsReceivedServerHelloDoneState extends TlsState {
 			byte[] preMasterSecret = ByteHelper.concatenate(version.getBytes(), TlsPseudoRandomNumberGenerator.nextBytes(46));
 			_stateMachine.computePendingMasterSecret(preMasterSecret);
 			
-			byte[] encryptedPreMasterSecretBytes;
-			try {
-				encryptedPreMasterSecretBytes = _stateMachine.getRsaCipher().encrypt(preMasterSecret);
-				TlsRsaEncryptedPreMasterSecret encPreMasterSecret = new TlsRsaEncryptedPreMasterSecret(encryptedPreMasterSecretBytes);
-				TlsClientKeyExchangeMessage_RSA message = new TlsClientKeyExchangeMessage_RSA(encPreMasterSecret);
-				sendTlsMessage(message);
-			}
-			catch (TlsAsymmetricOperationException e) {
-				setTlsState(TlsStateType.DECRYPT_ERROR_OCCURED_STATE);
-			}
+			sendRsaClientKeyExchangeMessage(preMasterSecret);
 		}
 		else {
 			throw new RuntimeException("Key exchange algorithm [" + algorithm.toString() + "] not implemented yet!");
+		}
+	}
+	
+	private void sendRsaClientKeyExchangeMessage(byte[] premastersecret) {
+		try {
+			byte[] encryptedPreMasterSecretBytes = _stateMachine.getRsaCipher().encrypt(premastersecret);
+			TlsRsaEncryptedPreMasterSecret encPreMasterSecret = new TlsRsaEncryptedPreMasterSecret(encryptedPreMasterSecretBytes);
+			TlsClientKeyExchangeMessage_RSA message = new TlsClientKeyExchangeMessage_RSA(encPreMasterSecret);
+			
+			_stateMachine.addHandshakeMessageForVerifyData(message);
+			sendTlsMessage(message);
+		}
+		catch (TlsAsymmetricOperationException e) {
+			setTlsState(TlsStateType.DECRYPT_ERROR_OCCURED_STATE);
 		}
 	}
 
 	private void sendChangeCipherSpecMessage() {
 		TlsMessage message = new TlsChangeCipherSpecMessage();
 		sendTlsMessage(message);
+		
+		_stateMachine.changeToPendingState();
 	}
 	
 	private void sendFinishedMessage() {

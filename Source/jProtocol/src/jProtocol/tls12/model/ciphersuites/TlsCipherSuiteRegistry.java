@@ -41,7 +41,9 @@ public class TlsCipherSuiteRegistry {
 	}
 	
 	public List<TlsCipherSuite> allCipherSuites() {
-		return new ArrayList<TlsCipherSuite>(_supportedCipherSuites.values());
+		List <TlsCipherSuite> result = new ArrayList<TlsCipherSuite>(_supportedCipherSuites.values());
+		result.remove(getNullCipherSuite());
+		return result;
 	}
 	
 	public TlsCipherSuite getNullCipherSuite() {

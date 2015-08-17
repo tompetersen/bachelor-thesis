@@ -75,7 +75,9 @@ public class TlsReceivedClientHelloState extends TlsState {
 	}
 	
 	private void sendServerHelloDone() {
-		TlsMessage message = new TlsServerHelloDoneMessage();
+		TlsServerHelloDoneMessage message = new TlsServerHelloDoneMessage();
+		
+		_stateMachine.addHandshakeMessageForVerifyData(message);
 		sendTlsMessage(message);
 	}
 	

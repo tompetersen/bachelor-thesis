@@ -5,6 +5,7 @@ import jProtocol.tls12.model.ciphersuites.TlsCipherSuiteRegistry;
 import jProtocol.tls12.model.exceptions.TlsDecodeErrorException;
 import jProtocol.tls12.model.messages.TlsMessage;
 import jProtocol.tls12.model.values.TlsContentType;
+import jProtocol.tls12.model.values.TlsKeyExchangeAlgorithm;
 import jProtocol.tls12.model.values.TlsVersion;
 
 public class TlsPlaintext {
@@ -40,10 +41,11 @@ public class TlsPlaintext {
 	 * 
 	 * @param decryptedBytes the decrypted message bytes (including content type, version and length)
 	 * @param registry the cipher suite registry
+	 * @param algorithm the used key exchange algorithm
 	 * 
 	 * @throws TlsDecodeErrorException
 	 */
-	public TlsPlaintext(byte[] decryptedBytes, TlsCipherSuiteRegistry registry) throws TlsDecodeErrorException {
+	public TlsPlaintext(byte[] decryptedBytes, TlsCipherSuiteRegistry registry, TlsKeyExchangeAlgorithm algorithm) throws TlsDecodeErrorException {
 		if (decryptedBytes.length < RECORD_HEADER_LENGTH) {
 			throw new TlsDecodeErrorException("Invalid TLS message - contains not enough information for content type, version and length!");
 		}
@@ -74,7 +76,7 @@ public class TlsPlaintext {
 		_fragment = new byte[fragmentLength];
 		System.arraycopy(decryptedBytes, 5, _fragment, 0, fragmentLength);
 		
-		TlsMessage message = TlsMessage.parseTlsMessage(_fragment, _contentType, registry);
+		TlsMessage message = TlsMessage.parseTlsMessage(_fragment, _contentType, registry, algorithm);
 		_message = message;
 	}
 	

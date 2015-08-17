@@ -6,6 +6,7 @@ import jProtocol.tls12.model.exceptions.TlsDecodeErrorException;
 import jProtocol.tls12.model.messages.TlsMessage;
 import jProtocol.tls12.model.values.TlsContentType;
 import jProtocol.tls12.model.values.TlsHandshakeType;
+import jProtocol.tls12.model.values.TlsKeyExchangeAlgorithm;
 import java.nio.ByteBuffer;
 
 public abstract class TlsHandshakeMessage extends TlsMessage {
@@ -29,7 +30,18 @@ public abstract class TlsHandshakeMessage extends TlsMessage {
 	 } Handshake;
 	 */
 	
-	public static TlsHandshakeMessage parseHandshakeMessage(byte[] unparsedContent, TlsCipherSuiteRegistry registry) throws TlsDecodeErrorException {
+	/**
+	 * Parses a handshake message dependent on the handshake type.
+	 * 
+	 * @param unparsedContent the content (not including ContentType, Protocol Version, length field)
+	 * @param registry the already parsed content type of the message
+	 * @param algorithm the used key exchange algorithm 
+	 * 
+	 * @return the parsed messages
+	 * 
+	 * @throws TlsDecodeErrorException if a message could not be successfully decoded
+	 */
+	public static TlsHandshakeMessage parseHandshakeMessage(byte[] unparsedContent, TlsCipherSuiteRegistry registry, TlsKeyExchangeAlgorithm algorithm) throws TlsDecodeErrorException {
 		TlsHandshakeType type;
 		try {
 			type = TlsHandshakeType.handshakeTypeFromValue(unparsedContent[0]);
@@ -64,8 +76,7 @@ public abstract class TlsHandshakeMessage extends TlsMessage {
 			result = new TlsCertificateVerifyMessage(unparsedMessageBody);
 			break;
 		case client_key_exchange:
-			//TODO static client key exchange parsing method
-			//result = new TlsClientKeyExchangeMessage(unparsedMessageBody);
+			result = TlsClientKeyExchangeMessage.parseClientKeyExchangeMessage(unparsedMessageBody, algorithm);
 			break;
 		case finished:
 			result = new TlsFinishedMessage(unparsedMessageBody);
@@ -122,6 +133,11 @@ public abstract class TlsHandshakeMessage extends TlsMessage {
 		return b.array();
 	}
 	
+	/**
+	 * Returns the handshake message body not including handshake header (handshake type and length field).
+	 * 
+	 * @return
+	 */
 	public abstract byte[] getBodyBytes();
 	
 }

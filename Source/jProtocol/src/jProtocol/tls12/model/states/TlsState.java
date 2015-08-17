@@ -26,27 +26,26 @@ public abstract class TlsState extends State<TlsCiphertext> {
 
 	@Override
 	public void receiveMessage(TlsCiphertext ciphertext) {
-		TlsPlaintext plaintext = null;
 		try {
-			plaintext = _stateMachine.ciphertextToPlaintext(ciphertext);
+			TlsPlaintext plaintext = _stateMachine.ciphertextToPlaintext(ciphertext);
+			
+			TlsMessage message = plaintext.getMessage();
+			
+			if (expectedTlsMessage(message)) {
+				receivedTlsMessage(plaintext.getMessage());
+			}
+			else if (message instanceof TlsAlertMessage){
+				handleAlertMessage((TlsAlertMessage)message);
+			}
+			else {
+				setTlsState(TlsStateType.RECEIVED_UNEXPECTED_MESSAGE_STATE);
+			}
 		} catch (TlsBadRecordMacException e) {
 			setTlsState(TlsStateType.RECEIVED_BAD_RECORD_MESSAGE_STATE);
 		} catch (TlsBadPaddingException e) {
 			setTlsState(TlsStateType.RECEIVED_BAD_RECORD_MESSAGE_STATE);
 		} catch (TlsDecodeErrorException e) {
 			setTlsState(TlsStateType.DECODE_ERROR_OCCURED_STATE);
-		}
-		
-		TlsMessage message = plaintext.getMessage();
-		
-		if (expectedTlsMessage(message)) {
-			receivedTlsMessage(plaintext.getMessage());
-		}
-		else if (message instanceof TlsAlertMessage){
-			handleAlertMessage((TlsAlertMessage)message);
-		}
-		else {
-			setTlsState(TlsStateType.RECEIVED_UNEXPECTED_MESSAGE_STATE);
 		}
 	}
 	

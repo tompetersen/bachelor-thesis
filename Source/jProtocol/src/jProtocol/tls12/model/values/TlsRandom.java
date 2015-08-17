@@ -1,5 +1,6 @@
 package jProtocol.tls12.model.values;
 
+import java.util.Arrays;
 import jProtocol.helper.ByteHelper;
 
 public class TlsRandom {
@@ -41,6 +42,11 @@ public class TlsRandom {
 	
 	public byte[] getBytes() {
 		return ByteHelper.concatenate(_gmt, _random);
+	}
+	
+	@Override
+	public String toString() {
+		return "TlsRandom [gmt=" + Arrays.toString(_gmt) + ", random=" + Arrays.toString(_random) + "]";
 	}
 
 }

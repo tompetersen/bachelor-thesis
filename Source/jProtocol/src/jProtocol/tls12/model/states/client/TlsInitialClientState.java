@@ -45,7 +45,8 @@ public class TlsInitialClientState extends TlsState {
 		
 		List<TlsCipherSuite> cipherSuites = _stateMachine.allCipherSuites();		
 		
-		TlsMessage clientHello = new TlsClientHelloMessage(version, random, sessionId, cipherSuites);
+		TlsClientHelloMessage clientHello = new TlsClientHelloMessage(version, random, sessionId, cipherSuites);
+		_stateMachine.addHandshakeMessageForVerifyData(clientHello);
 		sendTlsMessage(clientHello);
 	}
 

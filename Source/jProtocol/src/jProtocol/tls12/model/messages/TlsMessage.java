@@ -4,6 +4,7 @@ import jProtocol.tls12.model.ciphersuites.TlsCipherSuiteRegistry;
 import jProtocol.tls12.model.exceptions.TlsDecodeErrorException;
 import jProtocol.tls12.model.messages.handshake.TlsHandshakeMessage;
 import jProtocol.tls12.model.values.TlsContentType;
+import jProtocol.tls12.model.values.TlsKeyExchangeAlgorithm;
 
 public abstract class TlsMessage {
 
@@ -12,12 +13,14 @@ public abstract class TlsMessage {
 	 * 
 	 * @param unparsedContent the raw content (not including ContentType, Protocol Version, length field)
 	 * @param contentType the already parsed content type of the message
+	 * @param registry the cipher suite registry
+	 * @param algorithm the used key exchange algorithm 
 	 * 
 	 * @return the parsed messages
 	 * 
 	 * @throws TlsDecodeErrorException if a message could not be successfully decoded
 	 */
-	public static TlsMessage parseTlsMessage(byte[] unparsedContent, TlsContentType contentType, TlsCipherSuiteRegistry registry) throws TlsDecodeErrorException {
+	public static TlsMessage parseTlsMessage(byte[] unparsedContent, TlsContentType contentType, TlsCipherSuiteRegistry registry, TlsKeyExchangeAlgorithm algorithm) throws TlsDecodeErrorException {
 		if (contentType == null) {
 			throw new IllegalArgumentException("Content type must not be null!");
 		}
@@ -25,7 +28,7 @@ public abstract class TlsMessage {
 		TlsMessage result = null;
 		switch (contentType) {
 		case Handshake:
-			result = TlsHandshakeMessage.parseHandshakeMessage(unparsedContent, registry);
+			result = TlsHandshakeMessage.parseHandshakeMessage(unparsedContent, registry, algorithm);
 			break;
 		case ChangeCipherSpec:
 			result = new TlsChangeCipherSpecMessage(unparsedContent);

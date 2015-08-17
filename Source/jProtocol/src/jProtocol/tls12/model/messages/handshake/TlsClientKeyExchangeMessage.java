@@ -1,6 +1,8 @@
 package jProtocol.tls12.model.messages.handshake;
 
+import jProtocol.tls12.model.exceptions.TlsDecodeErrorException;
 import jProtocol.tls12.model.values.TlsHandshakeType;
+import jProtocol.tls12.model.values.TlsKeyExchangeAlgorithm;
 
 public abstract class TlsClientKeyExchangeMessage extends TlsHandshakeMessage {
 
@@ -22,6 +24,19 @@ public abstract class TlsClientKeyExchangeMessage extends TlsHandshakeMessage {
 	@Override
 	public TlsHandshakeType getHandshakeType() {
 		return TlsHandshakeType.client_key_exchange;
+	}
+	
+	public static TlsClientKeyExchangeMessage parseClientKeyExchangeMessage(byte[] unparsedMessage, TlsKeyExchangeAlgorithm algorithm) throws TlsDecodeErrorException {
+		if (algorithm == TlsKeyExchangeAlgorithm.rsa) {
+			return new TlsClientKeyExchangeMessage_RSA(unparsedMessage);
+		}
+		else if (algorithm == TlsKeyExchangeAlgorithm.dhe_rsa) {
+			return new TlsClientKeyExchangeMessage_DHE(unparsedMessage);
+		}
+		else {
+			//TODO: Implement for other key exchange algorithms
+			throw new UnsupportedOperationException("Parsing for key exchange algorithm " + algorithm.toString() + " not implemented yet!");
+		}
 	}
 
 }
