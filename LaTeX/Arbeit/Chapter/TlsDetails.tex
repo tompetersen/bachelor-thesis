@@ -20,7 +20,7 @@
 Die Informationen in diesem Abschnitt stammen überwiegend aus der TLS 1.2-Spezifikation (\cite{tls12}). Für einen ersten Überblick wurde \cite{eckert13} genutzt.
 \todo{Zum Einstieg grobe Funktionsbeschreibung, evtl. schon mit Grafik über Verbindungsaufbau?, Grafik der TLS-Protokolle}
 
-TLS besteht aus zwei Schichten. In der oberen Schicht sind vier Teilprotokolle spezifiziert: das \handshakeprotocol{}, das zum Aushandeln von kryptographischen Algorithmen und zur Vereinbarung von Schlüsselmaterial dient, das \changecipherspecprotocol{}, das den Beginn ihrer Nutzung regelt, das \alertprotocol{}, das das Versenden von Fehlerinformationen in der Verbindung übernimmt und das \applicationdataprotocol{}, , das für den Austausch von Anwendungsdaten genutzt wird. Auf diese Protokolle soll später eingegangen werden.\\ 
+TLS besteht aus zwei Schichten. In der oberen Schicht sind vier Teilprotokolle spezifiziert: das \handshakeprotocol{}, das zum Aushandeln von kryptographischen Algorithmen und zur Vereinbarung von Schlüsselmaterial dient, das \changecipherspecprotocol{}, das den Beginn der Nutzung dieser Algorithmen regelt, das \alertprotocol{}, das das Versenden von Fehlerinformationen in der Verbindung übernimmt und das \applicationdataprotocol{}, das für den Austausch von Anwendungsdaten genutzt wird. Auf diese Protokolle soll später eingegangen werden.\\ 
 In der unteren Schicht befindet sich das \recordprotocol{}, das die Daten von den Teilprotokollen der oberen Schicht entgegennimmt, verarbeitet und dann an tiefere Netzwerkschichten weitergibt. Eine Übersicht über diese Schichten bietet Abbildung \ref{fig_tls_protocol_hierarchie}.
 
 \begin{figure}[H]
@@ -83,7 +83,7 @@ Danach werden die Daten optional durch den während des Handshakes vereinbarten 
 } TLSCompressed;
 \end{lstlisting}
 
-Anschließend wird die Integrität der Daten mit einem MAC geschützt, der folgendermaßen berechnet wird:
+Anschließend wird die Integrität der Daten bei Nutzung einer \ciphersuite{} mit Strom- oder Blockverschlüsselungsalgorithmus (vgl. Abschnitt \ref{sec_cipher_suites}) mit einem MAC geschützt, der folgendermaßen berechnet wird:
 \begin{lstlisting}
 MAC(MAC_write_key, seq_num +
 				   TLSCompressed.type +
@@ -94,7 +94,7 @@ MAC(MAC_write_key, seq_num +
 Die jeweils für jeden Kommunikationspartner unabhängig fortlaufende Sequenznummer \datafield{seq\_num} dient hierbei zur Verhinderung von Replay-Angriffen, also der erneuten Sendung von mitgelesenen Paketen durch einen Angreifer. Auf die Berechnung von \datafield{MAC\_write\_key} wird in Abschnitt \ref{sec_key_material} eingegangen.\\
 Bei den in TLS verwendeten \ciphersuites{} wird das HMAC-Verfahren zur Berechnung des MACs genutzt. Details zu diesem Verfahren sind in \cite{hmac97} zu finden. Die hierbei verwendete Hashfunktion wird in der \ciphersuite{} angegeben. 
 
-Danach wird der Klartext zusammen mit dem MAC verschlüsselt, in ein \datafield{TLSCiphertext}-Objekt überführt und dann verschickt.
+Danach wird das \datafield{TLSCompressed}-Objeckt in ein \datafield{TLSCiphertext}-Objekt überführt und dann versendet.
 
 %p.21
 \begin{lstlisting}
@@ -112,12 +112,14 @@ struct {
 
 Abhängig vom verwendeten Verschlüsselungsverfahren sehen diese Nachrichten unterschiedlich aus. Bei Stromchiffren wird der MAC zusammen mit den Daten (\datafield{TLSCompressed.fragment}) verschlüsselt und übertragen. 
 
-Bei Blockchiffren werden die Daten zusammen mit dem MAC zuerst mit Padding versehen, um ein Vielfaches der Blocklänge als Länge zu erhalten, wobei jedes Padding-Byte die Paddinglänge als Wert enthält und die Länge zusätzlich als Byte an die Nachricht angehängt wird. Folglich gilt:
-\( |\text{daten}| + |\text{mac}| + |\text{padding}| + 1 = k * \text{blocklänge}\).\\
+Bei Blockchiffren werden die Daten zusammen mit dem MAC zuerst mit Padding versehen, um ein Vielfaches der Blocklänge als Nachrichtenlänge zu erhalten, wobei jedes Padding-Byte die Paddinglänge als Wert enthält und die Länge zusätzlich als Byte an die Nachricht angehängt wird. Folglich gilt:
+\( |\text{daten}| + |\text{mac}| + |\text{padding}| + 1 = k * \text{blocklänge}, k \in \mathbb{N}\).\\
 Dann werden Daten, MAC, Padding und Paddinglänge zusammen verschlüsselt und mit dem für jede Nachricht zufällig generierten Initialisierungsvektor (IV) versendet.
 
 % For AEAD [AEAD] ciphers (such as [CCM] or [GCM]), p. 24  
-Bei der Nutzung von AEAD-Chiffren\footnote{Authenticated Encryption with Associated Data: Betriebsmodi für Blockchiffren, die ohne zusätzlichen MAC Authentizität und Integrität bereitstellen. Beispiele für solche Modi sind CCM (Counter with CBC-MAC) oder GCM (Galois/Counter Mode).} werden bei der Verschlüsselung zusätzlich zum Klartext und Schlüssel zwei zusätzliche Parameter verwendet: eine sogenannte Nonce (eine einmalig verwendete, zufällige Eingabe) und zusätzliche Daten, in die die Sequenznummer der Nachricht, ihr Typ, ihre Version und ihre Länge einfließen (ähnlich zur Berechnung des MACs). Der explizite Teil der Nonce wird neben den verschlüsselten Daten übertragen. Der implizite Teil wird durch \datafield{server write IV} bzw. \datafield{client write IV} gebildet (vgl. Abschnitt \ref{sec_key_material}). Die Notwendigkeit einer MAC-Berechnung entfällt bei diesem Verfahren.
+Bei der Nutzung von AEAD-Chiffren\footnote{
+	Authenticated Encryption with Associated Data: Betriebsmodi für Blockchiffren, die ohne zusätzlichen MAC Authentizität und Integrität bereitstellen. Beispiele für solche Modi sind CCM (Counter with CBC-MAC) oder GCM (Galois/Counter Mode).
+} werden bei der Verschlüsselung zusätzlich zum Klartext und Schlüssel zwei zusätzliche Parameter verwendet: eine sogenannte Nonce (eine einmalig verwendete, zufällige Eingabe) und zusätzliche Daten, in die die Sequenznummer der Nachricht, ihr Typ, ihre Version und ihre Länge einfließen (ähnlich zur Berechnung des MACs). Der explizite Teil der Nonce wird neben den verschlüsselten Daten übertragen. Der implizite Teil wird durch \datafield{server write IV} bzw. \datafield{client write IV} gebildet (vgl. Abschnitt \ref{sec_key_material}). Die Notwendigkeit einer MAC-Berechnung entfällt bei diesem Verfahren.
 
 \section{Berechnung des Schlüsselmaterials}
 \label{sec_key_material}
@@ -171,7 +173,7 @@ key_block = PRF(SecurityParameters.master_secret,
 
 Das \handshakeprotocol{} dient zur Herstellung einer gesicherten Verbindung. Hierbei werden verwendete TLS-Version und kryptographische Verfahren zwischen den Kommunikationspartnern vereinbart, optional ihre Identitäten authentifiziert und ein gemeinsames Geheimnis (das sogenannte \premastersecret{}) für die bereits beschriebene Generierung der während der eigentlichen Kommunikation verwendeten Schlüssel übertragen oder berechnet. 
 
-Eine Übersicht über die während eines vollständigen Handshakes ausgetauschten Nachrichten bietet Abbildung \ref{fig_complete_handshake}. Im Folgenden werden diese Nachrichten und ihr Aufbau im Detail betrachtet. Nachrichten, die - je nach gewünschten Eigenschaften der Verbindung - optional gesendet werden können, sind mit einem Stern(*) gekennzeichnet.
+Eine Übersicht über die während eines vollständigen Handshakes ausgetauschten Nachrichten bietet Abbildung \ref{fig_complete_handshake}. Nachrichten, die - je nach gewünschten Eigenschaften der Verbindung - optional gesendet werden können, sind mit einem Stern (*) gekennzeichnet. Im Folgenden werden diese Nachrichten und ihr Aufbau im Detail betrachtet.
 
 %TODO:
 % - Übersicht über den Handshake (auf Grafik eingehen)
@@ -213,7 +215,7 @@ Application Data             <------->     Application Data
 struct { } HelloRequest;
 \end{lstlisting}
 
-Diese Nachricht kann vom Server gesendet werden, wenn ein neuer Handshake gewünscht wird (beispielsweise um Schlüssel und kryptographische Funktionen während einer Verbindung neu auszuhandeln).
+Diese Nachricht kann vom Server gesendet werden, wenn ein neuer Handshake gewünscht wird (beispielsweise um Schlüssel und kryptographische Algorithmen während einer Verbindung neu auszuhandeln).
 
 \subsection*{ClientHello}
 
@@ -235,12 +237,12 @@ struct {
 
 Mit der \clienthello{}-Nachricht initiiert der Client einen Verbindungsaufbau und sendet von ihm unterstützte Verfahren, die in der Verbindung genutzt werden können, sowie eine Identifikationsnummer für die Sitzung und einen Zufallswert.
 
-Hierbei enthält \datafield{client\_version} die neueste vom Client unterstützte TLS-/SSL-Version (z.B. 3.3 für TLS 1.2). 
+Hierbei enthält \datafield{client\_version} die neueste vom Client unterstützte TLS-/SSL-Version. 
 \datafield{random} besteht aus einem 4-Byte großen Zeitstempel (UNIX-Format) und 28 zufälligen Bytes. 
 Die \datafield{session\_id} dient zur Identifikation einer Sitzung. Sie ist bei dem ersten Handshake leer und kann später dazu verwendet werden, bestehende Sitzungen wieder aufzunehmen (vgl. Abschnitt \ref{sec_session_connection}). 
-Die \ciphersuite{}-Liste enthält alle vom Client unterstützten \ciphersuites{} in Reihenfolge seiner Präferenz. 
+Die \ciphersuite{}-Liste enthält alle vom Client unterstützten \ciphersuites{} geordnet nach Präferenz. 
 Ebenso wird eine Liste von unterstützten Kompressionsalgorithmen übertragen. 
-Optional kann auch eine Liste von gewünschten TLS-Extensions angegeben werden (vgl. \ref{sec_tls_extensions}).
+Optional kann auch eine Liste von gewünschten TLS-Extensions angegeben werden (vgl. Abschnitt \ref{sec_tls_extensions}).
 
 \subsection*{ServerHello}
 
@@ -262,7 +264,7 @@ struct {
 
 In der \serverhello{}-Nachricht teilt der Server dem Client die (aus den in der \clienthello{}-Nachricht übertragenen) ausgewählten Verfahren mit und sendet die Identifikationsnummer sowie seinen Zufallswert.
 
-In \datafield{server\_version} steht die höchste Version, die Server und Client unterstützen und die damit für die Kommunikation verwendet wird. \datafield{random} besteht äquivalent zur \clienthello{}-Nachricht aus einem 4-Byte Zeitstempel und 28 zufälligen Bytes. Die \datafield{session\_id} enthält entweder eine neu generierte ID, die ID einer wieder aufgenommen Sitzung oder kann auch leer sein, um anzugeben, dass die Sitzung nicht wieder aufgenommen werden kann. In \datafield{cipher\_suite} und \datafield{compression\_method} überträgt der Server die von ihm aus den vom Client übertragenen Listen ausgewählte \ciphersuite{} bzw. den Kompressionsalgorithmus. In der Extensionliste gibt der Server alle vom Client gewünschten Extensions an, die er unterstützt.
+In \datafield{server\_version} steckt die höchste Version, die Server und Client unterstützen und die damit für die Kommunikation verwendet wird. \datafield{random} besteht äquivalent zur \clienthello{}-Nachricht aus einem 4-Byte Zeitstempel und 28 zufälligen Bytes, die vom Server berechnet wurden. Die \datafield{session\_id} enthält entweder eine neu generierte Identifikationsnummer, die Identifikationsnummer einer wieder aufgenommen Sitzung oder kann auch leer sein, um anzugeben, dass die Sitzung nicht wieder aufgenommen werden kann. In \datafield{cipher\_suite} und \datafield{compression\_method} überträgt der Server die von ihm aus den vom Client übertragenen Listen ausgewählte \ciphersuite{} bzw. den Kompressionsalgorithmus. In der Extensionliste gibt der Server alle vom Client gewünschten Extensions an, die er unterstützt.
 
 \subsection*{ServerCertificate*}
 
@@ -272,7 +274,7 @@ struct {
 } Certificate;
 \end{lstlisting}
 
-In dieser Nachricht sendet der Server seine Zertifikatskette zur Überprüfung seiner Identität. Das erste Zertifikat in der Liste bildet das Serverzertifikat, folgende Zertifikate müssen das jeweils vorhergehende zertifizieren. Der im Zertifikat enthaltene Public-Key muss zum ausgehandelten Schlüsselaustausch-Algorithmus passen. Wenn nicht anders ausgehandelt wird für die Zertifikate das X.509v3-Format verwendet.\todo{RFC als Quelle}
+In dieser Nachricht sendet der Server seine Zertifikatskette zur Überprüfung seiner Identität. Das erste Zertifikat in der Liste bildet das Serverzertifikat, folgende Zertifikate müssen das jeweils vorhergehende zertifizieren. Der im Zertifikat enthaltene öffentliche Schlüssel muss zum ausgehandelten Schlüsselaustausch-Algorithmus passen. Wenn nicht anders vereinbart wird für die Zertifikate das X.509v3-Format\footnote{Ein Standard für Public-Key-Infrastrukturen, spezifiziert in RFC 5280.} verwendet.
 
 \subsection*{ServerKeyExchange*}
 
@@ -299,9 +301,9 @@ struct {
 
 Diese Nachricht wird nur für bestimmte Schlüsselaustausch-Verfahren gesendet, wenn die \servercertificate{}-Nachricht nicht genügend Informationen zum Austausch des \premastersecret{} bietet (vgl. \clientkeyexchange{}-Nachricht).
 
-\datafield{ServerDHParams} enthält dabei die öffentlichen Diffie-Hellman-Parameter \(p\) (die prime Ordnung der gewählten Gruppe), \(g\) (einen Erzeuger der Gruppe) und den öffentlichen Schlüssel \(Y_s = g^{X_s} \mod{p}\).
+\datafield{ServerDHParams} enthält dabei die öffentlichen Diffie-Hellman-Parameter \(p\) (die prime Ordnung der gewählten Gruppe), \(g\) (einen Erzeuger der Gruppe) und den öffentlichen Schlüssel \(Y_s = g^{X_s} \mod{p}\), wobei für \(X_s\) den geheimen Schlüssel des Servers steht.
 
-Im Fall von nicht anonymen Diffie-Hellman-Schlüsselaustausch werden diese Parameter mit gewähltem asymmetrischen Verfahren (DSS oder RSA) signiert.
+Im Fall von nicht anonymen Diffie-Hellman-Schlüsselaustausch werden diese Parameter mit gewähltem asymmetrischen Verfahren (DSS oder RSA) und dem (zum öffentlichen Schlüssel aus der \servercertificate{}-Nachricht gehörigen) geheimen Schlüssel signiert.
 
 \subsection*{CertificateRequest*}
 
@@ -344,7 +346,7 @@ struct {
 } ClientKeyExchange;
 \end{lstlisting}
 
-Wenn RSA als Schlüsselaustausch-Algorithmus vereinbart wurde, so wird das vom Client generierte \premastersecret{} mit dem ()aus dem Serverzertifikat entnommenen) öffentlichen Schlüssel des Servers verschlüsselt und gesendet. Es besteht aus der größten vom Client unterstützten Protokollversion (2 Bytes), um Version-Rollback-Angriffe zu verhindern (siehe Abschnitt \ref{sec_version_rollback}), und 46 zufällig generierten Bytes.
+Wenn RSA als Schlüsselaustausch-Algorithmus vereinbart wurde, so wird das vom Client generierte \premastersecret{} mit dem (aus dem Serverzertifikat stammenden) öffentlichen Schlüssel des Servers verschlüsselt und gesendet. Es besteht aus der größten vom Client unterstützten Protokollversion (2 Bytes), um Version-Rollback-Angriffe zu verhindern (siehe Abschnitt \ref{sec_version_rollback}), und 46 zufällig generierten Bytes.
 
 \begin{lstlisting}
 struct {
@@ -441,7 +443,7 @@ Das \applicationdataprotocol{} ist zuständig für das Durchreichen von Anwendun
 
 TLS erstellt beim ersten Handshake eine Sitzung zwischen Client und Server. Hierbei wird ein Sitzungsidentifikator gewählt, der beim \serverhello{} mitgesendet wird. 
 
-Ein Client kann nun später, wenn er den erhaltenen Sitzungsidentifikator in einer \clienthello{}-Nachricht mitschickt, eine alte Sitzung in Form einer neuen Verbindung wiederaufnehmen oder mehrere Verbindungen parallel aufbauen. Dabei werden die in den \datafield{SecurityParameters} hinterlegten Verfahren genutzt und aus dem ebenfalls hinterlegten \mastersecret{} sowie den in den Hello-Nachrichten übertragenen random-Werten neue Schlüssel berechnet wie in Abschnitt \ref{sec_key_material} beschrieben. Dadurch kommt der erneute Verbindungsaufbau mit weniger gesendeten Nachrichten aus, als ein neuer Verbindungsaufbau, wie in Abbildung \ref{fig_abbreviated_handshake} ersichtlich ist. So kann auf Neuberechnung des \mastersecret{}, Server- und Client-Validierung und Aushandlung der \ciphersuite{} verzichtet werden. Durch die \finished{}-Nachricht können sich Client und Server durch das gleiche Schlüsselmaterial, das auf dem \mastersecret{} beruht, trotzdem sicher sein, mit dem optional authentifizierten Gegenüber zu kommunizieren.
+Ein Client kann nun später, wenn er den erhaltenen Sitzungsidentifikator in einer \clienthello{}-Nachricht mitschickt, eine alte Sitzung in Form einer neuen Verbindung wiederaufnehmen oder mehrere Verbindungen parallel aufbauen. Dabei werden die in den \datafield{SecurityParameters} hinterlegten Verfahren genutzt und aus dem ebenfalls hinterlegten \mastersecret{} sowie den in den Hello-Nachrichten übertragenen random-Werten neue Schlüssel berechnet (siehe Abschnitt \ref{sec_key_material}). Dadurch kommt der verkürzte Handshake mit weniger gesendeten Nachrichten aus, als ein neuer Handshake, wie in Abbildung \ref{fig_abbreviated_handshake} ersichtlich ist. So kann auf Neuberechnung des \mastersecret{}, Server- und Client-Validierung und Aushandlung der \ciphersuite{} verzichtet werden. Durch die \finished{}-Nachricht können sich Client und Server durch das gleiche Schlüsselmaterial, das auf dem \mastersecret{} beruht, trotzdem sicher sein, mit dem optional authentifizierten Gegenüber zu kommunizieren.
 
 \lstset{
 	style=default,
@@ -467,8 +469,9 @@ Application Data              <------->     Application Data
 
 
 \section{\ciphersuites{}}
+\label{sec_cipher_suites}
 
-Eine \ciphersuite{} legt fest, welche Algorithmen zum Schlüsselaustausch, zur Verschlüsselung und zur Berechnung des MACs verwendet werden, sowie welche Eigenschaften(Schlüssellänge, Blocklänge, ...) diese besitzen. In der TLS 1.2-Spezifikation (\cite{tls12}) sind 37 \ciphersuites{} festgelegt.
+Eine \ciphersuite{} legt fest, welche Algorithmen zum Schlüsselaustausch, zur Verschlüsselung und zur Berechnung des MACs verwendet werden und welche Eigenschaften (Schlüssellänge, Blocklänge, ...) diese besitzen. In der TLS 1.2-Spezifikation (\cite{tls12}) sind 37 \ciphersuites{} festgelegt.
 
 Zum Schlüsselaustausch stehen \monospace{RSA} sowie verschiedene Varianten\footnote{
 	\monospace{DH}: Zertifikat mit festen Diffie-Hellman-Parametern\\ 
@@ -482,7 +485,7 @@ Laut Spezifikation muss zumindest \monospace{TLS\_RSA\_WITH\_AES\_128\_CBC\_SHA}
 
 Einen Sonderfall bildet die \ciphersuite{} \monospace{TLS\_NULL\_WITH\_NULL\_NULL}, die vor der Festlegung der \ciphersuite{} während des Handshakes als Standard festgelegt ist und weder Verschlüsselung noch MAC bietet.
 
-Kurz sei hier auch noch erwähnt, dass frühere Versionen (bis TLS 1.1) aufgrund von gesetzlichen Vorschriften zum Export von Kryptographie in den USA \ciphersuites{} enthielten, die durch Nutzung kürzerer Schlüssel leichter zu brechen sein sollten (so genannte export-geschwächte \ciphersuites{}). Diese teilweise noch unterstützten Verfahren ermöglichen teilweise noch heute Angriffe auf SSL/TLS (z.B. der FREAK-Angriff in Abschnitt \ref{sec_attack_freak}).
+Kurz sei hier auch noch erwähnt, dass frühere Versionen (bis TLS 1.1) aufgrund von gesetzlichen Vorschriften zum Export von Kryptographie aus den USA \ciphersuites{} enthielten, die durch Nutzung kürzerer Schlüssel leichter zu brechen sein sollten (so genannte export-geschwächte \ciphersuites{}). Diese teilweise noch unterstützten Verfahren ermöglichen noch heute Angriffe auf SSL/TLS (z.B. der FREAK-Angriff in Abschnitt \ref{sec_attack_freak}).
 
 \section{TLS-Extensions}
 
@@ -506,13 +509,13 @@ Im Folgenden soll kurz auf frühere Versionen von TLS/SSL und die entscheidenden
 
 \textbf{SSL 1.0} wurde nie veröffentlicht.
 
-\textbf{SSL 2.0} war die erste Version, die öffentlich gemacht und auch patentiert wurde. In dieser Version bestanden einige große Schwachstellen: Der Handshake wurde noch nicht authentifiziert, so dass Angreifer beispielsweise die \ciphersuite-Liste unbemerkt verändern konnten, viele schwache kryptographische Algorithmen wurden unterstützt und für Verschlüsselung und MAC-Berechnung wurden die gleichen Schlüssel verwendet. Auf diese Schwachstellen wird teilweise genauer in Kapitel \ref{cha_attacks} eingegangen. Da die Spezifikation nicht veröffentlicht wurde stammen diese Informationen aus \cite{meyer14}. Die Unterstützung von SSL 2.0 wird für TLS-Implementierungen durch RFC 6176 (\cite{prohibit_ssl20}) verboten.
+\textbf{SSL 2.0} war die erste Version, die öffentlich gemacht und auch patentiert wurde. In dieser Version bestanden einige große Schwachstellen: Der Handshake wurde noch nicht authentifiziert, so dass Angreifer beispielsweise die \ciphersuite-Liste unbemerkt verändern konnten, viele schwache kryptographische Algorithmen wurden unterstützt und für Verschlüsselung und MAC-Berechnung wurden die gleichen Schlüssel verwendet. Auf diese Schwachstellen wird teilweise genauer in Kapitel \ref{cha_attacks} eingegangen. Da die Spezifikation nicht veröffentlicht wurde, stammen diese Informationen aus \cite{meyer14}. Die Unterstützung von SSL 2.0 wird für TLS-Implementierungen durch RFC 6176 (\cite{prohibit_ssl20}) verboten.
 
 In \textbf{SSL 3.0} wurden verschiedene Schlüssel zur Verschlüsselung und MAC-Berechnung eingeführt und die während der MAC-Berechnung genutzte Hashfunktion konfigurierbar gemacht (aber noch kein HMAC verwendet). Der Handshake wurde jetzt authentifiziert (durch den Inhalt der \finished{}-Nachricht) und in die Generierung des \premastersecret{} floss jetzt die Versionsnummer ein, um Version-Rollback-Angriffe zu verhindern. Außerdem wurden neue kryptographische Algorithmen eingeführt und weitere kleine Änderungen vorgenommen (vgl. \cite{ssl30}). Von der Abwärtskompabilität von TLS-Implementierungen zu SSL 3.0 wird in RFC 7568 (\cite{deprecate_ssl30}) abgeraten.
 
 \textbf{TLS 1.0} ist großenteils äquivalent zu SSL 3.0. Es wurde die Pseudo Random Function eingeführt, die allerdings noch anders spezifiziert war als in der aktuellen Version. Die Berechnung des MACs erfolgte nun durch eine HMAC-Konstruktion. Außerdem wurde eine \changecipherspec{}-Nachricht vor der \finished{}-Nachricht vorgeschrieben, um den DropChangeCipherSpec-Angriff zu verhindern (vgl. \cite{tls10}).
 
-In \textbf{TLS 1.1} wurden explizite Initialisierungsvektoren für Blockchiffren im CBC-Modus vorgeschrieben, um den in Abschnitt \ref{sec_known_ivs} vorgestellten Angriff zu verhindern. Das Verhalten bei Padding-Fehlern wurde verändert, um den Bleichenbacher-Angriff zu verhindern. Außerdem wurden die exportgeschwächten \ciphersuites{} aus der Spezifikation entfernt (vgl. \cite{tls11}).
+In \textbf{TLS 1.1} wurden explizite Initialisierungsvektoren für Blockchiffren im CBC-Modus vorgeschrieben, um den in Abschnitt \ref{sec_known_ivs} vorgestellten Angriff zu verhindern. Das Verhalten bei Padding-Fehlern wurde vorgeschrieben, um den Bleichenbacher-Angriff zu verhindern. Außerdem wurden die exportgeschwächten \ciphersuites{} aus der Spezifikation entfernt (vgl. \cite{tls11}).
 
 In \textbf{TLS 1.2} wurde der Gebrauch von SHA1 und MD5 in der Pseudo Random Function durch eine \ciphersuite{}-abhängige Hashfunktion ersetzt. Zusätzlich wurde die Unterstützung von AEAD-\ciphersuites{} eingefügt. TLS-Extensions und der Gebrauch von AES als Blockchiffre wurden ergänzt. Außerdem wurden DES und IDEA als Blockchiffren aus der Spezifikation entfernt, die Unterstützung von SSL 2.0 nicht mehr empfohlen und weitere kleine Änderungen vorgenommen (vgl. \cite{tls12}).
 

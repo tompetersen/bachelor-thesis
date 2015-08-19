@@ -9,8 +9,8 @@ Eine gute Übersicht zu bisherigen Angriffen auf TLS findet sich in \cite{meyer1
 
 \label{sec_version_rollback}
 
-Ein Angreifer kann eine SSL 3.0-konforme \clienthello{}-Nachricht so modifizieren, dass der Server eine SSL 2.0-Verbindung aufbaut. So kann der Angreifer alle Schwächen der älteren Protokollversion ausnutzen. In der SSL 3.0-Spezifikation (\cite{ssl30}) wurde vorgeschrieben, dass bestimmte Bytes des PCKS \#1-Paddings einen festen Wert erhalten sollten, falls der Client SSL 3.0 unterstützt. So bleibt Kompatibilität mit der älteren Version erhalten, aber Version-Rollback-Angriffe werden trotzdem erkannt.\\
-Ein Schwachpunkt könnte laut \cite{wagner96} immer noch die Wiederaufnahme einer SSL 3.0-Sitzung durch eine SSL 2.0-\clienthello{}-Nachricht sein. Dieses sollte in Implementierungen verhindert werden.
+Ein Angreifer kann eine SSL 3.0-konforme \clienthello{}-Nachricht so modifizieren, dass der Server eine SSL 2.0-Verbindung aufbaut. So kann der Angreifer alle Schwächen der älteren Protokollversion ausnutzen. In der SSL 3.0-Spezifikation (\cite{ssl30}) wurde vorgeschrieben, dass bestimmte Bytes des PKCS\#1-Paddings (siehe \cite{pkcs1}) einen festen Wert erhalten sollten, falls der Client SSL 3.0 unterstützt. So bleibt Kompatibilität mit der älteren Version erhalten, aber Version-Rollback-Angriffe werden trotzdem erkannt.\\
+Ein Schwachpunkt könnte laut \cite{wagner96} immer noch die Wiederaufnahme einer SSL 3.0-Sitzung durch eine SSL 2.0 \clienthello{}-Nachricht sein. Dieses sollte in Implementierungen verhindert werden.
 
 Auch in neueren Browsern kann dieser Angriff noch zum Problem werden, wenn Fallback-Lösungen auf ältere Versionen implementiert sind, wenn ein Verbindungsversuch scheitert.
 
@@ -20,7 +20,7 @@ Durch die \finished{}-Nachricht ab SSL 3.0, die alle Handshake-Nachrichten authe
 
 Ein für SSL 2.0 bestehender Angriff ermöglichte aktiven Angreifern die während des Handshake-Protokolls übertragenen Listen von unterstützten Cipher Suites zu verändern, so dass schwache kryptographische Verfahren erzwungen werden konnten (oftmals exportgeschwächte Verfahren mit kürzeren Schlüsselängen).
 
-Ab SSL 3.0 wird dieser Angriff dadurch verhindert, dass die \finished{}-Nachrichten von Client und Server jeweils einen mit dem \mastersecret{} berechneten MAC über die Nachrichten des \emph{Handshake}-Protokolls enthalten, der die Integrität dieser Nachrichten bestätigt.
+Ab SSL 3.0 wird dieser Angriff dadurch verhindert, dass die \finished{}-Nachrichten von Client und Server jeweils einen mit dem \mastersecret{} berechneten MAC über die Nachrichten des \handshakeprotocol{}s enthalten, der die Integrität dieser Nachrichten bestätigt.
 
 Eine detaillierte Übersicht ist in \cite{wagner96} zu finden.
 
@@ -38,7 +38,7 @@ Details zu diesem Angriff sind in \cite{wagner96} zu finden.
 
 Daniel Bleichenbacher stellte 1998 in \cite{bleichenbacher98} einen Adaptive-Chosen-Ciphertext-Angriff gegen RSA-basierte Protokolle vor. Im Fall von SSL wird versucht, das \premastersecret{}, das während des Handshakes RSA-verschlüsselt gesendet werden kann, zu erhalten.
 
-Der Angriff basiert auf dem festen Format nach PKCS \#1 (siehe \cite{pkcs1}) formatierter Nachrichten, wie in Abbildung \ref{fig_pcks_padding} dargestellt. Die ersten beiden Bytes haben immer den gleichen Wert, danach folgen Padding (bestehend aus zufälligen Bytes ungleich null) und die Daten, getrennt durch ein Nullbyte. Nachrichten in diesem Format werden als Integer interpretiert, per RSA verschlüsselt und versendet. Der Empfänger entschlüsselt die Nachricht, überprüft das Format des als Bytekette interpretierten Ergebnisses und kann dann die Daten wieder extrahieren.
+Der Angriff basiert auf dem festen Format nach PKCS\#1 (siehe \cite{pkcs1}) formatierter Nachrichten, wie in Abbildung \ref{fig_pcks_padding} dargestellt. Die ersten beiden Bytes haben immer den gleichen Wert, danach folgen das Padding (bestehend aus zufälligen Bytes ungleich null) und die Daten, getrennt durch ein Nullbyte. Nachrichten in diesem Format werden als Integer interpretiert, per RSA verschlüsselt und versendet. Der Empfänger entschlüsselt die Nachricht, überprüft das Format des als Bytekette interpretierten Ergebnisses und kann dann die Daten wieder extrahieren.
 
 \begin{figure}[H]
 	\centering
@@ -58,13 +58,13 @@ Der Angriff basiert auf dem festen Format nach PKCS \#1 (siehe \cite{pkcs1}) for
 
 Voraussetzung für diesen Angriff ist der Zugriff auf ein Orakel, das dem Angreifer für eine verschlüsselte Nachricht lediglich mitteilt, ob das Padding der entschlüsselten Nachricht korrektes Format besitzt.
 
-Im Folgenden sei \((n,e)\) ein RSA-Public-Key und \((n,d)\) der zugehörige Private-Key. Der Angreifer möchte eine Nachricht \(m \equiv c^d\mod{n}\) erhalten, für die er im Besitz von \(c\) ist.\\ 
+Im Folgenden sei \((n,e)\) ein öffentlicher RSA-Schlüssel und \((n,d)\) der zugehörige geheime Schlüssel. Der Angreifer möchte eine Nachricht \(m \equiv c^d\mod{n}\) erhalten, für die er im Besitz von \(c\) ist.\\ 
 Dazu wählt er eine Zahl \(s\), berechnet \(c' \equiv cs^e \mod{n}\) und sendet \(c'\) an das Orakel. Wenn das Orakel korrektes Format signalisiert, dann weiß der Angreifer, dass die ersten zwei Bytes von \[(c')^d \equiv (cs^e)^d \equiv c^ds \equiv ms\mod{n}\] \(0x00\) und \(0x02\) sind. Mit diesem Wissen lässt sich ein neuer Wert \(s\) wählen, der weitere Informationen über \(m\) enthüllt. Details zu diesem iterativen Verfahren sind in \cite{bleichenbacher98} zu finden. Der Autor schätzt die Anzahl an nötigen Orakelanfragen mit etwa \(2^{20}\) ab.\\
 Das Orakel lässt sich auf zwei Weisen erhalten. Entweder gibt die Implementierung detaillierte Fehlermeldungen über ungültiges PKCS-Format zurück oder ermöglicht durch Zeitunterschiede bei der Verarbeitung gültiger und ungültiger Nachrichten einen Timing-Angriff. 
 
 In TLS ab Version 1.0 wird der Angriff dadurch verhindert, dass bei ungültigem PKCS-Format ein zufälliges \premastersecret{} erzeugt wird, mit dem der Handshake fortgesetzt wird. Dadurch scheitert der Handshake erst bei der Überprüfung der \finished{}-Nachricht und enthüllt keine Informationen über gültiges oder ungültiges Format.
 
-\section{Padding-Oracle-Angriff}
+\section{Padding-Orakel-Angriff}
 
 In \cite{vaudenay02} beschreibt der Autor einen Angriff zur Erlangung des Klartextes, bei dem das für Blockchiffren nötige Padding im CBC-Modus ausgenutzt wird. Durch das vorgegebene Format des Paddings und da das Padding bei TLS nicht durch den MAC geschützt ist (MAC - then PAD - then Encrypt) ermöglicht es theoretisch in einer relativ kleinen Zahl von Anfragen die Berechnung des Klartextes.\\
 Praktisch konnte das Verfahren nicht eingesetzt werden, da SSL 3.0 für Paddingfehler und MAC-Überprüfung gleiche Fehlermeldungen (\badrecordmac{}) ausgibt. In TLS 1.0 und 1.1 gibt es getrennte Fehlermeldungen (\badrecordmac{} und \decryptionfailed{}), so dass der Angriff theoretisch möglich wäre. Allerdings werden die Fehler über das \alertprotocol{} verschlüsselt gesendet, so dass ein Angreifer die Fehlerart anders (beispielsweise über Log-Einträge) erhalten muss. TLS 1.2 verbietet das Senden von \decryptionfailed{}-Fehlern aus diesem Grund.\\
@@ -89,9 +89,9 @@ In \cite{paterson13} stellen die Autoren weitere auf \cite{vaudenay02} basierend
 
 \label{sec_known_ivs}
 
-In \cite{bard04} stellt der Autor einen Angriff vor, der die Art ausnutzt, wie die für den CBC-Modus nötigen Initialisierungsvektoren (IV) von TLS bereitgestellt werden. Durch die Nutzung des letzten Ciphertextblocks der letzten Nachricht als IV der neuen Nachricht lässt sich unter bestimmten Voraussetzungen ein Chosen-Plaintext-Angriff durchführen. Der Autor beschreibt eine Möglichkeit unter Nutzung von Browser-Plugins über HTTPS übertragene Passwörter oder PINs herauszufinden. In \cite{bard06} verbessert der Autor seinen Angriff durch die Nutzung von Java-Applets anstelle von Browser-Plugins.
+In \cite{bard04} stellt der Autor einen Angriff vor, der die Art ausnutzt, wie die für den CBC-Modus nötigen Initialisierungsvektoren (IV) von TLS bereitgestellt wurden. Durch die Nutzung des letzten Ciphertextblocks der letzten Nachricht als IV der neuen Nachricht lässt sich unter bestimmten Voraussetzungen ein Chosen-Plaintext-Angriff durchführen. Der Autor beschreibt eine Möglichkeit unter Nutzung von Browser-Plugins über HTTPS übertragene Passwörter oder PINs herauszufinden. In \cite{bard06} verbessert der Autor seinen Angriff durch die Nutzung von Java-Applets anstelle von Browser-Plugins.
 
-Der eigentliche Angriff folgt dem folgenden Prinzip: Wenn eine Nachricht \(C = C_0,\dots,C_l\) gesendet wurde, wird für die nächste Nachricht \(C_l\) als IV verwendet werden. Wenn der Angreifer überprüfen möchte, ob ein Klartextblock \(P^*=P_j\), also zu \(C_j\) verschlüsselt wurde, so bringt er einen Sender dazu eine Nachricht \(P'\) mit dem ersten Block \(P_1'=C_{j-1} \oplus C_l \oplus P*\) zu verschlüsseln und erhält als ersten Chiffretextblock:
+Der eigentliche Angriff entspricht dem folgenden Prinzip: Wenn eine Nachricht \(C = C_0,\dots,C_l\) gesendet wurde, wird für die nächste Nachricht \(C_l\) als IV verwendet werden. Wenn der Angreifer überprüfen möchte, ob ein Klartextblock \(P^*=P_j\) zu \(C_j\) verschlüsselt wurde, so bringt er einen Sender dazu eine Nachricht \(P'\) mit dem ersten Block \(P_1'=C_{j-1} \oplus C_l \oplus P*\) zu verschlüsseln und erhält als ersten Chiffretextblock:
 \begin{align*}
 C_1' &= C_{K}(P_1' \oplus \text{IV})\\
 	&= C_{K}(P_1' \oplus C_l)\\

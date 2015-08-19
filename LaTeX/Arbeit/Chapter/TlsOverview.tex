@@ -1,8 +1,9 @@
 \chapter{SSL und TLS - ein Überblick}
 
-SSL (Secure Socket Layer) bzw. TLS\footnote{Im weiteren Verlauf dieser Arbeit wird der Einfachheit halber lediglich von TLS gesprochen. Bei etwaigen Unterschieden wird explizit auf diese eingegangen.} (Transport Layer Security) ist ein zustandsbehaftetes Protokoll, das (meist) auf dem TCP-Protokoll\footnote{DTLS (Datagram Transport Layer Security) ist ein auf TLS basierendes Protokoll, dass auf UDP aufsetzt.} der Transportschicht des TCP/IP-Protokollstapels aufbaut. 
+SSL (Secure Socket Layer) bzw. TLS\footnote{Im weiteren Verlauf dieser Arbeit wird der Einfachheit halber lediglich von TLS gesprochen. Bei etwaigen Unterschieden wird explizit auf diese eingegangen.} (Transport Layer Security) ist ein zustandsbehaftetes Protokoll, das auf dem TCP-Protokoll\footnote{DTLS (Datagram Transport Layer Security) ist ein auf TLS basierendes Protokoll, dass auf UDP aufsetzt.} der Transportschicht des TCP/IP-Protokollstapels aufbaut. 
 
-Hauptaufgaben von TLS sind Authentifikation der Kommunikationspartner, Verschlüsselung der Kommunikation sowie die Sicherstellung der Integrität der übertragenen Nachrichten (\cite{meyer14}). Dazu läuft die Kommunikation über TLS in zwei Phasen ab: Zu Beginn wird eine sichere Verbindung durch Festlegung der verwendeten kryptographischen Verfahren und des Schlüsselmaterials hergestellt. Danach können Daten transparent für Anwendungen und auf TLS aufbauende Protokolle über diese Verbindung gesendet werden. Einige Beispiele für solche Protokolle und Anwendungen der Anwendungsschicht, die TLS nutzen, sind:
+Hauptaufgaben von TLS sind Authentifikation der Kommunikationspartner, Verschlüsselung der Kommunikation sowie die Sicherstellung der Integrität der übertragenen Nachrichten (\cite{meyer14}). Dazu läuft die Kommunikation über TLS in zwei Phasen ab: Zu Beginn wird eine sichere Verbindung durch Festlegung der verwendeten kryptographischen Verfahren und des Schlüsselmaterials hergestellt. Danach können Daten transparent für Anwendungen und auf TLS aufbauende Protokolle über diese Verbindung gesendet werden.\\
+Einige Beispiele für solche Protokolle und Anwendungen der Anwendungsschicht, die TLS nutzen, sind:
 \begin{description}
 \item[HTTPS] für die Datenübertragung, zumeist für die Auslieferung von Webseiten genutzt. 
 \item[FTPS] für die Dateiübertragung.
@@ -19,11 +20,11 @@ Inzwischen ist TLS laut \cite{schmeh09} das "`gegenwärtig meistverwendete Versc
 
 Kurz sollen hier auch noch bestehende Implementierungen von SSL/TLS erwähnt werden, auch wenn der Fokus der Arbeit auf der Protokollspezifikation selber liegt.
 
-Die verbreitetste Implementierung, die unter anderem auch im häufig verwendeten Apache-Webserver genutzt wird, ist OpenSSL, eine Open-Source-Implementierung in C. In Produkten von Microsoft wird die Bibliothek SChannel, in Apple-Anwendungen Secure Transport und in Google Chrome und Mozilla-Produkten NSS verwendet. Auch manche Programmiersprachen bringen eigene Implementierungen mit. Ein Beispiel hierfür ist die Java Secure Socket Extension(JSSE) in Java.
+Die meistgenutzte Implementierung, die unter anderem auch im häufig verwendeten Apache-Webserver zum Einsatz kommt, ist OpenSSL, eine Open-Source-Implementierung in C. In Produkten von Microsoft wird die Bibliothek SChannel, in Apple-Anwendungen Secure Transport und in Google Chrome und Mozilla-Produkten NSS verwendet. Auch manche Programmiersprachen bringen eigene Implementierungen mit. Ein Beispiel hierfür ist die Java Secure Socket Extension(JSSE) in Java.
 
 Zusätzlich gibt es viele weitere seltener genutzte Implementierungen wie GnuTLS, PolarSSL, LibreSSL oder Amazon s2n, die vollständig neu entwickelt wurden oder als Forks bestehender Implementierungen entstanden sind.
 
-Viele Angriffe auf TLS-gesicherte Verbindungen, die bekannt geworden sind, waren Angriffe auf Implementierungen und nicht auf die Protokollspezifikation selbst (auf diese Angriffe wird in Kapitel \ref{cha_attacks} eingegangen). Ein Beispiel ist der Heartbleed\footnote{http://heartbleed.com/} getaufte Bug in OpenSSL, der es wegen eines Programmierfehlers ermöglichte, Speicherinhalte des Servers auszulesen. Auf solche Angriffe, die lediglich einzelne Implementierungen betreffen, soll im Rahmen dieser Arbeit nicht weiter eingegangen werden.
+Viele Angriffe auf TLS-gesicherte Verbindungen, die bekannt geworden sind, waren Angriffe auf Implementierungen und nicht auf die Protokollspezifikation selbst (auf diese zweite Art von Angriffen wird in Kapitel \ref{cha_attacks} eingegangen). Ein Beispiel ist der Heartbleed\footnote{http://heartbleed.com/} getaufte Bug in OpenSSL, der es wegen eines Programmierfehlers ermöglichte, Speicherinhalte des Servers auszulesen. Auf solche Angriffe, die lediglich einzelne Implementierungen betreffen, soll im Rahmen dieser Arbeit nicht weiter eingegangen werden.
 
 Eine gelungene Übersicht über bestehende Implementierungen, die tiefer ins Detail geht, ist in \cite{meyer14} zu finden.
 %https://en.wikipedia.org/wiki/Comparison_of_TLS_implementations
