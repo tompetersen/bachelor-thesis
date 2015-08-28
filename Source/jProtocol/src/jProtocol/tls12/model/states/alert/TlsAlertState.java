@@ -1,6 +1,5 @@
 package jProtocol.tls12.model.states.alert;
 
-import jProtocol.helper.MyLogger;
 import jProtocol.tls12.model.messages.TlsAlertMessage;
 import jProtocol.tls12.model.messages.TlsMessage;
 import jProtocol.tls12.model.states.TlsState;
@@ -27,8 +26,8 @@ public abstract class TlsAlertState extends TlsState {
 	public void onEnter() {
 		super.onEnter();
 		
-		//sendTlsMessage(getAlertMessageToSend());
-		MyLogger.severe("Would send alert message: " + getAlertMessageToSend().getAlert().toString());
+		sendTlsMessage(getAlertMessageToSend());
+		//MyLogger.severe("Would send alert message: " + getAlertMessageToSend().getAlert().toString());
 		//setTlsState(TlsStateType.INITIAL_SERVER_STATE);
 	}
 	

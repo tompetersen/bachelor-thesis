@@ -1,12 +1,14 @@
 package jProtocol.tls12.model.states.server;
 
 import jProtocol.helper.MyLogger;
+import jProtocol.tls12.model.messages.TlsApplicationDataMessage;
 import jProtocol.tls12.model.messages.TlsMessage;
 import jProtocol.tls12.model.messages.handshake.TlsFinishedMessage;
 import jProtocol.tls12.model.states.TlsState;
 import jProtocol.tls12.model.states.TlsStateMachine;
 import jProtocol.tls12.model.states.TlsStateMachine.TlsStateType;
 import jProtocol.tls12.model.values.TlsHandshakeType;
+import jProtocol.tls12.model.values.TlsVerifyData;
 
 public class TlsWaitingForFinishedState_Server extends TlsState {
 
@@ -16,20 +18,27 @@ public class TlsWaitingForFinishedState_Server extends TlsState {
 
 	@Override
 	public boolean expectedTlsMessage(TlsMessage message) {
-		return isHandshakeMessageOfType(message, TlsHandshakeType.finished);
+		return isHandshakeMessageOfType(message, TlsHandshakeType.finished) || isApplicationDataMessage(message);
 	}
 
 	@Override
 	public void receivedTlsMessage(TlsMessage message) {
-		TlsFinishedMessage finishedMessage = (TlsFinishedMessage)message;
-		
-		MyLogger.info("Server received Finished!");
-
-		if (_stateMachine.isCorrectVerifyData(finishedMessage.getVerifyData())) {
-			setTlsState(TlsStateType.SERVER_RECEIVED_FINISHED_STATE);
+		if (isApplicationDataMessage(message)) {
+			MyLogger.info("Server cached application data message in WaitingForFinishedState.");
+			_stateMachine.addCachedApplicationDataMessage((TlsApplicationDataMessage)message);
 		}
-		else {
-			setTlsState(TlsStateType.DECRYPT_ERROR_OCCURED_STATE);
+		else if (isHandshakeMessageOfType(message, TlsHandshakeType.finished)) {
+			TlsFinishedMessage finishedMessage = (TlsFinishedMessage)message;
+			
+			MyLogger.info("Server received Finished!");
+
+			TlsVerifyData verifyData = finishedMessage.getVerifyData();
+			if (_stateMachine.isCorrectVerifyData(verifyData)) {
+				setTlsState(TlsStateType.SERVER_RECEIVED_FINISHED_STATE);
+			}
+			else {
+				setTlsState(TlsStateType.DECRYPT_ERROR_OCCURED_STATE);
+			}
 		}
 	}
 

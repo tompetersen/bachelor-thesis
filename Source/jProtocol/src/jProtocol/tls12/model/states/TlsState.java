@@ -1,6 +1,7 @@
 package jProtocol.tls12.model.states;
 
 import jProtocol.Abstract.Model.State;
+import jProtocol.helper.MyLogger;
 import jProtocol.tls12.model.TlsCiphertext;
 import jProtocol.tls12.model.TlsPlaintext;
 import jProtocol.tls12.model.exceptions.TlsBadPaddingException;
@@ -8,6 +9,7 @@ import jProtocol.tls12.model.exceptions.TlsBadRecordMacException;
 import jProtocol.tls12.model.exceptions.TlsDecodeErrorException;
 import jProtocol.tls12.model.messages.TlsAlertMessage;
 import jProtocol.tls12.model.messages.TlsMessage;
+import jProtocol.tls12.model.messages.handshake.TlsCertificateMessage;
 import jProtocol.tls12.model.messages.handshake.TlsHandshakeMessage;
 import jProtocol.tls12.model.states.TlsStateMachine.TlsStateType;
 import jProtocol.tls12.model.values.TlsAlert;
@@ -27,7 +29,9 @@ public abstract class TlsState extends State<TlsCiphertext> {
 	@Override
 	public void receiveMessage(TlsCiphertext ciphertext) {
 		try {
-			TlsPlaintext plaintext = _stateMachine.ciphertextToPlaintext(ciphertext);
+			
+			byte[] ciphertextBytes = ciphertext.getBytes();
+			TlsPlaintext plaintext = _stateMachine.ciphertextToPlaintext(ciphertextBytes);
 			
 			TlsMessage message = plaintext.getMessage();
 			
@@ -50,7 +54,7 @@ public abstract class TlsState extends State<TlsCiphertext> {
 	}
 	
 	private void handleAlertMessage(TlsAlertMessage message) {
-		//TODO: handle alerts
+		MyLogger.severe("Received alert message: " + message.getAlert().toString());
 	}
 	
 	/**

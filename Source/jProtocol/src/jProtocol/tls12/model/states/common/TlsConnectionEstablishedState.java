@@ -14,6 +14,21 @@ public class TlsConnectionEstablishedState extends TlsState{
 	public TlsConnectionEstablishedState(TlsStateMachine stateMachine) {
 		super(stateMachine);
 	}
+	
+	
+
+	@Override
+	public void onEnter() {
+		super.onEnter();
+		
+		for (TlsApplicationDataMessage message : _stateMachine.getCachedApplicationDataMessages()) {
+			receivedTlsMessage(message);
+		}
+		
+		_stateMachine.clearCachedApplicationDataMessage();
+	}
+
+
 
 	@Override
 	public boolean expectedTlsMessage(TlsMessage message) {

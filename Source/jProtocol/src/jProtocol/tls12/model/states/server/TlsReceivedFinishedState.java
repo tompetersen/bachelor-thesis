@@ -1,5 +1,7 @@
 package jProtocol.tls12.model.states.server;
 
+import jProtocol.helper.MyLogger;
+import jProtocol.tls12.model.messages.TlsApplicationDataMessage;
 import jProtocol.tls12.model.messages.TlsChangeCipherSpecMessage;
 import jProtocol.tls12.model.messages.TlsMessage;
 import jProtocol.tls12.model.messages.handshake.TlsFinishedMessage;
@@ -16,12 +18,13 @@ public class TlsReceivedFinishedState extends TlsState {
 
 	@Override
 	public boolean expectedTlsMessage(TlsMessage message) {
-		return false;
+		return isApplicationDataMessage(message);
 	}
 
 	@Override
 	public void receivedTlsMessage(TlsMessage message) {
-		throw new RuntimeException("ReceivedTlsMessage() should not be called on ReceivedClientHelloState!");
+		MyLogger.info("Server cached application data message in ReceivedFinishedState.");
+		_stateMachine.addCachedApplicationDataMessage((TlsApplicationDataMessage)message);
 	}
 
 	@Override

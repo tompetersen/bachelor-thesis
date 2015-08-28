@@ -1,6 +1,7 @@
 package jProtocol.tls12.model.states.client;
 
 import jProtocol.helper.MyLogger;
+import jProtocol.tls12.model.messages.TlsApplicationDataMessage;
 import jProtocol.tls12.model.messages.TlsMessage;
 import jProtocol.tls12.model.messages.handshake.TlsFinishedMessage;
 import jProtocol.tls12.model.states.TlsState;
@@ -16,20 +17,26 @@ public class TlsWaitingForFinishedState_Client extends TlsState {
 
 	@Override
 	public boolean expectedTlsMessage(TlsMessage message) {
-		return isHandshakeMessageOfType(message, TlsHandshakeType.finished);
+		return isHandshakeMessageOfType(message, TlsHandshakeType.finished) || isApplicationDataMessage(message);
 	}
 
 	@Override
 	public void receivedTlsMessage(TlsMessage message) {
-		TlsFinishedMessage fm = (TlsFinishedMessage)message;
-		
-		MyLogger.info("Client received Finished!");
-		
-		if (_stateMachine.isCorrectVerifyData(fm.getVerifyData())) {
-			setTlsState(TlsStateType.CONNECTION_ESTABLISHED_STATE);
+		if (isApplicationDataMessage(message)) {
+			MyLogger.info("Client cached application data message in WaitingForFinishedState.");
+			_stateMachine.addCachedApplicationDataMessage((TlsApplicationDataMessage)message);
 		}
-		else {
-			setTlsState(TlsStateType.DECRYPT_ERROR_OCCURED_STATE);
+		else if (isHandshakeMessageOfType(message, TlsHandshakeType.finished)) {
+			TlsFinishedMessage fm = (TlsFinishedMessage)message;
+			
+			MyLogger.info("Client received Finished!");
+			
+			if (_stateMachine.isCorrectVerifyData(fm.getVerifyData())) {
+				setTlsState(TlsStateType.CONNECTION_ESTABLISHED_STATE);
+			}
+			else {
+				setTlsState(TlsStateType.DECRYPT_ERROR_OCCURED_STATE);
+			}
 		}
 	}
 

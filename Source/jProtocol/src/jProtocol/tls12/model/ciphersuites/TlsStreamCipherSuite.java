@@ -28,8 +28,7 @@ public abstract class TlsStreamCipherSuite implements TlsCipherSuite {
 	}
 
 	@Override
-	public TlsPlaintext ciphertextToPlaintext(TlsCiphertext ciphertext, TlsEncryptionParameters parameters, TlsCipherSuiteRegistry registry, TlsKeyExchangeAlgorithm algorithm) throws TlsBadRecordMacException, TlsDecodeErrorException {
-		byte[] ciphertextBytes = ciphertext.getBytes();
+	public TlsPlaintext ciphertextToPlaintext(byte[] ciphertextBytes, TlsEncryptionParameters parameters, TlsCipherSuiteRegistry registry, TlsKeyExchangeAlgorithm algorithm) throws TlsBadRecordMacException, TlsDecodeErrorException {
 		if (ciphertextBytes.length <= TlsPlaintext.RECORD_HEADER_LENGTH) {
 			throw new TlsDecodeErrorException("Ciphertext contains not enough information for record header and fragment!");
 		}

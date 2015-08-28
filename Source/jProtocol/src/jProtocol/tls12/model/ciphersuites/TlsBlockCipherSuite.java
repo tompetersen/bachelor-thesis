@@ -74,8 +74,7 @@ public abstract class TlsBlockCipherSuite implements TlsCipherSuite {
 		return ciphertext;
 	}
 	
-	public TlsPlaintext ciphertextToPlaintext(TlsCiphertext ciphertext,  TlsEncryptionParameters parameters, TlsCipherSuiteRegistry registry, TlsKeyExchangeAlgorithm algorithm) throws TlsBadRecordMacException, TlsBadPaddingException, TlsDecodeErrorException {
-		byte[] ciphertextBytes = ciphertext.getBytes();
+	public TlsPlaintext ciphertextToPlaintext(byte[] ciphertextBytes,  TlsEncryptionParameters parameters, TlsCipherSuiteRegistry registry, TlsKeyExchangeAlgorithm algorithm) throws TlsBadRecordMacException, TlsBadPaddingException, TlsDecodeErrorException {
 		if (ciphertextBytes.length <= TlsPlaintext.RECORD_HEADER_LENGTH) {
 			throw new TlsDecodeErrorException("Ciphertext contains not enough information for record header and fragment!");
 		}
@@ -116,9 +115,9 @@ public abstract class TlsBlockCipherSuite implements TlsCipherSuite {
 	//check mac
 		TlsMacParameters macParams = new TlsMacParameters(parameters.getMacWriteKey(), 
 				parameters.getSequenceNumber(), 
-				ciphertext.getContentType().getValue(), 
-				ciphertext.getVersion().getMajorVersion(), 
-				ciphertext.getVersion().getMinorVersion(), 
+				headerBytes[0], 
+				headerBytes[1], 
+				headerBytes[2], 
 				(short)decryptedFragment.length, 
 				decryptedFragment);
 		byte[] computedMac = computeMac(macParams);

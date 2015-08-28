@@ -14,6 +14,7 @@ import jProtocol.tls12.model.crypto.TlsRsaCipher;
 import jProtocol.tls12.model.exceptions.TlsBadPaddingException;
 import jProtocol.tls12.model.exceptions.TlsBadRecordMacException;
 import jProtocol.tls12.model.exceptions.TlsDecodeErrorException;
+import jProtocol.tls12.model.messages.TlsApplicationDataMessage;
 import jProtocol.tls12.model.messages.handshake.TlsHandshakeMessage;
 import jProtocol.tls12.model.states.alert.TlsDecodeErrorOccuredState;
 import jProtocol.tls12.model.states.alert.TlsDecryptErrorOccuredState;
@@ -33,7 +34,7 @@ import jProtocol.tls12.model.states.common.TlsWaitingForCloseNotifyState;
 import jProtocol.tls12.model.states.server.TlsInitialServerState;
 import jProtocol.tls12.model.states.server.TlsReceivedClientHelloState;
 import jProtocol.tls12.model.states.server.TlsReceivedFinishedState;
-import jProtocol.tls12.model.states.server.TlsServerWaitingForChangeCipherSpecState_Server;
+import jProtocol.tls12.model.states.server.TlsWaitingForChangeCipherSpecState_Server;
 import jProtocol.tls12.model.states.server.TlsWaitingForClientKeyExchangeState;
 import jProtocol.tls12.model.states.server.TlsWaitingForFinishedState_Server;
 import jProtocol.tls12.model.values.TlsApplicationData;
@@ -45,6 +46,7 @@ import jProtocol.tls12.model.values.TlsSessionId;
 import jProtocol.tls12.model.values.TlsVerifyData;
 import jProtocol.tls12.model.values.TlsVersion;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -121,6 +123,8 @@ public class TlsStateMachine extends StateMachine<TlsCiphertext> {
 	private TlsCipherSuiteRegistry _cipherSuiteRegistry;
 	private TlsRsaCipher _rsaCipher;
 	
+	private List<TlsApplicationDataMessage> _cachedApplicationDataMessages;
+	
 	public TlsStateMachine(CommunicationChannel<TlsCiphertext> channel, TlsConnectionEnd entity) {
 		super(channel);
 
@@ -130,6 +134,8 @@ public class TlsStateMachine extends StateMachine<TlsCiphertext> {
 		_currentConnectionState = new TlsConnectionState();
 		_pendingSecurityParameters = new TlsSecurityParameters(entity, _cipherSuiteRegistry.getNullCipherSuite());
 		_pendingConnectionState = new TlsConnectionState();
+		
+		_cachedApplicationDataMessages = new ArrayList<>();
 		
 		createStates();
 		
@@ -142,7 +148,7 @@ public class TlsStateMachine extends StateMachine<TlsCiphertext> {
 		addState(TlsStateType.SERVER_INITIAL_STATE.getType(), 								new TlsInitialServerState(this));
 		addState(TlsStateType.SERVER_RECEIVED_CLIENT_HELLO_STATE.getType(), 				new TlsReceivedClientHelloState(this));
 		addState(TlsStateType.SERVER_IS_WAITING_FOR_CLIENT_KEY_EXCHANGE_STATE.getType(), 	new TlsWaitingForClientKeyExchangeState(this));
-		addState(TlsStateType.SERVER_IS_WAITING_FOR_CHANGE_CIPHER_SPEC_STATE.getType(), 	new TlsServerWaitingForChangeCipherSpecState_Server(this));
+		addState(TlsStateType.SERVER_IS_WAITING_FOR_CHANGE_CIPHER_SPEC_STATE.getType(), 	new TlsWaitingForChangeCipherSpecState_Server(this));
 		addState(TlsStateType.SERVER_IS_WAITING_FOR_FINISHED_STATE.getType(), 				new TlsWaitingForFinishedState_Server(this));
 		addState(TlsStateType.SERVER_RECEIVED_FINISHED_STATE.getType(), 					new TlsReceivedFinishedState(this));
 
@@ -184,14 +190,14 @@ public class TlsStateMachine extends StateMachine<TlsCiphertext> {
 	 * Transforms a TLSCiphertext to a TLSPlaintext. The Message will be decrypted and 
 	 * the MAC will be checked according to the current ciphersuite.
 	 * 
-	 * @param ciphertext the TLSCiphertext
+	 * @param ciphertextBytes the TLSCiphertext bytes
 	 * 
 	 * @return the TlsPlaintext
 	 * @throws TlsDecodeErrorException 
 	 */
-	TlsPlaintext ciphertextToPlaintext(TlsCiphertext ciphertext) throws TlsBadRecordMacException, TlsBadPaddingException, TlsDecodeErrorException {	
+	TlsPlaintext ciphertextToPlaintext(byte[] ciphertextBytes) throws TlsBadRecordMacException, TlsBadPaddingException, TlsDecodeErrorException {	
 		TlsKeyExchangeAlgorithm algorithm = (_pendingSecurityParameters != null) ? _pendingSecurityParameters.getKeyExchangeAlgorithm() : null;
-		return _currentSecurityParameters.ciphertextToPlaintext(ciphertext, getEncryptionParameters(true), _cipherSuiteRegistry, algorithm);
+		return _currentSecurityParameters.ciphertextToPlaintext(ciphertextBytes, getEncryptionParameters(true), _cipherSuiteRegistry, algorithm);
 	}
 	
 	private TlsEncryptionParameters getEncryptionParameters(boolean isReceiving) {
@@ -324,7 +330,7 @@ public class TlsStateMachine extends StateMachine<TlsCiphertext> {
 		byte[] expected = _isServer ? 	_currentConnectionState.getFinishedVerifyDataForClient(masterSecret) : 
 										_currentConnectionState.getFinishedVerifyDataForServer(masterSecret);
 		
-		return  Arrays.equals(expected, verifyData.getBytes());
+		return Arrays.equals(expected, verifyData.getBytes());
 	}
 	
 	public TlsVerifyData getVerifyDataToSend() {
@@ -338,6 +344,10 @@ public class TlsStateMachine extends StateMachine<TlsCiphertext> {
 	
 	public void setTlsState(TlsStateType stateType, TlsState sender) {
 		setState(stateType.getType(), sender);
+		
+		if (stateType == TlsStateType.CONNECTION_ESTABLISHED_STATE) {
+			notifyStateMachineObservers(new TlsStateMachineEvent(TlsStateMachineEventType.connection_established));
+		}
 	}
 	
 	private void setTlsState(TlsStateType stateType) {
@@ -359,6 +369,18 @@ public class TlsStateMachine extends StateMachine<TlsCiphertext> {
 		_rsaCipher = rsaCipher;
 	}
 
+	public List<TlsApplicationDataMessage> getCachedApplicationDataMessages() {
+		return _cachedApplicationDataMessages;
+	}
+
+	public void addCachedApplicationDataMessage(TlsApplicationDataMessage message) {
+		_cachedApplicationDataMessages.add(message);
+	}
+	
+	public void clearCachedApplicationDataMessage() {
+		_cachedApplicationDataMessages.clear();
+	}
+
 	/*
 	 * Public methods
 	 */
@@ -368,7 +390,7 @@ public class TlsStateMachine extends StateMachine<TlsCiphertext> {
 			state.openConnection();
 		}
 		else {
-			throw new RuntimeException("Open connection can only be called on a client in its initial state!");
+			throw new RuntimeException(getEntityName() + ": Open connection can only be called on a client in its initial state!");
 		}
 	}
 	
@@ -378,7 +400,7 @@ public class TlsStateMachine extends StateMachine<TlsCiphertext> {
 			state.closeConnection();
 		}
 		else {
-			throw new RuntimeException("Close connection can only be called on an established connection!");
+			throw new RuntimeException(getEntityName() + ": Close connection can only be called on an established connection!");
 		}
 	}
 	
@@ -388,13 +410,17 @@ public class TlsStateMachine extends StateMachine<TlsCiphertext> {
 			state.sendApplicationData(data);
 		}
 		else {
-			throw new RuntimeException("Connection must be established to send data!");
+			throw new RuntimeException(getEntityName() + ": Connection must be established to send data!");
 		}
 	}
 	
 	public void receivedData(TlsApplicationData data) {
-		MyLogger.info((_isServer ? "Server" : "Client") + " received Data: " + new String(data.getBytes(), StandardCharsets.US_ASCII));
+		MyLogger.info(getEntityName() + " received Data: " + new String(data.getBytes(), StandardCharsets.US_ASCII));
 		
 		notifyStateMachineObservers(new TlsStateMachineEvent(TlsStateMachineEventType.received_data));
+	}
+	
+	private String getEntityName() {
+		return (_isServer ? "Server" : "Client");
 	}
 }

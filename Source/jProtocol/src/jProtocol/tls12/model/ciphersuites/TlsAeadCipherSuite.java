@@ -31,7 +31,7 @@ public abstract class TlsAeadCipherSuite implements TlsCipherSuite {
 	}
 
 	@Override
-	public TlsPlaintext ciphertextToPlaintext(TlsCiphertext plaintext, TlsEncryptionParameters parameters, TlsCipherSuiteRegistry registry, TlsKeyExchangeAlgorithm algorithm) throws TlsBadRecordMacException {
+	public TlsPlaintext ciphertextToPlaintext(byte[] ciphertextBytes, TlsEncryptionParameters parameters, TlsCipherSuiteRegistry registry, TlsKeyExchangeAlgorithm algorithm) throws TlsBadRecordMacException {
 		// TODO AEAD ciphertextToPlaintext
 		return null;
 	}

@@ -16,12 +16,28 @@ public class TlsCiphertext extends ProtocolDataUnit {
 	private short _length; 						//2 bytes
 	private TlsFragment _fragment;
 	
+	private byte[] _bytes;
+	
 	public TlsCiphertext(TlsMessage message, TlsVersion version, TlsFragment fragment) {
 		_message = message;
 		_version = version;
 		_contentType = message.getContentType();
 		_fragment = fragment;
 		_length = (short) _fragment.getLength();
+		
+		setBytes();
+	}
+	
+	private void setBytes() {
+		ByteBuffer b = ByteBuffer.allocate(5 + _length);	
+		
+		b.put(_contentType.getValue());
+		b.put(_version.getMajorVersion());
+		b.put(_version.getMinorVersion());
+		b.putShort(_length);
+		b.put(_fragment.getBytes());
+		
+		_bytes = b.array();
 	}
 	
 	public TlsContentType getContentType() {
@@ -32,6 +48,11 @@ public class TlsCiphertext extends ProtocolDataUnit {
 		return _version;
 	}
 
+	/**
+	 * The length sent in the TLS Record (not including content type, version and the length field itself).
+	 * 
+	 * @return the length
+	 */
 	public short getLength() {
 		return _length;
 	}
@@ -44,16 +65,13 @@ public class TlsCiphertext extends ProtocolDataUnit {
 		return _message;
 	}
 	
+	/**
+	 * The bytes to be send over the channel.
+	 * 
+	 * @return the bytes
+	 */
 	public byte[] getBytes() {
-		ByteBuffer b = ByteBuffer.allocate(5 + _length);	
-		
-		b.put(_contentType.getValue());
-		b.put(_version.getMajorVersion());
-		b.put(_version.getMinorVersion());
-		b.putShort(_length);
-		b.put(_fragment.getBytes());
-		
-		return b.array();
+		return _bytes;
 	}
 	
 }

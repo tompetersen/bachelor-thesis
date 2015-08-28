@@ -32,7 +32,7 @@ public interface TlsCipherSuite {
 	 * Transforms a TLSCiphertext to a TLSPlaintext. The Message will be decrypted and 
 	 * the MAC will be checked according to the used ciphersuite.
 	 * 
-	 * @param ciphertext the TLSCiphertext
+	 * @param ciphertextBytes the TLSCiphertext bytes
 	 * @param parameters the encryption parameters used to decrypt
 	 * @param registry the cipher suite registry
 	 * @param algorithm the used key exchange algorithm
@@ -43,7 +43,7 @@ public interface TlsCipherSuite {
 	 * @throws TlsBadPaddingException if decryption of the messages fails beacuse of invalid padding
 	 * @throws TlsDecodeErrorException if the message itself can not be decoded properly
 	 */
-	public TlsPlaintext ciphertextToPlaintext(TlsCiphertext ciphertext, TlsEncryptionParameters parameters, TlsCipherSuiteRegistry registry, TlsKeyExchangeAlgorithm algorithm) 
+	public TlsPlaintext ciphertextToPlaintext(byte[] ciphertextBytes, TlsEncryptionParameters parameters, TlsCipherSuiteRegistry registry, TlsKeyExchangeAlgorithm algorithm) 
 			throws TlsBadRecordMacException, TlsBadPaddingException, TlsDecodeErrorException;
 	
 	/**
