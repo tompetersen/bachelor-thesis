@@ -2,18 +2,21 @@
 
 \section{Warum eignet sich TLS bzw. warum sollte man sich überhaupt damit befassen?}
 
+\begin{mdframed}
 \begin{itemize}
 	\item "'einfaches"' Protokoll, das gut zur Erklärung einzelner Verfahren dienen kann (Record-Protocol für vertrauliche und authentifizierte Nachrichtenübertragung, Handshake zur Schlüsselaushandlung, ...)
 	\item Viele Angriffe, die Abwehrmaßnahmen und auch "'Prinzip des schwächsten Kettenglieds"' deutlich machen (CBC-IV, Padding, MAC-then-Encrypt)
 	\item weite Verbreitung -> notwendiges Verständnis
 \end{itemize}
+\end{mdframed}
 
 \section{Fundamentale Ideen / Schwerpunkte für die Lehre}
+
+\begin{mdframed}
 
 Was ist das? -> Im kleineren Rahmen für TLS (wahrscheinlich nicht ganz passend, aber es geht um die Richtung)
 
 Was könnte hier erwähnt werden?
-
 \begin{itemize}
 	\item Hybride Kryptosysteme (Symmetrisch und asymmetrisch)
 	\item Problem des Schlüsselaustausches und Authentifizierung
@@ -24,12 +27,125 @@ Was könnte hier erwähnt werden?
 	\item Probleme in \inquotes{unerwarteten} Bereichen: Komprimierung, ...
 \end{itemize}
 
-Überleitung zu Tool
+-> Überleitung zu Tool
+
+\end{mdframed}
+
+In \cite{schubert11} wird das didaktischen Prinzip nach J.S. Brunner, wonach die Lehre sich \inquotes{in erster Linie an den Strukturen der zugrundeliegenden Wissenschaft orientieren soll}, erwähnt. Diese Strukturen werden auch Fundamentale Ideen genannt.
+
+Hierbei handelt es sich um \inquotes{langlebige Konzepte}, die die \inquotes{Übertragung (Transfer) früher erworbener Kenntnisse auf [neue] Situationen} ermöglichen sollen (\cite{schubert11}). Insbesondere der nichtspezifische Transfer, also das Lernen von grundlegenden Begriffen, Prinzipien und Denkweisen, sollte an allgemeinbildenden Schulen und in der Hochschullehre im Gegensatz zum spezifischen Transfer, also dem geringfügigen Anpassen einer bekannten Situation an ein ähnliches Problem, im Vordergrund stehen.
+
+Kennzeichnend für Fundamentale Ideen sind unter anderem das in \cite{schubert11} erwähnte Horizontalkriterium, also die umfassende Anwendbarkeit oder Erkennbarkeit in vielen Bereichen einer Wissenschaft und das Zeitkriterium, also die längerfristige Relevanz der Idee. 
+
+Als Empfehlung für die Hochschuldidaktik fassen die Autoren diese Empfehlung folgendermaßen zusammen:\\
+\begin{quote}
+\inquotes{Jeder Student wird im Laufe seines Berufslebens vermutlich mehreren Paradigmenwechseln der Informatik gegenüberstehen, wobei jeweils ein größerer Teil seines Wissens überflüssig oder fehlerhaft wird. Daher sollten die Fähigkeiten, die er während des Studiums erwirbt, möglichst robust gegenüber neuen wissenschaftlichen Entwicklungen sein und ihn befähigen,  Paradigmenwechsel  zu  bewältigen.  Folglich  müssen  Studenten  ein Bild von den dauerhaften Grundlagen, den Fundamentalen Ideen, Prinzipien, Methoden und Denkweisen der Informatik erlangen. Dazu sind in Vorlesungen und  Lehrbüchern  stets  die  Fundamentalen  Ideen,  die  sich  hinter  den  jeweils 
+behandelten Sachgebieten verbergen, herauszuarbeiten, zu betonen, zu anderen Teilgebieten in Beziehung zu setzen und so in einen übergeordneten Zusammenhang  einzuordnen.} \cite{schubert11}
+\end{quote}
+
+Auch wenn das Prinzip Fundamentaler Ideen umfassender ist als der eingeschränkte Fokus dieser Arbeit, so lässt sich doch eine klare Empfehlung für die Nutzung von TLS (oder anderer konkreter Protokolle oder Verfahren) in der Hochschullehre ableiten. 
+
+\hrulefill
+
+Die  Methodologie sei dabei charakterisiert 
+durch gewisse langlebige Konzepte, sog. Fundamentale Ideen (ein Begriff, dessen 
+Ursprung in den Erziehungswissenschaften liegt), auf die sich große Bereiche 
+der Informatik abstützen, die den informatischen Forschungsbestrebungen eine 
+Richtung geben und die sich ferner an natürlichen kognitiven Prozessen orien-
+tieren und in der historischen Entwicklung der Informatik erkennbar sind. 
+(Didaktik der Informatik, p. 66)
+
+Im Jahre 1960 formulierte dann J.S. Bruner (1960) das didaktische Prinzip, wo-
+nach sich der Unterricht in erster Linie an den Strukturen der zugrundeliegenden 
+Wissenschaft  orientieren  soll.  Im  deutschsprachigen  Raum  hat  sich  für  diese 
+Strukturen die Bezeichnung „Fundamentale Ideen“ durchgesetzt. \\
+-> Übertragung (Transfer) früher erworbener Kenntnisse auf die neuen Situationen.\\
+Beim nichtspezifischen Transfer, der sich auf langfristige (i.A. lebenslange) Ef-
+fekte  bezieht,  lernt  man  anstelle  von  oder  zusätzlich  zu  handwerklichen 
+Fertigkeiten grundlegende Begriffe, Prinzipien und Denkweisen (sog. Fun-
+damentale Ideen).
+(Didaktik der Informatik, p. 60)
+
+Fundamentale  Ideen  sind  also  in  vielen  Bereichen  einer  Wissenschaft  umfas-
+send anwendbar, und sie besitzen eine tragende Rolle, indem sie eine Vielzahl 
+von Phänomenen ordnen und integrieren. Wir sprechen hier vom Horizontalkri-
+terium.
+(Didaktik der Informatik, p. 61)
+
+Anhaltspunkte für Fundamaentale Ideen:
+-  Weite, d.h. logische Allgemeinheit. Gemeint ist hier wohl Folgendes: Eine 
+Idee besitzt Weite, wenn sie einen gewissen Spielraum für Interpretationen 
+zulässt und ein gewisses Maß an Anpassungsfähigkeit besitzt. [...] 
+Ebenso sind hiernach die berühmte Gleichung E=mc 2  oder das 
+Quicksort-Verfahren  keine  Fundamentalen  Ideen.  Die  zugrundeliegenden 
+Ideen sind vielmehr der Materie-Energie-Dualismus bzw. das Divide-and-
+Conquer-Verfahren. \\
+-  Fülle, d.h. vielfältige Anwendbarkeit und Relevanz. Dieses Kriterium deckt 
+sich im Wesentlichen mit unserem Horizontalkriterium. 
+- Sinn -> unerheblich
+(Didaktik der Informatik, p. 73)
+
+„Bündel von Handlungen, Strategien oder Techniken, sei es durch lose Analogie oder 
+Transfer verbunden, die 
+(1) in der historischen Entwicklung der Mathematik aufzeigbar sind, [...] 
+(3) als Ideen zur Frage, was ist Mathematik überhaupt, zum Sprechen über Mathematik, 
+geeignet erscheinen, [...]“ (Schweiger, 1992, S. 207) \\
+Zeitkriterium [...] Andererseits  wird  hiermit  angedeutet,  dass  Fundamentale  Ideen 
+einer Wissenschaft längerfristig gültig bleiben. 
+(Didaktik der Informatik, p. 75)
+
+Definition fundamentale Idee:\\
+Eine  Fundamentale  Idee  bzgl.  eines  Gegenstandsbereichs  (Wissenschaft,  Teilge-
+biet) ist ein Denk-, Handlungs-, Beschreibungs- oder Erklärungsschema, das \\
+1.  in verschiedenen Gebieten des Bereichs vielfältig anwendbar oder erkenn-
+bar ist (Horizontalkriterium), \\
+2. auf  jedem  intellektuellen  Niveau  aufgezeigt  und  vermittelt  werden  kann 
+(Vertikalkriterium), \\
+3. zur  Annäherung  an  eine  gewisse  idealisierte  Zielvorstellung  dient,  die  je-
+doch faktisch möglicherweise unerreichbar ist (Zielkriterium), \\
+4. in der historischen Entwicklung des Bereichs deutlich wahrnehmbar ist und 
+längerfristig relevant bleibt (Zeitkriterium), \\
+5. einen Bezug zu Sprache und Denken des Alltags und der Lebenswelt be-
+sitzt und für das Verständnis des Faches notwendig ist (Sinnkriterium). \\
+(Didaktik der Informatik, p. 75)
+
+Die  Ergebnisse  können  auch  für  die  Weiterentwicklung  der  Hochschuldidaktik 
+Informatik herangezogen werden: Jeder Student wird im Laufe seines Berufsle-
+bens vermutlich mehreren Paradigmenwechseln der Informatik gegenüberste-
+hen, wobei jeweils ein größerer Teil seines Wissens überflüssig oder fehlerhaft 
+wird. Daher sollten die Fähigkeiten, die er während des Studiums erwirbt, mög-
+lichst robust gegenüber neuen wissenschaftlichen Entwicklungen sein und ihn 
+befähigen,  Paradigmenwechsel  zu  bewältigen.  Folglich  müssen  Studenten  ein 
+Bild von den dauerhaften Grundlagen, den Fundamentalen Ideen, Prinzipien, 
+Methoden und Denkweisen der Informatik erlangen. Dazu sind in Vorlesungen 
+und  Lehrbüchern  stets  die  Fundamentalen  Ideen,  die  sich  hinter  den  jeweils 
+behandelten Sachgebieten verbergen, herauszuarbeiten, zu betonen, zu anderen 
+Teilgebieten in Beziehung zu setzen und so in einen übergeordneten Zusam-
+menhang  einzuordnen.  Mehlhorn  (1984,  Chapt. IX)  hatte  die  Wahl  zwischen 
+einem  ideenorientierten  („paradigm  oriented“)  und  einem  themenorientierten 
+(„problem oriented“) Zugang, entschied sich dann aber der kürzeren Darstel-
+lung wegen für den themenorientierten Ansatz. In einem besonderen Kapitel 
+ordnet er die Lösungsansätze jedoch, wie von uns angeregt, in eine übergeord-
+nete  Ideenstruktur  ein.  (Schwill,  1993a  und  1994a)  enthalten  hierzu  Einzel-
+heiten. 
+(Didaktik der Informatik, p. 90)
+
+\hrulefill
+
+„Didaktische  Reduktion“  ist  die  „allgemeine  Beschreibung  für  eine  zentrale  Aufgabe 
+der Didaktik überhaupt: (Sie ist) die Rückführung komplexer Sachverhalte auf ihre we-
+sentlichen  Elemente,  um  sie  für  Lernende  überschaubar  und  begreiflich  zu  machen.“ 
+(Vogel 1995, 567)  
+(Lehren, Lernen und Fa chdidaktik, p.33)
+
+
 
 \section{Lernen durch Visualisierung/Exploration}
 
+\begin{mdframed}
 Erklärung best practices, ...
 
 Vllt. auch E-Learning?
 
 Hier die Überleitung zu Kapitel Implementierung. 
+\end{mdframed}
