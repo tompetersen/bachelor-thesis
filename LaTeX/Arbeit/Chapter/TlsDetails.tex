@@ -209,7 +209,7 @@ Application Data             <------->     Application Data
 \end{figure}
 \lstset{style=tls}
 
-\subsection*{HelloRequest*}
+\subsection{HelloRequest*}
 
 \begin{lstlisting}
 struct { } HelloRequest;
@@ -217,7 +217,7 @@ struct { } HelloRequest;
 
 Diese Nachricht kann vom Server gesendet werden, wenn ein neuer Handshake gewünscht wird (beispielsweise um Schlüssel und kryptographische Algorithmen während einer Verbindung neu auszuhandeln).
 
-\subsection*{ClientHello}
+\subsection{ClientHello}
 
 \begin{lstlisting}
 struct {
@@ -244,7 +244,7 @@ Die \ciphersuite{}-Liste enthält alle vom Client unterstützten \ciphersuites{}
 Ebenso wird eine Liste von unterstützten Kompressionsalgorithmen übertragen. 
 Optional kann auch eine Liste von gewünschten TLS-Extensions angegeben werden (vgl. Abschnitt \ref{sec_tls_extensions}).
 
-\subsection*{ServerHello}
+\subsection{ServerHello}
 
 \begin{lstlisting}
 struct {
@@ -266,7 +266,7 @@ In der \serverhello{}-Nachricht teilt der Server dem Client die (aus den in der 
 
 In \datafield{server\_version} steckt die höchste Version, die Server und Client unterstützen und die damit für die Kommunikation verwendet wird. \datafield{random} besteht äquivalent zur \clienthello{}-Nachricht aus einem 4-Byte Zeitstempel und 28 zufälligen Bytes, die vom Server berechnet wurden. Die \datafield{session\_id} enthält entweder eine neu generierte Identifikationsnummer, die Identifikationsnummer einer wieder aufgenommen Sitzung oder kann auch leer sein, um anzugeben, dass die Sitzung nicht wieder aufgenommen werden kann. In \datafield{cipher\_suite} und \datafield{compression\_method} überträgt der Server die von ihm aus den vom Client übertragenen Listen ausgewählte \ciphersuite{} bzw. den Kompressionsalgorithmus. In der Extensionliste gibt der Server alle vom Client gewünschten Extensions an, die er unterstützt.
 
-\subsection*{ServerCertificate*}
+\subsection{ServerCertificate*}
 
 \begin{lstlisting}
 struct {
@@ -276,7 +276,7 @@ struct {
 
 In dieser Nachricht sendet der Server seine Zertifikatskette zur Überprüfung seiner Identität. Das erste Zertifikat in der Liste bildet das Serverzertifikat, folgende Zertifikate müssen das jeweils vorhergehende zertifizieren. Der im Zertifikat enthaltene öffentliche Schlüssel muss zum ausgehandelten Schlüsselaustausch-Algorithmus passen. Wenn nicht anders vereinbart wird für die Zertifikate das X.509v3-Format\footnote{Ein Standard für Public-Key-Infrastrukturen, spezifiziert in RFC 5280.} verwendet.
 
-\subsection*{ServerKeyExchange*}
+\subsection{ServerKeyExchange*}
 
 \begin{lstlisting}
 struct {
@@ -305,7 +305,7 @@ Diese Nachricht wird nur für bestimmte Schlüsselaustausch-Verfahren gesendet, 
 
 Im Fall von nicht anonymen Diffie-Hellman-Schlüsselaustausch werden diese Parameter mit gewähltem asymmetrischen Verfahren (DSS oder RSA) und dem (zum öffentlichen Schlüssel aus der \servercertificate{}-Nachricht gehörigen) geheimen Schlüssel signiert.
 
-\subsection*{CertificateRequest*}
+\subsection{CertificateRequest*}
 
 \begin{lstlisting}
 struct {
@@ -317,7 +317,7 @@ struct {
 
 TLS unterstützt optionale Clientauthentifizierung. Mit dieser Nachricht kann der Client vom Server aufgefordert werden ebenfalls ein Zertifikat zu senden. Die \datafield{certificate\_types}-Liste enthält alle Zertifikatarten (z.B. Zertifikat mit RSA-Schlüssel, ...), die vom Server unterstützt werden, und \datafield{supported\_signature\_algorithms} die unterstützten Signaturalgorithmen. In \datafield{certificate\_authorities} kann eine Liste von erwarteten CAs übertragen werden.
 
-\subsection*{ServerHelloDone}
+\subsection{ServerHelloDone}
 
 \begin{lstlisting}
 struct { } ServerHelloDone;
@@ -325,11 +325,11 @@ struct { } ServerHelloDone;
 
 Mit dieser Nachricht signalisiert der Server das Ende des \serverhello{} und zugehöriger Nachrichten.
 
-\subsection*{ClientCertificate*}
+\subsection{ClientCertificate*}
 
 Wenn von dem Server eine Clientauthentifizierung gefordert wurde, kann der Client in dieser Nachricht seine Zertifikatskette senden. Das Format entspricht dem der \servercertificate{}-Nachricht.
 
-\subsection*{ClientKeyExchange}
+\subsection{ClientKeyExchange}
 
 \begin{lstlisting}
 struct {
@@ -367,7 +367,7 @@ struct {
 
 Das \premastersecret{} wird dann als \(Z=(Y_c)^{X_s} \mod{p}\) auf der Serverseite bzw. \(Z=(Y_s)^{X_c} \mod{p}\) auf der Clientseite berechnet.
 
-\subsection*{CertificateVerify*}
+\subsection{CertificateVerify*}
 
 \begin{lstlisting}
 struct {
@@ -379,11 +379,11 @@ struct {
 
 Diese Nachricht wird gesendet, falls ein Clientzertifikat vom Server angefordert wurde. Sie besteht aus einem mit dem geheimen Schlüssel des Clients signierten Hash der bisherigen Handshake-Nachrichten und dient zur Authentifikation des Clients.
 
-\subsection*{ChangeCipherSpec}
+\subsection{ChangeCipherSpec}
 
 Diese Nachricht gehört zum \changecipherspecprotocol{}. Es enthält lediglich diese eine Nachricht mit dem Wert 1. Das Empfangen signalisiert dem Empfänger, dass alle nachfolgend gesendeten Nachrichten mit den ausgehandelten kryptographischen Verfahren und Schlüsseln geschützt werden. Dazu werden read pending state (bei Empfang der Nachricht) und write pending state (nach Senden der Nachricht) in die current states kopiert.\todo{Irgendwo schon erwähnt oder bei der Einführung?}
 
-\subsection*{Finished}
+\subsection{Finished}
 
 \begin{lstlisting}
 struct {
