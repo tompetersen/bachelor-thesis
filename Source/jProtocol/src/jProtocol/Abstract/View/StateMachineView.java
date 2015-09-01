@@ -4,18 +4,18 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-public class ProtocolDataUnitView {
+public class StateMachineView {
 
-	protected JPanel _view;
+	private JPanel _view;
 	
-	public ProtocolDataUnitView() {
+	public StateMachineView(String title) {
 		_view = new JPanel();
-		
-		JLabel label = new JLabel("PDUs");
+		JLabel label = new JLabel(title);
 		_view.add(label);
 	}
-	
+
 	public JComponent getView() {
 		return _view;
 	}
+	
 }
