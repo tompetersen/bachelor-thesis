@@ -6,13 +6,12 @@ public class StateMachinePresenter {
 
 	private StateMachineView _view;
 	
-	public StateMachinePresenter(String title) {
-		_view = new StateMachineView(title);
+	public StateMachinePresenter(String title, JComponent stateMachineView) {
+		_view = new StateMachineView(title, stateMachineView);
 		
 	}
 	
 	public JComponent getView() {
 		return _view.getView();
 	}
-
 }

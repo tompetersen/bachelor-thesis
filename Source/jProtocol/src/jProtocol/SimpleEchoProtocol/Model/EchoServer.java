@@ -7,9 +7,7 @@ public class EchoServer extends StateMachine<EchoProtocolDataUnit> {
 
 	public final Integer RECEIVE_STATE = 1; 
 	
-	public EchoServer(EchoCommunicationChannel channel) {
-		super(channel);
-		
+	public EchoServer() {
 		addState(RECEIVE_STATE, new ReceiveState(this));               
 		setState(RECEIVE_STATE);
 	}

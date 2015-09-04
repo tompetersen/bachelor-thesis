@@ -79,5 +79,10 @@ public class TlsAlertMessage extends TlsMessage {
 	public boolean isFatal() {
 		return _isFatal;
 	}
+
+	@Override
+	public String toString() {
+		return _alert.toString() + (_isFatal ? " FATAL" : "");
+	}
 	
 }

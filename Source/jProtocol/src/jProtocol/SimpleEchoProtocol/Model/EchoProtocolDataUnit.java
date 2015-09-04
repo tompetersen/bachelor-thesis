@@ -1,5 +1,6 @@
 package jProtocol.SimpleEchoProtocol.Model;
 
+import java.nio.charset.StandardCharsets;
 import jProtocol.Abstract.Model.ProtocolDataUnit;
 
 public class EchoProtocolDataUnit extends ProtocolDataUnit {
@@ -21,6 +22,11 @@ public class EchoProtocolDataUnit extends ProtocolDataUnit {
 
 	public void setVersion(int version) {
 		_version = version;
+	}
+
+	@Override
+	public byte[] getBytes() {
+		return _payload.getBytes(StandardCharsets.US_ASCII);
 	}
 	
 }

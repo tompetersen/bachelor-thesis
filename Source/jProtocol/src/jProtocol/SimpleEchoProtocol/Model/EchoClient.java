@@ -10,9 +10,7 @@ public class EchoClient extends StateMachine<EchoProtocolDataUnit> {
 
 	private String _lastSentPayload;
 
-	public EchoClient(EchoCommunicationChannel channel) {
-		super(channel);
-
+	public EchoClient() {
 		addState(RECEIVE_STATE, new ReceiveState(this));
 		addState(SEND_STATE, new SendState(this));
 		

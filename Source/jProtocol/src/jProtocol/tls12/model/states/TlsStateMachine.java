@@ -1,7 +1,7 @@
 package jProtocol.tls12.model.states;
 
-import jProtocol.Abstract.Model.CommunicationChannel;
 import jProtocol.Abstract.Model.StateMachine;
+import jProtocol.Abstract.Model.Event;
 import jProtocol.helper.MyLogger;
 import jProtocol.tls12.model.TlsCiphertext;
 import jProtocol.tls12.model.TlsConnectionState;
@@ -59,7 +59,7 @@ public class TlsStateMachine extends StateMachine<TlsCiphertext> {
 		connection_closed
 	}
 	
-	public class TlsStateMachineEvent extends StateMachineEvent {
+	public class TlsStateMachineEvent extends Event {
 		private TlsStateMachineEventType _eventType;
 
 		public TlsStateMachineEvent(TlsStateMachineEventType eventType) {
@@ -125,9 +125,7 @@ public class TlsStateMachine extends StateMachine<TlsCiphertext> {
 	
 	private List<TlsApplicationDataMessage> _cachedApplicationDataMessages;
 	
-	public TlsStateMachine(CommunicationChannel<TlsCiphertext> channel, TlsConnectionEnd entity) {
-		super(channel);
-
+	public TlsStateMachine(TlsConnectionEnd entity) {
 		_cipherSuiteRegistry = new TlsCipherSuiteRegistry();
 		
 		_currentSecurityParameters = new TlsSecurityParameters(entity, _cipherSuiteRegistry.getNullCipherSuite());
@@ -422,5 +420,19 @@ public class TlsStateMachine extends StateMachine<TlsCiphertext> {
 	
 	private String getEntityName() {
 		return (_isServer ? "Server" : "Client");
+	}
+	
+	public String getViewData() {
+		StringBuilder result = new StringBuilder();
+		result.append(getEntityName());
+		result.append("\n");
+		try {
+			TlsCipherSuite suite = getPendingCipherSuite();
+			result.append(suite.getName());
+			result.append("\n");
+		}
+		catch (Exception e) {}
+		
+		return result.toString();
 	}
 }

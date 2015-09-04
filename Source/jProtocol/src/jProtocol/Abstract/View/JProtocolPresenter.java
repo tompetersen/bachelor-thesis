@@ -1,16 +1,20 @@
 package jProtocol.Abstract.View;
 
-public class JProtocolPresenter {
+import jProtocol.Abstract.JProtocolViewProvider;
+import jProtocol.Abstract.Model.CommunicationChannel;
+import jProtocol.Abstract.Model.ProtocolDataUnit;
+
+public class JProtocolPresenter<T extends ProtocolDataUnit> {
 
 	private JProtocolView _view;
 	
-	public JProtocolPresenter() {
+	public JProtocolPresenter(JProtocolViewProvider<T> provider, CommunicationChannel<T> channel) {
 		_view = new JProtocolView();
 		
-		StateMachinePresenter clientPresenter = new StateMachinePresenter("Client");
-		StateMachinePresenter serverPresenter = new StateMachinePresenter("Server");
+		StateMachinePresenter clientPresenter = new StateMachinePresenter("Client", provider.getViewForClientStateMachine());
+		StateMachinePresenter serverPresenter = new StateMachinePresenter("Server", provider.getViewForServerStateMachine());
 		
-		ProtocolDataUnitPresenter pduPresenter = new ProtocolDataUnitPresenter(); 
+		ProtocolDataUnitPresenter<T> pduPresenter = new ProtocolDataUnitPresenter<T>(provider, channel); 
 		
 		_view.setClientStateMachineView(clientPresenter.getView());
 		_view.setServerStateMachineView(serverPresenter.getView());

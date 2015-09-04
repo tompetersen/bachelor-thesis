@@ -24,6 +24,7 @@ public class JProtocolView {
 	
 	public JProtocolView() {
 		_frame = new JFrame("jProtocol");
+		_frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		_view = new JPanel();
 		GridBagLayout layout = new GridBagLayout();
@@ -58,7 +59,7 @@ public class JProtocolView {
 	}
 	
 	public void show() {
-		_frame.setSize(new Dimension(300, 300));
+		_frame.setSize(new Dimension(800, 600));
 		_frame.setVisible(true);
 	}
 	

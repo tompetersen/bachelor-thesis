@@ -42,4 +42,9 @@ public class TlsApplicationDataMessage extends TlsMessage {
 	public byte[] getBytes() {
 		return _applicationData.getBytes();
 	}
+
+	@Override
+	public String toString() {
+		return "DATA";
+	}
 }

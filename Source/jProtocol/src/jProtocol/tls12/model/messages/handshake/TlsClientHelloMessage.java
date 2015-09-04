@@ -175,8 +175,7 @@ public class TlsClientHelloMessage extends TlsHandshakeMessage {
 		return _cipherSuites;
 	}
 
-	@Override
-	public String toString() {
+	public String toDetailedString() {
 		return "TlsClientHelloMessage [clientVersion=" + _clientVersion + ", clientRandom=" + _clientRandom + ", sessionId=" + _sessionId + ", cipherSuites=" + _cipherSuites.size() + " entries]";
 	}
 

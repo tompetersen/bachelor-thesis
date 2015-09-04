@@ -8,13 +8,13 @@ import jProtocol.SimpleEchoProtocol.Model.EchoServer;
 public class EchoStartup {
 
 	public static void main(String[] args) {
-		EchoCommunicationChannel channel = new EchoCommunicationChannel();
+		EchoServer server = new EchoServer();
+		EchoClient client = new EchoClient();
 		
-		EchoServer server = new EchoServer(channel);
-		EchoClient client = new EchoClient(channel);
+		EchoCommunicationChannel channel = new EchoCommunicationChannel(client, server);
 		
-		channel.setServer(server);
-		channel.setClient(client);
+		server.setCommunicationChannel(channel);
+		client.setCommunicationChannel(channel);
 		
 		client.sendEchoRequest("Grml");
 	}

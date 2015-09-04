@@ -11,7 +11,7 @@ public class ByteHelper {
 	 * 
 	 * @return the resulting byte array
 	 */
-	public static byte[] hexStringToByteArray(String s) {
+	public static byte[] hexStringToBytes(String s) {
 	    int len = s.length();
 	    byte[] data = new byte[len / 2];
 	    for (int i = 0; i < len; i += 2) {
@@ -20,6 +20,25 @@ public class ByteHelper {
 	    }
 	    
 	    return data;
+	}
+	
+	final protected static char[] hexArray = "0123456789ABCDEF".toCharArray();
+	
+	/**
+	 * Converts a byte array to a hex encoded byte string.
+	 * 
+	 * @param bytes the byte array
+	 * 
+	 * @return the resulting hex string
+	 */
+	public static String bytesToHexString(byte[] bytes) {
+	    char[] hexChars = new char[bytes.length * 2];
+	    for ( int j = 0; j < bytes.length; j++ ) {
+	        int v = bytes[j] & 0xFF;
+	        hexChars[j * 2] = hexArray[v >>> 4];
+	        hexChars[j * 2 + 1] = hexArray[v & 0x0F];
+	    }
+	    return new String(hexChars);
 	}
 	
 	/**

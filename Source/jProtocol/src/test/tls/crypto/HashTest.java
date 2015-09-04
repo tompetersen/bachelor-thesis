@@ -20,7 +20,7 @@ public class HashTest {
 	public void testHash() {
 		byte[] input = "abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq".getBytes(StandardCharsets.US_ASCII);
 		byte[] result = _tlsHash.hash(input);
-		byte[] expected = ByteHelper.hexStringToByteArray("248d6a61d20638b8e5c026930c3e6039a33ce45964ff2167f6ecedd419db06c1");
+		byte[] expected = ByteHelper.hexStringToBytes("248d6a61d20638b8e5c026930c3e6039a33ce45964ff2167f6ecedd419db06c1");
 		
 		assertArrayEquals(expected, result);
 	}

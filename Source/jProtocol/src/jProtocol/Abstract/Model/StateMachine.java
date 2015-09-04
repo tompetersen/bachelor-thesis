@@ -6,13 +6,11 @@ import java.util.Observable;
 
 public abstract class StateMachine<T extends ProtocolDataUnit> extends Observable {
 	
-	public class StateMachineEvent {};
-	
 	private State<T> _currentState;
 	private Map<Integer, State<T>> _states = new HashMap<Integer, State<T>>();
 	private CommunicationChannel<T> _channel;
 	
-	public StateMachine(CommunicationChannel<T> channel) {
+	public void setCommunicationChannel(CommunicationChannel<T> channel) {
 		_channel = channel;
 	}
 	
@@ -62,10 +60,13 @@ public abstract class StateMachine<T extends ProtocolDataUnit> extends Observabl
 	}
 	
 	public void sendMessage(T pdu) {
+		if (_channel == null) {
+			throw new RuntimeException("Communication channel must be set before sending messages!");
+		}
 		_channel.sendMessage(pdu, this);
 	}
 	
-	public void notifyStateMachineObservers(StateMachineEvent event) {
+	public void notifyStateMachineObservers(Event event) {
 		setChanged();
 		notifyObservers(event);
 	}

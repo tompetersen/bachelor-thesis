@@ -9,7 +9,7 @@ public class ByteHelperTest {
 
 	@Test
 	public void testHexStringToByteArray() {
-		byte[] hexResult = ByteHelper.hexStringToByteArray("0001100fff");
+		byte[] hexResult = ByteHelper.hexStringToBytes("0001100fff");
 		byte[] expectedResult = {0,1,16,15,(byte)255};
 		
 		assertArrayEquals(hexResult, expectedResult);

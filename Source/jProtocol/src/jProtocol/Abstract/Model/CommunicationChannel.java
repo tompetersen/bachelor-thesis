@@ -1,38 +1,61 @@
 package jProtocol.Abstract.Model;
 
-public class CommunicationChannel<T extends ProtocolDataUnit> {
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Observable;
+
+public class CommunicationChannel<T extends ProtocolDataUnit> extends Observable {
 
 	//TODO: circular reference problem!
 	
 	private StateMachine<T> _client;
 	private StateMachine<T> _server;
 	
-	public CommunicationChannel() {
+	private List<T> _sentPdus;
+	
+	/**
+	 * Creates a communication channel between client and server.
+	 * 
+	 * @param client the client state machine
+	 * @param server the server state machine
+	 */
+	public CommunicationChannel(StateMachine<T> client, StateMachine<T> server) {
+		_sentPdus = new ArrayList<>();
 		
-	}
-	
-	public void setClient(StateMachine<T> client) {
+		if (client == null || server == null) {
+			throw new IllegalArgumentException("Client and server must not be null!");
+		}
+		
 		_client = client;
-	}
-	
-	public void setServer(StateMachine<T> server) {
 		_server = server;
 	}
 	
 	synchronized public void sendMessage(T pdu, StateMachine<T> sender) {
-		if (_server == null) {
-			throw new RuntimeException("Server must be set in communication channel before sending messages!");
+		boolean clientMessage = (sender == _client);
+		pdu.setSentByClient(clientMessage);
+		_sentPdus.add(pdu);
+		
+		setChanged();
+		notifyObservers();	
+		
+		try {
+			Thread.sleep(800);
 		}
-		if (_client == null) {
-			throw new RuntimeException("Client must be set in communication channel before sending messages!");
+		catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		
-		if (sender == _server) {
-			_client.receiveMessage(pdu);
-		}
-		else {
+		if (clientMessage) {
 			_server.receiveMessage(pdu);
 		}
+		else {
+			_client.receiveMessage(pdu);
+		}
+	}
+	
+	public List<T> getSentProtocolDataUnits() {
+		return _sentPdus;
 	}
 	
 }

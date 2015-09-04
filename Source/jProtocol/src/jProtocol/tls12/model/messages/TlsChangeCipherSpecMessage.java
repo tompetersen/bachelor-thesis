@@ -31,5 +31,10 @@ public class TlsChangeCipherSpecMessage extends TlsMessage {
 		byte[] messageBytes = {1};
 		return messageBytes;
 	}
+
+	@Override
+	public String toString() {
+		return "";
+	}
 	
 }

@@ -1,4 +1,4 @@
-package jProtocol.Abstract.View;
+package jProtocol.Abstract;
 
 import javax.swing.JComponent;
 import jProtocol.Abstract.Model.ProtocolDataUnit;
@@ -14,4 +14,7 @@ public interface JProtocolViewProvider<T extends ProtocolDataUnit> {
 	
 	public JComponent getViewForServerStateMachine();
 	
+	public void updateServerView();
+	
+	public void updateClientView();
 }

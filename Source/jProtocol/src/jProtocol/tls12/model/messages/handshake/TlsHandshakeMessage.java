@@ -139,5 +139,10 @@ public abstract class TlsHandshakeMessage extends TlsMessage {
 	 * @return
 	 */
 	public abstract byte[] getBodyBytes();
+
+	@Override
+	public String toString() {
+		return getHandshakeType().toString();
+	}
 	
 }
