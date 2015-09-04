@@ -117,9 +117,7 @@ Bei Blockchiffren werden die Daten zusammen mit dem MAC zuerst mit Padding verse
 Dann werden Daten, MAC, Padding und Paddinglänge zusammen verschlüsselt und mit dem für jede Nachricht zufällig generierten Initialisierungsvektor (IV) versendet.
 
 % For AEAD [AEAD] ciphers (such as [CCM] or [GCM]), p. 24  
-Bei der Nutzung von AEAD-Chiffren\footnote{
-	Authenticated Encryption with Associated Data: Betriebsmodi für Blockchiffren, die ohne zusätzlichen MAC Authentizität und Integrität bereitstellen. Beispiele für solche Modi sind CCM (Counter with CBC-MAC) oder GCM (Galois/Counter Mode).
-} werden bei der Verschlüsselung zusätzlich zum Klartext und Schlüssel zwei zusätzliche Parameter verwendet: eine sogenannte Nonce (eine einmalig verwendete, zufällige Eingabe) und zusätzliche Daten, in die die Sequenznummer der Nachricht, ihr Typ, ihre Version und ihre Länge einfließen (ähnlich zur Berechnung des MACs). Der explizite Teil der Nonce wird neben den verschlüsselten Daten übertragen. Der implizite Teil wird durch \datafield{server write IV} bzw. \datafield{client write IV} gebildet (vgl. Abschnitt \ref{sec_key_material}). Die Notwendigkeit einer MAC-Berechnung entfällt bei diesem Verfahren.
+Bei der Nutzung von AEAD-Chiffren werden bei der Verschlüsselung zusätzlich zum Klartext und Schlüssel zwei zusätzliche Parameter verwendet: eine sogenannte Nonce (eine einmalig verwendete, zufällige Eingabe) und zusätzliche Daten, in die die Sequenznummer der Nachricht, ihr Typ, ihre Version und ihre Länge einfließen (ähnlich zur Berechnung des MACs). Der explizite Teil der Nonce wird neben den verschlüsselten Daten übertragen. Der implizite Teil wird durch \datafield{server write IV} bzw. \datafield{client write IV} gebildet (vgl. Abschnitt \ref{sec_key_material}). Die Notwendigkeit einer MAC-Berechnung entfällt bei diesem Verfahren.
 
 \section{Berechnung des Schlüsselmaterials}
 \label{sec_key_material}

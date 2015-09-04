@@ -28,3 +28,79 @@ Viele Angriffe auf TLS-gesicherte Verbindungen, die bekannt geworden sind, waren
 
 Eine gelungene Übersicht über bestehende Implementierungen, die tiefer ins Detail geht, ist in \cite{meyer14} zu finden.
 %https://en.wikipedia.org/wiki/Comparison_of_TLS_implementations
+
+\chapter{Nach Besprechung mit Ephraim: Einführung}
+
+In diesem Kapitel soll ein kurzer Überblick über die im Laufe der Arbeit relevanten kryptographischen Verfahren gegeben werden, sowie die verwendete Notation vorgestellt werden.
+
+\section{Genutzte Verfahren(?)}
+
+UML
+
+Automat
+
+
+
+\section{Kryptographische Verfahren}
+
+\todo{Nette Bildchen}
+
+\subsection{Symmetrische Kryptographie}
+
+Symmetrische Kryptographie beschreibt Verfahren, bei denen bei der Ver- und Entschlüsselung der gleiche (oder ein aus dem anderen Schlüssel leicht berechenbarer) Schlüssel verwendet wird. Vor einer Kommunikation müssen beide Kommunikationspartner im Besitz dieses Schlüssels sein, ihn also über einen sicheren Kanal ausgetauscht haben.\\
+Es gilt:
+\[E_K(M)=C\] 
+\[D_K(C)=M\] 
+Hierbei steht \(M\) für die Nachricht, \(K\) für den Schlüssel, der verwendet wird, \(C\) für den Chiffretext und \(E\) bzw. \(D\) für die Ver- bzw. Entschlüsselung.
+
+Symmetrischen Chiffren lassen sich in Strom- und Blockchiffren unterteilen.
+
+\subsubsection{Stromchiffren}
+
+Stromchiffren sind symmetrische Verschlüsselungsalgorithmen, die Klartexte bitweise zu Chiffretexten konvertieren. Die einfachste Möglichkeit ist die XOR-Verknüpfung der Klartextbits mit einem schlüsselabhängig generierten Bitstrom (Schlüsselstrom). Durch erneute XOR-Verknüpfung mit dem selben Schlüsselstrom auf der Empfängerseite lässt sich der Klartext zurückerhalten. Ein Beispiel für eine heute verwendete Stromchiffre ist RC4 \cite{Schneier2006}.
+
+\subsubsection{Blockchiffren}
+
+Bei Blockchiffren handelt es sich um symmetrische Verschlüsselungsalgorithmen, die Nachrichten in Blöcken fester Größe verschlüsseln.  Beispiele für heute verwendete Blockchiffren sind AES oder Twofish.
+
+Da eine Blockchiffre immer nur einen Block verschlüsseln kann, muss festgelegt werden, wie mit mehreren Blöcken verfahren werden soll. Die Beschreibung eines solchen Verfahrens wird Betriebsmodus genannt.
+
+Der einfachste Modus ist der ECB-Modus (Electronic Codebook). In diesem Modus wird jeder Block einzeln und unabhängig von anderen Blöcken verschlüsselt. Dieser Modus ist als unsicher zu betrachten, da die Verschlüsselung gleicher Klartextblöcke mit gleichem Schlüssel immer zu dem gleichen Chiffretextblock führt und ein Angreifer außerdem nach Belieben einzelne Blöcke entfernen, hinzufügen oder austauschen kann, ohne dass dies zwingend bemerkt wird.
+
+Ein Beispiel für einen sichereren Modus ist CBC (Cipher Block Chaining). Hierbei erfolgt eine XOR-Verknüpfung des zuletzt erhaltenen Chiffretextblocks mit dem nächsten Klartextblock vor seiner Verschlüsselung. Zusätzlich wird für den ersten Klartextblock ein zusätzlicher, zufällig gewählter Block, der sogenannte Initialisierungsvektor (IV), benötigt \cite{Schneier2006}.
+
+Einen Sonderfall stellen die AEAD-Chiffren (Authenticated Encryption with Associated Data) dar. Hierbei handelt es sich um Betriebsmodi, die ohne zusätzlichen Message Authentication Code (siehe Abschnitt \ref{sec_mac}) Authentizität und Integrität bereitstellen. Beispiele für solche Modi sind CCM (Counter with CBC-MAC) oder GCM (Galois/Counter Mode). 
+
+\subsection{Asymmetrische Kryptographie}
+
+Asymmetrische Kryptographie (oftmals auch Public-Key-Kryptographie) beschreibt Verfahren, bei denen bei der Ver- und Entschlüsselung verschiedene Schlüssel verwendet werden. Diese lassen sich nicht aus dem jeweils anderen Schlüssel berechnen. Daher kann ein Empfänger seinen öffentlichen Schlüssel bekanntgeben. Nachrichten, die mit diesem Schlüssel verschlüsselt werden, kann ein Angreifer trotzdem nicht lesen, da nur der Empfänger im Besitz seines geheimen Schlüssels ist.
+
+Es gilt: 
+\[E_{K_{\text{public}}}(M)=C\] 
+\[D_{K_{\text{private}}}(C)=M\] 
+Hierbei steht \(K_{\text{public}}\) für den öffentlichen und \(K_{\text{private}}\) für den geheimen Schlüssel des Empfängers.
+
+Ein Beispiel für einen asymmetrischen Algorithmus ist das RSA-Verfahren \cite{Schneier2006}.
+
+\subsection{Diffie-Hellmann-Verfahren}
+
+\subsection{Hashfunktion}
+
+Eine Hashfunktion ist eine Funktion, die eine Eingabe variabler Länge auf einen String fester Länge abbildet.
+
+In der Kryptographie werden insbesondere Einweg-Hashfunktionen eingesetzt. Bei dieser Art von Hashfunktionen ist es leicht, aus einer Eingabe den Hashwert zu berechnen, jedoch sehr schwer, zu einem gegebenen Hashwert eine Eingabe zu finden, die auf diesen Wert abgebildet wird \cite{Schneier2006}. Beispiele für heute verwendete Hashfunktionen sind MD5 und SHA256.
+
+\subsection{Message Authentication Code}
+
+\label{sec_mac}
+
+\section{Verwendete Notationen}
+
+\(A \oplus B\) entspricht der bitweisen XOR-Verknüpfung zweier Zeichenketten A und B
+
+\(|B|\) steht für die Länge einer Zeichenkette B
+
+\(A + B\) steht für die Konkatenation zweier Zeichenketten A und B
+
+\(0x\dots\) entspricht einer Zahl im hexadezimalen System
+

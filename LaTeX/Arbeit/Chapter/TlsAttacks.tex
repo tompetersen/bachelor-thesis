@@ -9,16 +9,16 @@ Eine gute Übersicht zu bisherigen Angriffen auf TLS findet sich in \cite{meyer1
 
 \label{sec_version_rollback}
 
-Ein Angreifer kann eine SSL 3.0-konforme \clienthello{}-Nachricht so modifizieren, dass der Server eine SSL 2.0-Verbindung aufbaut. So kann der Angreifer alle Schwächen der älteren Protokollversion ausnutzen. In der SSL 3.0-Spezifikation (\cite{ssl30}) wurde vorgeschrieben, dass bestimmte Bytes des PKCS\#1-Paddings (siehe \cite{pkcs1}) einen festen Wert erhalten sollten, falls der Client SSL 3.0 unterstützt. So bleibt Kompatibilität mit der älteren Version erhalten, aber Version-Rollback-Angriffe werden trotzdem erkannt.\\
+Ein Angreifer kann eine SSL 3.0-konforme \clienthello{}-Nachricht so modifizieren, dass der Server eine SSL 2.0-Verbindung aufbaut. So kann der Angreifer alle Schwächen der älteren Protokollversion ausnutzen. \todo{Durch Ändern des Versionsfeldes in der Nachricht?} In der SSL 3.0-Spezifikation (\cite{ssl30}) wurde vorgeschrieben, dass bestimmte Bytes des PKCS\#1-Paddings (siehe \cite{pkcs1}) einen festen Wert erhalten sollten, falls der Client SSL 3.0 unterstützt. So bleibt Kompatibilität mit der älteren Version erhalten, aber Version-Rollback-Angriffe werden trotzdem erkannt.\\
 Ein Schwachpunkt könnte laut \cite{wagner96} immer noch die Wiederaufnahme einer SSL 3.0-Sitzung durch eine SSL 2.0 \clienthello{}-Nachricht sein. Dieses sollte in Implementierungen verhindert werden.
 
-Auch in neueren Browsern kann dieser Angriff noch zum Problem werden, wenn Fallback-Lösungen auf ältere Versionen implementiert sind, wenn ein Verbindungsversuch scheitert.
+Auch in neueren Browsern kann dieser Angriff noch zum Problem werden, falls Fallback-Lösungen auf ältere Versionen implementiert sind, wenn ein Verbindungsversuch scheitert.
 
 Durch die \finished{}-Nachricht ab SSL 3.0, die alle Handshake-Nachrichten authentifiziert, wird dieser Angriff verhindert. 
 
 \section{Ciphersuite Rollback}
 
-Ein für SSL 2.0 bestehender Angriff ermöglichte aktiven Angreifern die während des Handshake-Protokolls übertragenen Listen von unterstützten Cipher Suites zu verändern, so dass schwache kryptographische Verfahren erzwungen werden konnten (oftmals exportgeschwächte Verfahren mit kürzeren Schlüsselängen).
+Ein gegen SSL 2.0 bestehender Angriff ermöglichte aktiven Angreifern die während des Handshake-Protokolls übertragenen Listen von unterstützten Cipher Suites zu verändern, so dass schwache kryptographische Verfahren erzwungen werden konnten (oftmals exportgeschwächte Verfahren mit kürzeren Schlüsselängen).
 
 Ab SSL 3.0 wird dieser Angriff dadurch verhindert, dass die \finished{}-Nachrichten von Client und Server jeweils einen mit dem \mastersecret{} berechneten MAC über die Nachrichten des \handshakeprotocol{}s enthalten, der die Integrität dieser Nachrichten bestätigt.
 
@@ -26,7 +26,7 @@ Eine detaillierte Übersicht ist in \cite{wagner96} zu finden.
 
 \section{Verhindern der \changecipherspec{}-Nachricht}
 
-Im Sonderfall einer SSL-Verbindung, die lediglich die Integrität der Nachrichten schützen soll, aber nicht verschlüsselt, lässt sich ausnutzen, dass der in der \finished{}-Nachricht gesendete MAC die \changecipherspec{}-Nachricht nicht mit einschließt. Dadurch kann ein aktiver Angreifer diese Nachrichten abfangen und nicht weiterleiten, sodass die Verbindungspartner die Integritätsprüfung nicht einsetzen. Ein Angreifer ist so in der Lage, gesendete Nachrichten zu verändern. 
+Für den Sonderfall einer SSL-Verbindung, die lediglich die Integrität der Nachrichten schützen soll, aber nicht verschlüsselt, lässt sich ausnutzen, dass der in der \finished{}-Nachricht gesendete MAC die \changecipherspec{}-Nachricht nicht mit einschließt. Dadurch kann ein aktiver Angreifer diese Nachrichten abfangen und nicht weiterleiten, sodass die Verbindungspartner die Integritätsprüfung nicht einsetzen. Ein Angreifer ist so in der Lage, gesendete Nachrichten zu verändern. 
 
 Theoretisch wäre der Angriff unter bestimmten Voraussetzungen und schwacher Kryptographie auch bei verschlüsselten Verbindungen möglich. Dazu müsste die empfangene \finished{}-Nachricht vor dem Weiterleiten entschlüsselt werden. In bestimmten Fällen wäre zwar genug bekannter Klartext vorhanden, um einen Brute-Force-Angriff auf den Schlüssel zu erlauben, aber selbst bei exportgeschwächten 40-Bit Schlüsseln ist der Rechenaufwand hierfür sehr groß und unter praktischen Gesichtspunkten kaum unbemerkt ausführbar.
 
@@ -72,7 +72,7 @@ Ein weiterer Nachteil ist, dass es sich bei \badrecordmac{}- und \decryptionfail
 %Nichtsdestotrotz bietet die hier beschriebene Methode eine Grundlage für weitere Angriffe.
 
 Das verwendete Padding besteht immer aus Bytes mit dem Wert \(n\), wobei \(n\) die nötige Anzahl an Paddingbytes bis zum Erreichen eines Vielfachens der Blocklänge bezeichnet. Das Padding kann also folgende Werte annehmen: \(1, 22, 333, 4444, \dots\). Voraussetzung für diesen Angriff ist der Zugriff auf ein Orakel, das dem Angreifer für eine verschlüsselte Nachricht lediglich mitteilt, ob das Padding der entschlüsselten Nachricht korrektes Format besitzt. Im Folgenden bezeichnet \(C(x)\) die Verschlüsselung des Blockes \(x\) und \(C^{-1}(y)\) die Entschlüsselung von \(y\).\\
-Wenn der Angreifer nun das letzte Byte eines Chiffretextblocks \(y\) erhalten möchte, so sendet er \(r | y\) mit \(r = r_1,  \dots , r_b\) als zufällige Bytes und \(b\) als Blocklänge (in Byte) an das Orakel. Bei der Entschlüsselung im CBC-Modus wird der letzte Chiffretextblock (hier \(y\)) entschlüsselt und mit dem vorletzten Block XOR-verknüpft, um den Klartextblock zu erhalten. Dieser Block (hier \(x\)) wird dann auf gültiges Padding überprüft:
+Wenn der Angreifer nun das letzte Byte eines Chiffretextblocks \(y\) erhalten möchte, so sendet er \(r | y\) \todo{+ als Konkatenation?} mit \(r = r_1,  \dots , r_b\) als zufällige Bytes und \(b\) als Blocklänge (in Byte) an das Orakel. Bei der Entschlüsselung im CBC-Modus wird der letzte Chiffretextblock (hier \(y\)) entschlüsselt und mit dem vorletzten Block XOR-verknüpft, um den Klartextblock zu erhalten. Dieser Block (hier \(x\)) wird dann auf gültiges Padding überprüft:
 \[x=C^{-1}(y) \oplus r\]
 Wenn das Orakel gültiges Padding signalisiert, dann ist am wahrscheinlichsten, dass \(x\) auf \(1\) endet und somit das letzte Byte von \(C^{-1}(y)= r_b \oplus 1\) ist. Bei ungültigem Padding wird ein neuer Wert \(r_b\) gewählt und das Orakel neu befragt.\\
 In \cite{vaudenay02} wird ein Algorithmus, mit dem auch die unwahrscheinlicheren Fälle von längerem Padding abgedeckt werden, und ein Verfahren, um aus dem letzten Byte einen kompletten Block zu erhalten, angegeben. 
@@ -91,7 +91,7 @@ In \cite{paterson13} stellen die Autoren weitere auf \cite{vaudenay02} basierend
 
 In \cite{bard04} stellt der Autor einen Angriff vor, der die Art ausnutzt, wie die für den CBC-Modus nötigen Initialisierungsvektoren (IV) von TLS bereitgestellt wurden. Durch die Nutzung des letzten Ciphertextblocks der letzten Nachricht als IV der neuen Nachricht lässt sich unter bestimmten Voraussetzungen ein Chosen-Plaintext-Angriff durchführen. Der Autor beschreibt eine Möglichkeit unter Nutzung von Browser-Plugins über HTTPS übertragene Passwörter oder PINs herauszufinden. In \cite{bard06} verbessert der Autor seinen Angriff durch die Nutzung von Java-Applets anstelle von Browser-Plugins.
 
-Der eigentliche Angriff entspricht dem folgenden Prinzip: Wenn eine Nachricht \(C = C_0,\dots,C_l\) gesendet wurde, wird für die nächste Nachricht \(C_l\) als IV verwendet werden. Wenn der Angreifer überprüfen möchte, ob ein Klartextblock \(P^*=P_j\) zu \(C_j\) verschlüsselt wurde, so bringt er einen Sender dazu eine Nachricht \(P'\) mit dem ersten Block \(P_1'=C_{j-1} \oplus C_l \oplus P*\) zu verschlüsseln und erhält als ersten Chiffretextblock:
+Der eigentliche Angriff entspricht dem folgenden Prinzip: Wenn eine Nachricht \(C = C_0,\dots,C_l\) gesendet wurde, wird für die nächste Nachricht \(C_l\) als IV verwendet werden. Wenn der Angreifer überprüfen möchte, ob ein Klartextblock \(P^*=P_j\) zu \(C_j\) verschlüsselt wurde, so bringt er einen Sender dazu eine Nachricht \(P'\) mit dem ersten Block \(P_1'=C_{j-1} \oplus C_l \oplus P^*\) zu verschlüsseln und erhält als ersten Chiffretextblock:
 \begin{align*}
 C_1' &= C_{K}(P_1' \oplus \text{IV})\\
 	&= C_{K}(P_1' \oplus C_l)\\
@@ -100,7 +100,7 @@ C_1' &= C_{K}(P_1' \oplus \text{IV})\\
 \end{align*}
 Außerdem gilt auch \(C_j= C_{K}(P_j \oplus C_{j-1})\). Der Angreifer kann nun überprüfen, ob \(C_1'=C_j\) und damit \(P^*=P_j\) gilt, ob also seine Wahl für den gesuchten Klartextblock stimmt.
 
-Seit TLS 1.1 werden explizite IV vorgeschrieben. Hierzu besteht jede Nachricht aus einem Ciphertextblock mehr als Klartextblöcken. Dieser erste Block bildet den IV für die restliche Verschlüsselung. Da dieser IV nicht vor dem Senden der Nachricht bekannt ist, wird der hier beschriebene Chosen-Plaintext-Angriff verhindert.
+Seit TLS 1.1 werden explizite IV vorgeschrieben. Hierzu besteht jede verschlüsselte Nachricht aus einem Block mehr als Klartextblöcken. Dieser erste Block bildet den IV für die restliche Verschlüsselung. Da dieser IV nicht vor dem Empfang der Nachricht bekannt ist, wird der hier beschriebene Chosen-Plaintext-Angriff verhindert.
 
 \section{BEAST}
 
