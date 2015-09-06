@@ -1,14 +1,11 @@
 package test.tls;
 
-import java.util.Arrays;
-
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertNotNull;
 import jProtocol.tls12.model.TlsSecurityParameters;
-import jProtocol.tls12.model.ciphersuites.TlsCipherSuite;
-import jProtocol.tls12.model.ciphersuites.impl.TlsCipherSuite_NULL_WITH_NULL_NULL;
 import jProtocol.tls12.model.values.TlsConnectionEnd;
 import jProtocol.tls12.model.values.TlsRandom;
-import static org.junit.Assert.*;
-
+import java.util.Arrays;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -20,7 +17,7 @@ public class SecurityParametersTest {
 	
 	@Before
 	public void setup() {
-		_parameters = new TlsSecurityParameters(TlsConnectionEnd.server, null);
+		_parameters = new TlsSecurityParameters(TlsConnectionEnd.server);
 		Arrays.fill(_random28, (byte)0x11);
 		_tlsRandom = new TlsRandom(0x115599CC, _random28);
 	}
@@ -46,19 +43,6 @@ public class SecurityParametersTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void testSetServerRandomNull() {
 		_parameters.setServerRandom(null);
-	}
-	
-	@Test
-	public void testSetCipherSuite() {
-		TlsCipherSuite cs = new TlsCipherSuite_NULL_WITH_NULL_NULL();
-		_parameters.setCipherSuite(cs);
-		
-		assertEquals(cs.getCipherType(), _parameters.getCipherType());
-	}
-	
-	@Test(expected = IllegalArgumentException.class)
-	public void testSetCipherSuiteNull() {
-		_parameters.setCipherSuite(null);
 	}
 
 	@Test(expected = IllegalArgumentException.class)

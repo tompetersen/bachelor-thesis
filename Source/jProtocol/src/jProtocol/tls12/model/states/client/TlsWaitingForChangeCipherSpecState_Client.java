@@ -27,7 +27,7 @@ public class TlsWaitingForChangeCipherSpecState_Client extends TlsState {
 		else if (isChangeCipherSpecMessage(message)) {
 			MyLogger.info("Client received Change Cipher Spec!");
 			
-			_stateMachine.changeToPendingState();
+			_stateMachine.changeReadStateToPendingState();
 			
 			setTlsState(TlsStateType.CLIENT_IS_WAITING_FOR_FINISHED_STATE);
 		}

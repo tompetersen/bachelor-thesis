@@ -35,6 +35,9 @@ public class TlsReceivedFinishedState extends TlsState {
 		
 		if (fullHandshake) {
 			sendChangeCipherSpecMessage();
+			
+			_stateMachine.changeWriteStateToPendingState();
+			
 			sendFinishedMessage();
 			
 			setTlsState(TlsStateType.CONNECTION_ESTABLISHED_STATE);

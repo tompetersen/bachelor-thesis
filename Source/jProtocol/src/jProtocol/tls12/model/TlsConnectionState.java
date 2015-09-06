@@ -1,19 +1,18 @@
 package jProtocol.tls12.model;
 
 import jProtocol.helper.ByteHelper;
-import jProtocol.tls12.model.crypto.TlsHash;
+import jProtocol.tls12.model.ciphersuites.TlsCipherSuite;
+import jProtocol.tls12.model.ciphersuites.TlsCipherSuiteRegistry;
+import jProtocol.tls12.model.ciphersuites.TlsEncryptionParameters;
 import jProtocol.tls12.model.crypto.TlsPseudoRandomFunction;
-import jProtocol.tls12.model.messages.handshake.TlsHandshakeMessage;
-import jProtocol.tls12.model.values.TlsSessionId;
-import jProtocol.tls12.model.values.TlsVersion;
-import java.util.List;
-import java.util.ArrayList;
+import jProtocol.tls12.model.exceptions.TlsBadPaddingException;
+import jProtocol.tls12.model.exceptions.TlsBadRecordMacException;
+import jProtocol.tls12.model.exceptions.TlsDecodeErrorException;
+import jProtocol.tls12.model.values.TlsKeyExchangeAlgorithm;
+import jProtocol.tls12.model.values.TlsRandom;
 
-public class TlsConnectionState {
-
-	private static final int VERIFY_DATA_LENGTH = 12;
-	
-	private TlsHash _hash;
+public class TlsConnectionState implements Cloneable {
+	private TlsCipherSuite _cipherSuite;
 	
 	private byte[] _clientWriteMacKey;
 	private byte[] _serverWriteMacKey;
@@ -22,42 +21,42 @@ public class TlsConnectionState {
 	private byte[] _clientWriteIv;
 	private byte[] _serverWriteIv;
 	
-	private long _clientSequenceNumber;
-	private long _serverSequenceNumber;
-	private TlsSessionId _sessionId;
-	
-	private TlsVersion _version;
-	
-	private List<TlsHandshakeMessage> _currentHandshakeMessages;
-	
-	public TlsConnectionState() {
-		_hash = new TlsHash();
+	private long _sequenceNumber;
+
+	public TlsConnectionState(TlsCipherSuite initialCipherSuite) {
+		_cipherSuite = initialCipherSuite;
 		
-		_clientSequenceNumber = 0;
-		_serverSequenceNumber = 0;
-		_currentHandshakeMessages = new ArrayList<>();
+		_sequenceNumber = 0;
 	}
 	
-	public void computeKeys(TlsSecurityParameters securityParameters) {
+	public long getSequenceNumber() {
+		return _sequenceNumber;
+	}
+	
+	public void increaseSequenceNumber() {
+		_sequenceNumber++;
+	}
+	
+	public void computeKeys(TlsRandom clientRandom, TlsRandom serverRandom, byte[] masterSecret) {
 		/*
 		 * Computation according to chapter 6.3 (p. 26) TLS 1.2
 		 */
-		int neededKeySize = 2 * securityParameters.getEncKeyLength() + 	//encryption keys
-				2 * securityParameters.getMacKeyLength() + 				//mac keys
-				2 * securityParameters.getFixedIvLength();					//aead implicit nonce
+		int neededKeySize = 2 * _cipherSuite.getEncryptKeyLength() + 	//encryption keys
+				2 * _cipherSuite.getMacKeyLength() + 					//mac keys
+				2 * _cipherSuite.getFixedIvLength();					//aead implicit nonce
 		
-		byte[] keyBlock = TlsPseudoRandomFunction.prf(securityParameters.getMasterSecret(), 
+		byte[] keyBlock = TlsPseudoRandomFunction.prf(masterSecret, 
 				"key expansion", 
-				ByteHelper.concatenate(securityParameters.getClientRandom().getBytes(), securityParameters.getServerRandom().getBytes()), 
+				ByteHelper.concatenate(clientRandom.getBytes(), serverRandom.getBytes()), 
 				neededKeySize);
 		
-		setKeys(keyBlock, securityParameters);
+		setKeys(keyBlock);
 	}
 	
-	private void setKeys(byte[] keyBlock, TlsSecurityParameters securityParameters) {
+	private void setKeys(byte[] keyBlock) {
 		int pos = 0;
 		
-		byte macLength = securityParameters.getMacKeyLength();
+		byte macLength = _cipherSuite.getMacKeyLength();
 		
 		_clientWriteMacKey = new byte[macLength];
 		System.arraycopy(keyBlock, pos, _clientWriteMacKey, 0, macLength);
@@ -67,7 +66,7 @@ public class TlsConnectionState {
 		System.arraycopy(keyBlock, pos, _serverWriteMacKey, 0, macLength);
 		pos += macLength;
 		
-		byte encKeyLength = securityParameters.getEncKeyLength();
+		byte encKeyLength = _cipherSuite.getEncryptKeyLength();
 		
 		_clientWriteEncyrptionKey = new byte[encKeyLength]; 
 		System.arraycopy(keyBlock, pos, _clientWriteEncyrptionKey, 0, encKeyLength);
@@ -77,7 +76,7 @@ public class TlsConnectionState {
 		System.arraycopy(keyBlock, pos, _serverWriteEncyrptionKey, 0, encKeyLength);
 		pos += encKeyLength;
 		
-		byte writeIvLength = securityParameters.getFixedIvLength();
+		byte writeIvLength = _cipherSuite.getFixedIvLength();
 		
 		_clientWriteIv = new byte[writeIvLength]; 
 		System.arraycopy(keyBlock, pos, _clientWriteIv, 0, writeIvLength);
@@ -88,56 +87,6 @@ public class TlsConnectionState {
 		pos += writeIvLength;
 	}
 	
-	public long getClientSequenceNumber() {
-		return _clientSequenceNumber;
-	}
-	
-	public void increaseClientSequenceNumber() {
-		_clientSequenceNumber++;
-	}
-	
-	public long getServerSequenceNumber() {
-		return _serverSequenceNumber;
-	}
-	
-	public void increaseServerSequenceNumber() {
-		_serverSequenceNumber++;
-	}
-
-	public TlsSessionId getSessionId() {
-		if (_sessionId == null) {
-			throw new RuntimeException("SessionID must be set first!");
-		}
-		return _sessionId;
-	}
-
-	public void setSessionId(TlsSessionId sessionId) {
-		if (sessionId == null) {
-			throw new IllegalArgumentException("SessionID must be set!");
-		}
-		_sessionId = sessionId;
-	}
-
-	public TlsVersion getVersion() {
-		if (_version == null) {
-			//TODO: tls version
-			return TlsVersion.getTls12Version();
-			//throw new RuntimeException("Version must be set first!");
-		}
-		return _version;
-	}
-	
-	public boolean hasVersion() {
-		return (_version == null);
-	}
-
-	public void setVersion(TlsVersion version) {
-		if (version == null) {
-			throw new IllegalArgumentException("Version must be set!");
-		}
-		_version = version;
-	}
-
 	public byte[] getClientWriteMacKey() {
 		if (_clientWriteMacKey == null) {
 			throw new RuntimeException("Key must be computed first!");
@@ -180,36 +129,144 @@ public class TlsConnectionState {
 		return _serverWriteIv;
 	}
 	
-	public void addHandshakeMessageBytes(TlsHandshakeMessage message) {
-		_currentHandshakeMessages.add(message);
-	}
-	
-	private byte[] getBytesFromHandshakeMessages() {
-		byte[] result = new byte[0];
-		
-		for (TlsHandshakeMessage message : _currentHandshakeMessages) {
-			result = ByteHelper.concatenate(result, message.getBytes());
+	/**
+	 * Sets the cipher suite.
+	 * 
+	 * @param cipherSuite the cipher suite. Must not be null.
+	 */
+	public void setCipherSuite(TlsCipherSuite cipherSuite) {
+		if (cipherSuite == null) {
+			throw new IllegalArgumentException("Ciphersuite must not be null!");
 		}
-		
-		return result;
+		_cipherSuite = cipherSuite;
 	}
 	
-	public byte[] getFinishedVerifyDataForServer(byte[] masterSecret) {
-		byte[] verifyData = TlsPseudoRandomFunction.prf(masterSecret,
-				"server finished",
-				_hash.hash(getBytesFromHandshakeMessages()), 
-				VERIFY_DATA_LENGTH);
-		
-		return verifyData;
+	/**
+	 * Returns the current cipher suite, which must have been set before. 
+	 * 
+	 * @return the current cipher suite
+	 */
+	public TlsCipherSuite getCipherSuite() {
+		if (_cipherSuite == null) {
+			throw new RuntimeException("Ciphersuite must be set first!");
+		}
+		return _cipherSuite;
 	}
 	
-	public byte[] getFinishedVerifyDataForClient(byte[] masterSecret) {
-		byte[] verifyData = TlsPseudoRandomFunction.prf(masterSecret,
-				"client finished",
-				_hash.hash(getBytesFromHandshakeMessages()), 
-				VERIFY_DATA_LENGTH);
-		
-		return verifyData;
+	/*
+	 
+	public TlsBulkCipherAlgorithm getBulkCipherAlgorithm() {
+		if (_cipherSuite == null) {
+			throw new RuntimeException("Cipher Suite must be set first!");
+		}
+		return _cipherSuite.getBulkCipherAlgorithm();
 	}
 	
+	public TlsCipherType getCipherType() {
+		if (_cipherSuite == null) {
+			throw new RuntimeException("Cipher Suite must be set first!");
+		}
+		return _cipherSuite.getCipherType();
+	}
+	
+	public byte getEncKeyLength() {
+		if (_cipherSuite == null) {
+			throw new RuntimeException("Cipher Suite must be set first!");
+		}
+		return _cipherSuite.getEncryptKeyLength();
+	}
+
+	public byte getBlockLength() {
+		if (_cipherSuite == null) {
+			throw new RuntimeException("Cipher Suite must be set first!");
+		}
+		return _cipherSuite.getBlockLength();
+	}
+
+	public byte getFixedIvLength() {
+		if (_cipherSuite == null) {
+			throw new RuntimeException("Cipher Suite must be set first!");
+		}
+		return _cipherSuite.getFixedIvLength();
+	}
+
+	public byte getRecordIvLength() {
+		if (_cipherSuite == null) {
+			throw new RuntimeException("Cipher Suite must be set first!");
+		}
+		return _cipherSuite.getRecordIvLength();
+	}
+
+	public TlsMacAlgorithm getMacAlgorithm() {
+		if (_cipherSuite == null) {
+			throw new RuntimeException("Cipher Suite must be set first!");
+		}
+		return _cipherSuite.getMacAlgorithm();
+	}
+
+	public byte getMacLength() {
+		if (_cipherSuite == null) {
+			throw new RuntimeException("Cipher Suite must be set first!");
+		}
+		return _cipherSuite.getMacLength();
+	}
+	
+	public byte getMacKeyLength() {
+		if (_cipherSuite == null) {
+			throw new RuntimeException("Cipher Suite must be set first!");
+		}
+		return _cipherSuite.getMacKeyLength();
+	} 
+	 
+	 */
+	
+	public TlsKeyExchangeAlgorithm getKeyExchangeAlgorithm() {
+		if (_cipherSuite == null) {
+			throw new RuntimeException("Cipher Suite must be set first!");
+		}
+		return _cipherSuite.getKeyExchangeAlgorithm();
+	}
+	
+	/**
+	 * Transforms a TLSPlaintext to a TLSCiphertext. The Message will be MACed and 
+	 * encrypted according to the used ciphersuite.
+	 * 
+	 * @param plaintext the TLSPlaintext
+	 * @param parameters the encryption parameters used to encrypt
+	 * 
+	 * @return the TLSCiphertext
+	 */
+	public TlsCiphertext plaintextToCiphertext(TlsPlaintext plaintext, TlsEncryptionParameters parameters) {
+		return _cipherSuite.plaintextToCiphertext(plaintext, parameters);
+	}
+	
+	/**
+	 * Transforms a TLSCiphertext to a TLSPlaintext. The Message will be decrypted and 
+	 * the MAC will be checked according to the used ciphersuite.
+	 * 
+	 * @param ciphertextBytes the TLSCiphertext bytes
+	 * @param parameters the encryption parameters used to decrypt
+	 * @param registry the cipher suite registry
+	 * @param algorithm the used key exchange algorithm
+	 * 
+	 * @return the TlsPlaintext
+	 * 
+	 * @throws TlsBadRecordMacException if the message has an invalid MAC
+	 * @throws TlsBadPaddingException if decryption of the messages fails because of invalid padding
+	 * @throws TlsDecodeErrorException if the message itself can not be decoded properly
+	 */
+	public TlsPlaintext ciphertextToPlaintext(byte[] ciphertextBytes, TlsEncryptionParameters parameters, TlsCipherSuiteRegistry registry, TlsKeyExchangeAlgorithm algorithm) 
+			throws TlsBadRecordMacException, TlsBadPaddingException, TlsDecodeErrorException {
+		return _cipherSuite.ciphertextToPlaintext(ciphertextBytes, parameters, registry, algorithm);
+	}
+	
+	@Override
+	public Object clone() { //throws CloneNotSupportedException {
+        try {
+			return super.clone();
+		}
+		catch (CloneNotSupportedException e) {
+			throw new RuntimeException("Clone not supported!");
+		}
+    }
 }

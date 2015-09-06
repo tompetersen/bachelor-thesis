@@ -1,17 +1,16 @@
 package test.tls;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertNotNull;
 import jProtocol.tls12.model.TlsCiphertext;
 import jProtocol.tls12.model.TlsConnectionState;
 import jProtocol.tls12.model.TlsPlaintext;
-import jProtocol.tls12.model.TlsSecurityParameters;
 import jProtocol.tls12.model.ciphersuites.TlsCipherSuite;
 import jProtocol.tls12.model.ciphersuites.TlsCipherSuiteRegistry;
 import jProtocol.tls12.model.ciphersuites.TlsEncryptionParameters;
 import jProtocol.tls12.model.exceptions.TlsBadRecordMacException;
 import jProtocol.tls12.model.values.TlsBulkCipherAlgorithm;
 import jProtocol.tls12.model.values.TlsCipherType;
-import jProtocol.tls12.model.values.TlsConnectionEnd;
 import jProtocol.tls12.model.values.TlsKeyExchangeAlgorithm;
 import jProtocol.tls12.model.values.TlsMacAlgorithm;
 import jProtocol.tls12.model.values.TlsRandom;
@@ -80,7 +79,6 @@ public class ConnectionStateTest {
 	}
 	
 	private TlsCipherSuite _cs;
-	private TlsSecurityParameters _sp;
 	private TlsConnectionState _connectionState;
 	private byte[] _random28 = new byte[28];
 	private TlsRandom _tlsRandom = new TlsRandom(0, _random28);
@@ -90,18 +88,12 @@ public class ConnectionStateTest {
 	public void setUp() throws Exception {
 		_cs = new TestCipherSuite();
 		
-		_sp = new TlsSecurityParameters(TlsConnectionEnd.server, _cs);
-		_sp.setCipherSuite(_cs);
-		_sp.setClientRandom(_tlsRandom);
-		_sp.setServerRandom(_tlsRandom);
-		_sp.computeMasterSecret(_random48);
-		
-		_connectionState = new TlsConnectionState();
+		_connectionState = new TlsConnectionState(_cs);
 	}
 
 	@Test
 	public void testGetClientWriteMacKey() {
-		_connectionState.computeKeys(_sp);
+		_connectionState.computeKeys(_tlsRandom, _tlsRandom, _random48);
 		
 		assertNotNull(_connectionState.getClientWriteMacKey());
 	}
@@ -116,9 +108,9 @@ public class ConnectionStateTest {
 		byte[] testKeyBlock = {2,2,2,2,3,3,3,3,3,3,4,4,4,4,4,4,4,4};
 		
 		//Reflection used to test private method without having to deal with PRF provided values.
-		Method method = TlsConnectionState.class.getDeclaredMethod("setKeys", testKeyBlock.getClass(), TlsSecurityParameters.class);
+		Method method = TlsConnectionState.class.getDeclaredMethod("setKeys", testKeyBlock.getClass());
 		method.setAccessible(true);
-		method.invoke(_connectionState, testKeyBlock, _sp);
+		method.invoke(_connectionState, testKeyBlock);
 	
 		byte[] expectedMacKeys = {2,2};
 		byte[] expectedEcryptionKeys = {3,3,3};

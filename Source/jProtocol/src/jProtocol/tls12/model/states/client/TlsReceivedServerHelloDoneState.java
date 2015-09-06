@@ -39,6 +39,9 @@ public class TlsReceivedServerHelloDoneState extends TlsState {
 		
 		sendClientKeyExchangeMessage();
 		sendChangeCipherSpecMessage();
+		
+		_stateMachine.changeWriteStateToPendingState();
+		
 		sendFinishedMessage();
 	}
 	
@@ -74,8 +77,6 @@ public class TlsReceivedServerHelloDoneState extends TlsState {
 	private void sendChangeCipherSpecMessage() {
 		TlsMessage message = new TlsChangeCipherSpecMessage();
 		sendTlsMessage(message);
-		
-		_stateMachine.changeToPendingState();
 	}
 	
 	private void sendFinishedMessage() {
