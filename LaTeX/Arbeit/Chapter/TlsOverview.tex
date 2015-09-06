@@ -73,16 +73,18 @@ Einen Sonderfall stellen die AEAD-Chiffren (Authenticated Encryption with Associ
 
 \subsection{Asymmetrische Kryptographie}
 
-Asymmetrische Kryptographie (oftmals auch Public-Key-Kryptographie) beschreibt Verfahren, bei denen bei der Ver- und Entschlüsselung verschiedene Schlüssel verwendet werden. Diese lassen sich nicht aus dem jeweils anderen Schlüssel berechnen. Daher kann ein Empfänger seinen öffentlichen Schlüssel bekanntgeben. Nachrichten, die mit diesem Schlüssel verschlüsselt werden, kann ein Angreifer trotzdem nicht lesen, da nur der Empfänger im Besitz seines geheimen Schlüssels ist.
-
-Es gilt: 
+Asymmetrische Kryptographie (oftmals auch Public-Key-Kryptographie) beschreibt Verfahren, bei denen bei der Ver- und Entschlüsselung verschiedene Schlüssel verwendet werden. Diese lassen sich nicht aus dem jeweils anderen Schlüssel berechnen. Daher kann ein Empfänger seinen öffentlichen Schlüssel bekanntgeben. Nachrichten, die mit diesem Schlüssel verschlüsselt werden, kann ein Angreifer trotzdem nicht lesen, da nur der Empfänger im Besitz seines geheimen Schlüssels ist. Es gilt: 
 \[E_{K_{\text{public}}}(M)=C\] 
 \[D_{K_{\text{private}}}(C)=M\] 
 Hierbei steht \(K_{\text{public}}\) für den öffentlichen und \(K_{\text{private}}\) für den geheimen Schlüssel des Empfängers.
 
+Durch asymmetrische Kryptographie lässt sich das bei symmetrischen Algorithmen bestehende Problem des Schlüsselaustauschs durch Veröffentlichung des öffentlichen Schlüssels leicht lösen. Das Problem, das hierbei entsteht, ist jedoch die Identität des Besitzers eines öffentlichen Schlüssels sicherzustellen. 
+
 Ein Beispiel für einen asymmetrischen Algorithmus ist das RSA-Verfahren \cite{Schneier2006}.
 
 \subsection{Diffie-Hellmann-Verfahren}
+
+Das Diffie-Hellmann-Verfahren (DH-Verfahren) ist ein ebenfalls auf geheimen und öffentlichen Schlüssel basierendes Verfahren, das jedoch nicht der Ver- bzw. Entschlüsselung, sondern lediglich der Schlüsselvereinbarung dient. Es ermöglicht zwei Kommunikationspartnern einen Schlüssel zu erzeugen, ohne dass dieser direkt gesendet werden muss \cite{Schneier2006}. 
 
 \subsection{Hashfunktion}
 
@@ -94,11 +96,15 @@ In der Kryptographie werden insbesondere Einweg-Hashfunktionen eingesetzt. Bei d
 
 \label{sec_mac}
 
+Ein Message Authentication Code (MAC) ist ein Verfahren, das der Authentizität und dem Schutz der Integrität einer Nachricht dient. Dazu wird vom Sender aus einem geheimen Schlüssel \(K\) und der Nachricht \(M\) eine Art Prüfsumme generiert und zusammen mit der Nachricht versendet. Der Empfänger kann den MAC überprüfen, wenn er im Besitz des gleichen geheimen Schlüssels ist, und so sicherstellen, dass die Nachricht nicht verändert wurde. Ein Beispiel für einen solchen MAC ist der auch in TLS verwendete HMAC \cite{Schneier2006, ferguson10}.
+
 \section{Verwendete Notationen}
 
-\(A \oplus B\) entspricht der bitweisen XOR-Verknüpfung zweier Zeichenketten A und B
+In den folgenden Kapiteln werden die unten stehenden Notationen verwendet. Aus anderen Veröffentlichungen entnommene Passagen wurden teilweise geringfügig angepasst, um diesen Notationen zu folgen.
 
 \(|B|\) steht für die Länge einer Zeichenkette B
+
+\(A \oplus B\) entspricht der bitweisen XOR-Verknüpfung zweier Zeichenketten A und B
 
 \(A + B\) steht für die Konkatenation zweier Zeichenketten A und B
 
