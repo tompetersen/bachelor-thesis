@@ -52,7 +52,7 @@ public class GridBagConstraintsHelper {
 		c.gridwidth = gridwidth;
 		c.anchor = GridBagConstraints.NORTHWEST;
 		c.insets = insets;
-		c.fill = GridBagConstraints.HORIZONTAL;
+		c.fill = GridBagConstraints.BOTH;
 		c.weightx = 1;
 		
 		return c;

@@ -38,14 +38,6 @@ public class CommunicationChannel<T extends ProtocolDataUnit> extends Observable
 		setChanged();
 		notifyObservers();	
 		
-		try {
-			Thread.sleep(800);
-		}
-		catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
 		if (clientMessage) {
 			_server.receiveMessage(pdu);
 		}

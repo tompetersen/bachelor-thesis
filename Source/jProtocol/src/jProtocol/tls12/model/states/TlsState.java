@@ -9,7 +9,6 @@ import jProtocol.tls12.model.exceptions.TlsBadRecordMacException;
 import jProtocol.tls12.model.exceptions.TlsDecodeErrorException;
 import jProtocol.tls12.model.messages.TlsAlertMessage;
 import jProtocol.tls12.model.messages.TlsMessage;
-import jProtocol.tls12.model.messages.handshake.TlsCertificateMessage;
 import jProtocol.tls12.model.messages.handshake.TlsHandshakeMessage;
 import jProtocol.tls12.model.states.TlsStateMachine.TlsStateType;
 import jProtocol.tls12.model.values.TlsAlert;

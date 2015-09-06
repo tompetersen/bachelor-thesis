@@ -9,19 +9,16 @@ public class JProtocolPresenter<T extends ProtocolDataUnit> {
 	private JProtocolView _view;
 	
 	public JProtocolPresenter(JProtocolViewProvider<T> provider, CommunicationChannel<T> channel) {
-		_view = new JProtocolView();
-		
 		StateMachinePresenter clientPresenter = new StateMachinePresenter("Client", provider.getViewForClientStateMachine());
 		StateMachinePresenter serverPresenter = new StateMachinePresenter("Server", provider.getViewForServerStateMachine());
 		
 		ProtocolDataUnitPresenter<T> pduPresenter = new ProtocolDataUnitPresenter<T>(provider, channel); 
 		
-		_view.setClientStateMachineView(clientPresenter.getView());
-		_view.setServerStateMachineView(serverPresenter.getView());
-		_view.setProtocolDataUnitView(pduPresenter.getView());
+		_view = new JProtocolView(clientPresenter.getView(), serverPresenter.getView(), pduPresenter.getView());
 	}
 
 	public void showView() {
+		
 		_view.show();
 	}
 	

@@ -3,10 +3,9 @@ package jProtocol.Abstract.View;
 import jProtocol.Abstract.JProtocolViewProvider;
 import jProtocol.Abstract.Model.ProtocolDataUnit;
 import jProtocol.helper.ByteHelper;
-import jProtocol.helper.GridBagConstraintsHelper;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.GridBagLayout;
+import java.awt.Font;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.BoxLayout;
@@ -16,6 +15,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
+import javax.swing.SwingConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
@@ -44,7 +44,6 @@ public class ProtocolDataUnitView<T extends ProtocolDataUnit> {
 		public Object getValueAt(int rowIndex, int columnIndex) {
 			T pdu = _pdus.get(rowIndex);
 			return (pdu.hasBeenSentByClient() ? "-> " : "<- ") + pdu.toString();
-			
 		}
 	}
 
@@ -58,8 +57,9 @@ public class ProtocolDataUnitView<T extends ProtocolDataUnit> {
 	public ProtocolDataUnitView(JProtocolViewProvider<T> provider) {
 		_provider = provider;
 		
-		_view = new JPanel(new BorderLayout());
-
+		_view = new JPanel();
+		_view.setLayout(new BoxLayout(_view, BoxLayout.Y_AXIS));
+		
 		createPduList();
 		createPduDetailView();
 	}
@@ -67,51 +67,74 @@ public class ProtocolDataUnitView<T extends ProtocolDataUnit> {
 	private void createPduList() {
 		_tableModel = new PduTableModel();
 		final JTable table = new JTable(_tableModel);
-		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-		table.setPreferredScrollableViewportSize(new Dimension(200,200));
-		table.setPreferredSize(new Dimension(200, 200));
 		
 		table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 		    public void valueChanged(ListSelectionEvent lse) {
 		    	int row = table.getSelectedRow();
 				if (row > -1 && row < _pdus.size()) {
 					T pdu = _pdus.get(row);
-					
-					JComponent newPduView = _provider.getDetailedViewForProtocolDataUnit(pdu);
-					setPduView(newPduView);
-					
-					//TODO:
-					String bytes = ByteHelper.bytesToHexString(pdu.getBytes());
-					int length = Math.min(bytes.length(), 20);
-					_pduBytesLabel.setText(bytes.substring(0, length) + "...");
-					
+					setPduInView(pdu);
 				}
 		    }
 		});
 		
-		//table.setPreferredScrollableViewportSize(new Dimension(500, 200));
 		JScrollPane scrollPane = new JScrollPane(table, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		//scrollPane.setMinimumSize(new Dimension(100, 100));
-		//scrollPane.setMaximumSize(new Dimension(100, 100));
+		scrollPane.setMinimumSize(new Dimension(300, 300));
+		scrollPane.setMaximumSize(new Dimension(300, 300));
 		
-		table.setFillsViewportHeight(true);
 		_view.add(scrollPane, BorderLayout.CENTER);
+	}
+	
+	private void setPduInView(T pdu) {
+		JComponent newPduView = _provider.getDetailedViewForProtocolDataUnit(pdu);
+		setPduDetailView(newPduView);
+		
+		String bytes = ByteHelper.bytesToHexString(pdu.getBytes());
+		setByteTabValue(bytes);
 	}
 	
 	private void createPduDetailView() {
 		_pduView = new JPanel();
 		
-		_pduBytesLabel = new JLabel();
+		_pduBytesLabel = new JLabel(" ");
+		_pduBytesLabel.setVerticalAlignment(SwingConstants.TOP);
+		_pduBytesLabel.setHorizontalAlignment(SwingConstants.LEFT);
+		_pduBytesLabel.setFont(new Font("Monospaced", Font.PLAIN, 12));
+		JScrollPane scrollPane = new JScrollPane(_pduBytesLabel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		
 		JTabbedPane tabbedPane = new JTabbedPane();
-		tabbedPane.addTab("Bytes", _pduBytesLabel);
+		tabbedPane.setMinimumSize(new Dimension(300, 100));
+		tabbedPane.setMaximumSize(new Dimension(300, 100));
+		
+		tabbedPane.addTab("Bytes", scrollPane);
 		tabbedPane.addTab("Details", _pduView);
 		
 		_pduView.add(new JLabel("-"));
 		_view.add(tabbedPane, BorderLayout.PAGE_END);
 	}
 	
-	private void setPduView(JComponent pduView) {
+	private void setByteTabValue(String bytes) {
+		int length = bytes.length();
+		StringBuilder builder = new StringBuilder("<html>");
+		
+		int blocks = 0;
+		for (int i = 0; i < length; i += 4) {
+			int endIdx = Math.min(length, i + 4);
+			builder.append(" ");
+			builder.append(bytes.substring(i, endIdx));
+			blocks ++;
+			if (blocks % 8 == 0) {
+				builder.append("<br />");
+				blocks = 0;
+			}
+		}
+		
+		builder.append("</html>");
+		
+		_pduBytesLabel.setText(builder.toString());
+	}
+	
+	private void setPduDetailView(JComponent pduView) {
 		_pduView.removeAll();
 		_pduView.add(pduView);
 		

@@ -68,4 +68,6 @@ public class TlsCipherSuite_NULL_WITH_NULL_NULL extends TlsStreamCipherSuite {
 	public TlsKeyExchangeAlgorithm getKeyExchangeAlgorithm() {
 		return null;
 	}
+	
+	
 }

@@ -8,9 +8,14 @@ import jProtocol.tls12.model.states.TlsStateMachine.TlsStateMachineEvent;
 import jProtocol.tls12.model.states.TlsStateMachine.TlsStateMachineEventType;
 import jProtocol.tls12.model.values.TlsApplicationData;
 import jProtocol.tls12.model.values.TlsConnectionEnd;
+import jProtocol.tls12.view.KeyValueTree;
+import jProtocol.tls12.view.KeyValueTree.KeyValueObject;
 import jProtocol.tls12.view.TlsClientView;
 import jProtocol.tls12.view.TlsServerView;
+import java.awt.Color;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 import javax.swing.JComponent;
@@ -61,7 +66,8 @@ public class Tls12Startup implements Observer, JProtocolViewProvider<TlsCipherte
 	@Override
 	public JComponent getDetailedViewForProtocolDataUnit(TlsCiphertext pdu) {
 		// TODO Auto-generated method stub
-		return new JLabel(pdu.toString());
+		JLabel label = new JLabel(pdu.toString());
+		return label;
 	}
 
 	@Override

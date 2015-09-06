@@ -2,7 +2,6 @@ package jProtocol.tls12.model;
 
 import jProtocol.Abstract.Model.ProtocolDataUnit;
 import jProtocol.tls12.model.fragments.TlsFragment;
-import jProtocol.tls12.model.messages.TlsAlertMessage;
 import jProtocol.tls12.model.messages.TlsMessage;
 import jProtocol.tls12.model.values.TlsContentType;
 import jProtocol.tls12.model.values.TlsVersion;
