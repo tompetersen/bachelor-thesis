@@ -28,9 +28,10 @@ public abstract class TlsState extends State<TlsCiphertext> {
 	@Override
 	public void receiveMessage(TlsCiphertext ciphertext) {
 		try {
-			
 			byte[] ciphertextBytes = ciphertext.getBytes();
 			TlsPlaintext plaintext = _stateMachine.ciphertextToPlaintext(ciphertextBytes);
+			
+			_stateMachine.increaseReadSequenceNumber();
 			
 			TlsMessage message = plaintext.getMessage();
 			
@@ -77,6 +78,8 @@ public abstract class TlsState extends State<TlsCiphertext> {
 	public void sendTlsMessage(TlsMessage message) {
 		TlsPlaintext plaintext = new TlsPlaintext(message, _stateMachine.getVersion());
 		TlsCiphertext ciphertext = _stateMachine.plaintextToCiphertext(plaintext);
+		
+		_stateMachine.increaseWriteSequenceNumber();
 		
 		super.sendMessage(ciphertext);
 	}

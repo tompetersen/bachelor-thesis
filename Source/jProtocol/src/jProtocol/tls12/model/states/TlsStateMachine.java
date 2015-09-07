@@ -136,6 +136,10 @@ public class TlsStateMachine extends StateMachine<TlsCiphertext> {
 		_cipherSuiteRegistry = new TlsCipherSuiteRegistry();
 		_securityParameters = new TlsSecurityParameters(entity);
 		
+		if (_isServer) {
+			createCertificate();
+		}
+		
 		TlsCipherSuite nullCipherSuite = _cipherSuiteRegistry.getNullCipherSuite();
 		_currentReadConnectionState = new TlsConnectionState(nullCipherSuite);
 		_currentWriteConnectionState = new TlsConnectionState(nullCipherSuite);
@@ -145,6 +149,17 @@ public class TlsStateMachine extends StateMachine<TlsCiphertext> {
 		
 		createStates();
 		setTlsState(_isServer ? TlsStateType.SERVER_INITIAL_STATE : TlsStateType.CLIENT_INITIAL_STATE);
+	}
+	
+	private void createCertificate() {
+		TlsRsaCipher rsaCipher = new TlsRsaCipher();
+		setRsaCipher(rsaCipher);
+		
+		TlsCertificate certificate = TlsCertificate.generateRsaCertificate(rsaCipher.getEncodedPublicKey());
+		List<TlsCertificate> certList = new ArrayList<>();
+		certList.add(certificate);
+		
+		setCertificateList(certList);
 	}
 	
 	private void createStates() {
@@ -176,6 +191,18 @@ public class TlsStateMachine extends StateMachine<TlsCiphertext> {
 		addState(TlsStateType.RECEIVED_BAD_RECORD_MESSAGE_STATE.getType(), 					new TlsReceivedBadRecordMessageState(this));
 		addState(TlsStateType.DECODE_ERROR_OCCURED_STATE.getType(), 						new TlsDecodeErrorOccuredState(this));
 		addState(TlsStateType.DECRYPT_ERROR_OCCURED_STATE.getType(), 						new TlsDecryptErrorOccuredState(this));
+	}
+	
+	public void setTlsState(TlsStateType stateType, TlsState sender) {
+		setState(stateType.getType(), sender);
+		
+		if (stateType == TlsStateType.CONNECTION_ESTABLISHED_STATE) {
+			notifyObserversOfEvent(new TlsStateMachineEvent(TlsStateMachineEventType.connection_established));
+		}
+	}
+	
+	private void setTlsState(TlsStateType stateType) {
+		setState(stateType.getType());
 	}
 	
 	/**
@@ -230,6 +257,9 @@ public class TlsStateMachine extends StateMachine<TlsCiphertext> {
 		return new TlsEncryptionParameters(seqNum, encKey, macKey, iv);
 	}
 	
+/*
+ * Values
+ */
 	public TlsVersion getVersion() {
 		/*
 		 * Should return pending state version, but it's not available for client hello:
@@ -266,6 +296,27 @@ public class TlsStateMachine extends StateMachine<TlsCiphertext> {
 		return TlsVersion.getTls12Version();
 	}
 	
+	public boolean canPerformAbbreviatedHandshakeForSessionId(TlsSessionId sessionId) {
+		//TODO: Abbreviated Handshakes
+		return false;
+	}
+	
+	public void setSessionId(TlsSessionId sessionId) {
+		_securityParameters.setSessionId(sessionId);
+	}
+	
+	public TlsSessionId getSessionId() {
+		return _securityParameters.getSessionId();
+	}
+	
+	public void increaseWriteSequenceNumber() {
+		_currentWriteConnectionState.increaseSequenceNumber();
+	}
+	
+	public void increaseReadSequenceNumber() {
+		_currentReadConnectionState.increaseSequenceNumber();
+	}
+	
 	public void setClientRandom(TlsRandom random) {
 		_securityParameters.setClientRandom(random);
 	}
@@ -277,19 +328,6 @@ public class TlsStateMachine extends StateMachine<TlsCiphertext> {
 	public void computeMasterSecret(byte[] preMasterSecret) {
 		_securityParameters.computeMasterSecret(preMasterSecret);
 		_pendingConnectionState.computeKeys(_securityParameters.getClientRandom(), _securityParameters.getServerRandom(), _securityParameters.getMasterSecret());
-	}
-	
-	public boolean canPerformAbbreviatedHandshakeForSessionId(TlsSessionId sessionId) {
-		//TODO: Abbreviated Handshakes
-		return false;
-	}
-
-	public void setSessionId(TlsSessionId sessionId) {
-		_securityParameters.setSessionId(sessionId);
-	}
-	
-	public TlsSessionId getSessionId() {
-		return _securityParameters.getSessionId();
 	}
 	
 	public void setPendingCipherSuiteFromList(List<TlsCipherSuite> list) {
@@ -312,8 +350,27 @@ public class TlsStateMachine extends StateMachine<TlsCiphertext> {
 		return _cipherSuiteRegistry.allCipherSuites();
 	}
 	
+	public TlsRsaCipher getRsaCipher() {
+		if (_rsaCipher == null) {
+			throw new RuntimeException("RSA Cipher must be set first!");
+		}
+		return _rsaCipher;
+	}
+
+	public void setRsaCipher(TlsRsaCipher rsaCipher) {
+		_rsaCipher = rsaCipher;
+	}
+
+	public List<TlsCertificate> getCertificateList() {
+		return _certificateList;
+	}
+
+	public void setCertificateList(List<TlsCertificate> certificateList) {
+		_certificateList = certificateList;
+	}
+	
 	/**
-	 * Sets the pending state as current state.
+	 * Sets the pending state as current read state.
 	 * Should be called after receiving the change cipher spec message.
 	 */
 	public void changeReadStateToPendingState() {
@@ -321,13 +378,16 @@ public class TlsStateMachine extends StateMachine<TlsCiphertext> {
 	}
 	
 	/**
-	 * Sets the pending state as current state.
+	 * Sets the pending state as current write state.
 	 * Should be called after sending the change cipher spec message.
 	 */
 	public void changeWriteStateToPendingState() {
 		_currentWriteConnectionState = (TlsConnectionState) _pendingConnectionState.clone();
 	}
 	
+/*
+ * Verification data methods for finished message.
+ */
 	public void addHandshakeMessageForVerifyData(TlsHandshakeMessage message) {
 		if (isValidVerifyMessage(message)) {
 			_securityParameters.addHandshakeMessageBytes(message);
@@ -361,42 +421,6 @@ public class TlsStateMachine extends StateMachine<TlsCiphertext> {
 		return new TlsVerifyData(bytes);
 	}
 	
-	public void setTlsState(TlsStateType stateType, TlsState sender) {
-		setState(stateType.getType(), sender);
-		
-		if (stateType == TlsStateType.CONNECTION_ESTABLISHED_STATE) {
-			notifyObserversOfEvent(new TlsStateMachineEvent(TlsStateMachineEventType.connection_established));
-		}
-	}
-	
-	private void setTlsState(TlsStateType stateType) {
-		setState(stateType.getType());
-	}
-	
-	public TlsRsaCipher getRsaCipher() {
-		if (_rsaCipher == null) {
-			throw new RuntimeException("RSA Cipher must be set first!");
-		}
-		return _rsaCipher;
-	}
-
-	public void setRsaCipher(TlsRsaCipher rsaCipher) {
-		_rsaCipher = rsaCipher;
-	}
-
-	public List<TlsCertificate> getCertificateList() {
-		return _certificateList;
-	}
-
-	public void setCertificateList(List<TlsCertificate> certificateList) {
-		_certificateList = certificateList;
-		
-		TlsCertificate serverCert = certificateList.get(0);
-		byte[] rsaPublicKey = serverCert.getRsaPublicKey();
-		TlsRsaCipher rsaCipher = new TlsRsaCipher(rsaPublicKey);
-		setRsaCipher(rsaCipher);
-	}
-
 /*
  * Cached application data
  */
@@ -459,6 +483,9 @@ public class TlsStateMachine extends StateMachine<TlsCiphertext> {
 		return (_isServer ? "Server" : "Client");
 	}
 	
+/*
+ * View data
+ */
 	public List<KeyValueObject> getViewData() {
 		ArrayList<KeyValueObject> result = new ArrayList<>();
 		

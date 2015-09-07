@@ -128,11 +128,18 @@ public class KeyValueTree {
 	}
 	
 	public void updateTree() {
+		boolean[] expanded = new boolean[_tree.getRowCount()];
+		for (int i = 0; i < _tree.getRowCount(); i++) {
+			expanded[i] = _tree.isExpanded(_tree.getPathForRow(i));
+		}
+		
 		DefaultTreeModel model = (DefaultTreeModel) _tree.getModel();
 		model.reload();
 		
-//		for (int i = 0; i < _tree.getRowCount(); i++) {
-//			_tree.expandRow(i);
-//		}
+		for (int i = 0; i < _tree.getRowCount(); i++) {
+			if (i < expanded.length && expanded[i]) {
+				_tree.expandRow(i);
+			}
+		}
 	}
 }

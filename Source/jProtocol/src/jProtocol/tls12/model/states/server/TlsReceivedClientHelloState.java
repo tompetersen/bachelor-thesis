@@ -51,13 +51,7 @@ public class TlsReceivedClientHelloState extends TlsState {
 	}
 	
 	private void sendServerCertificate() {
-		TlsRsaCipher rsaCipher = new TlsRsaCipher();
-		_stateMachine.setRsaCipher(rsaCipher);
-		
-		TlsCertificate certificate = TlsCertificate.generateRsaCertificate(rsaCipher.getEncodedPublicKey());
-		List<TlsCertificate> certList = new ArrayList<>();
-		certList.add(certificate);
-		
+		List<TlsCertificate> certList = _stateMachine.getCertificateList();
 		TlsHandshakeMessage message = new TlsCertificateMessage(certList);
 		
 		_stateMachine.addHandshakeMessageForVerifyData(message);
