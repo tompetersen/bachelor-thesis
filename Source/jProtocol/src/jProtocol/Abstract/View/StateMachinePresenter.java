@@ -6,9 +6,8 @@ public class StateMachinePresenter {
 
 	private StateMachineView _view;
 	
-	public StateMachinePresenter(String title, JComponent stateMachineView) {
-		_view = new StateMachineView(title, stateMachineView);
-		
+	public StateMachinePresenter(JComponent stateMachineView) {
+		_view = new StateMachineView(stateMachineView);
 	}
 	
 	public JComponent getView() {

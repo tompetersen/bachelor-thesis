@@ -9,7 +9,6 @@ import java.awt.Insets;
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.Border;
 
@@ -18,13 +17,13 @@ public class JProtocolView {
 	private JFrame _frame;
 	private JPanel _view;
 	
-	public JProtocolView(JComponent clientView, JComponent serverView, JComponent pduView) {
+	public JProtocolView(JComponent clientView, JComponent serverView, JComponent pduView, JComponent channelView) {
 		_frame = new JFrame("jProtocol");
 		_frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		_frame.setBackground(Color.WHITE);
 		
-		_view = new JPanel();
-		GridBagLayout layout = new GridBagLayout();
-		_view.setLayout(layout);
+		_view = new JPanel(new GridBagLayout());
+		_view.setBackground(Color.WHITE);
 		
 		Insets insets = new Insets(5, 5, 5, 5);
 		Border border = BorderFactory.createLineBorder(Color.BLACK);
@@ -43,12 +42,8 @@ public class JProtocolView {
 		pduView.setBorder(BorderFactory.createLineBorder(Color.RED));
 		_view.add(pduView, constraints);
 		                      
-		JPanel p = new JPanel();
-		p.setBorder(border);
-		JLabel label = new JLabel("Whatever...");
-		p.add(label);
 		constraints = GridBagConstraintsHelper.createNormalConstraints(0, 1, 3, insets);
-		_view.add(p, constraints);
+		_view.add(channelView, constraints);
 		
 		_frame.add(_view);
 	}

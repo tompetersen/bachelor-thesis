@@ -3,9 +3,7 @@ package jProtocol.tls12.view;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Font;
-import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JComponent;
@@ -20,46 +18,11 @@ import javax.swing.tree.TreeSelectionModel;
 
 public class KeyValueTree {
 
-	public static class KeyValueObject {
-		private String _key;
-		private String _value;
-		private Color _backgroundColor;
-		private List<KeyValueObject> _kvoList;
-
-		public KeyValueObject(String key, String value) {
-			super();
-			this._key = key;
-			this._value = value;
-		}
-
-		public KeyValueObject(String key, String value, Color backgroundColor) {
-			this(key, value);
-			this._backgroundColor = backgroundColor;
-		}
-
-		public KeyValueObject(String key, List<KeyValueObject> valueList) {
-			this._key = key;
-			this._kvoList = valueList;
-		}
-
-		public KeyValueObject(String key, List<KeyValueObject> valueList, Color backgroundColor) {
-			this._key = key;
-			this._kvoList = valueList;
-			this._backgroundColor = backgroundColor;
-		}
-
-		public boolean hasChildren() {
-			return (_kvoList != null && _kvoList.size() > 0);
-		}
-	}
-
 	@SuppressWarnings("serial")
-	private class KeyValueCellRenderer extends DefaultTreeCellRenderer { // implements
-																	// TreeCellRenderer
-																	// {
+	private class KeyValueCellRenderer extends DefaultTreeCellRenderer { 
 		JLabel keyLabel = new JLabel(" ");
 		JLabel valueLabel = new JLabel(" ");
-		JPanel renderer = new JPanel(); //new FlowLayout(FlowLayout.LEFT, 0, 0)
+		JPanel renderer = new JPanel(); 
 		
 		DefaultTreeCellRenderer defaultRenderer = new DefaultTreeCellRenderer();
 		Color backgroundSelectionColor;
@@ -74,6 +37,7 @@ public class KeyValueTree {
 			valueLabel.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
 			
 			renderer.setLayout(new BoxLayout(renderer, BoxLayout.X_AXIS));
+			renderer.setBorder(BorderFactory.createLineBorder(Color.RED));
 
 			backgroundSelectionColor = defaultRenderer.getBackgroundSelectionColor();
 			backgroundNonSelectionColor = defaultRenderer.getBackgroundNonSelectionColor();
@@ -86,17 +50,17 @@ public class KeyValueTree {
 				Object userObject = ((DefaultMutableTreeNode) value).getUserObject();
 				if (userObject instanceof KeyValueObject) {
 					KeyValueObject kvo = (KeyValueObject) userObject;
-					keyLabel.setText(kvo._key);
-					valueLabel.setText(kvo._value);
+					keyLabel.setText(kvo.getKey());
+					valueLabel.setText(kvo.getValue());
 					
 					int neededWidth = keyLabel.getPreferredSize().width + valueLabel.getPreferredSize().width + 10;
-					renderer.setSize(new Dimension(neededWidth, 15));
+					renderer.setPreferredSize(new Dimension(neededWidth, 15));
 
 					if (selected) {
 						renderer.setBackground(backgroundSelectionColor);
 					}
-					else if (kvo._backgroundColor != null) {
-						renderer.setBackground(kvo._backgroundColor);
+					else if (kvo.getBackgroundColor() != null) {
+						renderer.setBackground(kvo.getBackgroundColor());
 					}
 					else {
 						renderer.setBackground(backgroundNonSelectionColor);
@@ -145,7 +109,7 @@ public class KeyValueTree {
 		DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(kvo);
 
 		if (kvo.hasChildren()) {
-			for (KeyValueObject kvoChild : kvo._kvoList) {
+			for (KeyValueObject kvoChild : kvo.getChildList()) {
 				addKeyValueObjectToNode(kvoChild, newNode);
 			}
 		}

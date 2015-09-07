@@ -40,13 +40,13 @@ public class TlsWaitingForServerHelloState extends TlsState {
 	private void setServerHelloValues(TlsServerHelloMessage message) {
 		TlsVersion version = message.getServerVersion();
 		if (_stateMachine.isSupportedVersion(version)) {
-			_stateMachine.setPendingVersion(version);
+			_stateMachine.setVersion(version);
 		}
 		else {
 			//TODO: no supported version
 		}
-		_stateMachine.setPendingServerRandom(message.getServerRandom());
-		_stateMachine.setPendingSessionId(message.getSessionId());
+		_stateMachine.setServerRandom(message.getServerRandom());
+		_stateMachine.setSessionId(message.getSessionId());
 		_stateMachine.setPendingCipherSuite(message.getCipherSuite());
 	}
 	

@@ -30,10 +30,10 @@ public class TlsInitialServerState extends TlsState {
 	}
 	
 	private void setClientHelloMessageValues(TlsClientHelloMessage chm) {
-		_stateMachine.setPendingClientRandom(chm.getClientRandom());
-		_stateMachine.setPendingSessionId(chm.getSessionId());	
+		_stateMachine.setClientRandom(chm.getClientRandom());
+		_stateMachine.setSessionId(chm.getSessionId());	
 		_stateMachine.setPendingCipherSuiteFromList(chm.getCipherSuites());	
-		_stateMachine.setPendingVersion(chm.getClientVersion());
+		_stateMachine.setVersion(chm.getClientVersion());
 	}
 
 	@Override

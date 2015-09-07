@@ -48,7 +48,7 @@ public class TlsWaitingForClientKeyExchangeState extends TlsState {
 		
 		TlsRsaCipher cipher = _stateMachine.getRsaCipher();
 		byte[] preMasterSecret = cipher.decrypt(encPreMasterSecret.getPreMasterSecret());
-		_stateMachine.computePendingMasterSecret(preMasterSecret);
+		_stateMachine.computeMasterSecret(preMasterSecret);
 	}
 
 	@Override

@@ -37,11 +37,12 @@ public class TlsInitialClientState extends TlsState {
 	private void sendClientHelloMessage() {
 		byte[] randomBytes = TlsPseudoRandomNumberGenerator.nextBytes(28);
 		TlsRandom random = new TlsRandom(randomBytes);
-		_stateMachine.setPendingClientRandom(random);
+		_stateMachine.setClientRandom(random);
 		
 		TlsVersion version = _stateMachine.getHighestSupportedVersion();
 		
-		TlsSessionId sessionId = new TlsSessionId(null);
+		byte[] sessionIdBytes = TlsPseudoRandomNumberGenerator.nextBytes(10);
+		TlsSessionId sessionId = new TlsSessionId(sessionIdBytes);
 		
 		List<TlsCipherSuite> cipherSuites = _stateMachine.allCipherSuites();		
 		

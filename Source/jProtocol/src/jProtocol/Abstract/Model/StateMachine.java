@@ -1,5 +1,7 @@
 package jProtocol.Abstract.Model;
 
+import jProtocol.Abstract.Model.events.Event;
+import jProtocol.Abstract.Model.events.StateMachineStateChangedEvent;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Observable;
@@ -66,8 +68,14 @@ public abstract class StateMachine<T extends ProtocolDataUnit> extends Observabl
 		_channel.sendMessage(pdu, this);
 	}
 	
-	public void notifyStateMachineObservers(Event event) {
+	public void notifyObserversOfEvent(Event event) {
 		setChanged();
 		notifyObservers(event);
 	}
+	
+	public void notifyObserversOfStateChanged() {
+		setChanged();
+		notifyObservers(new StateMachineStateChangedEvent());
+	}
+	
 }

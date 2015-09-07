@@ -87,6 +87,10 @@ public class TlsConnectionState implements Cloneable {
 		pos += writeIvLength;
 	}
 	
+	public boolean hasComputedKeys() {
+		return (_clientWriteEncyrptionKey != null);
+	}
+	
 	public byte[] getClientWriteMacKey() {
 		if (_clientWriteMacKey == null) {
 			throw new RuntimeException("Key must be computed first!");

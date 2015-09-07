@@ -51,7 +51,7 @@ public class TlsReceivedServerHelloDoneState extends TlsState {
 		if (algorithm == TlsKeyExchangeAlgorithm.rsa) {
 			TlsVersion version = _stateMachine.getVersion(); 
 			byte[] preMasterSecret = ByteHelper.concatenate(version.getBytes(), TlsPseudoRandomNumberGenerator.nextBytes(46));
-			_stateMachine.computePendingMasterSecret(preMasterSecret);
+			_stateMachine.computeMasterSecret(preMasterSecret);
 			
 			sendRsaClientKeyExchangeMessage(preMasterSecret);
 		}

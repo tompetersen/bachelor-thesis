@@ -44,17 +44,15 @@ public class Tls12Startup implements Observer, JProtocolViewProvider<TlsCipherte
 
 	@Override
 	public void update(Observable arg0, Object arg1) {
-		if (!(arg1 instanceof TlsStateMachineEvent)) {
-			throw new RuntimeException("Catched invalid event!");
-		}
-		
-		TlsStateMachineEventType type = ((TlsStateMachineEvent)arg1).getEventType();
-		
-		if (arg0 == _client && type == TlsStateMachineEventType.connection_established) {
-			_client.sendData(new TlsApplicationData("3,14159265".getBytes(StandardCharsets.US_ASCII)));
-		}
-		if (arg0 == _server && type == TlsStateMachineEventType.connection_established) {
-			_server.sendData(new TlsApplicationData("23.42.1337".getBytes(StandardCharsets.US_ASCII)));
+		if (arg1 instanceof TlsStateMachineEvent) {
+			TlsStateMachineEventType type = ((TlsStateMachineEvent)arg1).getEventType();
+			
+			if (arg0 == _client && type == TlsStateMachineEventType.connection_established) {
+				_client.sendData(new TlsApplicationData("3,14159265".getBytes(StandardCharsets.US_ASCII)));
+			}
+			if (arg0 == _server && type == TlsStateMachineEventType.connection_established) {
+				_server.sendData(new TlsApplicationData("23.42.1337".getBytes(StandardCharsets.US_ASCII)));
+			}
 		}
 	}
 

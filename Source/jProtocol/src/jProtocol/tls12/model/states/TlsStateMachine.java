@@ -1,7 +1,7 @@
 package jProtocol.tls12.model.states;
 
 import jProtocol.Abstract.Model.StateMachine;
-import jProtocol.Abstract.Model.Event;
+import jProtocol.Abstract.Model.events.Event;
 import jProtocol.helper.ByteHelper;
 import jProtocol.helper.MyLogger;
 import jProtocol.tls12.model.TlsCiphertext;
@@ -46,7 +46,7 @@ import jProtocol.tls12.model.values.TlsRandom;
 import jProtocol.tls12.model.values.TlsSessionId;
 import jProtocol.tls12.model.values.TlsVerifyData;
 import jProtocol.tls12.model.values.TlsVersion;
-import jProtocol.tls12.view.KeyValueTree.KeyValueObject;
+import jProtocol.tls12.view.KeyValueObject;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -244,7 +244,7 @@ public class TlsStateMachine extends StateMachine<TlsCiphertext> {
 		return version;
 	}
 	
-	public void setPendingVersion(TlsVersion version) {
+	public void setVersion(TlsVersion version) {
 		if (isSupportedVersion(version)) {
 			_securityParameters.setVersion(version);
 		}
@@ -263,15 +263,15 @@ public class TlsStateMachine extends StateMachine<TlsCiphertext> {
 		return TlsVersion.getTls12Version();
 	}
 	
-	public void setPendingClientRandom(TlsRandom random) {
+	public void setClientRandom(TlsRandom random) {
 		_securityParameters.setClientRandom(random);
 	}
 
-	public void setPendingServerRandom(TlsRandom random) {
+	public void setServerRandom(TlsRandom random) {
 		_securityParameters.setServerRandom(random);
 	}
 	
-	public void computePendingMasterSecret(byte[] preMasterSecret) {
+	public void computeMasterSecret(byte[] preMasterSecret) {
 		_securityParameters.computeMasterSecret(preMasterSecret);
 		_pendingConnectionState.computeKeys(_securityParameters.getClientRandom(), _securityParameters.getServerRandom(), _securityParameters.getMasterSecret());
 	}
@@ -281,11 +281,11 @@ public class TlsStateMachine extends StateMachine<TlsCiphertext> {
 		return false;
 	}
 
-	public void setPendingSessionId(TlsSessionId sessionId) {
+	public void setSessionId(TlsSessionId sessionId) {
 		_securityParameters.setSessionId(sessionId);
 	}
 	
-	public TlsSessionId getPendingSessionId() {
+	public TlsSessionId getSessionId() {
 		return _securityParameters.getSessionId();
 	}
 	
@@ -362,7 +362,7 @@ public class TlsStateMachine extends StateMachine<TlsCiphertext> {
 		setState(stateType.getType(), sender);
 		
 		if (stateType == TlsStateType.CONNECTION_ESTABLISHED_STATE) {
-			notifyStateMachineObservers(new TlsStateMachineEvent(TlsStateMachineEventType.connection_established));
+			notifyObserversOfEvent(new TlsStateMachineEvent(TlsStateMachineEventType.connection_established));
 		}
 	}
 	
@@ -433,7 +433,7 @@ public class TlsStateMachine extends StateMachine<TlsCiphertext> {
 	public void receivedData(TlsApplicationData data) {
 		MyLogger.info(getEntityName() + " received Data: " + new String(data.getBytes(), StandardCharsets.US_ASCII));
 		
-		notifyStateMachineObservers(new TlsStateMachineEvent(TlsStateMachineEventType.received_data));
+		notifyObserversOfEvent(new TlsStateMachineEvent(TlsStateMachineEventType.received_data));
 	}
 	
 	private String getEntityName() {
@@ -443,28 +443,39 @@ public class TlsStateMachine extends StateMachine<TlsCiphertext> {
 	public List<KeyValueObject> getViewData() {
 		ArrayList<KeyValueObject> result = new ArrayList<>();
 		
-		String sessionId = "0x" + ByteHelper.bytesToHexString(getPendingSessionId().getSessionId());
+		String sessionId = _securityParameters.hasSessionId() ? "0x" + ByteHelper.bytesToHexString(_securityParameters.getSessionId().getSessionId()) : "";
 		result.add(new KeyValueObject("Session ID", sessionId));
 		
-//		String sequenceNumberServer = Long.toHexString(_securityParameters.getServerSequenceNumber());
-//		result.add(new KeyValueObject("Sequence number server", sequenceNumberServer));
-//		
-//		String sequenceNumberClient = Long.toHexString(_securityParameters.getClientSequenceNumber());
-//		result.add(new KeyValueObject("Sequence number client", sequenceNumberClient));
+		String clientRandom = _securityParameters.hasClientRandom() ? "0x" + ByteHelper.bytesToHexString(_securityParameters.getClientRandom().getBytes()) : "";
+		result.add(new KeyValueObject("Client random", clientRandom));
 		
-		String cipherSuite = getPendingCipherSuite().toString();
-		result.add(new KeyValueObject("CipherSuite", cipherSuite));
+		String serverRandom = _securityParameters.hasServerRandom() ? "0x" + ByteHelper.bytesToHexString(_securityParameters.getServerRandom().getBytes()) : "";
+		result.add(new KeyValueObject("Server random", serverRandom));
 		
-		ArrayList<KeyValueObject> keyObjects = new ArrayList<>();
-		keyObjects.add(new KeyValueObject("Client write encryption key", 	ByteHelper.bytesToHexString(_pendingConnectionState.getClientWriteEncryptionKey())));
-		keyObjects.add(new KeyValueObject("Client write IV", 				ByteHelper.bytesToHexString(_pendingConnectionState.getClientWriteIv())));
-		keyObjects.add(new KeyValueObject("Client write MAC key", 			ByteHelper.bytesToHexString(_pendingConnectionState.getClientWriteMacKey())));
-		keyObjects.add(new KeyValueObject("Server write encryption key", 	ByteHelper.bytesToHexString(_pendingConnectionState.getServerWriteEncryptionKey())));
-		keyObjects.add(new KeyValueObject("Server write IV", 				ByteHelper.bytesToHexString(_pendingConnectionState.getServerWriteIv())));
-		keyObjects.add(new KeyValueObject("Server write MAC key", 			ByteHelper.bytesToHexString(_pendingConnectionState.getServerWriteMacKey())));
+		String masterSecret = _securityParameters.hasComputedMasterSecret() ? "0x" + ByteHelper.bytesToHexString(_securityParameters.getMasterSecret()) : "";
+		result.add(new KeyValueObject("Master secret", masterSecret));
 		
-		KeyValueObject keys = new KeyValueObject("Keys", keyObjects);
-		result.add(keys);
+		result.add(objectForConnectionState(_currentReadConnectionState, "Current read state"));
+		result.add(objectForConnectionState(_currentWriteConnectionState, "Current write state"));
+		result.add(objectForConnectionState(_pendingConnectionState, "Pending state"));
+		
+		return result;
+	}
+	
+	private KeyValueObject objectForConnectionState(TlsConnectionState state, String title) {
+		ArrayList<KeyValueObject> listObjects = new ArrayList<>();
+		listObjects.add(new KeyValueObject("Cipher suite", state.getCipherSuite().toString()));
+		listObjects.add(new KeyValueObject("Sequence number", Long.toHexString(state.getSequenceNumber())));
+		
+		boolean hasKeys = state.hasComputedKeys();
+		listObjects.add(new KeyValueObject("Client write encryption key", 	hasKeys ? ByteHelper.bytesToHexString(state.getClientWriteEncryptionKey()) : ""));
+		listObjects.add(new KeyValueObject("Client write IV", 				hasKeys ? ByteHelper.bytesToHexString(state.getClientWriteIv()) : ""));
+		listObjects.add(new KeyValueObject("Client write MAC key", 			hasKeys ? ByteHelper.bytesToHexString(state.getClientWriteMacKey()) : ""));
+		listObjects.add(new KeyValueObject("Server write encryption key", 	hasKeys ? ByteHelper.bytesToHexString(state.getServerWriteEncryptionKey()) : ""));
+		listObjects.add(new KeyValueObject("Server write IV", 				hasKeys ? ByteHelper.bytesToHexString(state.getServerWriteIv()) : ""));
+		listObjects.add(new KeyValueObject("Server write MAC key", 			hasKeys ? ByteHelper.bytesToHexString(state.getServerWriteMacKey()) : ""));
+		
+		KeyValueObject result = new KeyValueObject(title, listObjects);
 		
 		return result;
 	}

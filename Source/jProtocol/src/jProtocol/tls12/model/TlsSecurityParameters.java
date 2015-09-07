@@ -59,6 +59,10 @@ public class TlsSecurityParameters {
 		_sessionId = sessionId;
 	}
 	
+	public boolean hasSessionId() {
+		return (_sessionId != null);
+	}
+	
 	public TlsVersion getVersion() {
 		if (_version == null) {
 			//TODO: tls version
@@ -69,7 +73,7 @@ public class TlsSecurityParameters {
 	}
 	
 	public boolean hasVersion() {
-		return (_version == null);
+		return (_version != null);
 	}
 
 	public void setVersion(TlsVersion version) {
@@ -98,6 +102,14 @@ public class TlsSecurityParameters {
 			throw new IllegalArgumentException("Invalid server random value! Must not be null!");
 		}
 		this._serverRandom = serverRandom;
+	}
+	
+	public boolean hasClientRandom() {
+		return (_clientRandom != null);
+	}
+	
+	public boolean hasServerRandom() {
+		return (_serverRandom != null);
 	}
 	
 	public TlsRandom getClientRandom() {
@@ -136,6 +148,10 @@ public class TlsSecurityParameters {
 			throw new RuntimeException("Master secret must be computed first!");
 		}
 		return _masterSecret;
+	}
+	
+	public boolean hasComputedMasterSecret() {
+		return (_masterSecret != null);
 	}
 	
 /*

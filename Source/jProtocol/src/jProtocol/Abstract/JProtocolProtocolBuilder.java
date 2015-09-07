@@ -1,9 +1,9 @@
 package jProtocol.Abstract;
 
 import jProtocol.Abstract.Model.CommunicationChannel;
-import jProtocol.Abstract.Model.Event;
 import jProtocol.Abstract.Model.ProtocolDataUnit;
 import jProtocol.Abstract.Model.StateMachine;
+import jProtocol.Abstract.Model.events.StateMachineStateChangedEvent;
 import jProtocol.Abstract.View.JProtocolPresenter;
 import java.util.Observable;
 import java.util.Observer;
@@ -32,7 +32,7 @@ public class JProtocolProtocolBuilder<T extends ProtocolDataUnit> implements Obs
 
 	@Override
 	public void update(Observable o, Object arg) {
-		if (arg instanceof Event) {
+		if (arg instanceof StateMachineStateChangedEvent) {
 			if (o == _client) {
 				_provider.updateClientView();
 			}

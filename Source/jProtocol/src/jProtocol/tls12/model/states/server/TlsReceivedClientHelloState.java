@@ -37,12 +37,12 @@ public class TlsReceivedClientHelloState extends TlsState {
 	private void sendServerHello() {
 		byte[] randomBytes = TlsPseudoRandomNumberGenerator.nextBytes(28);
 		TlsRandom random = new TlsRandom(randomBytes);
-		_stateMachine.setPendingServerRandom(random);
+		_stateMachine.setServerRandom(random);
 		
 		TlsHandshakeMessage serverHelloMessage = new TlsServerHelloMessage(
 				_stateMachine.getVersion(), 
 				random, 
-				_stateMachine.getPendingSessionId(), 
+				_stateMachine.getSessionId(), 
 				_stateMachine.getPendingCipherSuite());
 		
 		_stateMachine.addHandshakeMessageForVerifyData(serverHelloMessage);
