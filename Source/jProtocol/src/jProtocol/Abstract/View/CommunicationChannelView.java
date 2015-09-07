@@ -25,8 +25,8 @@ public class CommunicationChannelView {
 		_nextStepButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				_nextStepButton.setEnabled(false);
-				_nextStepsButton.setEnabled(false);
+//				_nextStepButton.setEnabled(false);
+//				_nextStepsButton.setEnabled(false);
 				listener.nextStepClicked();
 			}
 		});
@@ -35,8 +35,8 @@ public class CommunicationChannelView {
 		_nextStepsButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				_nextStepButton.setEnabled(false);
-				_nextStepsButton.setEnabled(false);
+//				_nextStepButton.setEnabled(false);
+//				_nextStepsButton.setEnabled(false);
 				listener.nextStepsClicked();
 			}
 		});

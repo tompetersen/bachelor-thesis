@@ -1,5 +1,6 @@
 package jProtocol.tls12.model.states.server;
 
+import jProtocol.helper.MyLogger;
 import jProtocol.tls12.model.crypto.TlsPseudoRandomNumberGenerator;
 import jProtocol.tls12.model.crypto.TlsRsaCipher;
 import jProtocol.tls12.model.messages.TlsMessage;

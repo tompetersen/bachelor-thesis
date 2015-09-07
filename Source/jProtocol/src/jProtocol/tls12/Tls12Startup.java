@@ -34,8 +34,6 @@ public class Tls12Startup implements Observer, JProtocolViewProvider<TlsCipherte
 		_serverView = new TlsServerView(_server);
 		
 		JProtocolProtocolBuilder<TlsCiphertext> builder = new JProtocolProtocolBuilder<>(_client, _server, this);
-		
-		_client.openConnection();
 	}
 
 	public static void main(String[] args) {

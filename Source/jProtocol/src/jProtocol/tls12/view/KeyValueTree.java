@@ -37,7 +37,7 @@ public class KeyValueTree {
 			valueLabel.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
 			
 			renderer.setLayout(new BoxLayout(renderer, BoxLayout.X_AXIS));
-			renderer.setBorder(BorderFactory.createLineBorder(Color.RED));
+//			renderer.setBorder(BorderFactory.createLineBorder(Color.RED));
 
 			backgroundSelectionColor = defaultRenderer.getBackgroundSelectionColor();
 			backgroundNonSelectionColor = defaultRenderer.getBackgroundNonSelectionColor();
@@ -131,8 +131,8 @@ public class KeyValueTree {
 		DefaultTreeModel model = (DefaultTreeModel) _tree.getModel();
 		model.reload();
 		
-		for (int i = 0; i < _tree.getRowCount(); i++) {
-			_tree.expandRow(i);
-		}
+//		for (int i = 0; i < _tree.getRowCount(); i++) {
+//			_tree.expandRow(i);
+//		}
 	}
 }

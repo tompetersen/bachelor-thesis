@@ -47,11 +47,13 @@ public class TlsStateMachineTreeView {
 		if (newObj.hasChildren()) {
 			List<KeyValueObject> newChildren = newObj.getChildList();
 			List<KeyValueObject> oldChildren = oldObj.getChildList();
-			for (int i = 0; i < Math.min(newChildren.size(), oldChildren.size()); i++) {
-				KeyValueObject newChildObj = newChildren.get(i);
-				KeyValueObject oldChildObj = oldChildren.get(i);
-				
-				setCorrectComparisonDependentColor(newChildObj, oldChildObj);
+			if (newChildren != null && oldChildren != null) {
+				for (int i = 0; i < Math.min(newChildren.size(), oldChildren.size()); i++) {
+					KeyValueObject newChildObj = newChildren.get(i);
+					KeyValueObject oldChildObj = oldChildren.get(i);
+					
+					setCorrectComparisonDependentColor(newChildObj, oldChildObj);
+				}
 			}
 		}
 	}

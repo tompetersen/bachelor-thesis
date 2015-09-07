@@ -39,6 +39,7 @@ import jProtocol.tls12.model.states.server.TlsWaitingForChangeCipherSpecState_Se
 import jProtocol.tls12.model.states.server.TlsWaitingForClientKeyExchangeState;
 import jProtocol.tls12.model.states.server.TlsWaitingForFinishedState_Server;
 import jProtocol.tls12.model.values.TlsApplicationData;
+import jProtocol.tls12.model.values.TlsCertificate;
 import jProtocol.tls12.model.values.TlsConnectionEnd;
 import jProtocol.tls12.model.values.TlsHandshakeType;
 import jProtocol.tls12.model.values.TlsKeyExchangeAlgorithm;
@@ -124,6 +125,8 @@ public class TlsStateMachine extends StateMachine<TlsCiphertext> {
 	private TlsConnectionState _pendingConnectionState;
 	
 	private TlsCipherSuiteRegistry _cipherSuiteRegistry;
+	
+	private List<TlsCertificate> _certificateList; 
 	private TlsRsaCipher _rsaCipher;
 	
 	private List<TlsApplicationDataMessage> _cachedApplicationDataMessages;
@@ -370,10 +373,6 @@ public class TlsStateMachine extends StateMachine<TlsCiphertext> {
 		setState(stateType.getType());
 	}
 	
-	public void resetConnection() {
-		//TODO: reset connection
-	}
-	
 	public TlsRsaCipher getRsaCipher() {
 		if (_rsaCipher == null) {
 			throw new RuntimeException("RSA Cipher must be set first!");
@@ -385,6 +384,22 @@ public class TlsStateMachine extends StateMachine<TlsCiphertext> {
 		_rsaCipher = rsaCipher;
 	}
 
+	public List<TlsCertificate> getCertificateList() {
+		return _certificateList;
+	}
+
+	public void setCertificateList(List<TlsCertificate> certificateList) {
+		_certificateList = certificateList;
+		
+		TlsCertificate serverCert = certificateList.get(0);
+		byte[] rsaPublicKey = serverCert.getRsaPublicKey();
+		TlsRsaCipher rsaCipher = new TlsRsaCipher(rsaPublicKey);
+		setRsaCipher(rsaCipher);
+	}
+
+/*
+ * Cached application data
+ */
 	public List<TlsApplicationDataMessage> getCachedApplicationDataMessages() {
 		return _cachedApplicationDataMessages;
 	}
@@ -418,6 +433,10 @@ public class TlsStateMachine extends StateMachine<TlsCiphertext> {
 		else {
 			throw new RuntimeException(getEntityName() + ": Close connection can only be called on an established connection!");
 		}
+	}
+	
+	public void resetConnection() {
+		//TODO: reset connection
 	}
 	
 	public void sendData(TlsApplicationData data) {
@@ -455,11 +474,27 @@ public class TlsStateMachine extends StateMachine<TlsCiphertext> {
 		String masterSecret = _securityParameters.hasComputedMasterSecret() ? "0x" + ByteHelper.bytesToHexString(_securityParameters.getMasterSecret()) : "";
 		result.add(new KeyValueObject("Master secret", masterSecret));
 		
+		result.add(objectForCertificateList(getCertificateList()));
+		
 		result.add(objectForConnectionState(_currentReadConnectionState, "Current read state"));
 		result.add(objectForConnectionState(_currentWriteConnectionState, "Current write state"));
 		result.add(objectForConnectionState(_pendingConnectionState, "Pending state"));
 		
 		return result;
+	}
+	
+	private KeyValueObject objectForCertificateList(List<TlsCertificate> certList) {
+		if (getCertificateList() != null) {
+			ArrayList<KeyValueObject> listObjects = new ArrayList<>();
+			for (TlsCertificate certificate : getCertificateList()) {
+				listObjects.add(new KeyValueObject("", certificate.getReadableCertificate()));
+			}
+			
+			return new KeyValueObject("Certificate", listObjects);
+		}
+		else {
+			return new KeyValueObject("Certificate", "");
+		}
 	}
 	
 	private KeyValueObject objectForConnectionState(TlsConnectionState state, String title) {
