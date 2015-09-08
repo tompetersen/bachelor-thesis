@@ -43,13 +43,30 @@ Als Empfehlung für die Hochschuldidaktik fassen die Autoren dieses Prinzip folg
 behandelten Sachgebieten verbergen, herauszuarbeiten, zu betonen, zu anderen Teilgebieten in Beziehung zu setzen und so in einen übergeordneten Zusammenhang  einzuordnen.} \cite{schubert11}
 \end{quote}
 
-Auch wenn das Prinzip Fundamentaler Ideen umfassender ist als das eingeschränkte Thema dieser Arbeit, so lässt sich doch eine klare Empfehlung für die Nutzung von TLS (oder anderer konkreter Protokolle oder Verfahren) in der Hochschullehre ableiten. Es sollten  insbesondere Prinzipien betrachtet werden, die als allgemeingültig für den Bereich der IT-Sicherheit, der Kryptographie oder der Sicherheitsprotokolle angesehen werden können.\\
-Dieses Vorgehen wird auch in \cite{kluever12} als zentrale Aufgabe der Didaktik ausgemacht und als didaktische Reduktion, also \inquotes{die Rückführung komplexer Sachverhalte auf ihre wesentlichen  Elemente,  um  sie  für  Lernende  überschaubar  und  begreiflich  zu  machen}, bezeichnet.\\
+Auch wenn das Prinzip Fundamentaler Ideen umfassender ist als das eingeschränkte Thema dieser Arbeit, so lässt sich doch eine klare Empfehlung für die Nutzung von TLS (oder anderer konkreter Protokolle oder Verfahren) in der Hochschullehre ableiten. Es sollten  insbesondere Prinzipien betrachtet werden, die als häufig verwendet und auch langfristig gültig für den Bereich der IT-Sicherheit, der Kryptographie oder der Sicherheitsprotokolle angesehen werden können.\\
+Dieses Vorgehen wird von den Autoren auch in \cite{kluever12} als zentrale Aufgabe der Didaktik ausgemacht und als didaktische Reduktion, also \inquotes{die Rückführung komplexer Sachverhalte auf ihre wesentlichen  Elemente,  um  sie  für  Lernende  überschaubar  und  begreiflich  zu  machen}, bezeichnet.\\
 Im Folgenden sollen einige Vorschläge für solche Prinzipien aufgeführt werden.
 
-\subsection{Hybride Kryptosysteme (Symmetrisch und asymmetrisch)}
+\subsection{Hybride Kryptosysteme}
+
+In Kapitel \ref{cha_cryptographic_techniques} wurde bereits auf das Problem des Schlüsselaustausches bei symmetrischen Algorithmen zur Ver- und Entschlüsselung eingegangen. Durch asymmetrische Verfahren lässt sich dieses Problem leicht lösen. Diese Verfahren benötigen jedoch deutlich mehr Zeit als symmetrische für die Verarbeitung von Daten (je nach betrachteten Verfahren mindestens Faktor 1000). \\
+Um die Vorteile beider Lösungen zu kombinieren, werden häufig hybride Kryptosysteme eingesetzt: Es wird für jede neue Kommunikation ein symmetrischer Schlüssel zufällig generiert (daher Sitzungsschlüssel genannt) und dem Kommunikationspartner mit dessen öffentlichen Schlüssel verschlüsselt zugesendet oder per Diffie-Hellman-Verfahren vereinbart (vgl. Abschnitt \ref{sec_diffie_hellman}). Nach der Entschlüsselung sind beide Partner im Besitz des gleichen Sitzungsschlüssels und können ihre Kommunikation symmetrisch verschlüsseln \cite{Schneier2006}.
+
+Dieses Prinzip kommt neben seiner Anwendung in TLS unter anderem auch in IPSec und PGP zum Einsatz.
 
 \subsection{Problem des Schlüsselaustausches und Authentifizierung}
+
+Wie ebenfalls bereits in Kapitel \ref{cha_cryptographic_techniques} erwähnt, besteht bei der Nutzung von asymmetrischen Verfahren jedoch das Problem, die Identität des Besitzers des öffentlichen Schlüssels sicherzustellen.
+
+Dieses Problem soll kurz erläutert werden. Möchte eine Person A eine Nachricht asymmetrisch verschlüsselt mit B austauschen, so benötigt sie den öffentlichen Schlüssel \(K^B_\text{public}\) von B. Ein Angreifer M, der die Kommunikation zwischen A und B lesen und verändern kann (ein sogenannter Man-in-the-Middle), kann diesen öffentlichen Schlüssel bei der Übermittlung durch seinen eigenen \(K^M_\text{public}\) austauschen. Die Nachricht von A kann er nun mit seinem geheimen Schlüssel entschlüsseln. Damit sein Angriff unbemerkt bleibt, kann er die Nachricht nun mit \(K^B_\text{public}\) verschlüsseln und an B senden.\todo{Bild}
+
+Damit dieser Angriff erfolglos bleibt, muss es eine Möglichkeit geben, den Besitzer des Schlüssels zu verifizieren. Für diese Aufgabe wird in SSL/TLS auf Zertifikate und eine Public-Key-Infrastruktur (PKI) gesetzt. Ein Zertifikat enthält den öffentlichen Schlüssel und die Informationen des Besitzers bestehend aus dem Namen oder der URL des Servers und weiteren Angaben. Dieses Zertifikat wird von einer vertrauenswürdigen Instanz, der Certificate Authority (CA), nach der Überprüfung der Besitzeridentität mit ihrem geheimen Schlüssel signiert. Ein Empfänger des Zertifikats kann nun das Zertifikat mit dem öffentlichen Schlüssel der CA überprüfen, in dessen Besitz er im Vorwege sein muss\footnote{
+	Heutige Browser und Betriebssysteme werden bereits mit Listen solcher CAs ausgeliefert.
+}. Danach ist der Besitzer und der zugehörige öffentliche Schlüssel verifiziert und kann zum Verschlüsseln von Nachrichten genutzt werden\footnote{
+	Die Schwächen, die in diesem System bestehen können, sind vielfältig, liegen jedoch nicht im Fokus dieser Arbeit. Erste Hinweise sind in Abschnitt \ref{sec_certificates} und in \cite{ferguson10} zu finden.
+}. 
+
+Die Nutzung von Zertifikaten und einer PKI findet unter anderem auch in IPSec oder S/MIME Verwendung. 
 
 \subsection{Timing/Seitenkanal-Angriffe}
 Bleichenbacher und weitere

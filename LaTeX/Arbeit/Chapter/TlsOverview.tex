@@ -31,6 +31,8 @@ Eine gelungene Übersicht über bestehende Implementierungen, die tiefer ins Det
 
 \chapter{Nach Besprechung mit Ephraim: Einführung}
 
+\label{cha_cryptographic_techniques}
+
 In diesem Kapitel soll ein kurzer Überblick über die im Laufe der Arbeit relevanten kryptographischen Verfahren gegeben werden, sowie die verwendete Notation vorgestellt werden.
 
 \section{Genutzte Verfahren(?)}
@@ -44,6 +46,10 @@ Automat
 \section{Kryptographische Verfahren}
 
 \todo{Nette Bildchen}
+
+\subsection{Protokoll (?)}
+
+Zwar nicht nur kryptographisch, aber ...
 
 \subsection{Symmetrische Kryptographie}
 
@@ -78,11 +84,15 @@ Asymmetrische Kryptographie (oftmals auch Public-Key-Kryptographie) beschreibt V
 \[D_{K_{\text{private}}}(C)=M\] 
 Hierbei steht \(K_{\text{public}}\) für den öffentlichen und \(K_{\text{private}}\) für den geheimen Schlüssel des Empfängers.
 
-Durch asymmetrische Kryptographie lässt sich das bei symmetrischen Algorithmen bestehende Problem des Schlüsselaustauschs durch Veröffentlichung des öffentlichen Schlüssels leicht lösen. Das Problem, das hierbei entsteht, ist jedoch die Identität des Besitzers eines öffentlichen Schlüssels sicherzustellen. 
+Weiterhin können asymmetrische Verfahren auch zur Signierung von Nachrichten genutzt werden, indem der Verfasser die Nachricht (bzw. aus Effizienzgründen in der Praxis einen Hashwert der Nachricht) mit seinem geheimen Schlüssel verschlüsselt und an die Nachricht anhängt. Empfänger können nun durch Entschlüsselung mit dem öffentlichen Schlüssel und Vergleich mit der empfangenen Nachricht (bzw. ihrem Hashwert) die Signatur überprüfen.
+
+Durch asymmetrische Kryptographie lässt sich das bei symmetrischen Algorithmen bestehende Problem des Schlüsselaustauschs durch Veröffentlichung des öffentlichen Schlüssels leicht lösen. Das Problem, das hierbei entsteht, ist jedoch die Identität des Besitzers eines öffentlichen Schlüssels sicherzustellen.
 
 Ein Beispiel für einen asymmetrischen Algorithmus ist das RSA-Verfahren \cite{Schneier2006}.
 
 \subsection{Diffie-Hellmann-Verfahren}
+
+\label{sec_diffie_hellman}
 
 Das Diffie-Hellmann-Verfahren (DH-Verfahren) ist ein ebenfalls auf geheimen und öffentlichen Schlüssel basierendes Verfahren, das jedoch nicht der Ver- bzw. Entschlüsselung, sondern lediglich der Schlüsselvereinbarung dient. Es ermöglicht zwei Kommunikationspartnern einen Schlüssel zu erzeugen, ohne dass dieser direkt gesendet werden muss \cite{Schneier2006}. 
 
