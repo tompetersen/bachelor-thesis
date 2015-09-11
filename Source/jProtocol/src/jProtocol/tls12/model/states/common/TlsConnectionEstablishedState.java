@@ -46,7 +46,6 @@ public class TlsConnectionEstablishedState extends TlsState{
 	}
 
 	private void processApplicationData(TlsApplicationDataMessage m) {
-		//TODO: increase sequence number
 		_stateMachine.receivedData(m.getApplicationData());
 	}
 	

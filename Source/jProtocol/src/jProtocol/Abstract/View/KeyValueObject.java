@@ -1,4 +1,4 @@
-package jProtocol.tls12.view;
+package jProtocol.Abstract.View;
 
 import java.awt.Color;
 import java.util.List;

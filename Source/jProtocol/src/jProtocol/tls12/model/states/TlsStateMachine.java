@@ -2,6 +2,7 @@ package jProtocol.tls12.model.states;
 
 import jProtocol.Abstract.Model.StateMachine;
 import jProtocol.Abstract.Model.events.Event;
+import jProtocol.Abstract.View.KeyValueObject;
 import jProtocol.helper.ByteHelper;
 import jProtocol.helper.MyLogger;
 import jProtocol.tls12.model.TlsCiphertext;
@@ -47,7 +48,6 @@ import jProtocol.tls12.model.values.TlsRandom;
 import jProtocol.tls12.model.values.TlsSessionId;
 import jProtocol.tls12.model.values.TlsVerifyData;
 import jProtocol.tls12.model.values.TlsVersion;
-import jProtocol.tls12.view.KeyValueObject;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;

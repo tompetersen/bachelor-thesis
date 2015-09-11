@@ -1,5 +1,7 @@
 package jProtocol.tls12.view;
 
+import jProtocol.Abstract.View.KeyValueObject;
+import jProtocol.Abstract.View.KeyValueTree;
 import jProtocol.tls12.model.states.TlsStateMachine;
 import java.awt.Color;
 import java.util.List;

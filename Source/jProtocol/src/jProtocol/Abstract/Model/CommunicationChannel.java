@@ -63,8 +63,6 @@ public class CommunicationChannel<T extends ProtocolDataUnit> extends Observable
 			}
 		}
 		catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 			throw new RuntimeException("CountdownLatch interrupted unexpectedly!");
 		}
 	}
