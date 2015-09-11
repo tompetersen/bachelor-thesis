@@ -68,11 +68,18 @@ Damit dieser Angriff erfolglos bleibt, muss es eine Möglichkeit geben, den Besi
 
 Die Nutzung von Zertifikaten und einer PKI findet unter anderem auch in IPSec oder S/MIME Verwendung. 
 
-\subsection{Timing/Seitenkanal-Angriffe}
-Bleichenbacher und weitere
+\subsection{Seitenkanalangriffe}
+Seitenkanalangriffe sind Angriffe, die nicht das kryptographische Verfahren direkt angreifen, sondern versuchen Informationen über die Nachricht oder verwendete Schlüssel aus anderen Kanälen zu erhalten. Hierbei kann es sich beispielsweise um Zeit- oder Stromverbrauchsmessung handeln, aber auch um Messung von elektromagnetischer Abstrahlung, Schall oder sogar des Erdungspotentials eines Rechners. 
+
+Wenn sich unterschiedliche Schlüssel- oder Nachrichtenbits verschieden auf die Werte des Seitenkanals auswirken, so lassen sich Schlüssel bzw. Nachricht oftmals aus den gemessenen Informationen ableiten. Gerade bei einfachen Geräten wie Smartcards können schon einfache Angriffe erfolgreich sein.
+
+Um vor Seitenkanalangriffen geschützt zu sein, muss eine Implementierung sich für unterschiedliche Eingaben möglichst gleich verhalten. Ein Beispiel als Maßnahme gegen Timing-Angriffe (also die Messung der benötigten Zeit einer Operation) ist die Einführung einer konstanten Zeit für die Ausführungsdauer. Dazu wird eine Zeit \(d\) gewählt, die länger ist als jede mögliche benötigte Ausführungsdauer \(t\) der Operation. Nach der Ausführung wird immer die Zeit \(d-t\) gewartet, sodass die Operation insgesamt die konstante Zeit \(d\) benötigt. Diese Möglichkeit schützt natürlich nicht vor anderen Seitenkanalangriffen, für deren Abwehr andere Schutzmaßnahmen getroffen werden müssen \cite{ferguson10}.
+
+Seitenkanalangriffe in Form von Timing-Angriffen werden auch bei einigen Angriffen gegen SSL/TLS eingesetzt, wie beispielsweise bei dem Bleichenbacher- (Abschnitt \ref{sec_attack_bleichenbacher}) oder dem Padding-Orakel-Angriff (Abschnitt \ref{sec_attack_padding_oracle}).
 
 \subsection{Replay-Angriffe}
-Sequenznummer
+
+Bei einem Replay-Angriff sendet ein Angreifer zuvor aufgenommene Nachrichten erneut an den Empfänger. Da es sich um eine echte Nachricht handelt, müssen Gegenmaßnahmen getroffen werden, um dieses erneute Senden zu erkennen. Möglichkeiten hierfür sind beispielsweise die Einführung von Sequenznummern wie bei TLS, die Nutzung von Zeitstempeln oder ein Challenge-Response-Verfahren, dass einem Sender eine zufällige Aufgabe stellt, deren Lösung er in der Nachricht mitsenden muss \cite{ferguson10}.
 
 \subsection{Krypto-Standardvorgehen und Probleme, wenn man dagegen verstößt}
 Zufällige IVs in CBC, MAC-then-encrypt, ...
