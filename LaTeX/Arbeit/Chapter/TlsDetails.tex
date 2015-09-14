@@ -185,7 +185,7 @@ Für Blockchiffren im CBC-Modus wird ein IV benötigt (siehe Abschnitt \ref{sec_
 \end{figure}
 
 % For AEAD [AEAD] ciphers (such as [CCM] or [GCM]), p. 24  
-Bei der Nutzung von AEAD-Chiffren werden bei der Verschlüsselung zusätzlich zum Klartext und Schlüssel zwei zusätzliche Parameter verwendet: eine sogenannte Nonce (eine einmalig verwendete, zufällige Eingabe) und zusätzliche Daten, in die die Sequenznummer der Nachricht, ihr Typ, ihre Version und ihre Länge einfließen (ähnlich zur Berechnung des MACs). Der explizite Teil der Nonce wird neben den verschlüsselten Daten übertragen. Der implizite Teil wird durch \datafield{server write IV} bzw. \datafield{client write IV} gebildet (vgl. Abschnitt \ref{sec_key_material}). Die Notwendigkeit einer MAC-Berechnung entfällt bei diesem Verfahren.
+Bei der Nutzung von AEAD-Chiffren werden bei der Verschlüsselung zusätzlich zum Klartext und Schlüssel zwei zusätzliche Parameter verwendet: ein sogenanntes Nonce (eine einmalig verwendete, zufällige Eingabe) und zusätzliche Daten, in die die Sequenznummer der Nachricht, ihr Typ, ihre Version und ihre Länge einfließen (ähnlich zur Berechnung des MACs). Der explizite Teil des Nonce wird neben den verschlüsselten Daten übertragen. Der implizite Teil wird durch \datafield{server write IV} bzw. \datafield{client write IV} gebildet (vgl. Abschnitt \ref{sec_key_material}). Die Notwendigkeit einer MAC-Berechnung entfällt bei diesem Verfahren.
 
 \section{Berechnung des Schlüsselmaterials}
 \label{sec_key_material}
@@ -204,7 +204,7 @@ P_hash(secret, seed) = HMAC_hash(secret, A(1) + seed) +
 
 Aus \datafield{secret}, \datafield{label} und \datafield{seed} können so beliebige Mengen von pseudozufälligen Bits generiert werden (sieht man einmal von der Periode der Funktion ab).
 
-Nach der \clientkeyexchange{}-Nachricht sind Client und Server im Besitz des \premastersecret{}. Aus diesem und den in den Hello-Nachrichten übertragenen Zufallswerten wird nun auf beiden Seiten das \mastersecret{} folgendermaßen generiert:
+Nach der \clientkeyexchange{}-Nachricht sind Client und Server im Besitz des \premastersecret{}. Aus diesem und den in den Hello-Nachrichten übertragenen Zufallswerten (vgl. Abschnitte \ref{sec_handshake_client_hello} und \ref{sec_handshake_server_hello}) wird nun auf beiden Seiten das \mastersecret{} folgendermaßen generiert:
 
 \begin{lstlisting}
 master_secret = PRF(pre_master_secret, 
@@ -212,7 +212,7 @@ master_secret = PRF(pre_master_secret,
 					ClientHello.random + ServerHello.random)[0..47];
 \end{lstlisting}
 
-Aus diesem \mastersecret{} werden je nach verwendeten kryptographischen Verfahren Schlüssel für die Erstellung des MACs, für die Verschlüsselung zwischen Client und Server und für eine zusätzliche Eingabe bei AEAD-Chiffren berechnet:
+Aus diesem \mastersecret{} werden je nach verwendeten kryptographischen Verfahren Schlüssel für die Erstellung des MACs, für die Verschlüsselung zwischen Client und Server und für den impliziten Teil des Nonce bei AEAD-Chiffren berechnet:
 \begin{lstlisting}
 client write MAC key
 server write MAC key
@@ -222,7 +222,7 @@ client write IV
 server write IV
 \end{lstlisting}
 
-Dazu werden solange Schlüsselblöcke nach dem folgenden Verfahren erstellt, bis genug Daten vorhanden sind um alle benötigten Schlüssel konstruieren zu können: 
+Dazu werden solange Schlüsselblöcke nach dem folgenden Verfahren erstellt, bis genug Daten vorhanden sind, um alle benötigten Schlüssel konstruieren zu können: 
 
 \begin{lstlisting}
 key_block = PRF(SecurityParameters.master_secret,
@@ -237,8 +237,6 @@ key_block = PRF(SecurityParameters.master_secret,
 \label{sec_tls_handshake}
 
 Das \handshakeprotocol{} dient zur Herstellung einer gesicherten Verbindung. Hierbei werden verwendete TLS-Version und kryptographische Verfahren zwischen den Kommunikationspartnern vereinbart, optional ihre Identitäten authentifiziert und ein gemeinsames Geheimnis (das sogenannte \premastersecret{}) für die bereits beschriebene Generierung der während der eigentlichen Kommunikation verwendeten Schlüssel übertragen oder berechnet. 
-
-Eine Übersicht über die während eines vollständigen Handshakes ausgetauschten Nachrichten bietet Abbildung \ref{fig_complete_handshake}. Nachrichten, die - je nach gewünschten Eigenschaften der Verbindung - optional gesendet werden können, sind mit einem Stern (*) gekennzeichnet. Im Folgenden werden diese Nachrichten und ihr Aufbau im Detail betrachtet.
 
 %TODO:
 % - Übersicht über den Handshake (auf Grafik eingehen)
@@ -256,23 +254,25 @@ Eine Übersicht über die während eines vollständigen Handshakes ausgetauschte
                              <--------        HelloRequest*
 ClientHello                  -------->
                                                 ServerHello
-                                               Certificate*
+                                         ClientCertificate*
                                          ServerKeyExchange*
                                         CertificateRequest*
                              <--------      ServerHelloDone
-Certificate*
+ServerCertificate*
 ClientKeyExchange
 CertificateVerify*
 [ChangeCipherSpec]
 Finished                     -------->
                                          [ChangeCipherSpec]
                              <--------             Finished
-Application Data             <------->     Application Data
+[Application Data]           <------->   [Application Data]
 	\end{lstlisting}
-	\caption{Nachrichtenverlauf beim vollständigen TLS-Handshake. Entnommen aus \cite{tls12}.}
+	\caption{Nachrichtenverlauf beim vollständigen TLS-Handshake. Entnommen aus \cite{tls12} und angepasst.}
 	\label{fig_complete_handshake}
 \end{figure}
 \lstset{style=tls}
+
+Eine Übersicht über die während eines vollständigen Handshakes ausgetauschten Nachrichten bietet Abbildung \ref{fig_complete_handshake}. Nachrichten, die - je nach gewünschten Eigenschaften der Verbindung - optional gesendet werden können, sind mit einem Stern (*) gekennzeichnet. Da die \changecipherspec{}- und \applicationdata{}-Nachrichten einem eigenen Teilprotokoll entstammen, sind sie mit eckigen Klammern gekennzeichnet. Im Folgenden werden die Handshake-Nachrichten und ihr Aufbau nun im Detail betrachtet.
 
 \subsection{HelloRequest*}
 
@@ -280,9 +280,10 @@ Application Data             <------->     Application Data
 struct { } HelloRequest;
 \end{lstlisting}
 
-Diese Nachricht kann vom Server gesendet werden, wenn ein neuer Handshake gewünscht wird (beispielsweise um Schlüssel und kryptographische Algorithmen während einer Verbindung neu auszuhandeln).
+Diese Nachricht kann vom Server gesendet werden, wenn während einer bestehenden Verbindung ein neuer Handshake gewünscht wird. Dies kann beispielsweise dazu dienen Schlüssel für eine länger bestehende TLS-Verbindung nach einer gewissen Zeit neu auszuhandeln.
 
 \subsection{ClientHello}
+\label{sec_handshake_client_hello}
 
 \begin{lstlisting}
 struct {
@@ -310,6 +311,7 @@ Ebenso wird eine Liste von unterstützten Kompressionsalgorithmen übertragen.
 Optional kann auch eine Liste von gewünschten TLS-Extensions angegeben werden (vgl. Abschnitt \ref{sec_tls_extensions}).
 
 \subsection{ServerHello}
+\label{sec_handshake_server_hello}
 
 \begin{lstlisting}
 struct {
@@ -339,7 +341,7 @@ struct {
 } Certificate;
 \end{lstlisting}
 
-In dieser Nachricht sendet der Server seine Zertifikatskette zur Überprüfung seiner Identität. Das erste Zertifikat in der Liste bildet das Serverzertifikat, folgende Zertifikate müssen das jeweils vorhergehende zertifizieren. Der im Zertifikat enthaltene öffentliche Schlüssel muss zum ausgehandelten Schlüsselaustausch-Algorithmus passen. Wenn nicht anders vereinbart wird für die Zertifikate das X.509v3-Format\footnote{Ein Standard für Public-Key-Infrastrukturen, spezifiziert in RFC 5280.} verwendet.
+In dieser Nachricht sendet der Server seine Zertifikatskette zur Überprüfung seiner Identität. Das erste Zertifikat in der Liste bildet das Serverzertifikat, folgende Zertifikate müssen das jeweils vorhergehende zertifizieren. Der im Zertifikat enthaltene öffentliche Schlüssel muss zum ausgehandelten Schlüsselaustausch-Algorithmus passen. Wenn nicht anders vereinbart, wird für die Zertifikate das X.509v3-Format\footnote{Ein Standard für Public-Key-Infrastrukturen, spezifiziert in RFC 5280.} verwendet.
 
 \subsection{ServerKeyExchange*}
 
@@ -366,9 +368,9 @@ struct {
 
 Diese Nachricht wird nur für bestimmte Schlüsselaustausch-Verfahren gesendet, wenn die \servercertificate{}-Nachricht nicht genügend Informationen zum Austausch des \premastersecret{} bietet (vgl. \clientkeyexchange{}-Nachricht).
 
-\datafield{ServerDHParams} enthält dabei die öffentlichen Diffie-Hellman-Parameter \(p\) (die prime Ordnung der gewählten Gruppe), \(g\) (einen Erzeuger der Gruppe) und den öffentlichen Schlüssel \(Y_s = g^{X_s} \mod{p}\), wobei für \(X_s\) den geheimen Schlüssel des Servers steht.
+\datafield{ServerDHParams} enthält dabei die öffentlichen Diffie-Hellman-Parameter \(p\) (die prime Ordnung der gewählten Gruppe), \(g\) (einen Erzeuger der Gruppe) und den öffentlichen Schlüssel \(Y_s = g^{X_s} \mod{p}\), wobei \(X_s\) für den geheimen Schlüssel des Servers steht.
 
-Im Fall von nicht anonymen Diffie-Hellman-Schlüsselaustausch werden diese Parameter mit gewähltem asymmetrischen Verfahren (DSS oder RSA) und dem (zum öffentlichen Schlüssel aus der \servercertificate{}-Nachricht gehörigen) geheimen Schlüssel signiert.
+Im Fall eines nicht anonymen Diffie-Hellman-Schlüsselaustauschs werden diese Parameter mit gewähltem asymmetrischen Verfahren (DSS oder RSA) und dem zum öffentlichen Schlüssel aus der \servercertificate{}-Nachricht gehörigen geheimen Schlüssel signiert.
 
 \subsection{CertificateRequest*}
 
@@ -380,7 +382,7 @@ struct {
 } CertificateRequest;
 \end{lstlisting}
 
-TLS unterstützt optionale Clientauthentifizierung. Mit dieser Nachricht kann der Client vom Server aufgefordert werden ebenfalls ein Zertifikat zu senden. Die \datafield{certificate\_types}-Liste enthält alle Zertifikatarten (z.B. Zertifikat mit RSA-Schlüssel, ...), die vom Server unterstützt werden, und \datafield{supported\_signature\_algorithms} die unterstützten Signaturalgorithmen. In \datafield{certificate\_authorities} kann eine Liste von erwarteten CAs übertragen werden.
+TLS unterstützt eine optionale Clientauthentifizierung. Mit dieser Nachricht kann der Client vom Server aufgefordert werden ebenfalls ein Zertifikat zu senden. Die \datafield{certificate\_types}-Liste enthält alle Zertifikatarten (z.B. Zertifikat mit RSA-Schlüssel, ...), die vom Server unterstützt werden, und \datafield{supported\_signature\_algorithms} die unterstützten Signaturalgorithmen. In \datafield{certificate\_authorities} kann eine Liste von erwarteten CAs übertragen werden.
 
 \subsection{ServerHelloDone}
 
@@ -446,7 +448,7 @@ Diese Nachricht wird gesendet, falls ein Clientzertifikat vom Server angefordert
 
 \subsection{ChangeCipherSpec}
 
-Diese Nachricht gehört zum \changecipherspecprotocol{}. Es enthält lediglich diese eine Nachricht mit dem Wert 1. Das Empfangen signalisiert dem Empfänger, dass alle nachfolgend gesendeten Nachrichten mit den ausgehandelten kryptographischen Verfahren und Schlüsseln geschützt werden. Dazu werden read pending state (bei Empfang der Nachricht) und write pending state (nach Senden der Nachricht) in die current states kopiert.\todo{Irgendwo schon erwähnt oder bei der Einführung?}
+Diese Nachricht gehört zum \changecipherspecprotocol{}. Es enthält lediglich diese eine Nachricht mit dem Wert 1. Das Empfangen signalisiert dem Empfänger, dass alle nachfolgend gesendeten Nachrichten mit den ausgehandelten kryptographischen Verfahren und Schlüsseln geschützt werden. Dazu werden read pending state (bei Empfang der Nachricht) und write pending state (nach Senden der Nachricht) in die current states kopiert.\todo{Irgendwo schon erwähnt oder bei der Einführung? EIGENE section für ChangeCipherSpec und current/pending states}
 
 \subsection{Finished}
 
@@ -570,13 +572,13 @@ Beispiele für solche Extensions sind Server Name Indication, die es einem Serve
 
 \section{Frühere SSL-/TLS-Versionen und TLS 1.3}
 
-Im Folgenden soll kurz auf frühere Versionen von TLS/SSL und die entscheidenden Unterschiede zwischen diesen Versionen eingegangen, sowie ein kurzer Blick auf das noch nicht veröffentlichte TLS 1.3 geworfen werden.
+Im Folgenden soll kurz auf frühere Versionen von TLS/SSL und die entscheidenden Unterschiede zwischen diesen Versionen eingegangen sowie ein kurzer Blick auf das noch nicht veröffentlichte TLS 1.3 geworfen werden.
 
 \textbf{SSL 1.0} wurde nie veröffentlicht.
 
 \textbf{SSL 2.0} war die erste Version, die öffentlich gemacht und auch patentiert wurde. In dieser Version bestanden einige große Schwachstellen: Der Handshake wurde noch nicht authentifiziert, so dass Angreifer beispielsweise die \ciphersuite-Liste unbemerkt verändern konnten, viele schwache kryptographische Algorithmen wurden unterstützt und für Verschlüsselung und MAC-Berechnung wurden die gleichen Schlüssel verwendet. Auf diese Schwachstellen wird teilweise genauer in Kapitel \ref{cha_attacks} eingegangen. Da die Spezifikation nicht veröffentlicht wurde, stammen diese Informationen aus \cite{meyer14}. Die Unterstützung von SSL 2.0 wird für TLS-Implementierungen durch RFC 6176 (\cite{prohibit_ssl20}) verboten.
 
-In \textbf{SSL 3.0} wurden verschiedene Schlüssel zur Verschlüsselung und MAC-Berechnung eingeführt und die während der MAC-Berechnung genutzte Hashfunktion konfigurierbar gemacht (aber noch kein HMAC verwendet). Der Handshake wurde jetzt authentifiziert (durch den Inhalt der \finished{}-Nachricht) und in die Generierung des \premastersecret{} floss jetzt die Versionsnummer ein, um Version-Rollback-Angriffe zu verhindern. Außerdem wurden neue kryptographische Algorithmen eingeführt und weitere kleine Änderungen vorgenommen (vgl. \cite{ssl30}). Von der Abwärtskompabilität von TLS-Implementierungen zu SSL 3.0 wird in RFC 7568 (\cite{deprecate_ssl30}) abgeraten.
+In \textbf{SSL 3.0} wurden verschiedene Schlüssel zur Verschlüsselung und MAC-Berechnung eingeführt und die während der MAC-Berechnung genutzte Hashfunktion konfigurierbar gemacht (aber noch kein HMAC verwendet). Der Handshake wurde authentifiziert (durch den Inhalt der \finished{}-Nachricht) und in die Generierung des \premastersecret{} floss die Versionsnummer ein, um Version-Rollback-Angriffe zu verhindern. Außerdem wurden neue kryptographische Algorithmen eingeführt und weitere kleine Änderungen vorgenommen (vgl. \cite{ssl30}). Von der Abwärtskompabilität von TLS-Implementierungen zu SSL 3.0 wird in RFC 7568 (\cite{deprecate_ssl30}) abgeraten.
 
 \textbf{TLS 1.0} ist großenteils äquivalent zu SSL 3.0. Es wurde die Pseudo Random Function eingeführt, die allerdings noch anders spezifiziert war als in der aktuellen Version. Die Berechnung des MACs erfolgte nun durch eine HMAC-Konstruktion. Außerdem wurde eine \changecipherspec{}-Nachricht vor der \finished{}-Nachricht vorgeschrieben, um den DropChangeCipherSpec-Angriff zu verhindern (vgl. \cite{tls10}).
 
