@@ -1,5 +1,7 @@
 \chapter{SSL und TLS - ein Überblick}
 
+\label{sec_tls_overview}
+
 SSL (Secure Socket Layer) bzw. TLS\footnote{Im weiteren Verlauf dieser Arbeit wird der Einfachheit halber lediglich von TLS gesprochen. Bei etwaigen Unterschieden wird explizit auf diese eingegangen.} (Transport Layer Security) ist ein zustandsbehaftetes Protokoll, das auf dem TCP-Protokoll\footnote{DTLS (Datagram Transport Layer Security) ist ein auf TLS basierendes Protokoll, dass auf UDP aufsetzt.} der Transportschicht des TCP/IP-Protokollstapels aufbaut. 
 
 Hauptaufgaben von TLS sind Authentifikation der Kommunikationspartner, Verschlüsselung der Kommunikation sowie die Sicherstellung der Integrität der übertragenen Nachrichten (\cite{meyer14}). Dazu läuft die Kommunikation über TLS in zwei Phasen ab: Zu Beginn wird eine sichere Verbindung durch Festlegung der verwendeten kryptographischen Verfahren und des Schlüsselmaterials hergestellt. Danach können Daten transparent für Anwendungen und auf TLS aufbauende Protokolle über diese Verbindung gesendet werden.\\

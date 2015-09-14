@@ -1,16 +1,11 @@
 \chapter{TLS in der Lehre}
 
-\section{Warum eignet sich TLS bzw. warum sollte man sich überhaupt damit befassen?}
+Im Folgenden soll kurz darauf eingegangen werden, warum sich die Beschäftigung mit TLS in der Hochschullehre im Bereich der IT-Sicherheit anbietet. %Darauffolgend werden einige Schwerpunkte herausgearbeitet, die sich für die Lehre anbieten, und anschließend mit explorativen Lernen auf eine Methode eingegangen, die für das Verstehen von TLS hilfreich sein kann.
 
-\begin{mdframed}
-\begin{itemize}
-	\item "'einfaches"' Protokoll, das gut zur Erklärung einzelner Verfahren dienen kann (Record-Protocol für vertrauliche und authentifizierte Nachrichtenübertragung, Handshake zur Schlüsselaushandlung, ...)
-	\item Viele Angriffe, die Abwehrmaßnahmen und auch "'Prinzip des schwächsten Kettenglieds"' deutlich machen (CBC-IV, Padding, MAC-then-Encrypt)
-	\item weite Verbreitung -> notwendiges Verständnis
-\end{itemize}
-\end{mdframed}
+In Abschnitt \ref{sec_tls_overview} wurde bereits die Bedeutung und umfassende Verwendung von TLS erwähnt. Dies ist ein Grund dafür, dass jeder, der sich detaillierter mit IT-Sicherheit beschäftigt, auch die Grundlagen von TLS verstehen sollte. Auch viele Angriffe, die gegen TLS entwickelt wurden, und die entsprechenden Gegenmaßnahmen, die getroffen wurden, bieten gute Möglichkeiten dazu in der Lehre eingesetzt zu werden. Je nach gewünschten Schwerpunkten lassen sich beispielsweise Angriffe im Bereich der Kryptographie oder Protokollspezifikation nutzen. Sogar eine Betrachtung des gesellschaftlichen bzw. politischen Kontexts bietet sich an\footnote{Die Vorschrift für die Bereitstellung von exportgeschwächten \ciphersuites{} durch die US-Regierung könnte hier beispielsweise ein Ausgangspunkt sein.}.\\
+Zusätzlich spricht für einen Einsatz in der Lehre auch die ebenfalls bereits erwähnte einfache Protokollspezifikation, wodurch der Blick auf wesentliche Prinzipien erleichtert wird. Auf einige dieser Prinzipien soll im nächsten Abschnitt eingegangen werden.
 
-\section{Fundamentale Ideen / Schwerpunkte für die Lehre}
+\section{Schwerpunkte für die Lehre}
 
 In \cite{schubert11} wird das didaktischen Prinzip nach J.S. Brunner, wonach die Lehre sich \inquotes{in erster Linie an den Strukturen der zugrundeliegenden Wissenschaft orientieren soll}, erwähnt. Diese Strukturen werden auch Fundamentale Ideen genannt.
 
@@ -69,7 +64,7 @@ Zufällige IVs in CBC, MAC-then-encrypt, ...
 \subsection{Probleme in \inquotes{unerwarteten} Bereichen}
 Komprimierung, ...
 
-\section{Lernen durch Visualisierung/Exploration}
+\section{Lernen durch Exploration}
 
 Wie deutlich wird, eignet sich TLS also aus vielerlei Gründen für den Einsatz in der Hochschullehre. Eine spezielle Methode, die in der Lehre zum Einsatz kommen kann und mit der sich diese Arbeit beschäftigen wird, ist die Exploration. \todo{lernförderliche Software?}.
 
