@@ -14,7 +14,7 @@ public class CommunicationChannel<T extends ProtocolDataUnit> extends Observable
 	private StateMachine<T> _client;
 	private StateMachine<T> _server;
 
-	private T _pduToSent;
+	private T _pduToSend;
 	private CountDownLatch _clientCountdownLatch;
 	private CountDownLatch _serverCountdownLatch;
 
@@ -46,7 +46,7 @@ public class CommunicationChannel<T extends ProtocolDataUnit> extends Observable
 		_client.notifyObserversOfStateChanged();
 		_server.notifyObserversOfStateChanged();
 
-		_pduToSent = pdu;
+		_pduToSend = pdu;
 		if (clientMessage) {
 			_clientCountdownLatch = new CountDownLatch(1);
 		}
@@ -71,19 +71,19 @@ public class CommunicationChannel<T extends ProtocolDataUnit> extends Observable
 		Runnable r = new Runnable() {
 			@Override
 			public void run() {
-				if (_pduToSent != null) {
-					_sentPdus.add(_pduToSent);
+				if (_pduToSend != null) {
+					_sentPdus.add(_pduToSend);
 					setChanged();
 					notifyObservers(new ChannelReceivedMessageEvent());
 					
-					if (_pduToSent.hasBeenSentByClient()) {
-						_server.receiveMessage(_pduToSent);
-						_pduToSent = null;
+					if (_pduToSend.hasBeenSentByClient()) {
+						_server.receiveMessage(_pduToSend);
+						_pduToSend = null;
 						_clientCountdownLatch.countDown();
 					}
 					else {
-						_client.receiveMessage(_pduToSent);
-						_pduToSent = null;
+						_client.receiveMessage(_pduToSend);
+						_pduToSend = null;
 						_serverCountdownLatch.countDown();
 					}
 				}
@@ -98,5 +98,9 @@ public class CommunicationChannel<T extends ProtocolDataUnit> extends Observable
 
 	public List<T> getSentProtocolDataUnits() {
 		return _sentPdus;
+	}
+	
+	public T getPduToSend() {
+		return _pduToSend;
 	}
 }
