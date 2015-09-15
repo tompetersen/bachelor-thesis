@@ -1,6 +1,8 @@
 
 \chapter{Angriffe gegen SSL und TLS}
 
+\todo{Mehr Visualisierungen im ganzen Kapitel, falls sich das anbietet}
+
 \label{cha_attacks}
 
 Eine gute Übersicht zu bisherigen Angriffen auf TLS findet sich in \cite{meyer13}. Viele Schwächen früherer Protokollversionen bis SSL 3 sind in \cite{wagner96} zu finden.\todo{JEDEN Angriff auf angreifbare Version und Änderungen in neuen Versionen überprüfen.}
@@ -9,12 +11,13 @@ Eine gute Übersicht zu bisherigen Angriffen auf TLS findet sich in \cite{meyer1
 
 \label{sec_version_rollback}
 
-Ein Angreifer kann eine SSL 3.0-konforme \clienthello{}-Nachricht so modifizieren, dass der Server eine SSL 2.0-Verbindung aufbaut. So kann der Angreifer alle Schwächen der älteren Protokollversion ausnutzen. \todo{Durch Ändern des Versionsfeldes in der Nachricht?} In der SSL 3.0-Spezifikation (\cite{ssl30}) wurde vorgeschrieben, dass bestimmte Bytes des PKCS\#1-Paddings (siehe \cite{pkcs1}) einen festen Wert erhalten sollten, falls der Client SSL 3.0 unterstützt. So bleibt Kompatibilität mit der älteren Version erhalten, aber Version-Rollback-Angriffe werden trotzdem erkannt.\\
-Ein Schwachpunkt könnte laut \cite{wagner96} immer noch die Wiederaufnahme einer SSL 3.0-Sitzung durch eine SSL 2.0 \clienthello{}-Nachricht sein. Dieses sollte in Implementierungen verhindert werden.
+Ein Angreifer kann eine SSL 3.0-konforme \clienthello{}-Nachricht durch Ändern des Versionsfeldes in der Nachricht so modifizieren, dass der Server eine SSL 2.0-Verbindung aufbaut. So kann der Angreifer alle Schwächen der älteren Protokollversion ausnutzen. 
 
-Auch in neueren Browsern kann dieser Angriff noch zum Problem werden, falls Fallback-Lösungen auf ältere Versionen implementiert sind, wenn ein Verbindungsversuch scheitert.
+Durch die \finished{}-Nachricht ab SSL 3.0, die alle Handshake-Nachrichten authentifiziert, wird dieser Angriff verhindert.
 
-Durch die \finished{}-Nachricht ab SSL 3.0, die alle Handshake-Nachrichten authentifiziert, wird dieser Angriff verhindert. 
+Um Kompatibilität mit der älteren Version erhalten, aber Version-Rollback-Angriffe trotzdem zu erkennen, wurde in der SSL 3.0-Spezifikation \cite{ssl30} vorgeschrieben, dass bestimmte Bytes des PKCS\#1-Paddings (siehe \cite{pkcs1}) einen festen Wert erhalten sollten, falls der Client SSL 3.0 unterstützt. Ein Schwachpunkt könnte laut \cite{wagner96} immer noch die Wiederaufnahme einer SSL 3.0-Sitzung durch eine SSL 2.0 \clienthello{}-Nachricht sein. Dieses sollte in Implementierungen verhindert werden.
+
+Auch in neueren Browsern kann dieser Angriff noch zum Problem werden, falls Fallback-Lösungen auf SSL 2.0 implementiert sind, wenn ein Verbindungsversuch scheitert. Durch das Verbot von SSL 2.0-Unterstützung (vgl. Abschnitt \ref{sec_ssl_tls_version_overview}) sollte dieser Angriff für TLS-Versionen keine Auswirkungen mehr haben. 
 
 \section{Ciphersuite Rollback}
 
@@ -37,15 +40,15 @@ Details zu diesem Angriff sind in \cite{wagner96} zu finden.
 \section{Bleichenbacher-Angriff}
 \label{sec_attack_bleichenbacher}
 
-Daniel Bleichenbacher stellte 1998 in \cite{bleichenbacher98} einen Adaptive-Chosen-Ciphertext-Angriff gegen RSA-basierte Protokolle vor. Im Fall von SSL wird versucht, das \premastersecret{}, das während des Handshakes RSA-verschlüsselt gesendet werden kann, zu erhalten.
+Daniel Bleichenbacher stellte 1998 in \cite{bleichenbacher98} einen sogenannten Adaptive-Chosen-Ciphertext-Angriff gegen RSA-basierte Protokolle vor. Im Fall von SSL wird versucht, das \premastersecret{}, das während des Handshakes RSA-verschlüsselt gesendet werden kann, zu erhalten.
 
-Der Angriff basiert auf dem festen Format nach PKCS\#1 (siehe \cite{pkcs1}) formatierter Nachrichten, wie in Abbildung \ref{fig_pcks_padding} dargestellt. Die ersten beiden Bytes haben immer den gleichen Wert, danach folgen das Padding (bestehend aus zufälligen Bytes ungleich null) und die Daten, getrennt durch ein Nullbyte. Nachrichten in diesem Format werden als Integer interpretiert, per RSA verschlüsselt und versendet. Der Empfänger entschlüsselt die Nachricht, überprüft das Format des als Bytekette interpretierten Ergebnisses und kann dann die Daten wieder extrahieren.
+Der Angriff basiert auf dem festen Format nach PKCS\#1 (siehe \cite{pkcs1}) formatierter Nachrichten, wie in Abbildung \ref{fig_pcks_padding} dargestellt. Die ersten beiden Bytes haben immer den gleichen Wert. Danach folgen das aus zufälligen Bytes ungleich null bestehende Padding und die Daten, getrennt durch ein Nullbyte. Nachrichten in diesem Format werden als Integer interpretiert, per RSA verschlüsselt und versendet. Der Empfänger entschlüsselt die Nachricht, überprüft das Format des als Bytekette interpretierten Ergebnisses und kann dann die Daten wieder extrahieren.
 
 \begin{figure}[H]
 	\centering
 	\begin{tikzpicture}[node distance=0cm, outer sep = 0pt]
-		\tikzstyle{field}=[draw, rectangle, minimum height=1cm, minimum width=4cm, fill=blue!15, anchor=south west]
-		\tikzstyle{byte}=[draw, rectangle, minimum height=1cm, minimum width=1.5cm, fill=gray!20, anchor=south west]
+		\tikzstyle{field}=[draw, rectangle, minimum height=1cm, minimum width=4cm, anchor=south west]
+		\tikzstyle{byte}=[draw, rectangle, minimum height=1cm, minimum width=1.5cm, fill=blue!15, anchor=south west]
 
 		\node[byte] (first) at (0,0) {0x00};
 		\node[byte] (second) [right = of first] {0x02};
@@ -61,7 +64,7 @@ Voraussetzung für diesen Angriff ist der Zugriff auf ein Orakel, das dem Angrei
 
 Im Folgenden sei \((n,e)\) ein öffentlicher RSA-Schlüssel und \((n,d)\) der zugehörige geheime Schlüssel. Der Angreifer möchte eine Nachricht \(m \equiv c^d\mod{n}\) erhalten, für die er im Besitz von \(c\) ist.\\ 
 Dazu wählt er eine Zahl \(s\), berechnet \(c' \equiv cs^e \mod{n}\) und sendet \(c'\) an das Orakel. Wenn das Orakel korrektes Format signalisiert, dann weiß der Angreifer, dass die ersten zwei Bytes von \[(c')^d \equiv (cs^e)^d \equiv c^ds \equiv ms\mod{n}\] \(0x00\) und \(0x02\) sind. Mit diesem Wissen lässt sich ein neuer Wert \(s\) wählen, der weitere Informationen über \(m\) enthüllt. Details zu diesem iterativen Verfahren sind in \cite{bleichenbacher98} zu finden. Der Autor schätzt die Anzahl an nötigen Orakelanfragen mit etwa \(2^{20}\) ab.\\
-Das Orakel lässt sich auf zwei Weisen erhalten. Entweder gibt die Implementierung detaillierte Fehlermeldungen über ungültiges PKCS-Format zurück oder ermöglicht durch Zeitunterschiede bei der Verarbeitung gültiger und ungültiger Nachrichten einen Timing-Angriff. 
+Das Orakel lässt sich auf zwei Weisen erhalten. Entweder gibt die Implementierung detaillierte Fehlermeldungen über ungültiges PKCS-Format zurück oder ermöglicht durch Zeitunterschiede bei der Verarbeitung gültiger und ungültiger Nachrichten einen Timing-Seitenkanal-Angriff. 
 
 In TLS ab Version 1.0 wird der Angriff dadurch verhindert, dass bei ungültigem PKCS-Format ein zufälliges \premastersecret{} erzeugt wird, mit dem der Handshake fortgesetzt wird. Dadurch scheitert der Handshake erst bei der Überprüfung der \finished{}-Nachricht und enthüllt keine Informationen über gültiges oder ungültiges Format.
 
@@ -69,17 +72,17 @@ In TLS ab Version 1.0 wird der Angriff dadurch verhindert, dass bei ungültigem 
 \label{sec_attack_padding_oracle}
 
 In \cite{vaudenay02} beschreibt der Autor einen Angriff zur Erlangung des Klartextes, bei dem das für Blockchiffren nötige Padding im CBC-Modus ausgenutzt wird. Durch das vorgegebene Format des Paddings und da das Padding bei TLS nicht durch den MAC geschützt ist (MAC - then PAD - then Encrypt) ermöglicht es theoretisch in einer relativ kleinen Zahl von Anfragen die Berechnung des Klartextes.\\
-Praktisch konnte das Verfahren nicht eingesetzt werden, da SSL 3.0 für Paddingfehler und MAC-Überprüfung gleiche Fehlermeldungen (\badrecordmac{}) ausgibt. In TLS 1.0 und 1.1 gibt es getrennte Fehlermeldungen (\badrecordmac{} und \decryptionfailed{}), so dass der Angriff theoretisch möglich wäre. Allerdings werden die Fehler über das \alertprotocol{} verschlüsselt gesendet, so dass ein Angreifer die Fehlerart anders (beispielsweise über Log-Einträge) erhalten muss. TLS 1.2 verbietet das Senden von \decryptionfailed{}-Fehlern aus diesem Grund.\\
-Ein weiterer Nachteil ist, dass es sich bei \badrecordmac{}- und \decryptionfailed{}-Fehlern um fatal alerts handelt, die zum Abbruch der Sitzung führen.
+Praktisch konnte das Verfahren nicht eingesetzt werden, da SSL 3.0 für Paddingfehler und MAC-Überprüfung gleiche Fehlermeldungen (\badrecordmac{}) ausgibt. In TLS 1.0 und 1.1 gibt es getrennte Fehlermeldungen (\badrecordmac{} und \decryptionfailed{}), so dass der Angriff theoretisch möglich wäre. Allerdings werden die Fehler über das \alertprotocol{} verschlüsselt gesendet, so dass ein Angreifer die Fehlerart anders erhalten muss (beispielsweise über Log-Einträge). TLS 1.2 verbietet das Senden von \decryptionfailed{}-Fehlern aus diesem Grund.\\
+Ein weiterer Nachteil für den Angreifer ist, dass es sich bei \badrecordmac{}- und \decryptionfailed{}-Fehlern um fatal alerts handelt, die zum Abbruch der Sitzung führen.
 %Nichtsdestotrotz bietet die hier beschriebene Methode eine Grundlage für weitere Angriffe.
 
 Das verwendete Padding besteht immer aus Bytes mit dem Wert \(n\), wobei \(n\) die nötige Anzahl an Paddingbytes bis zum Erreichen eines Vielfachens der Blocklänge bezeichnet. Das Padding kann also folgende Werte annehmen: \(1, 22, 333, 4444, \dots\). Voraussetzung für diesen Angriff ist der Zugriff auf ein Orakel, das dem Angreifer für eine verschlüsselte Nachricht lediglich mitteilt, ob das Padding der entschlüsselten Nachricht korrektes Format besitzt. Im Folgenden bezeichnet \(C(x)\) die Verschlüsselung des Blockes \(x\) und \(C^{-1}(y)\) die Entschlüsselung von \(y\).\\
-Wenn der Angreifer nun das letzte Byte eines Chiffretextblocks \(y\) erhalten möchte, so sendet er \(r | y\) \todo{+ als Konkatenation?} mit \(r = r_1,  \dots , r_b\) als zufällige Bytes und \(b\) als Blocklänge (in Byte) an das Orakel. Bei der Entschlüsselung im CBC-Modus wird der letzte Chiffretextblock (hier \(y\)) entschlüsselt und mit dem vorletzten Block XOR-verknüpft, um den Klartextblock zu erhalten. Dieser Block (hier \(x\)) wird dann auf gültiges Padding überprüft:
+Wenn der Angreifer nun das letzte Byte eines Chiffretextblocks \(y\) erhalten möchte, so sendet er \(r + y\) mit \(r = r_1,  \dots , r_b\) als zufällige Bytes und \(b\) als Blocklänge (in Byte) an das Orakel. Bei der Entschlüsselung im CBC-Modus wird der letzte Chiffretextblock (hier \(y\)) entschlüsselt und mit dem vorletzten Block XOR-verknüpft, um den Klartextblock zu erhalten. Dieser Block (hier \(x\)) wird dann auf gültiges Padding überprüft:
 \[x=C^{-1}(y) \oplus r\]
 Wenn das Orakel gültiges Padding signalisiert, dann ist am wahrscheinlichsten, dass \(x\) auf \(1\) endet und somit das letzte Byte von \(C^{-1}(y)= r_b \oplus 1\) ist. Bei ungültigem Padding wird ein neuer Wert \(r_b\) gewählt und das Orakel neu befragt.\\
 In \cite{vaudenay02} wird ein Algorithmus, mit dem auch die unwahrscheinlicheren Fälle von längerem Padding abgedeckt werden, und ein Verfahren, um aus dem letzten Byte einen kompletten Block zu erhalten, angegeben. 
 
-In \cite{canvel03} beschreiben die Autoren eine Umsetzung des Angriffs auf TLS-gesicherte IMAP-Verbindungen zur Erlangung von Passwörtern. Hierbei wird das Problem ununterscheidbarer und verschlüsselter Fehlermeldungen durch einen Timing-Angriff umgangen. Außerdem bedenken die Autoren das Abbrechen der Sitzung durch Nutzung vieler paralleler Sitzungen mit dem gleichen verschlüsselten Aufruf (wie es bei der Authentifizierung im IMAP-Protokoll der Fall ist).
+In \cite{canvel03} beschreiben die Autoren eine Umsetzung des Angriffs auf TLS-gesicherte IMAP-Verbindungen zur Erlangung von Passwörtern. Hierbei wird das Problem ununterscheidbarer und verschlüsselter Fehlermeldungen durch einen Timing-Angriff umgangen. Außerdem bedenken die Autoren das Abbrechen der Sitzung durch Nutzung vieler paralleler Sitzungen mit dem gleichen verschlüsselten Aufruf, wie es bei der Authentifizierung im IMAP-Protokoll der Fall ist.
 
 %Nicht-Überprüfen des Paddings auch keine Option, siehe https://www.openssl.org/~bodo/tls-cbc.txt (Letzte EMail)
 
@@ -122,7 +125,7 @@ Auf der ekoparty Security Conference 2012 stellten die Entdecker des BEAST-Angri
 
 Dabei wird ausgenutzt, dass Kompressionsalgorithmen bereits verwendete Zeichenketten beim erneuten Auftreten verkürzen. Wird nun beispielsweise ein HTTP-Header wie \monospace{Cookie: twid= secret} gesendet, kann ein Angreifer durch das Einbringen von \monospace{Cookie: twid= a...} und \monospace{Cookie: twid= s...} einen Längenunterschied der Nachrichten feststellen und so das Geheimnis zeichenweise erhalten.
 
-Als Folge wurde Kompressionsunterstützung in Firefox und Chrome deaktiviert. Kompression ist im aktuellen Draft von TLS 1.3 (\cite{tls13}) nicht mehr enthalten.
+Als Folge wurde Kompressionsunterstützung in Firefox und Chrome deaktiviert. Kompression ist im aktuellen Draft von TLS 1.3 nicht mehr enthalten \cite{tls13}.
 
 \section{Poodle}
 
@@ -134,7 +137,7 @@ Von der Unterstützung von SSL 3.0 wird in \cite{deprecate_ssl30} abgeraten.
 
 \label{sec_attack_freak}
 
-Eine Gruppe von Pariser Wissenschaftlern entdeckte eine Möglichkeit, wie ein Angreifer die Kommunikationspartner während des Handshakes zur Nutzung schwacher Kryptographie (RSA export cipher suite) bringen kann. Weiterhin zeigten sie in \cite{freak15} die Machbarkeit der Faktorisierung der entsprechenden RSA-Module und die Praxistauglichkeit des Angriffs.
+Eine Gruppe von Wissenschaftlern entdeckte eine Möglichkeit, wie ein Angreifer die Kommunikationspartner während des Handshakes zur Nutzung schwacher Kryptographie (RSA export cipher suite) bringen kann. Weiterhin zeigten sie in \cite{freak15} die Machbarkeit der Faktorisierung der entsprechenden RSA-Module und die Praxistauglichkeit des Angriffs.
 %https://freakattack.com/
 %https://www.smacktls.com/#freak
 %http://blog.cryptographyengineering.com/2015/03/attack-of-week-freak-or-factoring-nsa.html
