@@ -9,7 +9,6 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
 import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -28,9 +27,9 @@ public class ProtocolDataUnitView<T extends ProtocolDataUnit> {
 	private JLabel _pduBytesLabel;
 	private JPanel _pduListView;
 	private JScrollPane _pduListViewScroller;
-	private List<T> _pdus = new ArrayList<T>();
+	
 	private JProtocolViewProvider<T> _provider;
-
+	
 	public ProtocolDataUnitView(JProtocolViewProvider<T> provider) {
 		_provider = provider;
 		
@@ -51,18 +50,45 @@ public class ProtocolDataUnitView<T extends ProtocolDataUnit> {
 		
 		_view.add(_pduListViewScroller, BorderLayout.CENTER);
 	}
-
-	public void setProtocolDataUnits(List<T> pdus) {
-		_pdus = pdus;
+	
+	private void createPduDetailView() {
+		_pduView = new JPanel();
 		
-		refreshPduList();
+		_pduBytesLabel = new JLabel(" ");
+		_pduBytesLabel.setVerticalAlignment(SwingConstants.TOP);
+		_pduBytesLabel.setHorizontalAlignment(SwingConstants.LEFT);
+		_pduBytesLabel.setFont(new Font("Monospaced", Font.PLAIN, 12));
+		JScrollPane scrollPane = new JScrollPane(_pduBytesLabel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		
+		JTabbedPane tabbedPane = new JTabbedPane();
+		tabbedPane.setMinimumSize(new Dimension(300, 100));
+		tabbedPane.setMaximumSize(new Dimension(300, 100));
+		tabbedPane.setPreferredSize(new Dimension(300, 100));
+		
+		tabbedPane.addTab("Bytes", scrollPane);
+		tabbedPane.addTab("Details", _pduView);
+		
+		_pduView.add(new JLabel("-"));
+		_view.add(tabbedPane, BorderLayout.PAGE_END);
 	}
 	
-	private void refreshPduList() {
-		for (int i = _pduListView.getComponentCount(); i < _pdus.size(); i++) {
-			T pdu = _pdus.get(i);
+	
+	public JComponent getView() {
+		return _view;
+	}
+
+	public void setProtocolDataUnits(List<T> pdus, T pduToSend) {
+		_pduListView.removeAll();
+		for (int i = 0; i < pdus.size(); i++) {
+			T pdu = pdus.get(i);
 			JComponent pduView = createSinglePduView(pdu);
 			_pduListView.add(pduView);
+		}
+		
+		if (pduToSend != null) {
+			JComponent pduToSendView = createSinglePduView(pduToSend);
+			pduToSendView.setBackground(Color.YELLOW);
+			_pduListView.add(pduToSendView);
 		}
 		
 		_pduListViewScroller.validate();
@@ -99,25 +125,12 @@ public class ProtocolDataUnitView<T extends ProtocolDataUnit> {
 		setByteTabValue(bytes);
 	}
 	
-	private void createPduDetailView() {
-		_pduView = new JPanel();
+	private void setPduDetailView(JComponent pduView) {
+		_pduView.removeAll();
+		_pduView.add(pduView);
 		
-		_pduBytesLabel = new JLabel(" ");
-		_pduBytesLabel.setVerticalAlignment(SwingConstants.TOP);
-		_pduBytesLabel.setHorizontalAlignment(SwingConstants.LEFT);
-		_pduBytesLabel.setFont(new Font("Monospaced", Font.PLAIN, 12));
-		JScrollPane scrollPane = new JScrollPane(_pduBytesLabel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-		
-		JTabbedPane tabbedPane = new JTabbedPane();
-		tabbedPane.setMinimumSize(new Dimension(300, 100));
-		tabbedPane.setMaximumSize(new Dimension(300, 100));
-		tabbedPane.setPreferredSize(new Dimension(300, 100));
-		
-		tabbedPane.addTab("Bytes", scrollPane);
-		tabbedPane.addTab("Details", _pduView);
-		
-		_pduView.add(new JLabel("-"));
-		_view.add(tabbedPane, BorderLayout.PAGE_END);
+		_pduView.revalidate();
+		_pduView.repaint();
 	}
 	
 	private void setByteTabValue(String bytes) {
@@ -139,17 +152,5 @@ public class ProtocolDataUnitView<T extends ProtocolDataUnit> {
 		builder.append("</html>");
 		
 		_pduBytesLabel.setText(builder.toString());
-	}
-	
-	private void setPduDetailView(JComponent pduView) {
-		_pduView.removeAll();
-		_pduView.add(pduView);
-		
-		_pduView.revalidate();
-		_pduView.repaint();
-	}
-
-	public JComponent getView() {
-		return _view;
 	}
 }

@@ -1,9 +1,10 @@
-package jProtocol.Abstract.View;
+package jProtocol.Abstract.View.keyvaluetree;
 
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JComponent;
@@ -87,9 +88,12 @@ public class KeyValueTree {
 
 	private JTree _tree;
 	private DefaultMutableTreeNode _rootNode;
+	private List<KeyValueObject> _lastUpdateList;
+	private boolean _highlightChangedFields;
 
-	public KeyValueTree(String title) {
+	public KeyValueTree(String title, boolean highlightChangedFields) {
 		_rootNode = new DefaultMutableTreeNode(title);
+		_highlightChangedFields = highlightChangedFields;
 		
 		_tree = new JTree(_rootNode);
 		_tree.putClientProperty("JTree.lineStyle", "None");
@@ -101,10 +105,51 @@ public class KeyValueTree {
 		_tree.setCellRenderer(renderer);
 	}
 
-	public void addKeyValueObjectNode(KeyValueObject kvo) {
-		addKeyValueObjectToNode(kvo, _rootNode);
+	public void setKeyValueObjectList(List<KeyValueObject> kvoList) {
+		removeAllNodes();
+		
+		if (_lastUpdateList != null && _highlightChangedFields) {
+			for (int i = 0; i < Math.min(kvoList.size(), _lastUpdateList.size()); i++) {
+				KeyValueObject newObj = kvoList.get(i);
+				KeyValueObject oldObj = _lastUpdateList.get(i);
+				
+				setCorrectComparisonDependentColor(newObj, oldObj);
+			}
+		}
+		
+		for (KeyValueObject kvo : kvoList) {
+			addKeyValueObjectToNode(kvo, _rootNode);
+		}
+		
+		_lastUpdateList = kvoList;
+		updateTree();
 	}
-
+	
+	private void setCorrectComparisonDependentColor(KeyValueObject newObj, KeyValueObject oldObj) {
+		if (!newObj.equals(oldObj)) {
+			newObj.setBackgroundColor(Color.YELLOW);
+		}
+		
+		if (newObj.hasChildren()) {
+			List<KeyValueObject> newChildren = newObj.getChildList();
+			List<KeyValueObject> oldChildren = oldObj.getChildList();
+			if (newChildren != null && oldChildren != null) {
+				for (int i = 0; i < Math.min(newChildren.size(), oldChildren.size()); i++) {
+					KeyValueObject newChildObj = newChildren.get(i);
+					KeyValueObject oldChildObj = oldChildren.get(i);
+					
+					setCorrectComparisonDependentColor(newChildObj, oldChildObj);
+				}
+			}
+			else if (newChildren != null) {
+				for (KeyValueObject newChild : newChildren) {
+					//TODO: recursive for other protocols?  
+					newChild.setBackgroundColor(Color.YELLOW);
+				}
+			}
+		}
+	}
+	
 	private void addKeyValueObjectToNode(KeyValueObject kvo, DefaultMutableTreeNode node) {
 		DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(kvo);
 
@@ -117,17 +162,11 @@ public class KeyValueTree {
 		node.add(newNode);
 	}
 
-	public void removeAllNodes() {
+	private void removeAllNodes() {
 		_rootNode.removeAllChildren();
 	}
 
-	public JComponent getView() {
-		JScrollPane pane = new JScrollPane(_tree);
-		pane.setBorder(BorderFactory.createLineBorder(Color.RED));
-		return _tree;
-	}
-	
-	public void updateTree() {
+	private void updateTree() {
 		boolean[] expanded = new boolean[_tree.getRowCount()];
 		for (int i = 0; i < _tree.getRowCount(); i++) {
 			expanded[i] = _tree.isExpanded(_tree.getPathForRow(i));
@@ -141,5 +180,11 @@ public class KeyValueTree {
 				_tree.expandRow(i);
 			}
 		}
+	}
+	
+	public JComponent getView() {
+		JScrollPane pane = new JScrollPane(_tree);
+		pane.setBorder(BorderFactory.createLineBorder(Color.RED));
+		return _tree;
 	}
 }

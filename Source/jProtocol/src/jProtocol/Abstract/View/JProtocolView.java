@@ -30,19 +30,19 @@ public class JProtocolView {
 
 		GridBagConstraints constraints = GridBagConstraintsHelper.createNormalConstraints(0, 0, 1, insets);
 		constraints.weighty = 1;
-		clientView.setBorder(BorderFactory.createLineBorder(Color.RED));
+//		clientView.setBorder(BorderFactory.createLineBorder(Color.RED));
 		_view.add(clientView, constraints);
 
 		constraints = GridBagConstraintsHelper.createNormalConstraints(2, 0, 1, insets);
 		constraints.weighty = 1;
-		serverView.setBorder(BorderFactory.createLineBorder(Color.RED));
+//		serverView.setBorder(BorderFactory.createLineBorder(Color.RED));
 		_view.add(serverView, constraints);
 
 		constraints = GridBagConstraintsHelper.createNormalConstraints(1, 0, 1, insets);
 		constraints.fill = GridBagConstraints.VERTICAL;
 		constraints.weightx = 0;
 		constraints.weighty = 1;
-		pduView.setBorder(BorderFactory.createLineBorder(Color.RED));
+//		pduView.setBorder(BorderFactory.createLineBorder(Color.RED));
 		_view.add(pduView, constraints);
 		                      
 		constraints = GridBagConstraintsHelper.createNormalConstraints(0, 1, 3, insets);

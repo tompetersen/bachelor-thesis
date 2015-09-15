@@ -47,18 +47,17 @@ public class CommunicationChannel<T extends ProtocolDataUnit> extends Observable
 		_server.notifyObserversOfStateChanged();
 
 		_pduToSend = pdu;
-		if (clientMessage) {
-			_clientCountdownLatch = new CountDownLatch(1);
-		}
-		else {
-			_serverCountdownLatch = new CountDownLatch(1);
-		}
+		
+		setChanged();
+		notifyObservers(new ChannelReceivedMessageEvent());
 		
 		try {
 			if (clientMessage) {
+				_clientCountdownLatch = new CountDownLatch(1);
 				_clientCountdownLatch.await();
 			}
 			else {
+				_serverCountdownLatch = new CountDownLatch(1);
 				_serverCountdownLatch.await();
 			}
 		}
@@ -73,8 +72,6 @@ public class CommunicationChannel<T extends ProtocolDataUnit> extends Observable
 			public void run() {
 				if (_pduToSend != null) {
 					_sentPdus.add(_pduToSend);
-					setChanged();
-					notifyObservers(new ChannelReceivedMessageEvent());
 					
 					if (_pduToSend.hasBeenSentByClient()) {
 						_server.receiveMessage(_pduToSend);

@@ -2,7 +2,7 @@ package jProtocol.tls12.model.states;
 
 import jProtocol.Abstract.Model.StateMachine;
 import jProtocol.Abstract.Model.events.Event;
-import jProtocol.Abstract.View.KeyValueObject;
+import jProtocol.Abstract.View.keyvaluetree.KeyValueObject;
 import jProtocol.helper.ByteHelper;
 import jProtocol.helper.MyLogger;
 import jProtocol.tls12.model.TlsCiphertext;

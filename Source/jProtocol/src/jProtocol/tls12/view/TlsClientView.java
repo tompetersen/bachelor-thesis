@@ -1,13 +1,12 @@
 package jProtocol.tls12.view;
 
+import jProtocol.tls12.model.states.TlsStateMachine;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import jProtocol.tls12.model.states.TlsStateMachine;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 
 public class TlsClientView {
 
@@ -21,8 +20,7 @@ public class TlsClientView {
 		_view = new JPanel();
 		_view.setLayout(new BoxLayout(_view, BoxLayout.Y_AXIS));
 		_treeView = new TlsStateMachineTreeView(client, "Client");
-		JScrollPane pane = new JScrollPane( _treeView.getView());
-		_view.add(pane);
+		_view.add(_treeView.getView());
 		
 		JButton connectButton = new JButton("Connect...");
 		connectButton.addActionListener(new ActionListener() {
