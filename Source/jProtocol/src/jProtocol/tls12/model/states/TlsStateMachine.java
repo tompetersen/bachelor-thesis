@@ -96,8 +96,8 @@ public class TlsStateMachine extends StateMachine<TlsCiphertext> {
 		
 		//Common
 		CONNECTION_ESTABLISHED_STATE					(200),
-		RECEIVED_CLOSE_NOTIFY_STATE						(400),
-		WAITING_FOR_CLOSE_NOTIFY_STATE					(401),
+		RECEIVED_CLOSE_NOTIFY_STATE						(300),
+		WAITING_FOR_CLOSE_NOTIFY_STATE					(301),
 		
 		//Alert
 		RECEIVED_UNEXPECTED_MESSAGE_STATE				(410),
@@ -114,21 +114,33 @@ public class TlsStateMachine extends StateMachine<TlsCiphertext> {
 		public int getType() {
 			return _type;
 		}
+		
+		public boolean isHandshakeState() {
+			return (_type > 0 && _type < 100);
+		}
+		
+		public boolean isEstablishedState() {
+			return _type == 200;
+		}
+		
+		public boolean isCloseState() {
+			return _type >= 300 && _type < 400;
+		}
+		
+		public boolean isErrorState() {
+			return _type >= 400;
+		}
 	}
 	
 	private boolean _isServer;
-	
+	private TlsStateType _currentStateType;
 	private TlsSecurityParameters _securityParameters;
-	
 	private TlsConnectionState _currentReadConnectionState;
 	private TlsConnectionState _currentWriteConnectionState;
 	private TlsConnectionState _pendingConnectionState;
-	
 	private TlsCipherSuiteRegistry _cipherSuiteRegistry;
-	
 	private List<TlsCertificate> _certificateList; 
 	private TlsRsaCipher _rsaCipher;
-	
 	private List<TlsApplicationDataMessage> _cachedApplicationDataMessages;
 	
 	public TlsStateMachine(TlsConnectionEnd entity) {
@@ -194,6 +206,8 @@ public class TlsStateMachine extends StateMachine<TlsCiphertext> {
 	}
 	
 	public void setTlsState(TlsStateType stateType, TlsState sender) {
+		_currentStateType = stateType;
+		MyLogger.info(getEntityName() + " sets state to " + stateType.toString()); 
 		setState(stateType.getType(), sender);
 		
 		if (stateType == TlsStateType.CONNECTION_ESTABLISHED_STATE) {
@@ -202,7 +216,13 @@ public class TlsStateMachine extends StateMachine<TlsCiphertext> {
 	}
 	
 	private void setTlsState(TlsStateType stateType) {
+		_currentStateType = stateType;
+		MyLogger.info(getEntityName() + " sets state to " + stateType.toString());
 		setState(stateType.getType());
+	}
+	
+	public TlsStateType getCurrentTlsState() {
+		return _currentStateType;
 	}
 	
 	/**

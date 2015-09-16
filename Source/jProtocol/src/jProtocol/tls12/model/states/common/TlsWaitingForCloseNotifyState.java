@@ -23,7 +23,7 @@ public class TlsWaitingForCloseNotifyState extends TlsState {
 
 	@Override
 	public void receivedTlsMessage(TlsMessage message) {
-		//TODO: Successfully closed connection
+		_stateMachine.resetConnection();
 	}
 
 }

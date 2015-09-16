@@ -4,6 +4,7 @@ import jProtocol.Abstract.View.keyvaluetree.KeyValueObject;
 import jProtocol.Abstract.View.keyvaluetree.KeyValueTree;
 import jProtocol.helper.GridBagConstraintsHelper;
 import jProtocol.tls12.model.states.TlsStateMachine;
+import jProtocol.tls12.model.states.TlsStateMachine.TlsStateType;
 import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -34,8 +35,7 @@ public class TlsStateMachineTreeView {
 		JScrollPane pane = new JScrollPane(_tree.getView());
 		_view.add(pane, constraints);
 		
-		_statusView = new JTextField("Handshake");
-		_statusView.setBackground(Color.GREEN);
+		_statusView = new JTextField("");
 		constraints = GridBagConstraintsHelper.createNormalConstraints(0, 1, 1);
 		_view.add(_statusView, constraints);
 		
@@ -47,10 +47,27 @@ public class TlsStateMachineTreeView {
 	public void updateView() {
 		List<KeyValueObject> newUpdateList =  _stateMachine.getViewData();		
 		_tree.setKeyValueObjectList(newUpdateList);
+		
+		TlsStateType type = _stateMachine.getCurrentTlsState();
+		if (type.isHandshakeState()) {
+			_statusView.setText("Performing handshake");
+			_statusView.setBackground(Color.YELLOW);
+		}
+		else if (type.isEstablishedState()) {
+			_statusView.setText("Connection established");
+			_statusView.setBackground(Color.GREEN);
+		}
+		else if (type.isCloseState()) {
+			_statusView.setText("Closing connection");
+			_statusView.setBackground(Color.GRAY);
+		}
+		else if (type.isErrorState()) {
+			_statusView.setText("Error occured");
+			_statusView.setBackground(Color.RED);
+		}
 	}
 	
 	public JComponent getView() {
 		return _view;
-	}
-
+	}	
 }

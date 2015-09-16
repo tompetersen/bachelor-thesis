@@ -59,10 +59,10 @@ public class TlsConnectionEstablishedState extends TlsState{
 	}
 	
 	public void closeConnection() {
+		setTlsState(TlsStateType.WAITING_FOR_CLOSE_NOTIFY_STATE);
+		
 		TlsAlertMessage message = new TlsAlertMessage(TlsAlert.close_notify, false);
 		sendTlsMessage(message);
-		
-		setTlsState(TlsStateType.WAITING_FOR_CLOSE_NOTIFY_STATE);
 	}
 	
 	

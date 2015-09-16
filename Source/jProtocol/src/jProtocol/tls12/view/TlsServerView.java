@@ -1,13 +1,15 @@
 package jProtocol.tls12.view;
 
+import jProtocol.tls12.model.states.TlsStateMachine;
+import jProtocol.tls12.model.values.TlsApplicationData;
+import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import jProtocol.tls12.model.states.TlsStateMachine;
+import java.nio.charset.StandardCharsets;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 
 public class TlsServerView {
 
@@ -15,7 +17,7 @@ public class TlsServerView {
 	private TlsStateMachineTreeView _treeView;
 	private JPanel _view;
 	
-	public TlsServerView(TlsStateMachine server) {
+	public TlsServerView(final TlsStateMachine server) {
 		_server = server;
 		
 		_view = new JPanel();
@@ -24,20 +26,37 @@ public class TlsServerView {
 		_treeView = new TlsStateMachineTreeView(server, "Server");
 		_view.add(_treeView.getView());
 		
-		JButton connectButton = new JButton("Send...");
-		connectButton.addActionListener(new ActionListener() {
+		JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		
+		JButton button = new JButton("Send");
+		button.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				new Thread(new Runnable() {
 					@Override
 					public void run() {
-						
+						server.sendData(new TlsApplicationData("Daten, Daten, Daten!".getBytes(StandardCharsets.US_ASCII)));
 					}
 				}).start();
 			}
 		});
+		buttonPanel.add(button);
 		
-		_view.add(connectButton);
+		button = new JButton("Close");
+		button.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				new Thread(new Runnable() {
+					@Override
+					public void run() {
+						server.closeConnection();
+					}
+				}).start();
+			}
+		});
+		buttonPanel.add(button);
+		
+		_view.add(buttonPanel);
 	}
 	
 	public void updateView() {

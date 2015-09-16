@@ -35,7 +35,4 @@ public class TlsReceivedCloseNotifyState extends TlsState {
 		
 		_stateMachine.resetConnection();
 	}
-	
-	
-
 }
