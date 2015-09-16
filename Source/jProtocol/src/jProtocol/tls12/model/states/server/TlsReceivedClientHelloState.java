@@ -1,8 +1,6 @@
 package jProtocol.tls12.model.states.server;
 
-import jProtocol.helper.MyLogger;
 import jProtocol.tls12.model.crypto.TlsPseudoRandomNumberGenerator;
-import jProtocol.tls12.model.crypto.TlsRsaCipher;
 import jProtocol.tls12.model.messages.TlsMessage;
 import jProtocol.tls12.model.messages.handshake.TlsCertificateMessage;
 import jProtocol.tls12.model.messages.handshake.TlsHandshakeMessage;
@@ -14,7 +12,6 @@ import jProtocol.tls12.model.states.TlsStateMachine;
 import jProtocol.tls12.model.states.TlsStateMachine.TlsStateType;
 import jProtocol.tls12.model.values.TlsCertificate;
 import jProtocol.tls12.model.values.TlsRandom;
-import java.util.ArrayList;
 import java.util.List;
 
 public class TlsReceivedClientHelloState extends TlsState {

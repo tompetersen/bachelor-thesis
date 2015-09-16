@@ -2,19 +2,17 @@ package jProtocol.tls12;
 
 import jProtocol.Abstract.JProtocolProtocolBuilder;
 import jProtocol.Abstract.JProtocolViewProvider;
+import jProtocol.Abstract.View.keyvaluetree.KeyValueTree;
 import jProtocol.tls12.model.TlsCiphertext;
 import jProtocol.tls12.model.states.TlsStateMachine;
 import jProtocol.tls12.model.states.TlsStateMachine.TlsStateMachineEvent;
 import jProtocol.tls12.model.states.TlsStateMachine.TlsStateMachineEventType;
-import jProtocol.tls12.model.values.TlsApplicationData;
 import jProtocol.tls12.model.values.TlsConnectionEnd;
 import jProtocol.tls12.view.TlsClientView;
 import jProtocol.tls12.view.TlsServerView;
-import java.nio.charset.StandardCharsets;
 import java.util.Observable;
 import java.util.Observer;
 import javax.swing.JComponent;
-import javax.swing.JLabel;
 
 public class Tls12Startup implements Observer, JProtocolViewProvider<TlsCiphertext> {
 	
@@ -56,9 +54,11 @@ public class Tls12Startup implements Observer, JProtocolViewProvider<TlsCipherte
 
 	@Override
 	public JComponent getDetailedViewForProtocolDataUnit(TlsCiphertext pdu) {
-		// TODO Auto-generated method stub
-		JLabel label = new JLabel(pdu.toString());
-		return label;
+		KeyValueTree tree = new KeyValueTree("TlsCiphertext", false);
+		tree.setKeyValueObjectList(pdu.getViewData());
+		tree.expandAll();
+		
+		return tree.getView();
 	}
 
 	@Override

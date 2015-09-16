@@ -1,10 +1,12 @@
 package jProtocol.tls12.model.messages;
 
+import jProtocol.Abstract.View.keyvaluetree.KeyValueObject;
 import jProtocol.tls12.model.ciphersuites.TlsCipherSuiteRegistry;
 import jProtocol.tls12.model.exceptions.TlsDecodeErrorException;
 import jProtocol.tls12.model.messages.handshake.TlsHandshakeMessage;
 import jProtocol.tls12.model.values.TlsContentType;
 import jProtocol.tls12.model.values.TlsKeyExchangeAlgorithm;
+import java.util.List;
 
 public abstract class TlsMessage {
 
@@ -68,4 +70,8 @@ public abstract class TlsMessage {
 
 	public abstract byte[] getBytes();
 
+	public List<KeyValueObject> getViewData() {
+		//TODO: abstract
+		return null;
+	}
 }

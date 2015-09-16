@@ -23,7 +23,7 @@ import javax.swing.SwingConstants;
 public class ProtocolDataUnitView<T extends ProtocolDataUnit> {
 
 	private JPanel _view;
-	private JPanel _pduView;
+	private JScrollPane _pduView;
 	private JLabel _pduBytesLabel;
 	private JPanel _pduListView;
 	private JScrollPane _pduListViewScroller;
@@ -52,7 +52,7 @@ public class ProtocolDataUnitView<T extends ProtocolDataUnit> {
 	}
 	
 	private void createPduDetailView() {
-		_pduView = new JPanel();
+		_pduView = new JScrollPane();
 		
 		_pduBytesLabel = new JLabel(" ");
 		_pduBytesLabel.setVerticalAlignment(SwingConstants.TOP);
@@ -61,9 +61,9 @@ public class ProtocolDataUnitView<T extends ProtocolDataUnit> {
 		JScrollPane scrollPane = new JScrollPane(_pduBytesLabel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		
 		JTabbedPane tabbedPane = new JTabbedPane();
-		tabbedPane.setMinimumSize(new Dimension(300, 100));
-		tabbedPane.setMaximumSize(new Dimension(300, 100));
-		tabbedPane.setPreferredSize(new Dimension(300, 100));
+		tabbedPane.setMinimumSize(new Dimension(300, 300));
+		tabbedPane.setMaximumSize(new Dimension(300, 300));
+		tabbedPane.setPreferredSize(new Dimension(300, 300));
 		
 		tabbedPane.addTab("Bytes", scrollPane);
 		tabbedPane.addTab("Details", _pduView);
@@ -126,8 +126,7 @@ public class ProtocolDataUnitView<T extends ProtocolDataUnit> {
 	}
 	
 	private void setPduDetailView(JComponent pduView) {
-		_pduView.removeAll();
-		_pduView.add(pduView);
+		_pduView.setViewportView(pduView);
 		
 		_pduView.revalidate();
 		_pduView.repaint();

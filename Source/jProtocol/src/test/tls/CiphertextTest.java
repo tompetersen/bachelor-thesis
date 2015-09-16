@@ -1,10 +1,13 @@
 package test.tls;
 
 import static org.junit.Assert.*;
+import java.util.List;
+import jProtocol.Abstract.View.keyvaluetree.KeyValueObject;
 import jProtocol.helper.ByteHelper;
 import jProtocol.tls12.model.TlsCiphertext;
 import jProtocol.tls12.model.fragments.TlsFragment;
 import jProtocol.tls12.model.messages.TlsApplicationDataMessage;
+import jProtocol.tls12.model.messages.TlsMessage;
 import jProtocol.tls12.model.values.TlsApplicationData;
 import jProtocol.tls12.model.values.TlsVersion;
 import org.junit.Before;
@@ -29,7 +32,11 @@ public class CiphertextTest {
 			byte[] result = {7,8,9};
 			return result;
 		}
-		
+
+		@Override
+		public KeyValueObject getViewData(TlsMessage message) {
+			return null;
+		}
 	}
 
 	private byte[] _applicationData = {1,2,3};

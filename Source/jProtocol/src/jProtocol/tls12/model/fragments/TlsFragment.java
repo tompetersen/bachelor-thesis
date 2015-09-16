@@ -1,5 +1,9 @@
 package jProtocol.tls12.model.fragments;
 
+import jProtocol.Abstract.View.keyvaluetree.KeyValueObject;
+import jProtocol.tls12.model.messages.TlsMessage;
+import java.util.List;
+
 public interface TlsFragment {
 
 	/**
@@ -23,4 +27,6 @@ public interface TlsFragment {
 	 * @return the unencrypted content
 	 */
 	public byte[] getContent();	
+	
+	public KeyValueObject getViewData(TlsMessage message);
 }

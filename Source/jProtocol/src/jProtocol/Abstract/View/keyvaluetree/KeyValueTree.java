@@ -20,11 +20,11 @@ import javax.swing.tree.TreeSelectionModel;
 public class KeyValueTree {
 
 	@SuppressWarnings("serial")
-	private class KeyValueCellRenderer extends DefaultTreeCellRenderer { 
+	private class KeyValueCellRenderer extends DefaultTreeCellRenderer {
 		JLabel keyLabel = new JLabel(" ");
 		JLabel valueLabel = new JLabel(" ");
-		JPanel renderer = new JPanel(); 
-		
+		JPanel renderer = new JPanel();
+
 		DefaultTreeCellRenderer defaultRenderer = new DefaultTreeCellRenderer();
 		Color backgroundSelectionColor;
 		Color backgroundNonSelectionColor;
@@ -36,9 +36,9 @@ public class KeyValueTree {
 			renderer.add(valueLabel);
 			valueLabel.setFont(new Font("Monospaced", Font.PLAIN, 12));
 			valueLabel.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
-			
+
 			renderer.setLayout(new BoxLayout(renderer, BoxLayout.X_AXIS));
-//			renderer.setBorder(BorderFactory.createLineBorder(Color.RED));
+			// renderer.setBorder(BorderFactory.createLineBorder(Color.RED));
 
 			backgroundSelectionColor = defaultRenderer.getBackgroundSelectionColor();
 			backgroundNonSelectionColor = defaultRenderer.getBackgroundNonSelectionColor();
@@ -53,7 +53,7 @@ public class KeyValueTree {
 					KeyValueObject kvo = (KeyValueObject) userObject;
 					keyLabel.setText(kvo.getKey());
 					valueLabel.setText(kvo.getValue());
-					
+
 					int neededWidth = keyLabel.getPreferredSize().width + valueLabel.getPreferredSize().width + 10;
 					renderer.setPreferredSize(new Dimension(neededWidth, 15));
 
@@ -94,11 +94,11 @@ public class KeyValueTree {
 	public KeyValueTree(String title, boolean highlightChangedFields) {
 		_rootNode = new DefaultMutableTreeNode(title);
 		_highlightChangedFields = highlightChangedFields;
-		
+
 		_tree = new JTree(_rootNode);
 		_tree.putClientProperty("JTree.lineStyle", "None");
 		_tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
-		
+
 		KeyValueCellRenderer renderer = new KeyValueCellRenderer();
 		// renderer.setClosedIcon(newIcon);
 		// renderer.setOpenIcon(newIcon);
@@ -107,29 +107,29 @@ public class KeyValueTree {
 
 	public void setKeyValueObjectList(List<KeyValueObject> kvoList) {
 		removeAllNodes();
-		
+
 		if (_lastUpdateList != null && _highlightChangedFields) {
 			for (int i = 0; i < Math.min(kvoList.size(), _lastUpdateList.size()); i++) {
 				KeyValueObject newObj = kvoList.get(i);
 				KeyValueObject oldObj = _lastUpdateList.get(i);
-				
+
 				setCorrectComparisonDependentColor(newObj, oldObj);
 			}
 		}
-		
+
 		for (KeyValueObject kvo : kvoList) {
 			addKeyValueObjectToNode(kvo, _rootNode);
 		}
-		
+
 		_lastUpdateList = kvoList;
 		updateTree();
 	}
-	
+
 	private void setCorrectComparisonDependentColor(KeyValueObject newObj, KeyValueObject oldObj) {
 		if (!newObj.equals(oldObj)) {
 			newObj.setBackgroundColor(Color.YELLOW);
 		}
-		
+
 		if (newObj.hasChildren()) {
 			List<KeyValueObject> newChildren = newObj.getChildList();
 			List<KeyValueObject> oldChildren = oldObj.getChildList();
@@ -137,19 +137,19 @@ public class KeyValueTree {
 				for (int i = 0; i < Math.min(newChildren.size(), oldChildren.size()); i++) {
 					KeyValueObject newChildObj = newChildren.get(i);
 					KeyValueObject oldChildObj = oldChildren.get(i);
-					
+
 					setCorrectComparisonDependentColor(newChildObj, oldChildObj);
 				}
 			}
 			else if (newChildren != null) {
 				for (KeyValueObject newChild : newChildren) {
-					//TODO: recursive for other protocols?  
+					// TODO: recursive for other protocols?
 					newChild.setBackgroundColor(Color.YELLOW);
 				}
 			}
 		}
 	}
-	
+
 	private void addKeyValueObjectToNode(KeyValueObject kvo, DefaultMutableTreeNode node) {
 		DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(kvo);
 
@@ -158,7 +158,7 @@ public class KeyValueTree {
 				addKeyValueObjectToNode(kvoChild, newNode);
 			}
 		}
-		
+
 		node.add(newNode);
 	}
 
@@ -171,20 +171,26 @@ public class KeyValueTree {
 		for (int i = 0; i < _tree.getRowCount(); i++) {
 			expanded[i] = _tree.isExpanded(_tree.getPathForRow(i));
 		}
-		
+
 		DefaultTreeModel model = (DefaultTreeModel) _tree.getModel();
 		model.reload();
-		
+
 		for (int i = 0; i < _tree.getRowCount(); i++) {
 			if (i < expanded.length && expanded[i]) {
 				_tree.expandRow(i);
 			}
 		}
 	}
-	
+
 	public JComponent getView() {
 		JScrollPane pane = new JScrollPane(_tree);
 		pane.setBorder(BorderFactory.createLineBorder(Color.RED));
 		return _tree;
+	}
+
+	public void expandAll() {
+		for (int i = 0; i < _tree.getRowCount(); i++) {
+			_tree.expandRow(i);
+		}
 	}
 }

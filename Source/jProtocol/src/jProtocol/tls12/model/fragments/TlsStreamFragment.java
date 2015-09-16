@@ -1,6 +1,10 @@
 package jProtocol.tls12.model.fragments;
 
+import jProtocol.Abstract.View.keyvaluetree.KeyValueObject;
+import jProtocol.helper.ByteHelper;
 import jProtocol.tls12.model.ciphersuites.TlsStreamCipherSuite.TlsStreamEncryptionResult;
+import jProtocol.tls12.model.messages.TlsMessage;
+import java.util.ArrayList;
 
 public class TlsStreamFragment implements TlsFragment {
 
@@ -32,5 +36,17 @@ public class TlsStreamFragment implements TlsFragment {
 	@Override
 	public byte[] getContent() {
 		return _encryptionResult.content;
+	}
+	
+	@Override
+	public KeyValueObject getViewData(TlsMessage message) {
+		ArrayList<KeyValueObject> resultList = new ArrayList<>();
+		
+		resultList.add(new KeyValueObject("Content", message.getViewData()));
+		resultList.add(new KeyValueObject("MAC", "0x"+ByteHelper.bytesToHexString(_encryptionResult.mac)));
+		
+		KeyValueObject result = new KeyValueObject("StreamFragment", resultList);
+		
+		return result;
 	}
 }

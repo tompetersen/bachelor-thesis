@@ -1,7 +1,11 @@
 package jProtocol.tls12.model.fragments;
 
+import jProtocol.Abstract.View.keyvaluetree.KeyValueObject;
 import jProtocol.helper.ByteHelper;
 import jProtocol.tls12.model.ciphersuites.TlsBlockCipherSuite.TlsBlockEncryptionResult;
+import jProtocol.tls12.model.messages.TlsMessage;
+import java.util.ArrayList;
+import java.util.List;
 
 public class TlsBlockFragment implements TlsFragment {
 
@@ -63,4 +67,20 @@ public class TlsBlockFragment implements TlsFragment {
 	public byte getPaddingLength() {
 		return _encryptionResult.paddingLength;
 	}
+
+	@Override
+	public KeyValueObject getViewData(TlsMessage message) {
+		ArrayList<KeyValueObject> resultList = new ArrayList<>();
+		resultList.add(new KeyValueObject("IV", "0x"+ByteHelper.bytesToHexString(_encryptionResult.iv)));
+		
+		resultList.add(new KeyValueObject("Content", message.getViewData()));
+		
+		resultList.add(new KeyValueObject("MAC", "0x"+ByteHelper.bytesToHexString(_encryptionResult.mac)));
+		resultList.add(new KeyValueObject("Padding", "0x"+ByteHelper.bytesToHexString(_encryptionResult.padding)));
+		resultList.add(new KeyValueObject("Padding length", Byte.toString(_encryptionResult.paddingLength)));
+		
+		KeyValueObject result = new KeyValueObject("BlockFragment", resultList);
+		
+		return result;
+	}	
 }

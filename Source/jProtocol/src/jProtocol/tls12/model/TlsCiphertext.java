@@ -1,11 +1,14 @@
 package jProtocol.tls12.model;
 
 import jProtocol.Abstract.Model.ProtocolDataUnit;
+import jProtocol.Abstract.View.keyvaluetree.KeyValueObject;
 import jProtocol.tls12.model.fragments.TlsFragment;
 import jProtocol.tls12.model.messages.TlsMessage;
 import jProtocol.tls12.model.values.TlsContentType;
 import jProtocol.tls12.model.values.TlsVersion;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.List;
 
 public class TlsCiphertext extends ProtocolDataUnit {
 
@@ -77,6 +80,20 @@ public class TlsCiphertext extends ProtocolDataUnit {
 	@Override
 	public String toString() {
 		return "[" + _contentType.toString() + "] " + _message.toString();
+	}
+	
+/*
+ * View Data	
+ */
+	public List<KeyValueObject> getViewData() {
+		ArrayList<KeyValueObject> result = new ArrayList<>();
+		
+		result.add(new KeyValueObject("ContentType", 	_contentType.toString()));
+		result.add(new KeyValueObject("Version", 		_version.toString()));
+		result.add(new KeyValueObject("Length", 		Short.toString(_length)));
+		result.add(_fragment.getViewData(_message));
+		
+		return result;
 	}
 	
 }
