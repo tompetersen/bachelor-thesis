@@ -3,6 +3,7 @@ package test.tls.ciphersuites;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import jProtocol.Abstract.View.keyvaluetree.KeyValueObject;
 import jProtocol.tls12.model.TlsCiphertext;
 import jProtocol.tls12.model.TlsPlaintext;
 import jProtocol.tls12.model.ciphersuites.TlsBlockCipherSuite;
@@ -33,6 +34,11 @@ public class BlockCipherSuiteTest {
 		public byte[] getBytes() {
 			byte[] test = {3,1,4,1,5,9,2,6,5,-42,23};
 			return test;
+		}
+
+		@Override
+		public KeyValueObject getViewData() {
+			return null;
 		}
 	}
 	

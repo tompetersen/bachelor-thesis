@@ -1,5 +1,6 @@
 package jProtocol.tls12.model.messages.handshake;
 
+import jProtocol.Abstract.View.keyvaluetree.KeyValueObject;
 import jProtocol.helper.ByteHelper;
 import jProtocol.tls12.model.ciphersuites.TlsCipherSuite;
 import jProtocol.tls12.model.ciphersuites.TlsCipherSuiteRegistry;
@@ -9,6 +10,8 @@ import jProtocol.tls12.model.values.TlsRandom;
 import jProtocol.tls12.model.values.TlsSessionId;
 import jProtocol.tls12.model.values.TlsVersion;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.List;
 
 public class TlsServerHelloMessage extends TlsHandshakeMessage {
 
@@ -162,5 +165,23 @@ public class TlsServerHelloMessage extends TlsHandshakeMessage {
 	public String toDetailedString() {
 		return "TlsServerHelloMessage [serverVersion=" + _serverVersion + ", serverRandom=" + _serverRandom + ", sessionId=" + _sessionId + ", cipherSuite=" + _cipherSuite + "]";
 	}
-
+	
+	@Override
+	public List<KeyValueObject> getBodyViewData() {
+		ArrayList<KeyValueObject> result = new ArrayList<>();
+		
+		KeyValueObject kvo = new KeyValueObject("ServerVersion", _serverVersion.toString());
+		result.add(kvo);
+		
+		kvo = new KeyValueObject("ServerRandom", _serverRandom.toString());
+		result.add(kvo);
+		
+		kvo = new KeyValueObject("SessionID", _sessionId.toString());
+		result.add(kvo);
+		
+		kvo = new KeyValueObject("CipherSuite", _cipherSuite.getName() + " [" + Short.toString(_cipherSuite.getCode()) + "]");
+		result.add(kvo);
+				
+		return result;
+	}
 }

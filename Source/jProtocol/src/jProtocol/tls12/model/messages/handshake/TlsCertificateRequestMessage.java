@@ -1,7 +1,10 @@
 package jProtocol.tls12.model.messages.handshake;
 
+import jProtocol.Abstract.View.keyvaluetree.KeyValueObject;
 import jProtocol.tls12.model.exceptions.TlsDecodeErrorException;
 import jProtocol.tls12.model.values.TlsHandshakeType;
+import java.util.ArrayList;
+import java.util.List;
 
 public class TlsCertificateRequestMessage extends TlsHandshakeMessage {
 
@@ -34,4 +37,15 @@ public class TlsCertificateRequestMessage extends TlsHandshakeMessage {
 		return null;
 	}
 
+	@Override
+	public List<KeyValueObject> getBodyViewData() {
+		ArrayList<KeyValueObject> result = new ArrayList<>();
+		
+		//TODO: view data for certificate request
+		KeyValueObject kvo = new KeyValueObject("Certificates", "TODO");
+		result.add(kvo);
+				
+		return result;
+	}
+	
 }

@@ -1,5 +1,8 @@
 package jProtocol.tls12.model.messages.handshake;
 
+import java.util.ArrayList;
+import java.util.List;
+import jProtocol.Abstract.View.keyvaluetree.KeyValueObject;
 import jProtocol.tls12.model.exceptions.TlsDecodeErrorException;
 import jProtocol.tls12.model.values.TlsHandshakeType;
 
@@ -17,7 +20,7 @@ public class TlsHelloRequestMessage extends TlsHandshakeMessage {
 		super(unparsedContent);
 
 		if (unparsedContent.length > 0) {
-			throw new TlsDecodeErrorException("Server hello done message should have no content!");
+			throw new TlsDecodeErrorException("Hello request message should have no content!");
 		}
 	}
 	
@@ -31,6 +34,11 @@ public class TlsHelloRequestMessage extends TlsHandshakeMessage {
 	public byte[] getBodyBytes() {
 		byte[] result = new byte[0];
 		return result;
+	}
+	
+	@Override
+	public List<KeyValueObject> getBodyViewData() {
+		return new ArrayList<KeyValueObject>();
 	}
 
 }

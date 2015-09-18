@@ -1,5 +1,8 @@
 package jProtocol.tls12.model.messages.handshake;
 
+import java.util.ArrayList;
+import java.util.List;
+import jProtocol.Abstract.View.keyvaluetree.KeyValueObject;
 import jProtocol.helper.ByteHelper;
 import jProtocol.tls12.model.exceptions.TlsDecodeErrorException;
 import jProtocol.tls12.model.values.TlsRsaEncryptedPreMasterSecret;
@@ -61,5 +64,16 @@ public class TlsClientKeyExchangeMessage_RSA extends TlsClientKeyExchangeMessage
 
 	public TlsRsaEncryptedPreMasterSecret getRsaEncryptedPreMasterSecret() {
 		return _encPreMasterSecret;
+	}
+	
+	@Override
+	public List<KeyValueObject> getBodyViewData() {
+		ArrayList<KeyValueObject> result = new ArrayList<>();
+		
+		//TODO: view data for DHE client key exchange message
+		KeyValueObject kvo = new KeyValueObject("EncyptedPreMasterSecret", "0x" + ByteHelper.bytesToHexString(_encPreMasterSecret.getPreMasterSecret()));
+		result.add(kvo);
+				
+		return result;
 	}
 }

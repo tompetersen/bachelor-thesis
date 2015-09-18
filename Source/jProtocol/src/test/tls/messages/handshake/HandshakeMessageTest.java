@@ -2,6 +2,8 @@ package test.tls.messages.handshake;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import java.util.List;
+import jProtocol.Abstract.View.keyvaluetree.KeyValueObject;
 import jProtocol.helper.ByteHelper;
 import jProtocol.tls12.model.messages.handshake.TlsHandshakeMessage;
 import jProtocol.tls12.model.values.TlsContentType;
@@ -27,6 +29,11 @@ public class HandshakeMessageTest {
 		@Override
 		public byte[] getBodyBytes() {
 			return _body;
+		}
+
+		@Override
+		public List<KeyValueObject> getBodyViewData() {
+			return null;
 		}
 	}
 	

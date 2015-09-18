@@ -1,7 +1,9 @@
 package jProtocol.tls12.model.messages;
 
+import jProtocol.Abstract.View.keyvaluetree.KeyValueObject;
 import jProtocol.tls12.model.exceptions.TlsDecodeErrorException;
 import jProtocol.tls12.model.values.TlsContentType;
+import java.util.ArrayList;
 
 
 /*
@@ -12,6 +14,7 @@ import jProtocol.tls12.model.values.TlsContentType;
  *  See chapter 7.1, p. 27 TLS 1.2
  */
 public class TlsChangeCipherSpecMessage extends TlsMessage {
+
 
 	public TlsChangeCipherSpecMessage() {};
 	
@@ -36,5 +39,13 @@ public class TlsChangeCipherSpecMessage extends TlsMessage {
 	public String toString() {
 		return "";
 	}
-	
+
+	@Override
+	public KeyValueObject getViewData() {
+		ArrayList<KeyValueObject> children = new ArrayList<KeyValueObject>();
+		children.add(new KeyValueObject("Value", "1"));
+		KeyValueObject result = new KeyValueObject("Content", children);
+		result.setValue("TlsChangeCipherSpec");
+		return result;
+	}
 }

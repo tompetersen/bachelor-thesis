@@ -1,5 +1,8 @@
 package jProtocol.tls12.model.messages.handshake;
 
+import java.util.ArrayList;
+import java.util.List;
+import jProtocol.Abstract.View.keyvaluetree.KeyValueObject;
 import jProtocol.tls12.model.exceptions.TlsDecodeErrorException;
 import jProtocol.tls12.model.values.TlsHandshakeType;
 
@@ -20,7 +23,7 @@ public class TlsCertificateVerifyMessage extends TlsHandshakeMessage {
 
 	public TlsCertificateVerifyMessage(byte[] unparsedContent) throws TlsDecodeErrorException {
 		super(unparsedContent);
-		// TODO Parsing for authenticated client -> Implement if necessary
+		// TODO: Parsing for authenticated client -> Implement if necessary
 	}
 
 	@Override
@@ -31,6 +34,17 @@ public class TlsCertificateVerifyMessage extends TlsHandshakeMessage {
 	@Override
 	public byte[] getBodyBytes() {
 		return null;
+	}
+	
+	@Override
+	public List<KeyValueObject> getBodyViewData() {
+		ArrayList<KeyValueObject> result = new ArrayList<>();
+		
+		//TODO: view data for certificate verify message
+		KeyValueObject kvo = new KeyValueObject("CertificateVerify", "TODO");
+		result.add(kvo);
+				
+		return result;
 	}
 
 }

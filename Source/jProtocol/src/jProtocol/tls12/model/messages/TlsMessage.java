@@ -70,8 +70,5 @@ public abstract class TlsMessage {
 
 	public abstract byte[] getBytes();
 
-	public List<KeyValueObject> getViewData() {
-		//TODO: abstract
-		return null;
-	}
+	public abstract KeyValueObject getViewData();
 }

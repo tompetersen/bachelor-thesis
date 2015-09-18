@@ -1,5 +1,8 @@
 package jProtocol.tls12.model.messages.handshake;
 
+import java.util.ArrayList;
+import java.util.List;
+import jProtocol.Abstract.View.keyvaluetree.KeyValueObject;
 import jProtocol.tls12.model.exceptions.TlsDecodeErrorException;
 import jProtocol.tls12.model.values.TlsHandshakeType;
 
@@ -45,6 +48,17 @@ public class TlsServerKeyExchangeMessage extends TlsHandshakeMessage {
 	@Override
 	public byte[] getBodyBytes() {
 		return null;
+	}
+	
+	@Override
+	public List<KeyValueObject> getBodyViewData() {
+		ArrayList<KeyValueObject> result = new ArrayList<>();
+		
+		//TODO: view data for DH server key exchange message
+		KeyValueObject kvo = new KeyValueObject("DH", "TODO");
+		result.add(kvo);
+				
+		return result;
 	}
 
 }

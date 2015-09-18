@@ -1,8 +1,10 @@
 package jProtocol.tls12.model.messages;
 
+import jProtocol.Abstract.View.keyvaluetree.KeyValueObject;
 import jProtocol.tls12.model.exceptions.TlsDecodeErrorException;
 import jProtocol.tls12.model.values.TlsAlert;
 import jProtocol.tls12.model.values.TlsContentType;
+import java.util.ArrayList;
 
 /*
  * struct {
@@ -83,6 +85,18 @@ public class TlsAlertMessage extends TlsMessage {
 	@Override
 	public String toString() {
 		return _alert.toString() + (_isFatal ? " FATAL" : "");
+	}
+
+	@Override
+	public KeyValueObject getViewData() {
+		ArrayList<KeyValueObject> children = new ArrayList<KeyValueObject>();
+		children.add(new KeyValueObject("AlertLevel", _isFatal ? "2 - fatal" : "1 - warning"));
+		children.add(new KeyValueObject("AlertDescription", _alert.toString()));
+		
+		KeyValueObject result = new KeyValueObject("Content", children);
+		result.setValue("TlsAlert");
+		
+		return result;
 	}
 	
 }

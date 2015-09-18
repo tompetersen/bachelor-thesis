@@ -1,5 +1,9 @@
 package jProtocol.tls12.model.messages.handshake;
 
+import java.util.ArrayList;
+import java.util.List;
+import jProtocol.Abstract.View.keyvaluetree.KeyValueObject;
+import jProtocol.helper.ByteHelper;
 import jProtocol.tls12.model.exceptions.TlsDecodeErrorException;
 import jProtocol.tls12.model.values.TlsHandshakeType;
 import jProtocol.tls12.model.values.TlsVerifyData;
@@ -44,5 +48,14 @@ public class TlsFinishedMessage extends TlsHandshakeMessage {
 	public TlsVerifyData getVerifyData() {
 		return _verifyData;
 	}
-
+	
+	@Override
+	public List<KeyValueObject> getBodyViewData() {
+		ArrayList<KeyValueObject> result = new ArrayList<>();
+		
+		KeyValueObject kvo = new KeyValueObject("VerifyData", "0x" + ByteHelper.bytesToHexString(_verifyData.getBytes()));
+		result.add(kvo);
+				
+		return result;
+	}
 }

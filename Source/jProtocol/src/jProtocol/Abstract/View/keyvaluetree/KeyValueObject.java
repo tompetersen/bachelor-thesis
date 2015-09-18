@@ -20,14 +20,7 @@ public class KeyValueObject {
 		this._kvoList = valueList;
 	}
 
-	public boolean hasChildren() {
-		return (_kvoList != null && _kvoList.size() > 0);
-	}
 	
-	public void setBackgroundColor(Color c) {
-		this._backgroundColor = c;
-	}
-
 	public String getKey() {
 		return _key;
 	}
@@ -36,12 +29,25 @@ public class KeyValueObject {
 		return _value;
 	}
 
+	public void setValue(String value) {
+		_value = value;
+	}
+
 	public List<KeyValueObject> getChildList() {
 		return _kvoList;
 	}
+	
+	public boolean hasChildren() {
+		return (_kvoList != null && _kvoList.size() > 0);
+	}
+	
 
 	public Color getBackgroundColor() {
 		return _backgroundColor;
+	}
+	
+	public void setBackgroundColor(Color c) {
+		this._backgroundColor = c;
 	}
 
 	@Override

@@ -1,8 +1,11 @@
 package jProtocol.tls12.model.messages;
 
+import jProtocol.Abstract.View.keyvaluetree.KeyValueObject;
 import jProtocol.tls12.model.exceptions.TlsDecodeErrorException;
 import jProtocol.tls12.model.values.TlsApplicationData;
 import jProtocol.tls12.model.values.TlsContentType;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 
 /*
  *  Application data messages are carried by the record layer and are 
@@ -46,5 +49,15 @@ public class TlsApplicationDataMessage extends TlsMessage {
 	@Override
 	public String toString() {
 		return "DATA";
+	}
+
+	@Override
+	public KeyValueObject getViewData() {
+		ArrayList<KeyValueObject> children = new ArrayList<KeyValueObject>();
+		children.add(new KeyValueObject("Value", new String(getBytes(), StandardCharsets.US_ASCII)));
+		KeyValueObject result = new KeyValueObject("Content", children);
+		result.setValue("TlsApplicationData");
+		
+		return result;
 	}
 }

@@ -1,5 +1,6 @@
 package jProtocol.tls12.model.messages.handshake;
 
+import jProtocol.Abstract.View.keyvaluetree.KeyValueObject;
 import jProtocol.helper.ByteHelper;
 import jProtocol.tls12.model.ciphersuites.TlsCipherSuiteRegistry;
 import jProtocol.tls12.model.exceptions.TlsDecodeErrorException;
@@ -8,6 +9,8 @@ import jProtocol.tls12.model.values.TlsContentType;
 import jProtocol.tls12.model.values.TlsHandshakeType;
 import jProtocol.tls12.model.values.TlsKeyExchangeAlgorithm;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class TlsHandshakeMessage extends TlsMessage {
 
@@ -139,10 +142,28 @@ public abstract class TlsHandshakeMessage extends TlsMessage {
 	 * @return
 	 */
 	public abstract byte[] getBodyBytes();
+	
+	public int getLength() {
+		return getBodyBytes().length;
+	}
 
 	@Override
 	public String toString() {
 		return getHandshakeType().toString();
 	}
+
+	@Override
+	public KeyValueObject getViewData() {
+		ArrayList<KeyValueObject> children = new ArrayList<KeyValueObject>();
+		children.add(new KeyValueObject("HandshakeType", getHandshakeType().toString()));
+		children.add(new KeyValueObject("Length", Integer.toString(getLength())));
+		children.addAll(getBodyViewData());
+		
+		KeyValueObject result = new KeyValueObject("Content", children);
+		result.setValue("TlsHandshake");//TODO: maybe getHandshakeType?
+		
+		return result;
+	}
 	
+	public abstract List<KeyValueObject> getBodyViewData();
 }

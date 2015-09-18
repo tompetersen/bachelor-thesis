@@ -90,7 +90,7 @@ public class CommunicationChannel<T extends ProtocolDataUnit> extends Observable
 	}
 
 	public void sendAllMessagesWithoutBreak() {
-		// TODO:
+		// TODO: sendAllMessages
 	}
 
 	public List<T> getSentProtocolDataUnits() {
