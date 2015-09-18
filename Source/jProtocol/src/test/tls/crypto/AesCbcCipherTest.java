@@ -1,26 +1,21 @@
 package test.tls.crypto;
 
-import static org.junit.Assert.*;
-
+import static org.junit.Assert.assertArrayEquals;
+import jProtocol.helper.ByteHelper;
+import jProtocol.tls12.model.crypto.TlsAesCbcCipher;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
-
-import jProtocol.helper.ByteHelper;
-import jProtocol.tls12.model.crypto.TlsSymmetricCipher;
-import jProtocol.tls12.model.values.TlsBulkCipherAlgorithm;
-import jProtocol.tls12.model.values.TlsCipherType;
-
 import org.junit.Before;
 import org.junit.Test;
 
-public class CipherTest {
+public class AesCbcCipherTest {
 
-	private TlsSymmetricCipher _blockCipher;
+	private TlsAesCbcCipher _blockCipher;
 	
 	
 	@Before
 	public void setUp() {
-		_blockCipher = new TlsSymmetricCipher(TlsBulkCipherAlgorithm.cipher_aes, TlsCipherType.block);
+		_blockCipher = new TlsAesCbcCipher();
 	}
 	
 	@Test

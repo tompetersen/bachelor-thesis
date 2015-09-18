@@ -1,7 +1,7 @@
 package jProtocol.tls12.model.ciphersuites.impl;
 
 import jProtocol.tls12.model.ciphersuites.TlsBlockCipherSuite;
-import jProtocol.tls12.model.crypto.TlsSymmetricCipher;
+import jProtocol.tls12.model.crypto.TlsAesCbcCipher;
 import jProtocol.tls12.model.crypto.TlsMac;
 import jProtocol.tls12.model.crypto.TlsMacParameters;
 import jProtocol.tls12.model.values.TlsBulkCipherAlgorithm;
@@ -15,11 +15,11 @@ import jProtocol.tls12.model.values.TlsMacAlgorithm;
 public class TlsCipherSuite_RSA_WITH_AES_128_CBC_SHA extends TlsBlockCipherSuite {
 
 	private TlsMac _mac;
-	private TlsSymmetricCipher _cipher;
+	private TlsAesCbcCipher _cipher;
 	
 	public TlsCipherSuite_RSA_WITH_AES_128_CBC_SHA() {
 		_mac = new TlsMac(getMacAlgorithm());
-		_cipher = new TlsSymmetricCipher(getBulkCipherAlgorithm(), getCipherType());
+		_cipher = new TlsAesCbcCipher();
 	}
 	
 	@Override

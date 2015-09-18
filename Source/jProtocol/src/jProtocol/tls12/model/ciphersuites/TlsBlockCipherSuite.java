@@ -29,6 +29,7 @@ public abstract class TlsBlockCipherSuite implements TlsCipherSuite {
 		
 		public TlsBlockEncryptionResult(byte[] iv, byte[] content, byte[] mac, byte[] padding, byte paddingLength, byte[] result) {
 			super();
+			
 			this.iv = iv;
 			this.content = content;
 			this.mac = mac;

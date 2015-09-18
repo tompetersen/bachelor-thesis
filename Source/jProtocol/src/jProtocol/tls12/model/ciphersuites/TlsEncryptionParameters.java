@@ -13,19 +13,39 @@ public class TlsEncryptionParameters {
 		_macWriteKey = macWriteKey;
 		_writeIv = writeIv;
 	}
-
+	
+	/**
+	 * The current write or read sequence number.
+	 * 
+	 * @return the sequence number
+	 */
 	public long getSequenceNumber() {
 		return _sequenceNumber;
 	}
 
+	/**
+	 * The server or client write encryption key.
+	 * 
+	 * @return the write encryption key
+	 */
 	public byte[] getEncryptionWriteKey() {
 		return _encryptionWriteKey;
 	}
 
+	/**
+	 * The server or client write MAC key.
+	 * 
+	 * @return the write mac key
+	 */
 	public byte[] getMacWriteKey() {
 		return _macWriteKey;
 	}
 
+	/**
+	 * The server or client write IV used as implicit nonce for AEAD ciphers.
+	 * 
+	 * @return the write IV
+	 */
 	public byte[] getWriteIv() {
 		return _writeIv;
 	}
