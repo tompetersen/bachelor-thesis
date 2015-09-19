@@ -41,10 +41,12 @@ import jProtocol.tls12.model.states.server.TlsWaitingForClientKeyExchangeState;
 import jProtocol.tls12.model.states.server.TlsWaitingForFinishedState_Server;
 import jProtocol.tls12.model.values.TlsApplicationData;
 import jProtocol.tls12.model.values.TlsCertificate;
+import jProtocol.tls12.model.values.TlsClientDhPublicKey;
 import jProtocol.tls12.model.values.TlsConnectionEnd;
 import jProtocol.tls12.model.values.TlsHandshakeType;
 import jProtocol.tls12.model.values.TlsKeyExchangeAlgorithm;
 import jProtocol.tls12.model.values.TlsRandom;
+import jProtocol.tls12.model.values.TlsServerDhParams;
 import jProtocol.tls12.model.values.TlsSessionId;
 import jProtocol.tls12.model.values.TlsVerifyData;
 import jProtocol.tls12.model.values.TlsVersion;
@@ -141,6 +143,7 @@ public class TlsStateMachine extends StateMachine<TlsCiphertext> {
 	private TlsCipherSuiteRegistry _cipherSuiteRegistry;
 	private List<TlsCertificate> _certificateList; 
 	private TlsRsaCipher _rsaCipher;
+	private TlsServerDhParams _serverDhParams;
 	private List<TlsApplicationDataMessage> _cachedApplicationDataMessages;
 	
 	public TlsStateMachine(TlsConnectionEnd entity) {
@@ -387,6 +390,31 @@ public class TlsStateMachine extends StateMachine<TlsCiphertext> {
 
 	public void setCertificateList(List<TlsCertificate> certificateList) {
 		_certificateList = certificateList;
+	}
+	
+	public TlsClientDhPublicKey getClientDhPublicKey() {
+		//TODO: client dh public Key
+		
+		return null;
+	}
+	
+	public void setServerDhParams(TlsServerDhParams serverDhParams) {
+		_serverDhParams = serverDhParams;
+	}
+	
+	public TlsServerDhParams getServerDhParams() {
+		return _serverDhParams;
+	}
+	
+	public byte[] getSignedDhParams() {
+		/*  digitally-signed struct {
+              opaque client_random[32];
+              opaque server_random[32];
+              ServerDHParams params;
+          } signed_params;*/
+		//TODO: signed struct
+		
+		return new byte[0];
 	}
 	
 	/**

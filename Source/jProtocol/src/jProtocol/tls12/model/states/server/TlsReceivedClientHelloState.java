@@ -6,10 +6,12 @@ import jProtocol.tls12.model.messages.handshake.TlsCertificateMessage;
 import jProtocol.tls12.model.messages.handshake.TlsHandshakeMessage;
 import jProtocol.tls12.model.messages.handshake.TlsServerHelloDoneMessage;
 import jProtocol.tls12.model.messages.handshake.TlsServerHelloMessage;
+import jProtocol.tls12.model.messages.handshake.TlsServerKeyExchangeMessage;
 import jProtocol.tls12.model.states.TlsState;
 import jProtocol.tls12.model.states.TlsStateMachine;
 import jProtocol.tls12.model.states.TlsStateMachine.TlsStateType;
 import jProtocol.tls12.model.values.TlsCertificate;
+import jProtocol.tls12.model.values.TlsKeyExchangeAlgorithm;
 import jProtocol.tls12.model.values.TlsRandom;
 import java.util.List;
 
@@ -55,13 +57,13 @@ public class TlsReceivedClientHelloState extends TlsState {
 	}
 	
 	private void sendServerKeyExchange() {
-		//TODO: Send for DHE_RSA, ...
-		boolean needsServerkeyExchangeMessage = false;
-		if (needsServerkeyExchangeMessage) {
-//			TlsHandshakeMessage message = new TlsServerKeyExchangeMessage();
-//			
-//			_stateMachine.addHandshakeMessageForVerifyData(message);
-//			sendTlsMessage(message);
+		TlsKeyExchangeAlgorithm algorithm = _stateMachine.getPendingCipherSuite().getKeyExchangeAlgorithm();
+		
+		if (algorithm == TlsKeyExchangeAlgorithm.dhe_rsa) {
+			TlsHandshakeMessage message = new TlsServerKeyExchangeMessage(_stateMachine.getServerDhParams(), _stateMachine.getSignedDhParams());
+			
+			_stateMachine.addHandshakeMessageForVerifyData(message);
+			sendTlsMessage(message);
 		}
 	}
 	

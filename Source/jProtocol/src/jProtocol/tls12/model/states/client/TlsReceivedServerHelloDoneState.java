@@ -55,6 +55,9 @@ public class TlsReceivedServerHelloDoneState extends TlsState {
 			
 			sendRsaClientKeyExchangeMessage(preMasterSecret);
 		}
+		else if (algorithm == TlsKeyExchangeAlgorithm.dhe_rsa) {
+			sendDhClientKeyExchangeMessage();
+		}
 		else {
 			throw new RuntimeException("Key exchange algorithm [" + algorithm.toString() + "] not implemented yet!");
 		}
