@@ -546,7 +546,7 @@ public class TlsStateMachine extends StateMachine<TlsCiphertext> {
 	
 	private KeyValueObject objectForConnectionState(TlsConnectionState state, String title) {
 		ArrayList<KeyValueObject> listObjects = new ArrayList<>();
-		listObjects.add(new KeyValueObject("Cipher suite", state.getCipherSuite().toString()));
+		listObjects.add(new KeyValueObject("Cipher suite", state.getCipherSuite().getName()));
 		listObjects.add(new KeyValueObject("Sequence number", Long.toHexString(state.getSequenceNumber())));
 		
 		boolean hasKeys = state.hasComputedKeys();

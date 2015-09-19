@@ -1,8 +1,10 @@
 package jProtocol.tls12.model.crypto;
 
+import jProtocol.tls12.model.exceptions.TlsBadRecordMacException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import javax.crypto.AEADBadTagException;
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
@@ -24,7 +26,7 @@ public class TlsAesGcmCipher {
 	 * RFC 5166
 	 * An authentication tag with a length of 16 octets (128 bits) is used.
 	 */
-	private static final int GCM_TAG_LENGTH = 16; // in bytes
+	public static final int GCM_TAG_LENGTH = 16; // in bytes
 	
 	private Cipher _cipher;
 
@@ -49,14 +51,19 @@ public class TlsAesGcmCipher {
 	 * @return the ciphertext
 	 */
 	public byte[] encrypt(byte[] key, byte[] nonce, byte[] additionalData, byte[] plaintext) {
-		return performCipherOperation(key, nonce, additionalData, plaintext, Cipher.ENCRYPT_MODE);
+		try {
+			return performCipherOperation(key, nonce, additionalData, plaintext, Cipher.ENCRYPT_MODE);
+		}
+		catch (TlsBadRecordMacException e) {
+			throw new RuntimeException("AEADBadTagException thrown in AES GCM encrypt mode. Wait... what?");
+		}
 	}
 	
-	public byte[] decrypt(byte[] key, byte[] nonce, byte[] additionalData, byte[] ciphertext) {
+	public byte[] decrypt(byte[] key, byte[] nonce, byte[] additionalData, byte[] ciphertext) throws TlsBadRecordMacException {
 		return performCipherOperation(key, nonce, additionalData, ciphertext, Cipher.DECRYPT_MODE);
 	}
 	
-	private byte[] performCipherOperation(byte[] key, byte[] nonce, byte[] additionalData, byte[] text, int opmode) {
+	private byte[] performCipherOperation(byte[] key, byte[] nonce, byte[] additionalData, byte[] text, int opmode) throws TlsBadRecordMacException {
 		SecretKeySpec secretKeySpec = new SecretKeySpec(key,"AES");
 		
 		GCMParameterSpec spec = new GCMParameterSpec(GCM_TAG_LENGTH * 8, nonce);
@@ -64,9 +71,9 @@ public class TlsAesGcmCipher {
 		try {
 			_cipher.init(opmode, secretKeySpec, spec);
 		} catch (InvalidKeyException e) {
-			throw new RuntimeException("Invalid key used for [AES/CBC/NoPadding]! Reason: " + e.getLocalizedMessage());
+			throw new RuntimeException("Invalid key used for [AES/GCM/NoPadding]! Reason: " + e.getLocalizedMessage());
 		} catch (InvalidAlgorithmParameterException e) {
-			throw new RuntimeException("Invalid algorithm parameter for [AES/CBC/NoPadding]! Reason: " + e.getLocalizedMessage());
+			throw new RuntimeException("Invalid algorithm parameter for [AES/GCM/NoPadding]! Reason: " + e.getLocalizedMessage());
 		}
 		
 		_cipher.updateAAD(additionalData);
@@ -75,9 +82,11 @@ public class TlsAesGcmCipher {
 		try {
 			result = _cipher.doFinal(text);
 		} catch (IllegalBlockSizeException e) {
-			throw new RuntimeException("Illegal block size for [AES/CBC/NoPadding]! Reason: " + e.getLocalizedMessage());
+			throw new RuntimeException("Illegal block size for [AES/GCM/NoPadding]! Reason: " + e.getLocalizedMessage());
+		} catch (AEADBadTagException e) {
+			throw new TlsBadRecordMacException("Bad authentication tag for [AES/GCM/NoPadding]!");
 		} catch (BadPaddingException e) {
-			throw new RuntimeException("Bad Padding for [AES/CBC/NoPadding]! Reason: " + e.getLocalizedMessage());
+			throw new RuntimeException("Bad Padding for [AES/GCM/NoPadding]! Reason: " + e.getLocalizedMessage());
 		}
 		
 		return result;

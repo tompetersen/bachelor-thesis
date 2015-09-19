@@ -14,7 +14,7 @@ public class TlsAeadFragment implements TlsFragment {
 	
 	public TlsAeadFragment(TlsAeadEncryptionResult encResult) {
 		_encryptionResult = encResult;
-		_sentBytes = ByteHelper.concatenate(encResult.nonce, encResult.aeadCiphered);
+		_sentBytes = ByteHelper.concatenate(encResult.nonce_explicit, encResult.aeadCiphered);
 	}
 
 	@Override
@@ -28,7 +28,7 @@ public class TlsAeadFragment implements TlsFragment {
 	 * @return the explicit nonce
 	 */
 	public byte[] getNonceExplicit() {
-		return _encryptionResult.nonce;
+		return _encryptionResult.nonce_explicit;
 	}
 
 	@Override
@@ -44,7 +44,7 @@ public class TlsAeadFragment implements TlsFragment {
 	@Override
 	public KeyValueObject getViewData(TlsMessage message) {
 		ArrayList<KeyValueObject> resultList = new ArrayList<>();
-		resultList.add(new KeyValueObject("Nonce explicit", "0x"+ByteHelper.bytesToHexString(_encryptionResult.nonce)));
+		resultList.add(new KeyValueObject("Nonce explicit", "0x"+ByteHelper.bytesToHexString(_encryptionResult.nonce_explicit)));
 		
 		KeyValueObject kvo = message.getViewData();
 		kvo.setBackgroundColor(Color.GRAY);

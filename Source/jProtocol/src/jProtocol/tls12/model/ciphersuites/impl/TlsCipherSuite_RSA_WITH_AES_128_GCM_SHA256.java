@@ -6,22 +6,22 @@ import jProtocol.tls12.model.exceptions.TlsBadRecordMacException;
 import jProtocol.tls12.model.values.TlsBulkCipherAlgorithm;
 import jProtocol.tls12.model.values.TlsKeyExchangeAlgorithm;
 
-public class TlsCipherSuite_DHE_RSA_WITH_AES_128_GCM_SHA256 extends TlsAeadCipherSuite {
+public class TlsCipherSuite_RSA_WITH_AES_128_GCM_SHA256 extends TlsAeadCipherSuite {
 
 	private TlsAesGcmCipher _cipher;
 	
-	public TlsCipherSuite_DHE_RSA_WITH_AES_128_GCM_SHA256() {
+	public TlsCipherSuite_RSA_WITH_AES_128_GCM_SHA256() {
 		_cipher = new TlsAesGcmCipher(); 
 	}
 
 	@Override
 	public String getName() {
-		return "TLS_DHE_RSA_WITH_AES_128_GCM_SHA256";
+		return "TLS_RSA_WITH_AES_128_GCM_SHA256";
 	}
 
 	@Override
 	public short getCode() {
-		return 0x009E;
+		return 0x009C;
 	}
 
 	@Override
@@ -41,23 +41,12 @@ public class TlsCipherSuite_DHE_RSA_WITH_AES_128_GCM_SHA256 extends TlsAeadCiphe
 
 	@Override
 	public byte getFixedIvLength() {
-		/*	struct {
-	             opaque salt[4];
-	             opaque nonce_explicit[8];
-	          } GCMNonce;
-	          
-			The salt is the "implicit" part of the nonce and is not sent in the
-			packet.  Instead, the salt is generated as part of the handshake
-			process: it is either the client_write_IV (when the client is
-			sending) or the server_write_IV (when the server is sending).  The
-			salt length (SecurityParameters.fixed_iv_length) is 4 octets.
-		  */
 		return (byte)4;
 	}
-	
+
 	@Override
 	public TlsKeyExchangeAlgorithm getKeyExchangeAlgorithm() {
-		return TlsKeyExchangeAlgorithm.dhe_rsa;
+		return TlsKeyExchangeAlgorithm.rsa;
 	}
 
 	@Override
@@ -69,9 +58,10 @@ public class TlsCipherSuite_DHE_RSA_WITH_AES_128_GCM_SHA256 extends TlsAeadCiphe
 	public byte[] decrypt(byte[] key, byte[] nonce, byte[] additionalData, byte[] ciphertext) throws TlsBadRecordMacException {
 		return _cipher.decrypt(key, nonce, additionalData, ciphertext);
 	}
-	
+
 	@Override
 	public int getAuthenticationTagLength() {
 		return TlsAesGcmCipher.GCM_TAG_LENGTH;
 	}
+
 }

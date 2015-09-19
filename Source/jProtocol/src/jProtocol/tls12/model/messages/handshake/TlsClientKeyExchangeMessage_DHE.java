@@ -1,7 +1,6 @@
 package jProtocol.tls12.model.messages.handshake;
 
 import jProtocol.Abstract.View.keyvaluetree.KeyValueObject;
-import jProtocol.tls12.model.values.TlsCertificate;
 import java.util.ArrayList;
 import java.util.List;
 

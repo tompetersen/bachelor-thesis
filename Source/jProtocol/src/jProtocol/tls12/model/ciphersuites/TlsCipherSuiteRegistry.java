@@ -2,6 +2,7 @@ package jProtocol.tls12.model.ciphersuites;
 
 import jProtocol.tls12.model.ciphersuites.impl.TlsCipherSuite_NULL_WITH_NULL_NULL;
 import jProtocol.tls12.model.ciphersuites.impl.TlsCipherSuite_RSA_WITH_AES_128_CBC_SHA;
+import jProtocol.tls12.model.ciphersuites.impl.TlsCipherSuite_RSA_WITH_AES_128_GCM_SHA256;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -17,7 +18,11 @@ public class TlsCipherSuiteRegistry {
 		//TODO: Add cipher suites (maybe automagically)
 		TlsCipherSuite cs = new TlsCipherSuite_NULL_WITH_NULL_NULL();
 		_supportedCipherSuites.put(cs.getCode(), cs);
+		
 		cs = new TlsCipherSuite_RSA_WITH_AES_128_CBC_SHA();
+		_supportedCipherSuites.put(cs.getCode(), cs);
+		
+		cs = new TlsCipherSuite_RSA_WITH_AES_128_GCM_SHA256();
 		_supportedCipherSuites.put(cs.getCode(), cs);
 	}
 	

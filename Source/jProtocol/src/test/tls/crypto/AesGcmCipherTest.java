@@ -3,6 +3,7 @@ package test.tls.crypto;
 import static org.junit.Assert.assertArrayEquals;
 import jProtocol.helper.ByteHelper;
 import jProtocol.tls12.model.crypto.TlsAesGcmCipher;
+import jProtocol.tls12.model.exceptions.TlsBadRecordMacException;
 import java.util.Arrays;
 import org.junit.Before;
 import org.junit.Test;
@@ -17,7 +18,7 @@ public class AesGcmCipherTest {
 	}
 	
 	@Test
-	public void testBlockCipher() {
+	public void testBlockCipher() throws TlsBadRecordMacException {
 		byte[] key = new byte[16];
 		Arrays.fill(key, (byte)0x12);
 		
@@ -45,7 +46,7 @@ public class AesGcmCipherTest {
 	 * http://csrc.nist.gov/groups/ST/toolkit/BCM/documents/proposedmodes/gcm/gcm-revised-spec.pdf
 	 */
 	@Test
-	public void testBlockCipherWithTestVector() {
+	public void testBlockCipherWithTestVector() throws TlsBadRecordMacException {
 		byte[] key = ByteHelper.hexStringToBytes("feffe9928665731c6d6a8f9467308308");
 		byte[] nonce = ByteHelper.hexStringToBytes("cafebabefacedbaddecaf888");
 		byte[] additional = ByteHelper.hexStringToBytes("feedfacedeadbeeffeedfacedeadbeefabaddad2");

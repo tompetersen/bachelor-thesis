@@ -6,7 +6,6 @@ import jProtocol.tls12.model.exceptions.TlsDecodeErrorException;
 import jProtocol.tls12.model.messages.handshake.TlsHandshakeMessage;
 import jProtocol.tls12.model.values.TlsContentType;
 import jProtocol.tls12.model.values.TlsKeyExchangeAlgorithm;
-import java.util.List;
 
 public abstract class TlsMessage {
 

@@ -65,7 +65,7 @@ public class ByteHelper {
 	 * @return the bytes
 	 */
 	public static byte[] longToByteArray(long l) {
-	    ByteBuffer buffer = ByteBuffer.allocate(Long.SIZE);
+	    ByteBuffer buffer = ByteBuffer.allocate(Long.BYTES);
 	    buffer.putLong(l);
 	    return buffer.array();
 	}
