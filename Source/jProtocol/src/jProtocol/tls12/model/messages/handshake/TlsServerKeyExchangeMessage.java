@@ -1,10 +1,13 @@
 package jProtocol.tls12.model.messages.handshake;
 
-import java.util.ArrayList;
-import java.util.List;
 import jProtocol.Abstract.View.keyvaluetree.KeyValueObject;
+import jProtocol.helper.ByteHelper;
 import jProtocol.tls12.model.exceptions.TlsDecodeErrorException;
 import jProtocol.tls12.model.values.TlsHandshakeType;
+import jProtocol.tls12.model.values.TlsServerDhParams;
+import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.List;
 
 public class TlsServerKeyExchangeMessage extends TlsHandshakeMessage {
 
@@ -29,15 +32,77 @@ public class TlsServerKeyExchangeMessage extends TlsHandshakeMessage {
               // may be extended, e.g., for ECDH -- see [TLSECC] 
           };
       } ServerKeyExchange;
+      
+       struct {
+          opaque dh_p<1..2^16-1>;
+          opaque dh_g<1..2^16-1>;
+          opaque dh_Ys<1..2^16-1>;
+      } ServerDHParams;     // Ephemeral DH parameters 
 	 */
 	
-	//TODO: Used for DHE -> Implement when necessary
-	public TlsServerKeyExchangeMessage() {
+	private static final int LENGTH_FIELD_LENGTHS = 2;
+	
+	private TlsServerDhParams _dhParams;
+	private byte[] _signedParams;
+	
+	public TlsServerKeyExchangeMessage(TlsServerDhParams dhParams, byte[] signedParams) {
+		_dhParams = dhParams;
+		_signedParams = signedParams;
 	}
 
 	public TlsServerKeyExchangeMessage(byte[] unparsedContent) throws TlsDecodeErrorException {
 		super(unparsedContent);
-		// TODO Parsing
+		
+		int completeLength = unparsedContent.length;
+		int parsedLength = 0;
+		byte[] remainingUnparsedContent = new byte[unparsedContent.length];
+		System.arraycopy(unparsedContent, 0, remainingUnparsedContent, 0, unparsedContent.length);
+		
+		//p
+		byte[] p = getNextValueFromUnparsedContent(remainingUnparsedContent);
+		parsedLength += LENGTH_FIELD_LENGTHS + p.length;
+		remainingUnparsedContent = new byte[completeLength - parsedLength];
+		System.arraycopy(unparsedContent, parsedLength, remainingUnparsedContent, 0, completeLength - parsedLength);
+		
+		//g
+		byte[] g = getNextValueFromUnparsedContent(remainingUnparsedContent);
+		parsedLength += LENGTH_FIELD_LENGTHS + g.length;
+		remainingUnparsedContent = new byte[completeLength - parsedLength];
+		System.arraycopy(unparsedContent, parsedLength, remainingUnparsedContent, 0, completeLength - parsedLength);
+		
+		//ys
+		byte[] ys = getNextValueFromUnparsedContent(remainingUnparsedContent);
+		parsedLength += LENGTH_FIELD_LENGTHS + ys.length;
+		remainingUnparsedContent = new byte[completeLength - parsedLength];
+		System.arraycopy(unparsedContent, parsedLength, remainingUnparsedContent, 0, completeLength - parsedLength);
+		
+		//signed
+		byte[] signedParams = getNextValueFromUnparsedContent(remainingUnparsedContent);
+		parsedLength += LENGTH_FIELD_LENGTHS + signedParams.length;
+		remainingUnparsedContent = new byte[completeLength - parsedLength];
+		System.arraycopy(unparsedContent, parsedLength, remainingUnparsedContent, 0, completeLength - parsedLength);
+		
+		_dhParams = new TlsServerDhParams(p, g, ys);
+		_signedParams = signedParams;
+	}
+	
+	private byte[] getNextValueFromUnparsedContent(byte[] remainingUnparsedContent) throws TlsDecodeErrorException {
+		int unparsedLength = remainingUnparsedContent.length; 
+		if (unparsedLength <= LENGTH_FIELD_LENGTHS) {
+			throw new TlsDecodeErrorException("DHE server key exchange message contains not enough information!");
+		}
+		
+		byte[] lengthBytes = {remainingUnparsedContent[0], remainingUnparsedContent[1]};
+		int length = ByteHelper.twoByteArrayToInt(lengthBytes);
+		
+		if (unparsedLength < length + LENGTH_FIELD_LENGTHS) {
+			throw new TlsDecodeErrorException("Invalid length field in DHE server key exchange message!");
+		}
+		
+		byte[] result = new byte[length];
+		System.arraycopy(remainingUnparsedContent, LENGTH_FIELD_LENGTHS, result, 0, length);
+		
+		return result;
 	}
 
 	@Override
@@ -47,15 +112,41 @@ public class TlsServerKeyExchangeMessage extends TlsHandshakeMessage {
 
 	@Override
 	public byte[] getBodyBytes() {
-		return null;
+		byte[] p = _dhParams.getDh_p();
+		byte[] g = _dhParams.getDh_g();
+		byte[] ys = _dhParams.getDh_Ys();
+		
+		int capacity = 4 * LENGTH_FIELD_LENGTHS + p.length + g.length + ys.length + _signedParams.length;
+		ByteBuffer b = ByteBuffer.allocate(capacity);
+		
+		b.put(createLengthValueCombination(p));
+		b.put(createLengthValueCombination(g));
+		b.put(createLengthValueCombination(ys));
+		b.put(createLengthValueCombination(_signedParams));
+		
+		return b.array();
+	}
+	
+	private byte[] createLengthValueCombination(byte[] value) {
+		int length = value.length;
+		byte[] lengthBytes = ByteHelper.intToTwoByteArray(length);
+		return ByteHelper.concatenate(lengthBytes, value);
 	}
 	
 	@Override
 	public List<KeyValueObject> getBodyViewData() {
 		ArrayList<KeyValueObject> result = new ArrayList<>();
 		
-		//TODO: view data for DH server key exchange message
-		KeyValueObject kvo = new KeyValueObject("DH", "TODO");
+		KeyValueObject kvo = new KeyValueObject("DH Param dh_p", "0x" + ByteHelper.bytesToHexString(_dhParams.getDh_p()));
+		result.add(kvo);
+		
+		kvo = new KeyValueObject("DH Param dh_g", "0x" + ByteHelper.bytesToHexString(_dhParams.getDh_g()));
+		result.add(kvo);
+		
+		kvo = new KeyValueObject("DH Param dh_ys", "0x" + ByteHelper.bytesToHexString(_dhParams.getDh_Ys()));
+		result.add(kvo);
+		
+		kvo = new KeyValueObject("Signed params", "0x" + ByteHelper.bytesToHexString(_signedParams));
 		result.add(kvo);
 				
 		return result;

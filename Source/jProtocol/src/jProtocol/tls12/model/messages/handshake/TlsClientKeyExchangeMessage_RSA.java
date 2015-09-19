@@ -70,7 +70,6 @@ public class TlsClientKeyExchangeMessage_RSA extends TlsClientKeyExchangeMessage
 	public List<KeyValueObject> getBodyViewData() {
 		ArrayList<KeyValueObject> result = new ArrayList<>();
 		
-		//TODO: view data for DHE client key exchange message
 		KeyValueObject kvo = new KeyValueObject("EncyptedPreMasterSecret", "0x" + ByteHelper.bytesToHexString(_encPreMasterSecret.getPreMasterSecret()));
 		result.add(kvo);
 				

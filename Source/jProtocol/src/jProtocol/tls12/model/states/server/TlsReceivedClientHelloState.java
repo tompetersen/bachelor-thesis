@@ -6,7 +6,6 @@ import jProtocol.tls12.model.messages.handshake.TlsCertificateMessage;
 import jProtocol.tls12.model.messages.handshake.TlsHandshakeMessage;
 import jProtocol.tls12.model.messages.handshake.TlsServerHelloDoneMessage;
 import jProtocol.tls12.model.messages.handshake.TlsServerHelloMessage;
-import jProtocol.tls12.model.messages.handshake.TlsServerKeyExchangeMessage;
 import jProtocol.tls12.model.states.TlsState;
 import jProtocol.tls12.model.states.TlsStateMachine;
 import jProtocol.tls12.model.states.TlsStateMachine.TlsStateType;
@@ -59,10 +58,10 @@ public class TlsReceivedClientHelloState extends TlsState {
 		//TODO: Send for DHE_RSA, ...
 		boolean needsServerkeyExchangeMessage = false;
 		if (needsServerkeyExchangeMessage) {
-			TlsHandshakeMessage message = new TlsServerKeyExchangeMessage();
-			
-			_stateMachine.addHandshakeMessageForVerifyData(message);
-			sendTlsMessage(message);
+//			TlsHandshakeMessage message = new TlsServerKeyExchangeMessage();
+//			
+//			_stateMachine.addHandshakeMessageForVerifyData(message);
+//			sendTlsMessage(message);
 		}
 	}
 	
