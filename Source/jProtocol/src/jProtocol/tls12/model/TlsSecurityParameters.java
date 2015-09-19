@@ -130,8 +130,8 @@ public class TlsSecurityParameters {
 		if (_clientRandom == null || _serverRandom == null) {
 			throw new RuntimeException("Client and server random values must be set before computing the master secret!");
 		}
-		if (premastersecret == null || premastersecret.length != 48) {
-			throw new IllegalArgumentException("Invalid premastersecret! Must be 48 bytes long!");
+		if (premastersecret == null) {
+			throw new IllegalArgumentException("Premastersecret must not be null!");
 		}
 		
 		/*

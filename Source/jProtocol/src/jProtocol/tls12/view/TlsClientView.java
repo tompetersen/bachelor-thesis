@@ -1,7 +1,6 @@
 package jProtocol.tls12.view;
 
 import jProtocol.tls12.model.states.TlsStateMachine;
-import jProtocol.tls12.model.states.TlsStateMachine.TlsStateType;
 import jProtocol.tls12.model.values.TlsApplicationData;
 import java.awt.Color;
 import java.awt.FlowLayout;

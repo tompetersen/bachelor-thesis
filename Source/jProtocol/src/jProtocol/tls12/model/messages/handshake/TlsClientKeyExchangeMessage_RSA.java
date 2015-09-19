@@ -57,7 +57,7 @@ public class TlsClientKeyExchangeMessage_RSA extends TlsClientKeyExchangeMessage
 
 	@Override
 	public byte[] getBodyBytes() {
-		byte[] encPreMasterSecretBytes = _encPreMasterSecret.getPreMasterSecret();
+		byte[] encPreMasterSecretBytes = _encPreMasterSecret.getEncryptedPreMasterSecret();
 		byte[] lengthBytes = ByteHelper.intToTwoByteArray(encPreMasterSecretBytes.length); 
 		return ByteHelper.concatenate(lengthBytes, encPreMasterSecretBytes);
 	}
@@ -70,7 +70,7 @@ public class TlsClientKeyExchangeMessage_RSA extends TlsClientKeyExchangeMessage
 	public List<KeyValueObject> getBodyViewData() {
 		ArrayList<KeyValueObject> result = new ArrayList<>();
 		
-		KeyValueObject kvo = new KeyValueObject("EncyptedPreMasterSecret", "0x" + ByteHelper.bytesToHexString(_encPreMasterSecret.getPreMasterSecret()));
+		KeyValueObject kvo = new KeyValueObject("EncyptedPreMasterSecret", "0x" + ByteHelper.bytesToHexString(_encPreMasterSecret.getEncryptedPreMasterSecret()));
 		result.add(kvo);
 				
 		return result;

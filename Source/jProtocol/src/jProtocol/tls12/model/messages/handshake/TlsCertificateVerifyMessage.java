@@ -23,7 +23,7 @@ public class TlsCertificateVerifyMessage extends TlsHandshakeMessage {
 
 	public TlsCertificateVerifyMessage(byte[] unparsedContent) throws TlsDecodeErrorException {
 		super(unparsedContent);
-		// TODO: Parsing for authenticated client -> Implement if necessary
+		// TODO: Used for authenticated client -> Implement parsing if necessary
 	}
 
 	@Override
@@ -40,7 +40,7 @@ public class TlsCertificateVerifyMessage extends TlsHandshakeMessage {
 	public List<KeyValueObject> getBodyViewData() {
 		ArrayList<KeyValueObject> result = new ArrayList<>();
 		
-		//TODO: view data for certificate verify message
+		//TODO: Used for authenticated client -> view data for certificate verify message
 		KeyValueObject kvo = new KeyValueObject("CertificateVerify", "TODO");
 		result.add(kvo);
 				

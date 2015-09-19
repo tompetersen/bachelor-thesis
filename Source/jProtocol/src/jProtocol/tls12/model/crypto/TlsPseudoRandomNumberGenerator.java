@@ -12,4 +12,7 @@ public class TlsPseudoRandomNumberGenerator {
 		return result;
 	}
 	
+	public static SecureRandom getRandom() {
+		return _random;
+	}
 }

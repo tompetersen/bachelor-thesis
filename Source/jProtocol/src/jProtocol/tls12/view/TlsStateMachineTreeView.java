@@ -4,7 +4,7 @@ import jProtocol.Abstract.View.keyvaluetree.KeyValueObject;
 import jProtocol.Abstract.View.keyvaluetree.KeyValueTree;
 import jProtocol.helper.GridBagConstraintsHelper;
 import jProtocol.tls12.model.states.TlsStateMachine;
-import jProtocol.tls12.model.states.TlsStateMachine.TlsStateType;
+import jProtocol.tls12.model.states.TlsStateType;
 import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;

@@ -8,7 +8,7 @@ public class TlsRsaEncryptedPreMasterSecret {
 		_premastersecret = premastersecret;
 	}
 	
-	public byte[] getPreMasterSecret() {
+	public byte[] getEncryptedPreMasterSecret() {
 		return _premastersecret;
 	}
 

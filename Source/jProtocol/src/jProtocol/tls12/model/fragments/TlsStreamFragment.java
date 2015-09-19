@@ -4,6 +4,7 @@ import jProtocol.Abstract.View.keyvaluetree.KeyValueObject;
 import jProtocol.helper.ByteHelper;
 import jProtocol.tls12.model.ciphersuites.TlsStreamCipherSuite.TlsStreamEncryptionResult;
 import jProtocol.tls12.model.messages.TlsMessage;
+import jProtocol.tls12.view.TlsUiConstants;
 import java.awt.Color;
 import java.util.ArrayList;
 
@@ -44,10 +45,12 @@ public class TlsStreamFragment implements TlsFragment {
 		ArrayList<KeyValueObject> resultList = new ArrayList<>();
 		
 		KeyValueObject kvo = message.getViewData();
-		kvo.setBackgroundColor(Color.GRAY);
+		kvo.setBackgroundColor(TlsUiConstants.ENCRYPTED_MESSAGE_FIELD_BACKGROUND);
 		resultList.add(kvo);
-		kvo = new KeyValueObject("MAC", "0x"+ByteHelper.bytesToHexString(_encryptionResult.mac));
-		kvo.setBackgroundColor(Color.GRAY);
+		
+		String mac = ByteHelper.bytesToHexString(_encryptionResult.mac);
+		kvo = new KeyValueObject("MAC", mac.length() > 0 ? "0x" + mac : "");
+		kvo.setBackgroundColor(TlsUiConstants.ENCRYPTED_MESSAGE_FIELD_BACKGROUND);
 		resultList.add(kvo);
 		
 		KeyValueObject result = new KeyValueObject("StreamFragment", resultList);

@@ -22,7 +22,7 @@ public abstract class TlsStreamCipherSuite implements TlsCipherSuite {
 	
 	@Override
 	public TlsCiphertext plaintextToCiphertext(TlsPlaintext plaintext, TlsEncryptionParameters parameters) {
-		// TODO currently just used for TLS_NULL_WITH_NULL_NULL -> implement if necessary
+		//TODO: Used for stream ciphers -> implement if necessary (currently just used for TLS_NULL_WITH_NULL_NULL)
 		TlsStreamFragment fragment = new TlsStreamFragment(encrypt(parameters.getEncryptionWriteKey(), plaintext.getFragment())); 
 		return new TlsCiphertext(plaintext.getMessage(),plaintext.getVersion(),fragment);
 	}
@@ -38,7 +38,7 @@ public abstract class TlsStreamCipherSuite implements TlsCipherSuite {
 		byte[] fragmentBytes = new byte[ciphertextBytes.length - TlsPlaintext.RECORD_HEADER_LENGTH];
 		System.arraycopy(ciphertextBytes, TlsPlaintext.RECORD_HEADER_LENGTH, fragmentBytes, 0, fragmentBytes.length);
 		
-		// TODO currently just used for TLS_NULL_WITH_NULL_NULL -> implement if necessary
+		//TODO: Used for stream ciphers -> implement if necessary (currently just used for TLS_NULL_WITH_NULL_NULL)
 
 	//decrypt
 		byte[] decryptedFragment = decrypt(parameters.getEncryptionWriteKey(), fragmentBytes);

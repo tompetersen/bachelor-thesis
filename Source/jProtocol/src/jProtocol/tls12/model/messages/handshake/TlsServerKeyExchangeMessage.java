@@ -88,7 +88,7 @@ public class TlsServerKeyExchangeMessage extends TlsHandshakeMessage {
 	
 	private byte[] getNextValueFromUnparsedContent(byte[] remainingUnparsedContent) throws TlsDecodeErrorException {
 		int unparsedLength = remainingUnparsedContent.length; 
-		if (unparsedLength <= LENGTH_FIELD_LENGTHS) {
+		if (unparsedLength < LENGTH_FIELD_LENGTHS) {
 			throw new TlsDecodeErrorException("DHE server key exchange message contains not enough information!");
 		}
 		
@@ -103,6 +103,14 @@ public class TlsServerKeyExchangeMessage extends TlsHandshakeMessage {
 		System.arraycopy(remainingUnparsedContent, LENGTH_FIELD_LENGTHS, result, 0, length);
 		
 		return result;
+	}
+
+	public TlsServerDhParams getDhParams() {
+		return _dhParams;
+	}
+
+	public byte[] getSignedParams() {
+		return _signedParams;
 	}
 
 	@Override
@@ -143,7 +151,7 @@ public class TlsServerKeyExchangeMessage extends TlsHandshakeMessage {
 		kvo = new KeyValueObject("DH Param dh_g", "0x" + ByteHelper.bytesToHexString(_dhParams.getDh_g()));
 		result.add(kvo);
 		
-		kvo = new KeyValueObject("DH Param dh_ys", "0x" + ByteHelper.bytesToHexString(_dhParams.getDh_Ys()));
+		kvo = new KeyValueObject("DH Param dh_Ys", "0x" + ByteHelper.bytesToHexString(_dhParams.getDh_Ys()));
 		result.add(kvo);
 		
 		kvo = new KeyValueObject("Signed params", "0x" + ByteHelper.bytesToHexString(_signedParams));

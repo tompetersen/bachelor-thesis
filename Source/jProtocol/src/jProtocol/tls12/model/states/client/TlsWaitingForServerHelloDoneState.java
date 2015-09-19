@@ -5,7 +5,7 @@ import jProtocol.tls12.model.messages.TlsMessage;
 import jProtocol.tls12.model.messages.handshake.TlsServerHelloDoneMessage;
 import jProtocol.tls12.model.states.TlsState;
 import jProtocol.tls12.model.states.TlsStateMachine;
-import jProtocol.tls12.model.states.TlsStateMachine.TlsStateType;
+import jProtocol.tls12.model.states.TlsStateType;
 import jProtocol.tls12.model.values.TlsHandshakeType;
 
 public class TlsWaitingForServerHelloDoneState extends TlsState {

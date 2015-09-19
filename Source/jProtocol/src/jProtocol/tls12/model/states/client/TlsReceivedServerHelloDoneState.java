@@ -5,11 +5,13 @@ import jProtocol.tls12.model.crypto.TlsPseudoRandomNumberGenerator;
 import jProtocol.tls12.model.exceptions.TlsAsymmetricOperationException;
 import jProtocol.tls12.model.messages.TlsChangeCipherSpecMessage;
 import jProtocol.tls12.model.messages.TlsMessage;
+import jProtocol.tls12.model.messages.handshake.TlsClientKeyExchangeMessage_DHE;
 import jProtocol.tls12.model.messages.handshake.TlsClientKeyExchangeMessage_RSA;
 import jProtocol.tls12.model.messages.handshake.TlsFinishedMessage;
 import jProtocol.tls12.model.states.TlsState;
 import jProtocol.tls12.model.states.TlsStateMachine;
-import jProtocol.tls12.model.states.TlsStateMachine.TlsStateType;
+import jProtocol.tls12.model.states.TlsStateType;
+import jProtocol.tls12.model.values.TlsClientDhPublicKey;
 import jProtocol.tls12.model.values.TlsKeyExchangeAlgorithm;
 import jProtocol.tls12.model.values.TlsRsaEncryptedPreMasterSecret;
 import jProtocol.tls12.model.values.TlsVerifyData;
@@ -75,6 +77,14 @@ public class TlsReceivedServerHelloDoneState extends TlsState {
 		catch (TlsAsymmetricOperationException e) {
 			setTlsState(TlsStateType.DECRYPT_ERROR_OCCURED_STATE);
 		}
+	}
+	
+	private void sendDhClientKeyExchangeMessage() {
+		TlsClientDhPublicKey clientDhPublicKey = _stateMachine.getClientDhPublicKey();
+		TlsClientKeyExchangeMessage_DHE message = new TlsClientKeyExchangeMessage_DHE(clientDhPublicKey);
+		
+		_stateMachine.addHandshakeMessageForVerifyData(message);
+		sendTlsMessage(message);
 	}
 
 	private void sendChangeCipherSpecMessage() {

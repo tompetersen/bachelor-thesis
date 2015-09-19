@@ -4,6 +4,7 @@ import jProtocol.Abstract.View.keyvaluetree.KeyValueObject;
 import jProtocol.helper.ByteHelper;
 import jProtocol.tls12.model.ciphersuites.TlsBlockCipherSuite.TlsBlockEncryptionResult;
 import jProtocol.tls12.model.messages.TlsMessage;
+import jProtocol.tls12.view.TlsUiConstants;
 import java.awt.Color;
 import java.util.ArrayList;
 
@@ -75,19 +76,19 @@ public class TlsBlockFragment implements TlsFragment {
 		resultList.add(new KeyValueObject("IV", "0x"+ByteHelper.bytesToHexString(_encryptionResult.iv)));
 		
 		KeyValueObject kvo = message.getViewData();
-		kvo.setBackgroundColor(Color.GRAY);
+		kvo.setBackgroundColor(TlsUiConstants.ENCRYPTED_MESSAGE_FIELD_BACKGROUND);
 		resultList.add(kvo);
 		
 		kvo = new KeyValueObject("MAC", "0x"+ByteHelper.bytesToHexString(_encryptionResult.mac));
-		kvo.setBackgroundColor(Color.GRAY);
+		kvo.setBackgroundColor(TlsUiConstants.ENCRYPTED_MESSAGE_FIELD_BACKGROUND);
 		resultList.add(kvo);
 		
 		kvo = new KeyValueObject("Padding", "0x"+ByteHelper.bytesToHexString(_encryptionResult.padding));
-		kvo.setBackgroundColor(Color.GRAY);
+		kvo.setBackgroundColor(TlsUiConstants.ENCRYPTED_MESSAGE_FIELD_BACKGROUND);
 		resultList.add(kvo);
 		
 		kvo = new KeyValueObject("Padding length", Byte.toString(_encryptionResult.paddingLength));
-		kvo.setBackgroundColor(Color.GRAY);
+		kvo.setBackgroundColor(TlsUiConstants.ENCRYPTED_MESSAGE_FIELD_BACKGROUND);
 		resultList.add(kvo);
 		
 		KeyValueObject result = new KeyValueObject("BlockFragment", resultList);

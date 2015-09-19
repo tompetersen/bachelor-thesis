@@ -4,6 +4,7 @@ import jProtocol.Abstract.View.keyvaluetree.KeyValueObject;
 import jProtocol.helper.ByteHelper;
 import jProtocol.tls12.model.ciphersuites.TlsAeadCipherSuite.TlsAeadEncryptionResult;
 import jProtocol.tls12.model.messages.TlsMessage;
+import jProtocol.tls12.view.TlsUiConstants;
 import java.awt.Color;
 import java.util.ArrayList;
 
@@ -47,7 +48,7 @@ public class TlsAeadFragment implements TlsFragment {
 		resultList.add(new KeyValueObject("Nonce explicit", "0x"+ByteHelper.bytesToHexString(_encryptionResult.nonce_explicit)));
 		
 		KeyValueObject kvo = message.getViewData();
-		kvo.setBackgroundColor(Color.GRAY);
+		kvo.setBackgroundColor(TlsUiConstants.ENCRYPTED_MESSAGE_FIELD_BACKGROUND);
 		resultList.add(kvo);
 		
 		KeyValueObject result = new KeyValueObject("AEADFragment", resultList);

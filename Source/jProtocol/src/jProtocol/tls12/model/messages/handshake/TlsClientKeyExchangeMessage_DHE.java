@@ -57,15 +57,15 @@ public class TlsClientKeyExchangeMessage_DHE extends TlsClientKeyExchangeMessage
 		return ByteHelper.concatenate(lengthBytes, yc);
 	}
 
-	public byte[] getDiffieHellmenClientPublicValue() {
-		return _dhPublicKey.getPublicKey();
+	public TlsClientDhPublicKey getDiffieHellmenClientPublicKey() {
+		return _dhPublicKey;
 	}
 	
 	@Override
 	public List<KeyValueObject> getBodyViewData() {
 		ArrayList<KeyValueObject> result = new ArrayList<>();
 		
-		KeyValueObject kvo = new KeyValueObject("DH Public Key", "0x" + ByteHelper.bytesToHexString(_dhPublicKey.getPublicKey()));
+		KeyValueObject kvo = new KeyValueObject("DH Param dh_Yc", "0x" + ByteHelper.bytesToHexString(_dhPublicKey.getPublicKey()));
 		result.add(kvo);
 				
 		return result;

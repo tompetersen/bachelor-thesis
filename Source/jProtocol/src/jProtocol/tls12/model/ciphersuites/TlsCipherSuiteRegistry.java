@@ -1,5 +1,6 @@
 package jProtocol.tls12.model.ciphersuites;
 
+import jProtocol.tls12.model.ciphersuites.impl.TlsCipherSuite_DHE_RSA_WITH_AES_128_GCM_SHA256;
 import jProtocol.tls12.model.ciphersuites.impl.TlsCipherSuite_NULL_WITH_NULL_NULL;
 import jProtocol.tls12.model.ciphersuites.impl.TlsCipherSuite_RSA_WITH_AES_128_CBC_SHA;
 import jProtocol.tls12.model.ciphersuites.impl.TlsCipherSuite_RSA_WITH_AES_128_GCM_SHA256;
@@ -23,6 +24,9 @@ public class TlsCipherSuiteRegistry {
 		_supportedCipherSuites.put(cs.getCode(), cs);
 		
 		cs = new TlsCipherSuite_RSA_WITH_AES_128_GCM_SHA256();
+		_supportedCipherSuites.put(cs.getCode(), cs);
+		
+		cs = new TlsCipherSuite_DHE_RSA_WITH_AES_128_GCM_SHA256();
 		_supportedCipherSuites.put(cs.getCode(), cs);
 	}
 	

@@ -6,7 +6,7 @@ import jProtocol.tls12.model.messages.TlsMessage;
 import jProtocol.tls12.model.messages.handshake.TlsCertificateMessage;
 import jProtocol.tls12.model.states.TlsState;
 import jProtocol.tls12.model.states.TlsStateMachine;
-import jProtocol.tls12.model.states.TlsStateMachine.TlsStateType;
+import jProtocol.tls12.model.states.TlsStateType;
 import jProtocol.tls12.model.values.TlsCertificate;
 import jProtocol.tls12.model.values.TlsHandshakeType;
 import java.util.List;
@@ -37,8 +37,7 @@ public class TlsWaitingForServerCertificateState extends TlsState {
 		TlsRsaCipher rsaCipher = new TlsRsaCipher(rsaPublicKey);
 		_stateMachine.setRsaCipher(rsaCipher);
 		
-		boolean needsServerKeyExchangemessage = false;
-		if (needsServerKeyExchangemessage) {
+		if (_stateMachine.needsServerKeyExchangeMessage()) {
 			setTlsState(TlsStateType.CLIENT_IS_WAITING_FOR_SERVER_KEY_EXCHANGE_STATE);
 		}
 		else {

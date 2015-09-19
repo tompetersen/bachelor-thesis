@@ -1,7 +1,6 @@
 package jProtocol.tls12.model.states;
 
 import jProtocol.Abstract.Model.StateMachine;
-import jProtocol.Abstract.Model.events.Event;
 import jProtocol.Abstract.View.keyvaluetree.KeyValueObject;
 import jProtocol.helper.ByteHelper;
 import jProtocol.helper.MyLogger;
@@ -12,12 +11,15 @@ import jProtocol.tls12.model.TlsSecurityParameters;
 import jProtocol.tls12.model.ciphersuites.TlsCipherSuite;
 import jProtocol.tls12.model.ciphersuites.TlsCipherSuiteRegistry;
 import jProtocol.tls12.model.ciphersuites.TlsEncryptionParameters;
+import jProtocol.tls12.model.crypto.TlsClientDhKeyAgreement;
 import jProtocol.tls12.model.crypto.TlsRsaCipher;
+import jProtocol.tls12.model.crypto.TlsServerDhKeyAgreement;
 import jProtocol.tls12.model.exceptions.TlsBadPaddingException;
 import jProtocol.tls12.model.exceptions.TlsBadRecordMacException;
 import jProtocol.tls12.model.exceptions.TlsDecodeErrorException;
 import jProtocol.tls12.model.messages.TlsApplicationDataMessage;
 import jProtocol.tls12.model.messages.handshake.TlsHandshakeMessage;
+import jProtocol.tls12.model.states.TlsStateMachineEvent.TlsStateMachineEventType;
 import jProtocol.tls12.model.states.alert.TlsDecodeErrorOccuredState;
 import jProtocol.tls12.model.states.alert.TlsDecryptErrorOccuredState;
 import jProtocol.tls12.model.states.alert.TlsReceivedBadRecordMessageState;
@@ -51,88 +53,14 @@ import jProtocol.tls12.model.values.TlsSessionId;
 import jProtocol.tls12.model.values.TlsVerifyData;
 import jProtocol.tls12.model.values.TlsVersion;
 import java.nio.charset.StandardCharsets;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class TlsStateMachine extends StateMachine<TlsCiphertext> {
-	
-	public enum TlsStateMachineEventType {
-		connection_established,
-		connection_error,
-		received_data,
-		connection_closed
-	}
-	
-	public class TlsStateMachineEvent extends Event {
-		private TlsStateMachineEventType _eventType;
-
-		public TlsStateMachineEvent(TlsStateMachineEventType eventType) {
-			super();
-			_eventType = eventType;
-		}
-
-		public TlsStateMachineEventType getEventType() {
-			return _eventType;
-		}
-	}
-	
-	public enum TlsStateType {
-		//Server
-		SERVER_INITIAL_STATE							(1),
-		SERVER_RECEIVED_CLIENT_HELLO_STATE				(2),
-		SERVER_IS_WAITING_FOR_CLIENT_KEY_EXCHANGE_STATE	(3),
-		SERVER_IS_WAITING_FOR_CHANGE_CIPHER_SPEC_STATE	(4),
-		SERVER_IS_WAITING_FOR_FINISHED_STATE			(5),
-		SERVER_RECEIVED_FINISHED_STATE					(6),
-		
-		//Client
-		CLIENT_INITIAL_STATE							(51),
-		CLIENT_IS_WAITING_FOR_SERVER_HELLO_STATE		(52),
-		CLIENT_IS_WAITING_FOR_CERTIFICATE_STATE			(53),
-		CLIENT_IS_WAITING_FOR_SERVER_KEY_EXCHANGE_STATE	(54),
-		CLIENT_IS_WAITING_FOR_SERVER_HELLO_DONE_STATE	(55),
-		CLIENT_RECEIVED_SERVER_HELLO_DONE_STATE			(56),
-		CLIENT_IS_WAITING_FOR_CHANGE_CIPHER_SPEC_STATE	(57),
-		CLIENT_IS_WAITING_FOR_FINISHED_STATE			(58),
-		
-		//Common
-		CONNECTION_ESTABLISHED_STATE					(200),
-		RECEIVED_CLOSE_NOTIFY_STATE						(300),
-		WAITING_FOR_CLOSE_NOTIFY_STATE					(301),
-		
-		//Alert
-		RECEIVED_UNEXPECTED_MESSAGE_STATE				(410),
-		RECEIVED_BAD_RECORD_MESSAGE_STATE				(420),
-		DECODE_ERROR_OCCURED_STATE						(450),
-		DECRYPT_ERROR_OCCURED_STATE						(451);
-		
-		private int _type;
-		
-		private TlsStateType(int type) {
-			_type = type;
-		}
-
-		public int getType() {
-			return _type;
-		}
-		
-		public boolean isHandshakeState() {
-			return (_type > 0 && _type < 100);
-		}
-		
-		public boolean isEstablishedState() {
-			return _type == 200;
-		}
-		
-		public boolean isCloseState() {
-			return _type >= 300 && _type < 400;
-		}
-		
-		public boolean isErrorState() {
-			return _type >= 400;
-		}
-	}
 	
 	private boolean _isServer;
 	private TlsStateType _currentStateType;
@@ -142,9 +70,11 @@ public class TlsStateMachine extends StateMachine<TlsCiphertext> {
 	private TlsConnectionState _pendingConnectionState;
 	private TlsCipherSuiteRegistry _cipherSuiteRegistry;
 	private List<TlsCertificate> _certificateList; 
-	private TlsRsaCipher _rsaCipher;
-	private TlsServerDhParams _serverDhParams;
 	private List<TlsApplicationDataMessage> _cachedApplicationDataMessages;
+	
+	private TlsRsaCipher _rsaCipher;
+	private TlsServerDhKeyAgreement _serverDhKeyAgreement;
+	private TlsClientDhKeyAgreement _clientDhKeyAgreement;
 	
 	public TlsStateMachine(TlsConnectionEnd entity) {
 		_isServer = (entity == TlsConnectionEnd.server);
@@ -153,6 +83,7 @@ public class TlsStateMachine extends StateMachine<TlsCiphertext> {
 		
 		if (_isServer) {
 			createCertificate();
+			createServerDhKeyAgreement();
 		}
 		
 		TlsCipherSuite nullCipherSuite = _cipherSuiteRegistry.getNullCipherSuite();
@@ -175,6 +106,10 @@ public class TlsStateMachine extends StateMachine<TlsCiphertext> {
 		certList.add(certificate);
 		
 		setCertificateList(certList);
+	}
+	
+	private void createServerDhKeyAgreement() {
+		_serverDhKeyAgreement = new TlsServerDhKeyAgreement();
 	}
 	
 	private void createStates() {
@@ -320,8 +255,12 @@ public class TlsStateMachine extends StateMachine<TlsCiphertext> {
 	}
 	
 	public boolean canPerformAbbreviatedHandshakeForSessionId(TlsSessionId sessionId) {
-		//TODO: Abbreviated Handshakes
+		//TODO: Used for abbreviated handshake -> implement if necessary
 		return false;
+	}
+	
+	public boolean needsServerKeyExchangeMessage() {
+		return (getPendingCipherSuite().getKeyExchangeAlgorithm() == TlsKeyExchangeAlgorithm.dhe_rsa);
 	}
 	
 	public void setSessionId(TlsSessionId sessionId) {
@@ -392,20 +331,36 @@ public class TlsStateMachine extends StateMachine<TlsCiphertext> {
 		_certificateList = certificateList;
 	}
 	
-	public TlsClientDhPublicKey getClientDhPublicKey() {
-		//TODO: client dh public Key
-		
-		return null;
-	}
-	
-	public void setServerDhParams(TlsServerDhParams serverDhParams) {
-		_serverDhParams = serverDhParams;
-	}
-	
+	/**
+	 * Should be called only for server state machine. -,-
+	 * 
+	 * @return
+	 */
 	public TlsServerDhParams getServerDhParams() {
-		return _serverDhParams;
+		return _serverDhKeyAgreement.getServerDhParams();
 	}
 	
+	/**
+	 * Should be called only for client state machine.
+	 * 
+	 * @param serverDhParams
+	 * @throws InvalidAlgorithmParameterException
+	 * @throws InvalidKeySpecException
+	 * @throws InvalidKeyException 
+	 */
+	public void createClientDhKeyAgreementFromServerValues(TlsServerDhParams serverDhParams) throws InvalidAlgorithmParameterException, InvalidKeySpecException, InvalidKeyException {
+		_clientDhKeyAgreement = new TlsClientDhKeyAgreement(serverDhParams);
+		
+		byte[] premastersecret = _clientDhKeyAgreement.computePreMasterSecret();
+		computeMasterSecret(premastersecret);
+		MyLogger.info("Client agreed on premastersecret: " + ByteHelper.bytesToHexString(premastersecret));
+	}
+	
+	/**
+	 * Should be called only for server state machine. -,-
+	 * 
+	 * @return
+	 */
 	public byte[] getSignedDhParams() {
 		/*  digitally-signed struct {
               opaque client_random[32];
@@ -415,6 +370,25 @@ public class TlsStateMachine extends StateMachine<TlsCiphertext> {
 		//TODO: signed struct
 		
 		return new byte[0];
+	}
+	
+	/**
+	 * Should be called only for client state machine.
+	 * 
+	 * @return
+	 */
+	public TlsClientDhPublicKey getClientDhPublicKey() {
+		return _clientDhKeyAgreement.getClientPublicKey();
+	}
+	
+	/**
+	 * Should be called only for server state machine.
+	 * 
+	 */
+	public void computePreMasterSecretForServerDhKeyAgreement(TlsClientDhPublicKey clientPublicKey) throws InvalidKeyException, InvalidKeySpecException {
+		byte[] premastersecret = _serverDhKeyAgreement.computePreMasterSecret(clientPublicKey);
+		computeMasterSecret(premastersecret);
+		MyLogger.info("[DH] Server agreed on premastersecret: " + ByteHelper.bytesToHexString(premastersecret));
 	}
 	
 	/**
@@ -446,7 +420,6 @@ public class TlsStateMachine extends StateMachine<TlsCiphertext> {
 	}
 	
 	private boolean isValidVerifyMessage(TlsHandshakeMessage message) {
-		//TODO: maybe more checks, like already contains message, ...
 		TlsHandshakeType type = message.getHandshakeType();
 		return type != TlsHandshakeType.finished && type != TlsHandshakeType.hello_request;
 	}
