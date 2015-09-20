@@ -52,11 +52,7 @@ public class TlsReceivedServerHelloDoneState extends TlsState {
 		TlsKeyExchangeAlgorithm algorithm = _stateMachine.getPendingCipherSuite().getKeyExchangeAlgorithm();
 		
 		if (algorithm == TlsKeyExchangeAlgorithm.rsa) {
-			TlsVersion version = _stateMachine.getVersion(); 
-			byte[] preMasterSecret = ByteHelper.concatenate(version.getBytes(), TlsPseudoRandomNumberGenerator.nextBytes(46));
-			_stateMachine.computeMasterSecret(preMasterSecret);
-			
-			sendRsaClientKeyExchangeMessage(preMasterSecret);
+			sendRsaClientKeyExchangeMessage();
 		}
 		else if (algorithm == TlsKeyExchangeAlgorithm.dhe_rsa) {
 			sendDhClientKeyExchangeMessage();
@@ -66,14 +62,19 @@ public class TlsReceivedServerHelloDoneState extends TlsState {
 		}
 	}
 	
-	private void sendRsaClientKeyExchangeMessage(byte[] premastersecret) {
+	private void sendRsaClientKeyExchangeMessage() {
 		try {
+			TlsVersion version = _stateMachine.getVersion(); 
+			byte[] premastersecret = ByteHelper.concatenate(version.getBytes(), TlsPseudoRandomNumberGenerator.nextBytes(46));
+			_stateMachine.computeMasterSecret(premastersecret);
+			
 			TlsClientStateMachine clientStateMachine = (TlsClientStateMachine) _stateMachine;
 			byte[] encryptedPreMasterSecretBytes = clientStateMachine.getRsaCipher().encrypt(premastersecret);
 			TlsRsaEncryptedPreMasterSecret encPreMasterSecret = new TlsRsaEncryptedPreMasterSecret(encryptedPreMasterSecretBytes);
 			TlsClientKeyExchangeMessage_RSA message = new TlsClientKeyExchangeMessage_RSA(encPreMasterSecret);
 			
 			_stateMachine.addHandshakeMessageForVerifyData(message);
+			
 			sendTlsMessage(message);
 		}
 		catch (TlsAsymmetricOperationException e) {
@@ -87,6 +88,7 @@ public class TlsReceivedServerHelloDoneState extends TlsState {
 		TlsClientKeyExchangeMessage_DHE message = new TlsClientKeyExchangeMessage_DHE(clientDhPublicKey);
 		
 		_stateMachine.addHandshakeMessageForVerifyData(message);
+		
 		sendTlsMessage(message);
 	}
 

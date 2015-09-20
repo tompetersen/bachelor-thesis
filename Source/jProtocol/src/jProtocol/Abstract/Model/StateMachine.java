@@ -73,7 +73,7 @@ public abstract class StateMachine<T extends ProtocolDataUnit> extends Observabl
 		notifyObservers(event);
 	}
 	
-	public void notifyObserversOfStateChanged() {
+	public void notifyObserversOfStateChangedXXX() {
 		setChanged();
 		notifyObservers(new StateMachineStateChangedEvent());
 	}

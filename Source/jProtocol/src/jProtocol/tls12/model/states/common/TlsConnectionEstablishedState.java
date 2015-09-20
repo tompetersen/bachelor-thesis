@@ -15,8 +15,6 @@ public class TlsConnectionEstablishedState extends TlsState{
 		super(stateMachine);
 	}
 	
-	
-
 	@Override
 	public void onEnter() {
 		super.onEnter();
@@ -26,9 +24,8 @@ public class TlsConnectionEstablishedState extends TlsState{
 		}
 		
 		_stateMachine.clearCachedApplicationDataMessage();
+		_stateMachine.notifyObserversOfStateChangedXXX();
 	}
-
-
 
 	@Override
 	public boolean expectedTlsMessage(TlsMessage message) {
@@ -43,6 +40,8 @@ public class TlsConnectionEstablishedState extends TlsState{
 		else if (isAlertMessageOfType(message, TlsAlert.close_notify)){
 			closeNotifyAlertReceived();
 		}
+		
+		_stateMachine.notifyObserversOfStateChangedXXX();
 	}
 
 	private void processApplicationData(TlsApplicationDataMessage m) {

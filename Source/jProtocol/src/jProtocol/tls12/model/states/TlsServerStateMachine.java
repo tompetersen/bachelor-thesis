@@ -17,6 +17,7 @@ import java.util.List;
 public class TlsServerStateMachine extends TlsStateMachine {
 
 	private TlsServerDhKeyAgreement _serverDhKeyAgreement;
+	private TlsClientDhPublicKey _clientDhPublicKey;
 	private List<TlsCertificate> _certificateList; 
 	private TlsRsaCipher _rsaCipher;
 	
@@ -60,8 +61,14 @@ public class TlsServerStateMachine extends TlsStateMachine {
 		
 		return new byte[0];
 	}
+
+	@Override
+	public TlsClientDhPublicKey getClientDhPublicKey() {
+		return _clientDhPublicKey;
+	}
 	
 	public void computePreMasterSecretForServerDhKeyAgreement(TlsClientDhPublicKey clientPublicKey) throws TlsAsymmetricOperationException {
+		_clientDhPublicKey = clientPublicKey;
 		byte[] premastersecret = _serverDhKeyAgreement.computePreMasterSecret(clientPublicKey);
 		computeMasterSecret(premastersecret);
 		MyLogger.info("[DH] Server agreed on premastersecret: " + ByteHelper.bytesToHexString(premastersecret));

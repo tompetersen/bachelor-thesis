@@ -40,9 +40,11 @@ import jProtocol.tls12.model.states.server.TlsWaitingForClientKeyExchangeState;
 import jProtocol.tls12.model.states.server.TlsWaitingForFinishedState_Server;
 import jProtocol.tls12.model.values.TlsApplicationData;
 import jProtocol.tls12.model.values.TlsCertificate;
+import jProtocol.tls12.model.values.TlsClientDhPublicKey;
 import jProtocol.tls12.model.values.TlsHandshakeType;
 import jProtocol.tls12.model.values.TlsKeyExchangeAlgorithm;
 import jProtocol.tls12.model.values.TlsRandom;
+import jProtocol.tls12.model.values.TlsServerDhParams;
 import jProtocol.tls12.model.values.TlsSessionId;
 import jProtocol.tls12.model.values.TlsVerifyData;
 import jProtocol.tls12.model.values.TlsVersion;
@@ -260,6 +262,10 @@ public abstract class TlsStateMachine extends StateMachine<TlsCiphertext> {
 	
 	public abstract List<TlsCertificate> getCertificateList();
 
+	public abstract TlsClientDhPublicKey getClientDhPublicKey();
+	
+	public abstract TlsServerDhParams getServerDhParams();
+	
 	/**
 	 * Sets the pending state as current read state.
 	 * Should be called after receiving the change cipher spec message.
@@ -376,6 +382,7 @@ public abstract class TlsStateMachine extends StateMachine<TlsCiphertext> {
 		result.add(new KeyValueObject("Master secret", masterSecret));
 		
 		result.add(objectForCertificateList(getCertificateList()));
+		result.add(objectForDhValues(getServerDhParams(), getClientDhPublicKey()));
 		
 		result.add(objectForConnectionState(_currentReadConnectionState, "Current read state"));
 		result.add(objectForConnectionState(_currentWriteConnectionState, "Current write state"));
@@ -396,6 +403,21 @@ public abstract class TlsStateMachine extends StateMachine<TlsCiphertext> {
 		else {
 			return new KeyValueObject("Certificate", "");
 		}
+	}
+	
+	private KeyValueObject objectForDhValues(TlsServerDhParams serverParams, TlsClientDhPublicKey clientPublicKey) {
+		ArrayList<KeyValueObject> resultList = new ArrayList<>();
+		
+		boolean hasServerParams = (serverParams != null);
+		boolean hasClientKey = (clientPublicKey != null);
+			
+		resultList.add(new KeyValueObject("dh_p", hasServerParams ? "0x" + ByteHelper.bytesToHexString(serverParams.getDh_p()) : ""));
+		resultList.add(new KeyValueObject("dh_g", hasServerParams ? "0x" + ByteHelper.bytesToHexString(serverParams.getDh_g()) : ""));
+		resultList.add(new KeyValueObject("dh_Ys", hasServerParams ? "0x" + ByteHelper.bytesToHexString(serverParams.getDh_Ys()) : ""));
+		resultList.add(new KeyValueObject("dh_Yc", hasClientKey ? "0x" + ByteHelper.bytesToHexString(clientPublicKey.getPublicKey()) : ""));
+		//TODO: maybe private key?
+		
+		return new KeyValueObject("DH parameters", resultList);
 	}
 	
 	private KeyValueObject objectForConnectionState(TlsConnectionState state, String title) {

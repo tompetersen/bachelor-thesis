@@ -46,6 +46,7 @@ public class TlsReceivedClientHelloState extends TlsState {
 				_stateMachine.getPendingCipherSuite());
 		
 		_stateMachine.addHandshakeMessageForVerifyData(serverHelloMessage);
+		
 		sendTlsMessage(serverHelloMessage);
 	}
 	

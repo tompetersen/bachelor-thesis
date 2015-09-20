@@ -48,6 +48,8 @@ public class TlsWaitingForServerHelloState extends TlsState {
 		_stateMachine.setServerRandom(message.getServerRandom());
 		_stateMachine.setSessionId(message.getSessionId());
 		_stateMachine.setPendingCipherSuite(message.getCipherSuite());
+		
+		_stateMachine.notifyObserversOfStateChangedXXX();
 	}
 	
 }

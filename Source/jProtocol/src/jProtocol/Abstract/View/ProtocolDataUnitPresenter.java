@@ -25,7 +25,7 @@ public class ProtocolDataUnitPresenter<T extends ProtocolDataUnit> implements Ob
 	}
 
 	@Override
-	public void update(Observable o, Object arg) {
+	public synchronized void update(Observable o, Object arg) {
 		List<T> pdus = _channel.getSentProtocolDataUnits();
 		T pduToSend = _channel.getPduToSend();
 		

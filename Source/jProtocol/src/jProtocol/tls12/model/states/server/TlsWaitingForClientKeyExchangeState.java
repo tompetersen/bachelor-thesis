@@ -31,7 +31,7 @@ public class TlsWaitingForClientKeyExchangeState extends TlsState {
 		TlsKeyExchangeAlgorithm algorithm = _stateMachine.getPendingCipherSuite().getKeyExchangeAlgorithm();
 		try {
 			if (algorithm == TlsKeyExchangeAlgorithm.rsa) {
-					setPreMasterSecretFromRsaMessage((TlsClientKeyExchangeMessage_RSA)message);
+				setPreMasterSecretFromRsaMessage((TlsClientKeyExchangeMessage_RSA)message);
 				
 			}
 			else if (algorithm == TlsKeyExchangeAlgorithm.dhe_rsa) {
@@ -46,6 +46,8 @@ public class TlsWaitingForClientKeyExchangeState extends TlsState {
 			setTlsState(TlsStateType.DECRYPT_ERROR_OCCURED_STATE);
 			return;
 		}
+		
+		_stateMachine.notifyObserversOfStateChangedXXX();
 		
 		_stateMachine.addHandshakeMessageForVerifyData(clientKeyExchangeMessage);
 		setTlsState(TlsStateType.SERVER_IS_WAITING_FOR_CHANGE_CIPHER_SPEC_STATE);

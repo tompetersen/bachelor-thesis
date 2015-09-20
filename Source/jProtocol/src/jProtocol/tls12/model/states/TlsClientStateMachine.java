@@ -16,6 +16,7 @@ import jProtocol.tls12.model.values.TlsVerifyData;
 public class TlsClientStateMachine extends TlsStateMachine {
 
 	private TlsClientDhKeyAgreement _clientDhKeyAgreement;
+	private TlsServerDhParams _serverDhParams;
 	private List<TlsCertificate> _serverCertificateList; 
 	private TlsRsaCipher _rsaCipher;
 	
@@ -24,6 +25,7 @@ public class TlsClientStateMachine extends TlsStateMachine {
 	}
 	
 	public void createClientDhKeyAgreementFromServerValues(TlsServerDhParams serverDhParams) throws TlsAsymmetricOperationException {
+		_serverDhParams = serverDhParams;
 		_clientDhKeyAgreement = new TlsClientDhKeyAgreement(serverDhParams);
 		
 		byte[] premastersecret = _clientDhKeyAgreement.computePreMasterSecret();
@@ -32,7 +34,12 @@ public class TlsClientStateMachine extends TlsStateMachine {
 	}
 
 	public TlsClientDhPublicKey getClientDhPublicKey() {
-		return _clientDhKeyAgreement.getClientPublicKey();
+		return (_clientDhKeyAgreement != null) ? _clientDhKeyAgreement.getClientPublicKey() : null;
+	}
+	
+	@Override
+	public TlsServerDhParams getServerDhParams() {
+		return _serverDhParams;
 	}
 	
 	@Override
@@ -102,5 +109,6 @@ public class TlsClientStateMachine extends TlsStateMachine {
 	protected String getEntityName() {
 		return "Client";
 	}
+
 
 }

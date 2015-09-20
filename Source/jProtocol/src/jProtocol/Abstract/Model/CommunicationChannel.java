@@ -15,6 +15,7 @@ public class CommunicationChannel<T extends ProtocolDataUnit> extends Observable
 	private T _pduToSend;
 	private CountDownLatch _clientCountdownLatch;
 	private CountDownLatch _serverCountdownLatch;
+	private boolean _sendAllMessages;
 
 	private List<T> _sentPdus;
 
@@ -28,6 +29,7 @@ public class CommunicationChannel<T extends ProtocolDataUnit> extends Observable
 	 */
 	public CommunicationChannel(StateMachine<T> client, StateMachine<T> server) {
 		_sentPdus = new ArrayList<>();
+		_sendAllMessages = false;
 
 		if (client == null || server == null) {
 			throw new IllegalArgumentException("Client and server must not be null!");
@@ -41,13 +43,14 @@ public class CommunicationChannel<T extends ProtocolDataUnit> extends Observable
 		boolean clientMessage = (sender == _client);
 		pdu.setSentByClient(clientMessage);
 
-		_client.notifyObserversOfStateChanged();
-		_server.notifyObserversOfStateChanged();
-
 		_pduToSend = pdu;
 		
 		setChanged();
 		notifyObservers(new ChannelReceivedMessageEvent());
+		
+		if (_sendAllMessages) {
+			sendNextMessage();
+		}
 		
 		try {
 			if (clientMessage) {
@@ -72,11 +75,15 @@ public class CommunicationChannel<T extends ProtocolDataUnit> extends Observable
 					_sentPdus.add(_pduToSend);
 					
 					if (_pduToSend.hasBeenSentByClient()) {
+						//clear state
+						_client.notifyObserversOfStateChangedXXX();
 						_server.receiveMessage(_pduToSend);
 						_pduToSend = null;
 						_clientCountdownLatch.countDown();
 					}
 					else {
+						//clear state
+						_server.notifyObserversOfStateChangedXXX();
 						_client.receiveMessage(_pduToSend);
 						_pduToSend = null;
 						_serverCountdownLatch.countDown();
@@ -87,11 +94,18 @@ public class CommunicationChannel<T extends ProtocolDataUnit> extends Observable
 				}
 			}
 		};
+		
+		try {
+			Thread.sleep(200);
+		}
+		catch (InterruptedException e) { }
+		
 		new Thread(r).start();
 	}
 
 	public void sendAllMessagesWithoutBreak() {
-		// TODO: sendAllMessages
+		_sendAllMessages = true;
+		sendNextMessage();
 	}
 
 	public List<T> getSentProtocolDataUnits() {

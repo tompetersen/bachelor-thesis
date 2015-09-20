@@ -80,6 +80,8 @@ public abstract class TlsState extends State<TlsCiphertext> {
 		
 		_stateMachine.increaseWriteSequenceNumber();
 		
+		_stateMachine.notifyObserversOfStateChangedXXX();
+		
 		super.sendMessage(ciphertext);
 	}
 	

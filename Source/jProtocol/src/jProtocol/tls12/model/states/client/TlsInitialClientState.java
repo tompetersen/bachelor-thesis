@@ -48,6 +48,7 @@ public class TlsInitialClientState extends TlsState {
 		
 		TlsClientHelloMessage clientHello = new TlsClientHelloMessage(version, random, sessionId, cipherSuites);
 		_stateMachine.addHandshakeMessageForVerifyData(clientHello);
+		
 		sendTlsMessage(clientHello);
 	}
 
