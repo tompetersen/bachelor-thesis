@@ -1,15 +1,13 @@
 package jProtocol.Abstract.Model;
 
 import jProtocol.Abstract.Model.events.ChannelReceivedMessageEvent;
-import jProtocol.helper.MyLogger;
+import jProtocol.Abstract.Model.events.ChannelSentMessageEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
 import java.util.concurrent.CountDownLatch;
 
 public class CommunicationChannel<T extends ProtocolDataUnit> extends Observable {
-
-	// TODO: circular reference problem!
 
 	private StateMachine<T> _client;
 	private StateMachine<T> _server;
@@ -83,6 +81,9 @@ public class CommunicationChannel<T extends ProtocolDataUnit> extends Observable
 						_pduToSend = null;
 						_serverCountdownLatch.countDown();
 					}
+					
+					setChanged();
+					notifyObservers(new ChannelSentMessageEvent());
 				}
 			}
 		};

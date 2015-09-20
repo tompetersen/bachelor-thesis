@@ -1,5 +1,6 @@
 package jProtocol.tls12.model.crypto;
 
+import jProtocol.tls12.model.exceptions.TlsAsymmetricOperationException;
 import jProtocol.tls12.model.values.TlsClientDhPublicKey;
 import jProtocol.tls12.model.values.TlsServerDhParams;
 import java.math.BigInteger;
@@ -58,7 +59,7 @@ public class TlsServerDhKeyAgreement {
 				_serverPublicKeySpec.getY().toByteArray());
 	}
 	
-	public byte[] computePreMasterSecret(TlsClientDhPublicKey clientPublicKey) throws InvalidKeySpecException, InvalidKeyException  {
+	public byte[] computePreMasterSecret(TlsClientDhPublicKey clientPublicKey) throws TlsAsymmetricOperationException {
 		KeyAgreement keyAgreement;
 		try {
 			BigInteger clientPublicKeyBI = new BigInteger(clientPublicKey.getPublicKey());
@@ -73,6 +74,10 @@ public class TlsServerDhKeyAgreement {
 		catch (NoSuchAlgorithmException e) {
 			throw new RuntimeException("DH algorithm not found!");
 		}
+		catch (InvalidKeySpecException | InvalidKeyException e) {
+			throw new TlsAsymmetricOperationException("DH key agreement failed! " + e.getLocalizedMessage());
+		}
+		
 		   
 		byte[] agreedKey = keyAgreement.generateSecret();
 

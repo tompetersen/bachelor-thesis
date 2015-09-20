@@ -34,7 +34,7 @@ public abstract class TlsClientKeyExchangeMessage extends TlsHandshakeMessage {
 			return new TlsClientKeyExchangeMessage_DHE(unparsedMessage);
 		}
 		else {
-			//TODO: Implement for other key exchange algorithms
+			//TODO: Used for key exchange other than RSA or DHE_RSA -> Implement for other key exchange algorithms
 			throw new UnsupportedOperationException("Parsing for key exchange algorithm " + algorithm.toString() + " not implemented yet!");
 		}
 	}

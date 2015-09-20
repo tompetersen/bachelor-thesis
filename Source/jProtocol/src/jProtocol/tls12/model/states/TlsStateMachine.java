@@ -14,6 +14,7 @@ import jProtocol.tls12.model.ciphersuites.TlsEncryptionParameters;
 import jProtocol.tls12.model.crypto.TlsClientDhKeyAgreement;
 import jProtocol.tls12.model.crypto.TlsRsaCipher;
 import jProtocol.tls12.model.crypto.TlsServerDhKeyAgreement;
+import jProtocol.tls12.model.exceptions.TlsAsymmetricOperationException;
 import jProtocol.tls12.model.exceptions.TlsBadPaddingException;
 import jProtocol.tls12.model.exceptions.TlsBadRecordMacException;
 import jProtocol.tls12.model.exceptions.TlsDecodeErrorException;
@@ -344,11 +345,11 @@ public class TlsStateMachine extends StateMachine<TlsCiphertext> {
 	 * Should be called only for client state machine.
 	 * 
 	 * @param serverDhParams
-	 * @throws InvalidAlgorithmParameterException
-	 * @throws InvalidKeySpecException
-	 * @throws InvalidKeyException 
+	 * 
+	 * @throws TlsAsymmetricOperationException 
+	 * 
 	 */
-	public void createClientDhKeyAgreementFromServerValues(TlsServerDhParams serverDhParams) throws InvalidAlgorithmParameterException, InvalidKeySpecException, InvalidKeyException {
+	public void createClientDhKeyAgreementFromServerValues(TlsServerDhParams serverDhParams) throws TlsAsymmetricOperationException {
 		_clientDhKeyAgreement = new TlsClientDhKeyAgreement(serverDhParams);
 		
 		byte[] premastersecret = _clientDhKeyAgreement.computePreMasterSecret();
@@ -384,8 +385,9 @@ public class TlsStateMachine extends StateMachine<TlsCiphertext> {
 	/**
 	 * Should be called only for server state machine.
 	 * 
+	 * @throws TlsAsymmetricOperationException 
 	 */
-	public void computePreMasterSecretForServerDhKeyAgreement(TlsClientDhPublicKey clientPublicKey) throws InvalidKeyException, InvalidKeySpecException {
+	public void computePreMasterSecretForServerDhKeyAgreement(TlsClientDhPublicKey clientPublicKey) throws TlsAsymmetricOperationException {
 		byte[] premastersecret = _serverDhKeyAgreement.computePreMasterSecret(clientPublicKey);
 		computeMasterSecret(premastersecret);
 		MyLogger.info("[DH] Server agreed on premastersecret: " + ByteHelper.bytesToHexString(premastersecret));

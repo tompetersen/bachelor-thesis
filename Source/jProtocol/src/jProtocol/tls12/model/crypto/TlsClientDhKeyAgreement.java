@@ -1,5 +1,6 @@
 package jProtocol.tls12.model.crypto;
 
+import jProtocol.tls12.model.exceptions.TlsAsymmetricOperationException;
 import jProtocol.tls12.model.values.TlsClientDhPublicKey;
 import jProtocol.tls12.model.values.TlsServerDhParams;
 import java.math.BigInteger;
@@ -25,10 +26,10 @@ public class TlsClientDhKeyAgreement {
 	/**
 	 * Generates a new key pair with server values p and g.
 	 * 
-	 * @throws InvalidAlgorithmParameterException 
-	 * @throws InvalidKeySpecException 
+	 * @throws TlsAsymmetricOperationException 
+	 * 
 	 */
-	public TlsClientDhKeyAgreement(TlsServerDhParams serverParams) throws InvalidAlgorithmParameterException, InvalidKeySpecException {
+	public TlsClientDhKeyAgreement(TlsServerDhParams serverParams) throws TlsAsymmetricOperationException {
 		try {
 			BigInteger p = new BigInteger(serverParams.getDh_p());
 			BigInteger g = new BigInteger(serverParams.getDh_g());
@@ -46,6 +47,9 @@ public class TlsClientDhKeyAgreement {
 		catch (NoSuchAlgorithmException e) {
 			throw new RuntimeException("DH algorithm not found!");
 		}
+		catch (InvalidAlgorithmParameterException | InvalidKeySpecException e) {
+			throw new TlsAsymmetricOperationException("DH key generation failed! " + e.getLocalizedMessage());
+		}
 	}
 
 	
@@ -60,19 +64,21 @@ public class TlsClientDhKeyAgreement {
 		}
 	}
 	
-	public byte[] computePreMasterSecret() throws InvalidKeySpecException, InvalidKeyException  {
-		KeyAgreement keyAgreement;
+	public byte[] computePreMasterSecret() throws TlsAsymmetricOperationException {
 		try {
-			keyAgreement = KeyAgreement.getInstance("DiffieHellman");
+			KeyAgreement keyAgreement = KeyAgreement.getInstance("DiffieHellman");
 		    keyAgreement.init(_clientDhKeyPair.getPrivate());
 			keyAgreement.doPhase(_serverPublicKey, true);
+			
+			byte[] agreedKey = keyAgreement.generateSecret();
+			return agreedKey;
 		}
 		catch (NoSuchAlgorithmException e) {
 			throw new RuntimeException("DH algorithm not found!");
 		}
-		   
-		byte[] agreedKey = keyAgreement.generateSecret();
-		return agreedKey;
+		catch (InvalidKeyException e) {
+			throw new TlsAsymmetricOperationException("DH key agreement failed! " + e.getLocalizedMessage());
+		}
 	}
 
 }

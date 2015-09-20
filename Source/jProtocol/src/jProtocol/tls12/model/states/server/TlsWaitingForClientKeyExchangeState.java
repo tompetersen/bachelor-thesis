@@ -1,7 +1,5 @@
 package jProtocol.tls12.model.states.server;
 
-import java.security.InvalidKeyException;
-import java.security.spec.InvalidKeySpecException;
 import jProtocol.helper.MyLogger;
 import jProtocol.tls12.model.crypto.TlsRsaCipher;
 import jProtocol.tls12.model.exceptions.TlsAsymmetricOperationException;
@@ -30,20 +28,22 @@ public class TlsWaitingForClientKeyExchangeState extends TlsState {
 		MyLogger.info("Received Client Key Exchange!");
 		
 		TlsKeyExchangeAlgorithm algorithm = _stateMachine.getPendingCipherSuite().getKeyExchangeAlgorithm();
-		if (algorithm == TlsKeyExchangeAlgorithm.rsa) {
-			try {
-				setPreMasterSecretFromRsaMessage((TlsClientKeyExchangeMessage_RSA)message);
+		try {
+			if (algorithm == TlsKeyExchangeAlgorithm.rsa) {
+					setPreMasterSecretFromRsaMessage((TlsClientKeyExchangeMessage_RSA)message);
+				
 			}
-			catch (TlsAsymmetricOperationException e) {
-				setTlsState(TlsStateType.DECRYPT_ERROR_OCCURED_STATE);
-				return;
+			else if (algorithm == TlsKeyExchangeAlgorithm.dhe_rsa) {
+				setPreMasterSecretFromDheMessage((TlsClientKeyExchangeMessage_DHE)message);
+			}
+			else {
+				//TODO: Used for key exchange other than RSA or DHE_RSA -> Implement for other key exchange algorithms
+				throw new UnsupportedOperationException("Key exchange algorithm [" + algorithm.toString() + "] not implemented yet!");
 			}
 		}
-		else if (algorithm == TlsKeyExchangeAlgorithm.dhe_rsa) {
-			setPreMasterSecretFromDheMessage((TlsClientKeyExchangeMessage_DHE)message);
-		}
-		else {
-			throw new UnsupportedOperationException("Key exchange algorithm [" + algorithm.toString() + "] not implemented yet!");
+		catch (TlsAsymmetricOperationException e) {
+			setTlsState(TlsStateType.DECRYPT_ERROR_OCCURED_STATE);
+			return;
 		}
 		
 		_stateMachine.addHandshakeMessageForVerifyData(clientKeyExchangeMessage);
@@ -58,20 +58,9 @@ public class TlsWaitingForClientKeyExchangeState extends TlsState {
 		_stateMachine.computeMasterSecret(preMasterSecret);
 	}
 	
-	private void setPreMasterSecretFromDheMessage(TlsClientKeyExchangeMessage_DHE dheMessage) {
+	private void setPreMasterSecretFromDheMessage(TlsClientKeyExchangeMessage_DHE dheMessage) throws TlsAsymmetricOperationException {
 		TlsClientDhPublicKey clientDhPublicKey = dheMessage.getDiffieHellmenClientPublicKey(); 
-		
-		try {
-			_stateMachine.computePreMasterSecretForServerDhKeyAgreement(clientDhPublicKey);
-		}
-		catch (InvalidKeyException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		catch (InvalidKeySpecException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		_stateMachine.computePreMasterSecretForServerDhKeyAgreement(clientDhPublicKey);
 	}
 
 	@Override
