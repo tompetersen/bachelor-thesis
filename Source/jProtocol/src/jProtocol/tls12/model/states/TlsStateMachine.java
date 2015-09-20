@@ -11,10 +11,6 @@ import jProtocol.tls12.model.TlsSecurityParameters;
 import jProtocol.tls12.model.ciphersuites.TlsCipherSuite;
 import jProtocol.tls12.model.ciphersuites.TlsCipherSuiteRegistry;
 import jProtocol.tls12.model.ciphersuites.TlsEncryptionParameters;
-import jProtocol.tls12.model.crypto.TlsClientDhKeyAgreement;
-import jProtocol.tls12.model.crypto.TlsRsaCipher;
-import jProtocol.tls12.model.crypto.TlsServerDhKeyAgreement;
-import jProtocol.tls12.model.exceptions.TlsAsymmetricOperationException;
 import jProtocol.tls12.model.exceptions.TlsBadPaddingException;
 import jProtocol.tls12.model.exceptions.TlsBadRecordMacException;
 import jProtocol.tls12.model.exceptions.TlsDecodeErrorException;
@@ -44,49 +40,30 @@ import jProtocol.tls12.model.states.server.TlsWaitingForClientKeyExchangeState;
 import jProtocol.tls12.model.states.server.TlsWaitingForFinishedState_Server;
 import jProtocol.tls12.model.values.TlsApplicationData;
 import jProtocol.tls12.model.values.TlsCertificate;
-import jProtocol.tls12.model.values.TlsClientDhPublicKey;
-import jProtocol.tls12.model.values.TlsConnectionEnd;
 import jProtocol.tls12.model.values.TlsHandshakeType;
 import jProtocol.tls12.model.values.TlsKeyExchangeAlgorithm;
 import jProtocol.tls12.model.values.TlsRandom;
-import jProtocol.tls12.model.values.TlsServerDhParams;
 import jProtocol.tls12.model.values.TlsSessionId;
 import jProtocol.tls12.model.values.TlsVerifyData;
 import jProtocol.tls12.model.values.TlsVersion;
 import java.nio.charset.StandardCharsets;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-public class TlsStateMachine extends StateMachine<TlsCiphertext> {
+public abstract class TlsStateMachine extends StateMachine<TlsCiphertext> {
 	
-	private boolean _isServer;
 	private TlsStateType _currentStateType;
-	private TlsSecurityParameters _securityParameters;
-	private TlsConnectionState _currentReadConnectionState;
-	private TlsConnectionState _currentWriteConnectionState;
-	private TlsConnectionState _pendingConnectionState;
+	protected TlsSecurityParameters _securityParameters;
+	protected TlsConnectionState _currentReadConnectionState;
+	protected TlsConnectionState _currentWriteConnectionState;
+	protected TlsConnectionState _pendingConnectionState;
 	private TlsCipherSuiteRegistry _cipherSuiteRegistry;
-	private List<TlsCertificate> _certificateList; 
 	private List<TlsApplicationDataMessage> _cachedApplicationDataMessages;
 	
-	private TlsRsaCipher _rsaCipher;
-	private TlsServerDhKeyAgreement _serverDhKeyAgreement;
-	private TlsClientDhKeyAgreement _clientDhKeyAgreement;
-	
-	public TlsStateMachine(TlsConnectionEnd entity) {
-		_isServer = (entity == TlsConnectionEnd.server);
+	public TlsStateMachine() {
 		_cipherSuiteRegistry = new TlsCipherSuiteRegistry();
-		_securityParameters = new TlsSecurityParameters(entity);
-		
-		if (_isServer) {
-			createCertificate();
-			createServerDhKeyAgreement();
-		}
-		
+		_securityParameters = new TlsSecurityParameters();
+
 		TlsCipherSuite nullCipherSuite = _cipherSuiteRegistry.getNullCipherSuite();
 		_currentReadConnectionState = new TlsConnectionState(nullCipherSuite);
 		_currentWriteConnectionState = new TlsConnectionState(nullCipherSuite);
@@ -95,22 +72,6 @@ public class TlsStateMachine extends StateMachine<TlsCiphertext> {
 		_cachedApplicationDataMessages = new ArrayList<>();
 		
 		createStates();
-		setTlsState(_isServer ? TlsStateType.SERVER_INITIAL_STATE : TlsStateType.CLIENT_INITIAL_STATE);
-	}
-	
-	private void createCertificate() {
-		TlsRsaCipher rsaCipher = new TlsRsaCipher();
-		setRsaCipher(rsaCipher);
-		
-		TlsCertificate certificate = TlsCertificate.generateRsaCertificate(rsaCipher.getEncodedPublicKey());
-		List<TlsCertificate> certList = new ArrayList<>();
-		certList.add(certificate);
-		
-		setCertificateList(certList);
-	}
-	
-	private void createServerDhKeyAgreement() {
-		_serverDhKeyAgreement = new TlsServerDhKeyAgreement();
 	}
 	
 	private void createStates() {
@@ -154,7 +115,7 @@ public class TlsStateMachine extends StateMachine<TlsCiphertext> {
 		}
 	}
 	
-	private void setTlsState(TlsStateType stateType) {
+	protected void setTlsState(TlsStateType stateType) {
 		_currentStateType = stateType;
 		MyLogger.info(getEntityName() + " sets state to " + stateType.toString());
 		setState(stateType.getType());
@@ -190,30 +151,14 @@ public class TlsStateMachine extends StateMachine<TlsCiphertext> {
 		return _currentReadConnectionState.ciphertextToPlaintext(ciphertextBytes, getEncryptionParameters(true), _cipherSuiteRegistry, algorithm);
 	}
 	
-	private TlsEncryptionParameters getEncryptionParameters(boolean isReceiving) {
-		byte[] encKey = null;
-		byte[] macKey = null;
-		byte[] iv = null;
-		long seqNum = 0;
-		
-		if (isReceiving) {
-			if (_currentReadConnectionState.getCipherSuite() != _cipherSuiteRegistry.getNullCipherSuite()) {
-				encKey = _isServer ? _currentReadConnectionState.getClientWriteEncryptionKey() : _currentReadConnectionState.getServerWriteEncryptionKey();
-				macKey = _isServer ? _currentReadConnectionState.getClientWriteMacKey() : 		_currentReadConnectionState.getServerWriteMacKey();
-				iv = 	 _isServer ? _currentReadConnectionState.getClientWriteIv() : 			_currentReadConnectionState.getServerWriteIv();
-				seqNum =  _currentReadConnectionState.getSequenceNumber();
-			}
-		}
-		else {
-			if (_currentWriteConnectionState.getCipherSuite() != _cipherSuiteRegistry.getNullCipherSuite()) {
-				encKey = _isServer ? _currentWriteConnectionState.getServerWriteEncryptionKey() : _currentWriteConnectionState.getClientWriteEncryptionKey();
-				macKey = _isServer ? _currentWriteConnectionState.getServerWriteMacKey() : 		_currentWriteConnectionState.getClientWriteMacKey();
-				iv = 	 _isServer ? _currentWriteConnectionState.getServerWriteIv() : 			_currentWriteConnectionState.getClientWriteIv();
-				seqNum = _currentWriteConnectionState.getSequenceNumber();
-			}
-		}
-
-		return new TlsEncryptionParameters(seqNum, encKey, macKey, iv);
+	protected abstract TlsEncryptionParameters getEncryptionParameters(boolean isReceiving); 
+	
+	public boolean currentReadCipherSuiteIsNotTlsNull() {
+		return (_currentReadConnectionState.getCipherSuite() != _cipherSuiteRegistry.getNullCipherSuite());
+	}
+	
+	public boolean currentWriteCipherSuiteIsNotTlsNull() {
+		return (_currentWriteConnectionState.getCipherSuite() != _cipherSuiteRegistry.getNullCipherSuite());
 	}
 	
 /*
@@ -313,86 +258,8 @@ public class TlsStateMachine extends StateMachine<TlsCiphertext> {
 		return _cipherSuiteRegistry.allCipherSuites();
 	}
 	
-	public TlsRsaCipher getRsaCipher() {
-		if (_rsaCipher == null) {
-			throw new RuntimeException("RSA Cipher must be set first!");
-		}
-		return _rsaCipher;
-	}
+	public abstract List<TlsCertificate> getCertificateList();
 
-	public void setRsaCipher(TlsRsaCipher rsaCipher) {
-		_rsaCipher = rsaCipher;
-	}
-
-	public List<TlsCertificate> getCertificateList() {
-		return _certificateList;
-	}
-
-	public void setCertificateList(List<TlsCertificate> certificateList) {
-		_certificateList = certificateList;
-	}
-	
-	/**
-	 * Should be called only for server state machine. -,-
-	 * 
-	 * @return
-	 */
-	public TlsServerDhParams getServerDhParams() {
-		return _serverDhKeyAgreement.getServerDhParams();
-	}
-	
-	/**
-	 * Should be called only for client state machine.
-	 * 
-	 * @param serverDhParams
-	 * 
-	 * @throws TlsAsymmetricOperationException 
-	 * 
-	 */
-	public void createClientDhKeyAgreementFromServerValues(TlsServerDhParams serverDhParams) throws TlsAsymmetricOperationException {
-		_clientDhKeyAgreement = new TlsClientDhKeyAgreement(serverDhParams);
-		
-		byte[] premastersecret = _clientDhKeyAgreement.computePreMasterSecret();
-		computeMasterSecret(premastersecret);
-		MyLogger.info("Client agreed on premastersecret: " + ByteHelper.bytesToHexString(premastersecret));
-	}
-	
-	/**
-	 * Should be called only for server state machine. -,-
-	 * 
-	 * @return
-	 */
-	public byte[] getSignedDhParams() {
-		/*  digitally-signed struct {
-              opaque client_random[32];
-              opaque server_random[32];
-              ServerDHParams params;
-          } signed_params;*/
-		//TODO: signed struct
-		
-		return new byte[0];
-	}
-	
-	/**
-	 * Should be called only for client state machine.
-	 * 
-	 * @return
-	 */
-	public TlsClientDhPublicKey getClientDhPublicKey() {
-		return _clientDhKeyAgreement.getClientPublicKey();
-	}
-	
-	/**
-	 * Should be called only for server state machine.
-	 * 
-	 * @throws TlsAsymmetricOperationException 
-	 */
-	public void computePreMasterSecretForServerDhKeyAgreement(TlsClientDhPublicKey clientPublicKey) throws TlsAsymmetricOperationException {
-		byte[] premastersecret = _serverDhKeyAgreement.computePreMasterSecret(clientPublicKey);
-		computeMasterSecret(premastersecret);
-		MyLogger.info("[DH] Server agreed on premastersecret: " + ByteHelper.bytesToHexString(premastersecret));
-	}
-	
 	/**
 	 * Sets the pending state as current read state.
 	 * Should be called after receiving the change cipher spec message.
@@ -426,23 +293,9 @@ public class TlsStateMachine extends StateMachine<TlsCiphertext> {
 		return type != TlsHandshakeType.finished && type != TlsHandshakeType.hello_request;
 	}
 	
-	public boolean isCorrectVerifyData(TlsVerifyData verifyData) {
-		byte[] masterSecret = _securityParameters.getMasterSecret();
-		
-		byte[] expected = _isServer ? 	_securityParameters.getFinishedVerifyDataForClient(masterSecret) : 
-										_securityParameters.getFinishedVerifyDataForServer(masterSecret);
-		
-		return Arrays.equals(expected, verifyData.getBytes());
-	}
+	public abstract boolean isCorrectVerifyData(TlsVerifyData verifyData); 
 	
-	public TlsVerifyData getVerifyDataToSend() {
-		byte[] masterSecret = _securityParameters.getMasterSecret();
-		
-		byte[] bytes = _isServer ? 	_securityParameters.getFinishedVerifyDataForServer(masterSecret) : 
-									_securityParameters.getFinishedVerifyDataForClient(masterSecret);
-		
-		return new TlsVerifyData(bytes);
-	}
+	public abstract TlsVerifyData getVerifyDataToSend(); 
 	
 /*
  * Cached application data
@@ -502,9 +355,7 @@ public class TlsStateMachine extends StateMachine<TlsCiphertext> {
 		notifyObserversOfEvent(new TlsStateMachineEvent(TlsStateMachineEventType.received_data));
 	}
 	
-	private String getEntityName() {
-		return (_isServer ? "Server" : "Client");
-	}
+	protected abstract String getEntityName();
 	
 /*
  * View data
@@ -534,9 +385,9 @@ public class TlsStateMachine extends StateMachine<TlsCiphertext> {
 	}
 	
 	private KeyValueObject objectForCertificateList(List<TlsCertificate> certList) {
-		if (getCertificateList() != null) {
+		if (certList != null) {
 			ArrayList<KeyValueObject> listObjects = new ArrayList<>();
-			for (TlsCertificate certificate : getCertificateList()) {
+			for (TlsCertificate certificate : certList) {
 				listObjects.add(new KeyValueObject("", certificate.getReadableCertificate()));
 			}
 			

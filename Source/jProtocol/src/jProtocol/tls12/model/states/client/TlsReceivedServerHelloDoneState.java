@@ -8,6 +8,7 @@ import jProtocol.tls12.model.messages.TlsMessage;
 import jProtocol.tls12.model.messages.handshake.TlsClientKeyExchangeMessage_DHE;
 import jProtocol.tls12.model.messages.handshake.TlsClientKeyExchangeMessage_RSA;
 import jProtocol.tls12.model.messages.handshake.TlsFinishedMessage;
+import jProtocol.tls12.model.states.TlsClientStateMachine;
 import jProtocol.tls12.model.states.TlsState;
 import jProtocol.tls12.model.states.TlsStateMachine;
 import jProtocol.tls12.model.states.TlsStateType;
@@ -67,7 +68,8 @@ public class TlsReceivedServerHelloDoneState extends TlsState {
 	
 	private void sendRsaClientKeyExchangeMessage(byte[] premastersecret) {
 		try {
-			byte[] encryptedPreMasterSecretBytes = _stateMachine.getRsaCipher().encrypt(premastersecret);
+			TlsClientStateMachine clientStateMachine = (TlsClientStateMachine) _stateMachine;
+			byte[] encryptedPreMasterSecretBytes = clientStateMachine.getRsaCipher().encrypt(premastersecret);
 			TlsRsaEncryptedPreMasterSecret encPreMasterSecret = new TlsRsaEncryptedPreMasterSecret(encryptedPreMasterSecretBytes);
 			TlsClientKeyExchangeMessage_RSA message = new TlsClientKeyExchangeMessage_RSA(encPreMasterSecret);
 			
@@ -80,7 +82,8 @@ public class TlsReceivedServerHelloDoneState extends TlsState {
 	}
 	
 	private void sendDhClientKeyExchangeMessage() {
-		TlsClientDhPublicKey clientDhPublicKey = _stateMachine.getClientDhPublicKey();
+		TlsClientStateMachine clientStateMachine = (TlsClientStateMachine) _stateMachine;
+		TlsClientDhPublicKey clientDhPublicKey = clientStateMachine.getClientDhPublicKey();
 		TlsClientKeyExchangeMessage_DHE message = new TlsClientKeyExchangeMessage_DHE(clientDhPublicKey);
 		
 		_stateMachine.addHandshakeMessageForVerifyData(message);

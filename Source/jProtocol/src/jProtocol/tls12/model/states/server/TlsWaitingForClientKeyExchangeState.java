@@ -7,6 +7,7 @@ import jProtocol.tls12.model.messages.TlsMessage;
 import jProtocol.tls12.model.messages.handshake.TlsClientKeyExchangeMessage;
 import jProtocol.tls12.model.messages.handshake.TlsClientKeyExchangeMessage_DHE;
 import jProtocol.tls12.model.messages.handshake.TlsClientKeyExchangeMessage_RSA;
+import jProtocol.tls12.model.states.TlsServerStateMachine;
 import jProtocol.tls12.model.states.TlsState;
 import jProtocol.tls12.model.states.TlsStateMachine;
 import jProtocol.tls12.model.states.TlsStateType;
@@ -53,14 +54,17 @@ public class TlsWaitingForClientKeyExchangeState extends TlsState {
 	private void setPreMasterSecretFromRsaMessage(TlsClientKeyExchangeMessage_RSA rsaMessage) throws TlsAsymmetricOperationException {
 		TlsRsaEncryptedPreMasterSecret encPreMasterSecret = rsaMessage.getRsaEncryptedPreMasterSecret();
 		
-		TlsRsaCipher cipher = _stateMachine.getRsaCipher();
+		TlsServerStateMachine serverStateMachine = (TlsServerStateMachine) _stateMachine;
+		TlsRsaCipher cipher = serverStateMachine.getRsaCipher();
 		byte[] preMasterSecret = cipher.decrypt(encPreMasterSecret.getEncryptedPreMasterSecret());
 		_stateMachine.computeMasterSecret(preMasterSecret);
 	}
 	
 	private void setPreMasterSecretFromDheMessage(TlsClientKeyExchangeMessage_DHE dheMessage) throws TlsAsymmetricOperationException {
 		TlsClientDhPublicKey clientDhPublicKey = dheMessage.getDiffieHellmenClientPublicKey(); 
-		_stateMachine.computePreMasterSecretForServerDhKeyAgreement(clientDhPublicKey);
+		
+		TlsServerStateMachine serverStateMachine = (TlsServerStateMachine) _stateMachine;
+		serverStateMachine.computePreMasterSecretForServerDhKeyAgreement(clientDhPublicKey);
 	}
 
 	@Override

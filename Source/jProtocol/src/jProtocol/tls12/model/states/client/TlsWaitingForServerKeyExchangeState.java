@@ -4,6 +4,7 @@ import jProtocol.helper.MyLogger;
 import jProtocol.tls12.model.exceptions.TlsAsymmetricOperationException;
 import jProtocol.tls12.model.messages.TlsMessage;
 import jProtocol.tls12.model.messages.handshake.TlsServerKeyExchangeMessage;
+import jProtocol.tls12.model.states.TlsClientStateMachine;
 import jProtocol.tls12.model.states.TlsState;
 import jProtocol.tls12.model.states.TlsStateMachine;
 import jProtocol.tls12.model.states.TlsStateType;
@@ -34,7 +35,8 @@ public class TlsWaitingForServerKeyExchangeState extends TlsState {
 		//TODO: check signed params with server public key
 		
 		try {
-			_stateMachine.createClientDhKeyAgreementFromServerValues(serverParams);
+			TlsClientStateMachine clientStateMachine = (TlsClientStateMachine) _stateMachine;
+			clientStateMachine.createClientDhKeyAgreementFromServerValues(serverParams);
 		}
 		catch (TlsAsymmetricOperationException e) {
 			setTlsState(TlsStateType.DECRYPT_ERROR_OCCURED_STATE);

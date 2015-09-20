@@ -48,7 +48,7 @@ public class TlsRsaCipher {
 	 * side).
 	 * Only encrypt should be called.
 	 * 
-	 * @param encodedPublicKey
+	 * @param encodedPublicKey 
 	 */
 	public TlsRsaCipher(byte[] encodedPublicKey) {
 		createCipher();
@@ -156,52 +156,4 @@ public class TlsRsaCipher {
 
 		return decryptedData;
 	}
-
-	/*public void method() {
-		// encode
-		byte[] publicKey = keypair.getPublic().getEncoded();
-		byte[] privateKey = keypair.getPrivate().getEncoded();
-
-		String publicEncodingFormat = keypair.getPublic().getFormat();
-		String privateEncodingFormat = keypair.getPrivate().getFormat();
-		if (!publicEncodingFormat.equals("X.509")) {
-			throw new RuntimeException("Public key encoding is unequal to X.509");
-		}
-		if (!privateEncodingFormat.equals("PKCS#8")) {
-			throw new RuntimeException("Private key encoding is unequal to PKCS#8");
-		}
-
-		KeyFactory fact = KeyFactory.getInstance("RSA");
-
-		// decode
-		X509EncodedKeySpec pubKeySpec = new X509EncodedKeySpec(publicKey);
-		PKCS8EncodedKeySpec privKeySpec = new PKCS8EncodedKeySpec(privateKey);
-		PublicKey pubKey = fact.generatePublic(pubKeySpec);
-		PrivateKey privKey = fact.generatePrivate(privKeySpec);
-
-		 RSAPublicKeySpec pub = fact.getKeySpec(pubKey,
-		 RSAPublicKeySpec.class);
-		 RSAPrivateKeySpec priv = fact.getKeySpec(keypair.getPrivate(),
-		 RSAPrivateKeySpec.class);
-
-		byte[] data = new byte[308]; // {3,1,4,1,5,9,2,6,5};
-
-		// encrypt
-		Cipher cipher = Cipher.getInstance("RSA");
-		cipher.init(Cipher.ENCRYPT_MODE, pubKey);
-		byte[] cipherData = cipher.doFinal(data);
-
-		// decrypt
-		Cipher cipher2 = Cipher.getInstance("RSA");
-		cipher2.init(Cipher.DECRYPT_MODE, privKey);
-		byte[] decryptedData = cipher2.doFinal(cipherData);
-
-		if (data.equals(decryptedData)) {
-			throw new RuntimeException("Unequal input and decrypted output!");
-		}
-		else {
-			MyLogger.info("Successfully decrypted!");
-		}
-	}*/
-
 }

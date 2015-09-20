@@ -4,10 +4,11 @@ import jProtocol.Abstract.JProtocolProtocolBuilder;
 import jProtocol.Abstract.JProtocolViewProvider;
 import jProtocol.Abstract.View.keyvaluetree.KeyValueTree;
 import jProtocol.tls12.model.TlsCiphertext;
+import jProtocol.tls12.model.states.TlsClientStateMachine;
+import jProtocol.tls12.model.states.TlsServerStateMachine;
 import jProtocol.tls12.model.states.TlsStateMachine;
 import jProtocol.tls12.model.states.TlsStateMachineEvent;
 import jProtocol.tls12.model.states.TlsStateMachineEvent.TlsStateMachineEventType;
-import jProtocol.tls12.model.values.TlsConnectionEnd;
 import jProtocol.tls12.view.TlsClientView;
 import jProtocol.tls12.view.TlsServerView;
 import java.util.Observable;
@@ -23,9 +24,9 @@ public class Tls12Startup implements Observer, JProtocolViewProvider<TlsCipherte
 	private TlsServerView _serverView;
 
 	public Tls12Startup() {
-		_client = new TlsStateMachine(TlsConnectionEnd.client);
+		_client = new TlsClientStateMachine();
 		_client.addObserver(this);
-		_server = new TlsStateMachine(TlsConnectionEnd.server);
+		_server = new TlsServerStateMachine();
 		_server.addObserver(this);
 		
 		_clientView = new TlsClientView(_client);

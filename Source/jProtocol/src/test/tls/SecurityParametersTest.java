@@ -3,7 +3,6 @@ package test.tls;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertNotNull;
 import jProtocol.tls12.model.TlsSecurityParameters;
-import jProtocol.tls12.model.values.TlsConnectionEnd;
 import jProtocol.tls12.model.values.TlsRandom;
 import java.util.Arrays;
 import org.junit.Before;
@@ -17,7 +16,7 @@ public class SecurityParametersTest {
 	
 	@Before
 	public void setup() {
-		_parameters = new TlsSecurityParameters(TlsConnectionEnd.server);
+		_parameters = new TlsSecurityParameters();
 		Arrays.fill(_random28, (byte)0x11);
 		_tlsRandom = new TlsRandom(0x115599CC, _random28);
 	}

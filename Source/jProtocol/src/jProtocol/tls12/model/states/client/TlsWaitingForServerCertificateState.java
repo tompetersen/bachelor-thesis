@@ -4,6 +4,7 @@ import jProtocol.helper.MyLogger;
 import jProtocol.tls12.model.crypto.TlsRsaCipher;
 import jProtocol.tls12.model.messages.TlsMessage;
 import jProtocol.tls12.model.messages.handshake.TlsCertificateMessage;
+import jProtocol.tls12.model.states.TlsClientStateMachine;
 import jProtocol.tls12.model.states.TlsState;
 import jProtocol.tls12.model.states.TlsStateMachine;
 import jProtocol.tls12.model.states.TlsStateType;
@@ -29,13 +30,15 @@ public class TlsWaitingForServerCertificateState extends TlsState {
 		
 		MyLogger.info("Received Server Certificate!");
 		
+		TlsClientStateMachine clientStateMachine = (TlsClientStateMachine) _stateMachine;
+		
 		List<TlsCertificate> certificateList = certMessage.getCertificates();
-		_stateMachine.setCertificateList(certificateList);
+		clientStateMachine.setCertificateList(certificateList);
 		
 		TlsCertificate serverCert = certificateList.get(0);
 		byte[] rsaPublicKey = serverCert.getRsaPublicKey();
 		TlsRsaCipher rsaCipher = new TlsRsaCipher(rsaPublicKey);
-		_stateMachine.setRsaCipher(rsaCipher);
+		clientStateMachine.setRsaCipher(rsaCipher);
 		
 		if (_stateMachine.needsServerKeyExchangeMessage()) {
 			setTlsState(TlsStateType.CLIENT_IS_WAITING_FOR_SERVER_KEY_EXCHANGE_STATE);

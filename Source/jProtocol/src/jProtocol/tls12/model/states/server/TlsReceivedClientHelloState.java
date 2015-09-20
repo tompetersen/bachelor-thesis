@@ -7,6 +7,7 @@ import jProtocol.tls12.model.messages.handshake.TlsHandshakeMessage;
 import jProtocol.tls12.model.messages.handshake.TlsServerHelloDoneMessage;
 import jProtocol.tls12.model.messages.handshake.TlsServerHelloMessage;
 import jProtocol.tls12.model.messages.handshake.TlsServerKeyExchangeMessage;
+import jProtocol.tls12.model.states.TlsServerStateMachine;
 import jProtocol.tls12.model.states.TlsState;
 import jProtocol.tls12.model.states.TlsStateMachine;
 import jProtocol.tls12.model.states.TlsStateType;
@@ -60,7 +61,8 @@ public class TlsReceivedClientHelloState extends TlsState {
 		TlsKeyExchangeAlgorithm algorithm = _stateMachine.getPendingCipherSuite().getKeyExchangeAlgorithm();
 		
 		if (algorithm == TlsKeyExchangeAlgorithm.dhe_rsa) {
-			TlsHandshakeMessage message = new TlsServerKeyExchangeMessage(_stateMachine.getServerDhParams(), _stateMachine.getSignedDhParams());
+			TlsServerStateMachine serverStateMachine = (TlsServerStateMachine) _stateMachine;
+			TlsHandshakeMessage message = new TlsServerKeyExchangeMessage(serverStateMachine.getServerDhParams(), serverStateMachine.getSignedDhParams());
 			
 			_stateMachine.addHandshakeMessageForVerifyData(message);
 			sendTlsMessage(message);

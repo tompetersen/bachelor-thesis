@@ -4,7 +4,6 @@ import jProtocol.helper.ByteHelper;
 import jProtocol.tls12.model.crypto.TlsHash;
 import jProtocol.tls12.model.crypto.TlsPseudoRandomFunction;
 import jProtocol.tls12.model.messages.handshake.TlsHandshakeMessage;
-import jProtocol.tls12.model.values.TlsConnectionEnd;
 import jProtocol.tls12.model.values.TlsRandom;
 import jProtocol.tls12.model.values.TlsSessionId;
 import jProtocol.tls12.model.values.TlsVersion;
@@ -26,7 +25,6 @@ public class TlsSecurityParameters {
 	//private PrfAlgorithm _prfAlgorithm;
 	//private CompressionMethod _compressionAlgorithm;
 	
-	private TlsConnectionEnd _connectionEnd;
 	private TlsHash _hash;
 
 	private TlsSessionId _sessionId;
@@ -38,8 +36,7 @@ public class TlsSecurityParameters {
 
 	private List<TlsHandshakeMessage> _currentHandshakeMessages;
 	
-	public TlsSecurityParameters(TlsConnectionEnd connectionEnd) {
-		_connectionEnd = connectionEnd;
+	public TlsSecurityParameters() {
 		_hash = new TlsHash();
 		
 		_currentHandshakeMessages = new ArrayList<>();
@@ -81,10 +78,6 @@ public class TlsSecurityParameters {
 			throw new IllegalArgumentException("Version must be set!");
 		}
 		_version = version;
-	}
-
-	public TlsConnectionEnd getEntity() {
-		return _connectionEnd;
 	}
 	
 /*
