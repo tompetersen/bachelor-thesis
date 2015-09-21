@@ -4,6 +4,7 @@ import jProtocol.Abstract.Model.StateMachine;
 import jProtocol.Abstract.View.keyvaluetree.KeyValueObject;
 import jProtocol.helper.ByteHelper;
 import jProtocol.helper.MyLogger;
+import jProtocol.tls12.htmlinfo.TlsHtmlInfoLoader;
 import jProtocol.tls12.model.TlsCiphertext;
 import jProtocol.tls12.model.TlsConnectionState;
 import jProtocol.tls12.model.TlsPlaintext;
@@ -371,7 +372,7 @@ public abstract class TlsStateMachine extends StateMachine<TlsCiphertext> {
 		
 		String sessionId = _securityParameters.hasSessionId() ? "0x" + ByteHelper.bytesToHexString(_securityParameters.getSessionId().getSessionId()) : "";
 		KeyValueObject kvo = new KeyValueObject("Session ID", sessionId);
-		kvo.setHtmlHelpContent("<h1>SessionID</h1>Die <b>SessionID</b> dient zur Identifikation einer Clientsitzung und besitzt eine Länge von maximal 32 (?) Bytes.");
+		kvo.setHtmlHelpContent(TlsHtmlInfoLoader.loadHtmlInfoForFileName("TLS12_SessionId.html"));
 		result.add(kvo);
 		
 		String clientRandom = _securityParameters.hasClientRandom() ? "0x" + ByteHelper.bytesToHexString(_securityParameters.getClientRandom().getBytes()) : "";

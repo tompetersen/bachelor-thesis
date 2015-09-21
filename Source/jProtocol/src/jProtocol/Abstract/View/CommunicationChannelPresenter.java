@@ -1,11 +1,11 @@
 package jProtocol.Abstract.View;
 
-import java.util.Observable;
-import java.util.Observer;
 import jProtocol.Abstract.Model.CommunicationChannel;
 import jProtocol.Abstract.Model.ProtocolDataUnit;
 import jProtocol.Abstract.Model.events.ChannelReceivedMessageEvent;
 import jProtocol.Abstract.View.CommunicationChannelView.CommunicationChannelViewListener;
+import java.util.Observable;
+import java.util.Observer;
 import javax.swing.JComponent;
 
 public class CommunicationChannelPresenter<T extends ProtocolDataUnit> implements Observer, CommunicationChannelViewListener {

@@ -1,8 +1,8 @@
 package jProtocol.Abstract;
 
-import javax.swing.JComponent;
 import jProtocol.Abstract.Model.ProtocolDataUnit;
 import jProtocol.Abstract.View.HtmlInfoUpdater;
+import javax.swing.JComponent;
 
 public interface JProtocolViewProvider<T extends ProtocolDataUnit> {
 	
