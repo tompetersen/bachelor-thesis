@@ -370,7 +370,10 @@ public abstract class TlsStateMachine extends StateMachine<TlsCiphertext> {
 		ArrayList<KeyValueObject> result = new ArrayList<>();
 		
 		String sessionId = _securityParameters.hasSessionId() ? "0x" + ByteHelper.bytesToHexString(_securityParameters.getSessionId().getSessionId()) : "";
-		result.add(new KeyValueObject("Session ID", sessionId));
+		KeyValueObject kvo = new KeyValueObject("Session ID", sessionId);
+		kvo.setHtmlHelpContent("<html>Die <b>SessionID</b> dient zur Identifikation einer Clientsitzung und besitzt eine Länge von maximal 32 (?) Bytes.</html>");
+		result.add(kvo);
+		
 		
 		String clientRandom = _securityParameters.hasClientRandom() ? "0x" + ByteHelper.bytesToHexString(_securityParameters.getClientRandom().getBytes()) : "";
 		result.add(new KeyValueObject("Client random", clientRandom));
@@ -410,12 +413,16 @@ public abstract class TlsStateMachine extends StateMachine<TlsCiphertext> {
 		
 		boolean hasServerParams = (serverParams != null);
 		boolean hasClientKey = (clientPublicKey != null);
-			
-		resultList.add(new KeyValueObject("dh_p", hasServerParams ? "0x" + ByteHelper.bytesToHexString(serverParams.getDh_p()) : ""));
-		resultList.add(new KeyValueObject("dh_g", hasServerParams ? "0x" + ByteHelper.bytesToHexString(serverParams.getDh_g()) : ""));
-		resultList.add(new KeyValueObject("dh_Ys", hasServerParams ? "0x" + ByteHelper.bytesToHexString(serverParams.getDh_Ys()) : ""));
-		resultList.add(new KeyValueObject("dh_Yc", hasClientKey ? "0x" + ByteHelper.bytesToHexString(clientPublicKey.getPublicKey()) : ""));
+		
 		//TODO: maybe private key?
+		if (hasServerParams) { 
+			resultList.add(new KeyValueObject("dh_p", hasServerParams ? "0x" + ByteHelper.bytesToHexString(serverParams.getDh_p()) : ""));
+			resultList.add(new KeyValueObject("dh_g", hasServerParams ? "0x" + ByteHelper.bytesToHexString(serverParams.getDh_g()) : ""));
+			resultList.add(new KeyValueObject("dh_Ys", hasServerParams ? "0x" + ByteHelper.bytesToHexString(serverParams.getDh_Ys()) : ""));
+		}
+		if (hasClientKey) {
+			resultList.add(new KeyValueObject("dh_Yc", hasClientKey ? "0x" + ByteHelper.bytesToHexString(clientPublicKey.getPublicKey()) : ""));
+		}
 		
 		return new KeyValueObject("DH parameters", resultList);
 	}

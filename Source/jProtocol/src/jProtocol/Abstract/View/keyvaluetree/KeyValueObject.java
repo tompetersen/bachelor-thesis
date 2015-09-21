@@ -8,6 +8,7 @@ public class KeyValueObject {
 	private String _value;
 	private Color _backgroundColor;
 	private List<KeyValueObject> _kvoList;
+	private String _htmlHelpContent;
 
 	public KeyValueObject(String key, String value) {
 		super();
@@ -19,7 +20,6 @@ public class KeyValueObject {
 		this._key = key;
 		this._kvoList = valueList;
 	}
-
 	
 	public String getKey() {
 		return _key;
@@ -41,13 +41,20 @@ public class KeyValueObject {
 		return (_kvoList != null && _kvoList.size() > 0);
 	}
 	
-
 	public Color getBackgroundColor() {
 		return _backgroundColor;
 	}
 	
 	public void setBackgroundColor(Color c) {
 		this._backgroundColor = c;
+	}
+
+	public String getHtmlHelpContent() {
+		return _htmlHelpContent;
+	}
+
+	public void setHtmlHelpContent(String htmlHelpContent) {
+		_htmlHelpContent = htmlHelpContent;
 	}
 
 	@Override
