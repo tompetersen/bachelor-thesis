@@ -372,42 +372,50 @@ public abstract class TlsStateMachine extends StateMachine<TlsCiphertext> {
 		
 		String sessionId = _securityParameters.hasSessionId() ? "0x" + ByteHelper.bytesToHexString(_securityParameters.getSessionId().getSessionId()) : "";
 		KeyValueObject kvo = new KeyValueObject("Session ID", sessionId);
-		kvo.setHtmlHelpContent(TlsHtmlInfoLoader.loadHtmlInfoForFileName("TLS12_SessionId.html"));
+		kvo.setHtmlHelpContent(TlsHtmlInfoLoader.loadHtmlInfoForFileName("states/TLS12_SessionId.html"));
 		result.add(kvo);
 		
 		String clientRandom = _securityParameters.hasClientRandom() ? "0x" + ByteHelper.bytesToHexString(_securityParameters.getClientRandom().getBytes()) : "";
 		kvo = new KeyValueObject("Client random", clientRandom);
-		kvo.setHtmlHelpContent("<h1>Random</h1>Die Random Werte bestehen aus einem 4 Byte Zeitstempel und 28 zufälligen Bytes.<pre>int main() {\n  Some sample code\n  with multiple lines\n}</pre");
+		kvo.setHtmlHelpContent(TlsHtmlInfoLoader.loadHtmlInfoForFileName("states/TLS12_Random.html"));
 		result.add(kvo);
 		
 		String serverRandom = _securityParameters.hasServerRandom() ? "0x" + ByteHelper.bytesToHexString(_securityParameters.getServerRandom().getBytes()) : "";
-		result.add(new KeyValueObject("Server random", serverRandom));
+		kvo = new KeyValueObject("Server random", serverRandom);
+		kvo.setHtmlHelpContent(TlsHtmlInfoLoader.loadHtmlInfoForFileName("states/TLS12_Random.html"));
+		result.add(kvo);
 		
 		String masterSecret = _securityParameters.hasComputedMasterSecret() ? "0x" + ByteHelper.bytesToHexString(_securityParameters.getMasterSecret()) : "";
-		result.add(new KeyValueObject("Master secret", masterSecret));
+		kvo = new KeyValueObject("Master secret", masterSecret);
+		kvo.setHtmlHelpContent(TlsHtmlInfoLoader.loadHtmlInfoForFileName("states/TLS12_MasterSecret.html"));
+		result.add(kvo);
 		
 		result.add(objectForCertificateList(getCertificateList()));
 		result.add(objectForDhValues(getServerDhParams(), getClientDhPublicKey()));
 		
-		result.add(objectForConnectionState(_currentReadConnectionState, "Current read state"));
-		result.add(objectForConnectionState(_currentWriteConnectionState, "Current write state"));
-		result.add(objectForConnectionState(_pendingConnectionState, "Pending state"));
+		result.add(objectForConnectionState(_currentReadConnectionState, "Current read state", "states/TLS12_CurrentState.html"));
+		result.add(objectForConnectionState(_currentWriteConnectionState, "Current write state", "states/TLS12_CurrentState.html"));
+		result.add(objectForConnectionState(_pendingConnectionState, "Pending state", "states/TLS12_PendingState.html"));
 		
 		return result;
 	}
 	
 	private KeyValueObject objectForCertificateList(List<TlsCertificate> certList) {
+		KeyValueObject result;
 		if (certList != null) {
 			ArrayList<KeyValueObject> listObjects = new ArrayList<>();
 			for (TlsCertificate certificate : certList) {
 				listObjects.add(new KeyValueObject("", certificate.getReadableCertificate()));
 			}
 			
-			return new KeyValueObject("Certificate", listObjects);
+			result = new KeyValueObject("Certificate", listObjects);
 		}
 		else {
-			return new KeyValueObject("Certificate", "");
+			result = new KeyValueObject("Certificate", "");
 		}
+		
+		result.setHtmlHelpContent(TlsHtmlInfoLoader.loadHtmlInfoForFileName("states/TLS12_Certificate.html"));
+		return result;
 	}
 	
 	private KeyValueObject objectForDhValues(TlsServerDhParams serverParams, TlsClientDhPublicKey clientPublicKey) {
@@ -426,23 +434,49 @@ public abstract class TlsStateMachine extends StateMachine<TlsCiphertext> {
 			resultList.add(new KeyValueObject("dh_Yc", hasClientKey ? "0x" + ByteHelper.bytesToHexString(clientPublicKey.getPublicKey()) : ""));
 		}
 		
-		return new KeyValueObject("DH parameters", resultList);
+		KeyValueObject result = new KeyValueObject("DH parameters", resultList);
+		result.setHtmlHelpContent(TlsHtmlInfoLoader.loadHtmlInfoForFileName("states/TLS12_DH.html"));
+		return result;
 	}
 	
-	private KeyValueObject objectForConnectionState(TlsConnectionState state, String title) {
+	private KeyValueObject objectForConnectionState(TlsConnectionState state, String title, String infoFileName) {
 		ArrayList<KeyValueObject> listObjects = new ArrayList<>();
-		listObjects.add(new KeyValueObject("Cipher suite", state.getCipherSuite().getName()));
-		listObjects.add(new KeyValueObject("Sequence number", Long.toHexString(state.getSequenceNumber())));
+		
+		KeyValueObject kvo = new KeyValueObject("Cipher suite", state.getCipherSuite().getName());
+		kvo.setHtmlHelpContent(TlsHtmlInfoLoader.loadHtmlInfoForFileName("states/TLS12_CipherSuite.html"));
+		listObjects.add(kvo);
+		
+		kvo = new KeyValueObject("Sequence number", Long.toHexString(state.getSequenceNumber()));
+		kvo.setHtmlHelpContent(TlsHtmlInfoLoader.loadHtmlInfoForFileName("states/TLS12_SequenceNumber.html"));
+		listObjects.add(kvo);
 		
 		boolean hasKeys = state.hasComputedKeys();
-		listObjects.add(new KeyValueObject("Client write encryption key", 	hasKeys ? ByteHelper.bytesToHexString(state.getClientWriteEncryptionKey()) : ""));
-		listObjects.add(new KeyValueObject("Client write IV", 				hasKeys ? ByteHelper.bytesToHexString(state.getClientWriteIv()) : ""));
-		listObjects.add(new KeyValueObject("Client write MAC key", 			hasKeys ? ByteHelper.bytesToHexString(state.getClientWriteMacKey()) : ""));
-		listObjects.add(new KeyValueObject("Server write encryption key", 	hasKeys ? ByteHelper.bytesToHexString(state.getServerWriteEncryptionKey()) : ""));
-		listObjects.add(new KeyValueObject("Server write IV", 				hasKeys ? ByteHelper.bytesToHexString(state.getServerWriteIv()) : ""));
-		listObjects.add(new KeyValueObject("Server write MAC key", 			hasKeys ? ByteHelper.bytesToHexString(state.getServerWriteMacKey()) : ""));
+		kvo = new KeyValueObject("Client write encryption key", hasKeys ? ByteHelper.bytesToHexString(state.getClientWriteEncryptionKey()) : "");
+		kvo.setHtmlHelpContent(TlsHtmlInfoLoader.loadHtmlInfoForFileName("states/TLS12_WriteEncryptionKey.html"));
+		listObjects.add(kvo);
+		
+		kvo = new KeyValueObject("Client write IV", hasKeys ? ByteHelper.bytesToHexString(state.getClientWriteIv()) : "");
+		kvo.setHtmlHelpContent(TlsHtmlInfoLoader.loadHtmlInfoForFileName("states/TLS12_WriteIv.html"));
+		listObjects.add(kvo);
+		
+		kvo = new KeyValueObject("Client write MAC key", hasKeys ? ByteHelper.bytesToHexString(state.getClientWriteMacKey()) : "");
+		kvo.setHtmlHelpContent(TlsHtmlInfoLoader.loadHtmlInfoForFileName("states/TLS12_WriteMacKey.html"));
+		listObjects.add(kvo);
+		
+		kvo = new KeyValueObject("Server write encryption key", hasKeys ? ByteHelper.bytesToHexString(state.getServerWriteEncryptionKey()) : "");
+		kvo.setHtmlHelpContent(TlsHtmlInfoLoader.loadHtmlInfoForFileName("states/TLS12_WriteEncryptionKey.html"));
+		listObjects.add(kvo);
+		
+		kvo = new KeyValueObject("Server write IV", hasKeys ? ByteHelper.bytesToHexString(state.getServerWriteIv()) : "");
+		kvo.setHtmlHelpContent(TlsHtmlInfoLoader.loadHtmlInfoForFileName("states/TLS12_WriteIv.html"));
+		listObjects.add(kvo);
+		
+		kvo = new KeyValueObject("Server write MAC key", hasKeys ? ByteHelper.bytesToHexString(state.getServerWriteMacKey()) : "");
+		kvo.setHtmlHelpContent(TlsHtmlInfoLoader.loadHtmlInfoForFileName("states/TLS12_WriteMacKey.html"));
+		listObjects.add(kvo);
 		
 		KeyValueObject result = new KeyValueObject(title, listObjects);
+		result.setHtmlHelpContent(TlsHtmlInfoLoader.loadHtmlInfoForFileName(infoFileName));
 		
 		return result;
 	}
