@@ -4,6 +4,7 @@ import jProtocol.Abstract.Model.CommunicationChannel;
 import jProtocol.Abstract.Model.ProtocolDataUnit;
 import jProtocol.Abstract.Model.StateMachine;
 import jProtocol.Abstract.Model.events.StateMachineStateChangedEvent;
+import jProtocol.Abstract.View.DefaultHtmlInfoUpdater;
 import jProtocol.Abstract.View.JProtocolPresenter;
 import java.util.Observable;
 import java.util.Observer;
@@ -25,8 +26,10 @@ public class JProtocolProtocolBuilder<T extends ProtocolDataUnit> implements Obs
 		server.setCommunicationChannel(channel);
 		client.addObserver(this);
 		server.addObserver(this);
-
-		JProtocolPresenter<T> presenter = new JProtocolPresenter<>(viewProvider, channel);
+		
+		DefaultHtmlInfoUpdater htmlInfoUpdater = new DefaultHtmlInfoUpdater();
+		
+		JProtocolPresenter<T> presenter = new JProtocolPresenter<>(viewProvider, channel, htmlInfoUpdater);
 		presenter.showView();
 	}
 

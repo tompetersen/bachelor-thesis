@@ -1,5 +1,6 @@
 package jProtocol.Abstract.View.keyvaluetree;
 
+import jProtocol.Abstract.View.HtmlInfoUpdater;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -9,7 +10,6 @@ import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -102,9 +102,11 @@ public class KeyValueTree implements TreeSelectionListener {
 	private DefaultMutableTreeNode _rootNode;
 	private List<KeyValueObject> _lastUpdateList;
 	private boolean _highlightChangedFields;
+	private HtmlInfoUpdater _htmlInfoUpdater;
 
-	public KeyValueTree(String title, boolean highlightChangedFields) {
+	public KeyValueTree(String title, HtmlInfoUpdater htmlInfoUpdater, boolean highlightChangedFields) {
 		_rootNode = new DefaultMutableTreeNode(title);
+		_htmlInfoUpdater = htmlInfoUpdater;
 		_highlightChangedFields = highlightChangedFields;
 
 		_tree = new JTree(_rootNode);
@@ -128,18 +130,11 @@ public class KeyValueTree implements TreeSelectionListener {
 			if (nodeInfo instanceof KeyValueObject) {
 				KeyValueObject kvo = (KeyValueObject)nodeInfo;
 				String html = kvo.getHtmlHelpContent();
-				if (html != null) {
-					openHelpWindow(html);
+				if (html != null && _htmlInfoUpdater != null) {
+					_htmlInfoUpdater.setInfoHtmlBodyContent(html);
 				}
 			}
 		}
-	}
-
-	public void openHelpWindow(String htmlContent) {
-		JFrame frame = new JFrame();
-		JLabel label = new JLabel(htmlContent);
-		frame.add(label);
-		frame.setVisible(true);
 	}
 
 	public void setKeyValueObjectList(List<KeyValueObject> kvoList) {

@@ -1,5 +1,6 @@
 package jProtocol.tls12.view;
 
+import jProtocol.Abstract.View.HtmlInfoUpdater;
 import jProtocol.tls12.model.states.TlsStateMachine;
 import jProtocol.tls12.model.values.TlsApplicationData;
 import java.awt.FlowLayout;
@@ -13,17 +14,14 @@ import javax.swing.JPanel;
 
 public class TlsServerView {
 
-	private TlsStateMachine _server;
 	private TlsStateMachineTreeView _treeView;
 	private JPanel _view;
 	
-	public TlsServerView(final TlsStateMachine server) {
-		_server = server;
-		
+	public TlsServerView(final TlsStateMachine server, HtmlInfoUpdater htmlInfoUpdater) {
 		_view = new JPanel();
 		_view.setLayout(new BoxLayout(_view, BoxLayout.Y_AXIS));
 		
-		_treeView = new TlsStateMachineTreeView(server, "Server");
+		_treeView = new TlsStateMachineTreeView(server, htmlInfoUpdater, "Server");
 		_view.add(_treeView.getView());
 		
 		JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));

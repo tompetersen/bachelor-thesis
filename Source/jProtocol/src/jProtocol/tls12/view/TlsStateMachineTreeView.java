@@ -1,5 +1,6 @@
 package jProtocol.tls12.view;
 
+import jProtocol.Abstract.View.HtmlInfoUpdater;
 import jProtocol.Abstract.View.keyvaluetree.KeyValueObject;
 import jProtocol.Abstract.View.keyvaluetree.KeyValueTree;
 import jProtocol.helper.GridBagConstraintsHelper;
@@ -22,13 +23,13 @@ public class TlsStateMachineTreeView {
 	private JTextField _protocolStateView;
 	private JTextField _statusView;
 	
-	public TlsStateMachineTreeView(TlsStateMachine stateMachine, String title) {
+	public TlsStateMachineTreeView(TlsStateMachine stateMachine, HtmlInfoUpdater infoUpdater, String title) {
 		_stateMachine = stateMachine;
 		
 		_view = new JPanel();
 		_view.setLayout(new GridBagLayout());
 		
-		_tree = new KeyValueTree(title, true);
+		_tree = new KeyValueTree(title, infoUpdater, true);
 		GridBagConstraints constraints = GridBagConstraintsHelper.createNormalConstraints(0, 0, 1);
 		constraints.weighty = 1;
 		constraints.fill = GridBagConstraints.BOTH;

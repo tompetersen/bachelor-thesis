@@ -28,10 +28,12 @@ public class ProtocolDataUnitView<T extends ProtocolDataUnit> {
 	private JPanel _pduListView;
 	private JScrollPane _pduListViewScroller;
 	
+	private HtmlInfoUpdater _htmlInfoUpdater;
 	private JProtocolViewProvider<T> _provider;
 	
-	public ProtocolDataUnitView(JProtocolViewProvider<T> provider) {
+	public ProtocolDataUnitView(JProtocolViewProvider<T> provider, HtmlInfoUpdater htmlInfoUpdater) {
 		_provider = provider;
+		_htmlInfoUpdater = htmlInfoUpdater;
 		
 		_view = new JPanel();
 		_view.setLayout(new BoxLayout(_view, BoxLayout.Y_AXIS));
@@ -118,7 +120,7 @@ public class ProtocolDataUnitView<T extends ProtocolDataUnit> {
 	}
 	
 	private void setPduInView(T pdu) {
-		JComponent newPduView = _provider.getDetailedViewForProtocolDataUnit(pdu);
+		JComponent newPduView = _provider.getDetailedViewForProtocolDataUnit(pdu, _htmlInfoUpdater);
 		setPduDetailView(newPduView);
 		
 		String bytes = ByteHelper.bytesToHexString(pdu.getBytes());

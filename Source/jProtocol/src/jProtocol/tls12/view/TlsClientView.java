@@ -1,8 +1,8 @@
 package jProtocol.tls12.view;
 
+import jProtocol.Abstract.View.HtmlInfoUpdater;
 import jProtocol.tls12.model.states.TlsStateMachine;
 import jProtocol.tls12.model.values.TlsApplicationData;
-import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -14,16 +14,13 @@ import javax.swing.JPanel;
 
 public class TlsClientView {
 
-	private TlsStateMachine _client;
 	private TlsStateMachineTreeView _treeView;
 	private JPanel _view;
 	
-	public TlsClientView(final TlsStateMachine client) {
-		_client = client;
-		
+	public TlsClientView(final TlsStateMachine client, HtmlInfoUpdater htmlInfoUpdater) {
 		_view = new JPanel();
 		_view.setLayout(new BoxLayout(_view, BoxLayout.Y_AXIS));
-		_treeView = new TlsStateMachineTreeView(client, "Client");
+		_treeView = new TlsStateMachineTreeView(client, htmlInfoUpdater, "Client");
 		_view.add(_treeView.getView());
 		
 		JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));

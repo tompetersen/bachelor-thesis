@@ -16,6 +16,7 @@ public class CommunicationChannelView {
 	public interface CommunicationChannelViewListener {
 		public void nextStepClicked();
 		public void nextStepsClicked();
+		public void showHelpClicked();
 	}
 	
 	public CommunicationChannelView(final CommunicationChannelViewListener listener) {
@@ -41,6 +42,15 @@ public class CommunicationChannelView {
 			}
 		});
 		
+		JButton helpButton = new JButton("Help");
+		helpButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				listener.showHelpClicked();
+			}
+		});
+		
+		_view.add(helpButton);
 		_view.add(_nextStepButton);
 		_view.add(_nextStepsButton);
 	}

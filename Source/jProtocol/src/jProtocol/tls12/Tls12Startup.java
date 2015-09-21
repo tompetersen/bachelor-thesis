@@ -2,6 +2,7 @@ package jProtocol.tls12;
 
 import jProtocol.Abstract.JProtocolProtocolBuilder;
 import jProtocol.Abstract.JProtocolViewProvider;
+import jProtocol.Abstract.View.HtmlInfoUpdater;
 import jProtocol.Abstract.View.keyvaluetree.KeyValueTree;
 import jProtocol.tls12.model.TlsCiphertext;
 import jProtocol.tls12.model.states.TlsClientStateMachine;
@@ -28,10 +29,7 @@ public class Tls12Startup implements Observer, JProtocolViewProvider<TlsCipherte
 		_client.addObserver(this);
 		_server = new TlsServerStateMachine();
 		_server.addObserver(this);
-		
-		_clientView = new TlsClientView(_client);
-		_serverView = new TlsServerView(_server);
-		
+
 		JProtocolProtocolBuilder<TlsCiphertext> builder = new JProtocolProtocolBuilder<>(_client, _server, this);
 	}
 
@@ -54,8 +52,8 @@ public class Tls12Startup implements Observer, JProtocolViewProvider<TlsCipherte
 	}
 
 	@Override
-	public JComponent getDetailedViewForProtocolDataUnit(TlsCiphertext pdu) {
-		KeyValueTree tree = new KeyValueTree("TlsCiphertext", false);
+	public JComponent getDetailedViewForProtocolDataUnit(TlsCiphertext pdu, HtmlInfoUpdater htmlInfoUpdater) {
+		KeyValueTree tree = new KeyValueTree("TlsCiphertext", htmlInfoUpdater, false);
 		tree.setKeyValueObjectList(pdu.getViewData());
 		tree.expandAll();
 		
@@ -63,12 +61,14 @@ public class Tls12Startup implements Observer, JProtocolViewProvider<TlsCipherte
 	}
 
 	@Override
-	public JComponent getViewForClientStateMachine() {
+	public JComponent getViewForClientStateMachine(HtmlInfoUpdater htmlInfoUpdater) {
+		_clientView = new TlsClientView(_client, htmlInfoUpdater);
 		return _clientView.getView();
 	}
 
 	@Override
-	public JComponent getViewForServerStateMachine() {
+	public JComponent getViewForServerStateMachine(HtmlInfoUpdater htmlInfoUpdater) {
+		_serverView = new TlsServerView(_server, htmlInfoUpdater);
 		return _serverView.getView();
 	}
 

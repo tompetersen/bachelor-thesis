@@ -19,12 +19,12 @@ public class TlsCipherSuiteRegistry {
 		//TODO: Add cipher suites (maybe automagically)
 		TlsCipherSuite cs = new TlsCipherSuite_NULL_WITH_NULL_NULL();
 		_supportedCipherSuites.put(cs.getCode(), cs);
-		
-		cs = new TlsCipherSuite_RSA_WITH_AES_128_CBC_SHA();
-		_supportedCipherSuites.put(cs.getCode(), cs);
-		
-		cs = new TlsCipherSuite_RSA_WITH_AES_128_GCM_SHA256();
-		_supportedCipherSuites.put(cs.getCode(), cs);
+//		
+//		cs = new TlsCipherSuite_RSA_WITH_AES_128_CBC_SHA();
+//		_supportedCipherSuites.put(cs.getCode(), cs);
+//		
+//		cs = new TlsCipherSuite_RSA_WITH_AES_128_GCM_SHA256();
+//		_supportedCipherSuites.put(cs.getCode(), cs);
 		
 		cs = new TlsCipherSuite_DHE_RSA_WITH_AES_128_GCM_SHA256();
 		_supportedCipherSuites.put(cs.getCode(), cs);

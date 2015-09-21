@@ -8,12 +8,12 @@ public class JProtocolPresenter<T extends ProtocolDataUnit> {
 
 	private JProtocolView _view;
 	
-	public JProtocolPresenter(JProtocolViewProvider<T> provider, CommunicationChannel<T> channel) {
-		StateMachinePresenter clientPresenter = new StateMachinePresenter(provider.getViewForClientStateMachine());
-		StateMachinePresenter serverPresenter = new StateMachinePresenter(provider.getViewForServerStateMachine());
+	public JProtocolPresenter(JProtocolViewProvider<T> provider, CommunicationChannel<T> channel, DefaultHtmlInfoUpdater htmlInfoUpdater) {
+		StateMachinePresenter clientPresenter = new StateMachinePresenter(provider.getViewForClientStateMachine(htmlInfoUpdater));
+		StateMachinePresenter serverPresenter = new StateMachinePresenter(provider.getViewForServerStateMachine(htmlInfoUpdater));
 		
-		ProtocolDataUnitPresenter<T> pduPresenter = new ProtocolDataUnitPresenter<T>(provider, channel); 
-		CommunicationChannelPresenter<T> ccPresenter = new CommunicationChannelPresenter<T>(channel);
+		ProtocolDataUnitPresenter<T> pduPresenter = new ProtocolDataUnitPresenter<T>(provider, channel, htmlInfoUpdater); 
+		CommunicationChannelPresenter<T> ccPresenter = new CommunicationChannelPresenter<T>(channel, htmlInfoUpdater.getHtmlInfoView());
 		
 		_view = new JProtocolView(clientPresenter.getView(), serverPresenter.getView(), pduPresenter.getView(), ccPresenter.getView());
 	}

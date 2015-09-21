@@ -13,9 +13,9 @@ public class ProtocolDataUnitPresenter<T extends ProtocolDataUnit> implements Ob
 	private ProtocolDataUnitView<T> _view;
 	private CommunicationChannel<T> _channel;
 	
-	public ProtocolDataUnitPresenter(JProtocolViewProvider<T> provider, CommunicationChannel<T> channel) {
+	public ProtocolDataUnitPresenter(JProtocolViewProvider<T> provider, CommunicationChannel<T> channel, HtmlInfoUpdater htmlInfoUpdate) {
 		_channel = channel;
-		_view = new ProtocolDataUnitView<T>(provider);
+		_view = new ProtocolDataUnitView<T>(provider, htmlInfoUpdate);
 		
 		channel.addObserver(this);
 	}

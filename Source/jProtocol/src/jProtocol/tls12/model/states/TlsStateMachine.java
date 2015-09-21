@@ -371,12 +371,13 @@ public abstract class TlsStateMachine extends StateMachine<TlsCiphertext> {
 		
 		String sessionId = _securityParameters.hasSessionId() ? "0x" + ByteHelper.bytesToHexString(_securityParameters.getSessionId().getSessionId()) : "";
 		KeyValueObject kvo = new KeyValueObject("Session ID", sessionId);
-		kvo.setHtmlHelpContent("<html>Die <b>SessionID</b> dient zur Identifikation einer Clientsitzung und besitzt eine Länge von maximal 32 (?) Bytes.</html>");
+		kvo.setHtmlHelpContent("<h1>SessionID</h1>Die <b>SessionID</b> dient zur Identifikation einer Clientsitzung und besitzt eine Länge von maximal 32 (?) Bytes.");
 		result.add(kvo);
 		
-		
 		String clientRandom = _securityParameters.hasClientRandom() ? "0x" + ByteHelper.bytesToHexString(_securityParameters.getClientRandom().getBytes()) : "";
-		result.add(new KeyValueObject("Client random", clientRandom));
+		kvo = new KeyValueObject("Client random", clientRandom);
+		kvo.setHtmlHelpContent("<h1>Random</h1>Die Random Werte bestehen aus einem 4 Byte Zeitstempel und 28 zufälligen Bytes.<pre>int main() {\n  Some sample code\n  with multiple lines\n}</pre");
+		result.add(kvo);
 		
 		String serverRandom = _securityParameters.hasServerRandom() ? "0x" + ByteHelper.bytesToHexString(_securityParameters.getServerRandom().getBytes()) : "";
 		result.add(new KeyValueObject("Server random", serverRandom));

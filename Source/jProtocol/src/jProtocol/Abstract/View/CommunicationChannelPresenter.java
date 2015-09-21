@@ -12,10 +12,12 @@ public class CommunicationChannelPresenter<T extends ProtocolDataUnit> implement
 
 	private CommunicationChannelView _view;
 	private CommunicationChannel<T> _channel;
+	private HtmlInfoView _htmlInfoView;
 	
-	public CommunicationChannelPresenter(CommunicationChannel<T> channel) {
+	public CommunicationChannelPresenter(CommunicationChannel<T> channel, HtmlInfoView htmlInfoView) {
 		_view = new CommunicationChannelView(this);
 		_channel = channel;
+		_htmlInfoView = htmlInfoView;
 	}
 	
 	public JComponent getView() {
@@ -37,6 +39,11 @@ public class CommunicationChannelPresenter<T extends ProtocolDataUnit> implement
 	@Override
 	public void nextStepsClicked() {
 		_channel.sendAllMessagesWithoutBreak();
+	}
+
+	@Override
+	public void showHelpClicked() {
+		_htmlInfoView.show();
 	}
 
 }
