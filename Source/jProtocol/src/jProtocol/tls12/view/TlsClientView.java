@@ -17,6 +17,12 @@ public class TlsClientView {
 	private TlsStateMachineTreeView _treeView;
 	private JPanel _view;
 	
+	/**
+	 * A view for the TLS client state machine.
+	 * 
+	 * @param client the client
+	 * @param htmlInfoUpdater an info updater to set the info view content
+	 */
 	public TlsClientView(final TlsStateMachine client, HtmlInfoUpdater htmlInfoUpdater) {
 		_view = new JPanel();
 		_view.setLayout(new BoxLayout(_view, BoxLayout.Y_AXIS));
@@ -70,10 +76,18 @@ public class TlsClientView {
 		_view.add(buttonPanel);
 	}
 	
+	/**
+	 * Updates the client state machine view with the current client state.
+	 */
 	public void updateView() {
 		_treeView.updateView();
 	}
 	
+	/**
+	 * Returns the client state machine view.
+	 * 
+	 * @return the view
+	 */
 	public JComponent getView() {
 		return _view;
 	}

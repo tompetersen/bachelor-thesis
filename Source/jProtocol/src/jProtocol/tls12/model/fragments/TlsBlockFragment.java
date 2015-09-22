@@ -74,7 +74,7 @@ public class TlsBlockFragment implements TlsFragment {
 		ArrayList<KeyValueObject> resultList = new ArrayList<>();
 		
 		KeyValueObject kvo = new KeyValueObject("IV", "0x"+ByteHelper.bytesToHexString(_encryptionResult.iv));
-		kvo.setHtmlHelpContent(TlsHtmlInfoLoader.loadHtmlInfoForFileName("messages/fragment/TLS12_Iv.html"));
+		kvo.setHtmlInfoContent(TlsHtmlInfoLoader.loadHtmlInfoForFileName("messages/fragment/TLS12_Iv.html"));
 		resultList.add(kvo);
 		
 		kvo = message.getViewData();
@@ -83,21 +83,21 @@ public class TlsBlockFragment implements TlsFragment {
 		
 		kvo = new KeyValueObject("MAC", "0x"+ByteHelper.bytesToHexString(_encryptionResult.mac));
 		kvo.setBackgroundColor(TlsUiConstants.ENCRYPTED_MESSAGE_FIELD_BACKGROUND);
-		kvo.setHtmlHelpContent(TlsHtmlInfoLoader.loadHtmlInfoForFileName("messages/fragment/TLS12_Mac.html"));
+		kvo.setHtmlInfoContent(TlsHtmlInfoLoader.loadHtmlInfoForFileName("messages/fragment/TLS12_Mac.html"));
 		resultList.add(kvo);
 		
 		kvo = new KeyValueObject("Padding", "0x"+ByteHelper.bytesToHexString(_encryptionResult.padding));
 		kvo.setBackgroundColor(TlsUiConstants.ENCRYPTED_MESSAGE_FIELD_BACKGROUND);
-		kvo.setHtmlHelpContent(TlsHtmlInfoLoader.loadHtmlInfoForFileName("messages/fragment/TLS12_Padding.html"));
+		kvo.setHtmlInfoContent(TlsHtmlInfoLoader.loadHtmlInfoForFileName("messages/fragment/TLS12_Padding.html"));
 		resultList.add(kvo);
 		
 		kvo = new KeyValueObject("Padding length", Byte.toString(_encryptionResult.paddingLength));
 		kvo.setBackgroundColor(TlsUiConstants.ENCRYPTED_MESSAGE_FIELD_BACKGROUND);
-		kvo.setHtmlHelpContent(TlsHtmlInfoLoader.loadHtmlInfoForFileName("messages/fragment/TLS12_PaddingLength.html"));
+		kvo.setHtmlInfoContent(TlsHtmlInfoLoader.loadHtmlInfoForFileName("messages/fragment/TLS12_PaddingLength.html"));
 		resultList.add(kvo);
 		
 		KeyValueObject result = new KeyValueObject("BlockFragment", resultList);
-		result.setHtmlHelpContent(TlsHtmlInfoLoader.loadHtmlInfoForFileName("messages/fragment/TLS12_BlockFragment.html"));
+		result.setHtmlInfoContent(TlsHtmlInfoLoader.loadHtmlInfoForFileName("messages/fragment/TLS12_BlockFragment.html"));
 		
 		return result;
 	}	

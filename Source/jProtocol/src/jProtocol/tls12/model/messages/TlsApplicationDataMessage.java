@@ -60,7 +60,7 @@ public class TlsApplicationDataMessage extends TlsMessage {
 		
 		KeyValueObject result = new KeyValueObject("Content", children);
 		result.setValue("TlsApplicationData");
-		result.setHtmlHelpContent(TlsHtmlInfoLoader.loadHtmlInfoForFileName("messages/tlsmessages/TLS12_ApplicationData.html"));
+		result.setHtmlInfoContent(TlsHtmlInfoLoader.loadHtmlInfoForFileName("messages/tlsmessages/TLS12_ApplicationData.html"));
 		
 		return result;
 	}

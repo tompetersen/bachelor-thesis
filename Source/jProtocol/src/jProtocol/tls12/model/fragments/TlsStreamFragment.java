@@ -51,11 +51,11 @@ public class TlsStreamFragment implements TlsFragment {
 		String mac = ByteHelper.bytesToHexString(_encryptionResult.mac);
 		kvo = new KeyValueObject("MAC", mac.length() > 0 ? "0x" + mac : "");
 		kvo.setBackgroundColor(TlsUiConstants.ENCRYPTED_MESSAGE_FIELD_BACKGROUND);
-		kvo.setHtmlHelpContent(TlsHtmlInfoLoader.loadHtmlInfoForFileName("messages/fragment/TLS12_Mac.html"));
+		kvo.setHtmlInfoContent(TlsHtmlInfoLoader.loadHtmlInfoForFileName("messages/fragment/TLS12_Mac.html"));
 		resultList.add(kvo);
 		
 		KeyValueObject result = new KeyValueObject("StreamFragment", resultList);
-		result.setHtmlHelpContent(TlsHtmlInfoLoader.loadHtmlInfoForFileName("messages/fragment/TLS12_StreamFragment.html"));
+		result.setHtmlInfoContent(TlsHtmlInfoLoader.loadHtmlInfoForFileName("messages/fragment/TLS12_StreamFragment.html"));
 		
 		return result;
 	}

@@ -22,6 +22,13 @@ public class TlsStateMachineTreeView {
 	private JPanel _view;
 	private JTextField _statusView;
 	
+	/**
+	 * Creates a state machine state showing key value tree with a TLS status field.
+	 * 
+	 * @param stateMachine the state machine
+	 * @param infoUpdater an info updater object
+	 * @param title the title for the tree root
+	 */
 	public TlsStateMachineTreeView(TlsStateMachine stateMachine, HtmlInfoUpdater infoUpdater, String title) {
 		_stateMachine = stateMachine;
 		
@@ -40,9 +47,12 @@ public class TlsStateMachineTreeView {
 		_view.add(_statusView, constraints);
 	}
 	
+	/**
+	 * Updates the state machine tree and status field.
+	 */
 	public void updateView() {
 		List<KeyValueObject> newUpdateList =  _stateMachine.getViewData();		
-		_tree.setKeyValueObjectList(newUpdateList);
+		_tree.updateKeyValueObjectList(newUpdateList);
 		
 		TlsStateType type = _stateMachine.getCurrentTlsState();
 		if (type.isHandshakeState()) {
@@ -63,6 +73,11 @@ public class TlsStateMachineTreeView {
 		}
 	}
 	
+	/**
+	 * Returns the state machine tree view.
+	 * 
+	 * @return the view
+	 */
 	public JComponent getView() {
 		return _view;
 	}	

@@ -54,7 +54,7 @@ public class Tls12Startup implements Observer, JProtocolViewProvider<TlsCipherte
 	@Override
 	public JComponent getDetailedViewForProtocolDataUnit(TlsCiphertext pdu, HtmlInfoUpdater htmlInfoUpdater) {
 		KeyValueTree tree = new KeyValueTree("TlsCiphertext", htmlInfoUpdater, false);
-		tree.setKeyValueObjectList(pdu.getViewData());
+		tree.updateKeyValueObjectList(pdu.getViewData());
 		tree.expandAll();
 		
 		return tree.getView();

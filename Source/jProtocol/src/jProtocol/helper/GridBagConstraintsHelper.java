@@ -6,7 +6,7 @@ import java.awt.Insets;
 /**
  * A class containing static methods for GridBagConstraints creation.
  * 
- * @author Tom Petersen
+ * @author Tom Petersen, 2015
  */
 public class GridBagConstraintsHelper {
 

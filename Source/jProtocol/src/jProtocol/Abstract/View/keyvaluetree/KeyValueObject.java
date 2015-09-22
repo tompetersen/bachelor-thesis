@@ -3,22 +3,41 @@ package jProtocol.Abstract.View.keyvaluetree;
 import java.awt.Color;
 import java.util.List;
 
+/**
+ * A KeyValueObject has a key, an optional value and optional children and can be 
+ * displayed in a KeyValueTree. A background color and a HTML info text can be set 
+ * additionally.
+ * 
+ * @author Tom Petersen, 2015
+ */
 public class KeyValueObject {
 	private String _key;
 	private String _value;
 	private Color _backgroundColor;
 	private List<KeyValueObject> _kvoList;
-	private String _htmlHelpContent;
+	private String _htmlInfoContent;
 
+	/**
+	 * Creates a key value object with key and value.
+	 * 
+	 * @param key the key
+	 * @param value the value
+	 */
 	public KeyValueObject(String key, String value) {
 		super();
 		this._key = key;
 		this._value = value;
 	}
 
-	public KeyValueObject(String key, List<KeyValueObject> valueList) {
+	/**
+	 * Creates a key value object with a key and a list of children
+	 * 
+	 * @param key the key
+	 * @param childList the children of the object
+	 */
+	public KeyValueObject(String key, List<KeyValueObject> childList) {
 		this._key = key;
-		this._kvoList = valueList;
+		this._kvoList = childList;
 	}
 	
 	public String getKey() {
@@ -49,12 +68,12 @@ public class KeyValueObject {
 		this._backgroundColor = c;
 	}
 
-	public String getHtmlHelpContent() {
-		return _htmlHelpContent;
+	public String getHtmlInfoContent() {
+		return _htmlInfoContent;
 	}
 
-	public void setHtmlHelpContent(String htmlHelpContent) {
-		_htmlHelpContent = htmlHelpContent;
+	public void setHtmlInfoContent(String htmlHelpContent) {
+		_htmlInfoContent = htmlHelpContent;
 	}
 
 	@Override

@@ -63,7 +63,7 @@ public class KeyValueTree implements TreeSelectionListener {
 					keyLabel.setText(kvo.getKey());
 					valueLabel.setText(kvo.getValue());
 
-					boolean showInfoButton = kvo.getHtmlHelpContent() != null;
+					boolean showInfoButton = kvo.getHtmlInfoContent() != null;
 					infoButton.setVisible(showInfoButton);
 
 					int neededWidth = keyLabel.getPreferredSize().width + valueLabel.getPreferredSize().width + infoButton.getPreferredSize().width + 10;
@@ -104,6 +104,14 @@ public class KeyValueTree implements TreeSelectionListener {
 	private boolean _highlightChangedFields;
 	private HtmlInfoUpdater _htmlInfoUpdater;
 
+	/**
+	 * Creates a key value tree. If highlightChangedFields is true, then key value objects 
+	 * with changed values will be highlighted when the tree is updated.
+	 * 
+	 * @param title the title used for the tree root
+	 * @param htmlInfoUpdater a info updater to set the content of the info view
+	 * @param highlightChangedFields true, if changed fields should be highlighted during tree update
+	 */
 	public KeyValueTree(String title, HtmlInfoUpdater htmlInfoUpdater, boolean highlightChangedFields) {
 		_rootNode = new DefaultMutableTreeNode(title);
 		_htmlInfoUpdater = htmlInfoUpdater;
@@ -129,7 +137,7 @@ public class KeyValueTree implements TreeSelectionListener {
 			
 			if (nodeInfo instanceof KeyValueObject) {
 				KeyValueObject kvo = (KeyValueObject)nodeInfo;
-				String html = kvo.getHtmlHelpContent();
+				String html = kvo.getHtmlInfoContent();
 				if (html != null && _htmlInfoUpdater != null) {
 					_htmlInfoUpdater.setInfoHtmlBodyContent(html);
 				}
@@ -137,7 +145,14 @@ public class KeyValueTree implements TreeSelectionListener {
 		}
 	}
 
-	public void setKeyValueObjectList(List<KeyValueObject> kvoList) {
+	/**
+	 * Updates the trees key value objects. If higlightChangedFields is true, the changed 
+	 * objects will be highlighted.
+	 * Expanded key value objects will stay expanded.
+	 * 
+	 * @param kvoList the new key value object list
+	 */
+	public void updateKeyValueObjectList(List<KeyValueObject> kvoList) {
 		removeAllNodes();
 
 		if (_lastUpdateList != null && _highlightChangedFields) {
@@ -232,12 +247,20 @@ public class KeyValueTree implements TreeSelectionListener {
 		}
 	}
 
+	/**
+	 * Returns the tree view with an enclosing JScrollPane.
+	 * 
+	 * @return the tree view
+	 */
 	public JComponent getView() {
 		JScrollPane pane = new JScrollPane(_tree);
 		pane.setBorder(BorderFactory.createLineBorder(Color.RED));
 		return _tree;
 	}
 
+	/**
+	 * Expands all key value objects with children.
+	 */
 	public void expandAll() {
 		for (int i = 0; i < _tree.getRowCount(); i++) {
 			_tree.expandRow(i);

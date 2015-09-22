@@ -47,7 +47,7 @@ public class TlsAeadFragment implements TlsFragment {
 		ArrayList<KeyValueObject> resultList = new ArrayList<>();
 		
 		KeyValueObject kvo = new KeyValueObject("Nonce explicit", "0x"+ByteHelper.bytesToHexString(_encryptionResult.nonce_explicit));
-		kvo.setHtmlHelpContent(TlsHtmlInfoLoader.loadHtmlInfoForFileName("messages/fragment/TLS12_NonceExplicit.html"));
+		kvo.setHtmlInfoContent(TlsHtmlInfoLoader.loadHtmlInfoForFileName("messages/fragment/TLS12_NonceExplicit.html"));
 		resultList.add(kvo);
 		
 		kvo = message.getViewData();
@@ -55,7 +55,7 @@ public class TlsAeadFragment implements TlsFragment {
 		resultList.add(kvo);
 		
 		KeyValueObject result = new KeyValueObject("AEADFragment", resultList);
-		result.setHtmlHelpContent(TlsHtmlInfoLoader.loadHtmlInfoForFileName("messages/fragment/TLS12_AeadFragment.html"));
+		result.setHtmlInfoContent(TlsHtmlInfoLoader.loadHtmlInfoForFileName("messages/fragment/TLS12_AeadFragment.html"));
 		
 		return result;
 	}

@@ -2,6 +2,11 @@ package jProtocol.helper;
 
 import java.nio.ByteBuffer;
 
+/**
+ * Some convenience methods used for byte array conversions.
+ * 
+ * @author Tom Petersen, 2015
+ */
 public class ByteHelper {
 	
 	/**
@@ -70,6 +75,13 @@ public class ByteHelper {
 	    return buffer.array();
 	}
 	
+	/**
+	 * Converts an int value to a four byte array.
+	 * 
+	 * @param value the int value
+	 * 
+	 * @return the byte array (big endian)
+	 */
 	public static byte[] intToByteArray(int value) {
 	    return new byte[] {
 	            (byte)(value >>> 24),
@@ -78,6 +90,13 @@ public class ByteHelper {
 	            (byte)value};
 	}
 	
+	/**
+	 * Converts a four byte array to its int value. 
+	 * 
+	 * @param b the byte array (big endian)
+	 * 
+	 * @return the int value
+	 */
 	public static int byteArrayToInt(byte[] b) {
 		if (b.length != 4) {
 			throw new IllegalArgumentException("Array must have length 4!");
@@ -88,6 +107,13 @@ public class ByteHelper {
 	            (b[0] & 0xFF) << 24;
 	}
 	
+	/**
+	 * Converts an int value to a three byte array. The first byte of the int value will be ignored.
+	 * 
+	 * @param value the int value
+	 * 
+	 * @return the byte array (big endian)
+	 */
 	public static byte[] intToThreeByteArray(int value) {
 	    return new byte[] {
 	            (byte)(value >>> 16),
@@ -95,7 +121,13 @@ public class ByteHelper {
 	            (byte)value};
 	}
 	
-	
+	/**
+	 * Converts a three byte array to its int value. 
+	 * 
+	 * @param b the byte array (big endian)
+	 * 
+	 * @return the int value
+	 */
 	public static int threeByteArrayToInt(byte[] b) {
 		if (b.length != 3) {
 			throw new IllegalArgumentException("Array must have length 3!");
@@ -105,13 +137,26 @@ public class ByteHelper {
 	            (b[0] & 0xFF) << 16;
 	}
 	
+	/**
+	 * Converts an int value to a two byte array. The first two bytes of the int value will be ignored.
+	 * 
+	 * @param value the int value
+	 * 
+	 * @return the byte array (big endian)
+	 */
 	public static byte[] intToTwoByteArray(int value) {
 	    return new byte[] {
 	            (byte)(value >>> 8),
 	            (byte)value};
 	}
 	
-	
+	/**
+	 * Converts a two byte array to its int value. 
+	 * 
+	 * @param b the byte array (big endian)
+	 * 
+	 * @return the int value
+	 */
 	public static int twoByteArrayToInt(byte[] b) {
 		if (b.length != 2) {
 			throw new IllegalArgumentException("Array must have length 2!");

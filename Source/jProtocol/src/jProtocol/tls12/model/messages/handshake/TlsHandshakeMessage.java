@@ -158,21 +158,21 @@ public abstract class TlsHandshakeMessage extends TlsMessage {
 		ArrayList<KeyValueObject> children = new ArrayList<KeyValueObject>();
 		
 		KeyValueObject kvo = new KeyValueObject("HandshakeType", getHandshakeType().toString());
-		kvo.setHtmlHelpContent(TlsHtmlInfoLoader.loadHtmlInfoForFileName("messages/tlsmessages/handshake/TLS12_HandshakeType.html"));
+		kvo.setHtmlInfoContent(TlsHtmlInfoLoader.loadHtmlInfoForFileName("messages/tlsmessages/handshake/TLS12_HandshakeType.html"));
 		children.add(kvo);
 		
 		kvo = new KeyValueObject("Length", Integer.toString(getLength()));
-		kvo.setHtmlHelpContent(TlsHtmlInfoLoader.loadHtmlInfoForFileName("messages/tlsmessages/handshake/TLS12_HandshakeLength.html"));
+		kvo.setHtmlInfoContent(TlsHtmlInfoLoader.loadHtmlInfoForFileName("messages/tlsmessages/handshake/TLS12_HandshakeLength.html"));
 		children.add(kvo);
 
 		KeyValueObject bodyKvo = new KeyValueObject("Body", getBodyViewData());
 		bodyKvo.setValue(getHandshakeType().toString());
-		bodyKvo.setHtmlHelpContent(getBodyHtmlInfo());
+		bodyKvo.setHtmlInfoContent(getBodyHtmlInfo());
 		children.add(bodyKvo);
 		
 		KeyValueObject result = new KeyValueObject("Content", children);
 		result.setValue("TlsHandshake");
-		result.setHtmlHelpContent(TlsHtmlInfoLoader.loadHtmlInfoForFileName("messages/tlsmessages/handshake/TLS12_Handshake.html"));
+		result.setHtmlInfoContent(TlsHtmlInfoLoader.loadHtmlInfoForFileName("messages/tlsmessages/handshake/TLS12_Handshake.html"));
 		
 		return result;
 	}

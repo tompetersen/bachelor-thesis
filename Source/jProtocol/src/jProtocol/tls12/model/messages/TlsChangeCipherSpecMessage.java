@@ -49,7 +49,7 @@ public class TlsChangeCipherSpecMessage extends TlsMessage {
 		
 		KeyValueObject result = new KeyValueObject("Content", children);
 		result.setValue("TlsChangeCipherSpec");
-		result.setHtmlHelpContent(TlsHtmlInfoLoader.loadHtmlInfoForFileName("messages/tlsmessages/TLS12_ChangeCipherSpec.html"));
+		result.setHtmlInfoContent(TlsHtmlInfoLoader.loadHtmlInfoForFileName("messages/tlsmessages/TLS12_ChangeCipherSpec.html"));
 		
 		return result;
 	}

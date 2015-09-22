@@ -55,7 +55,7 @@ public class TlsFinishedMessage extends TlsHandshakeMessage {
 		ArrayList<KeyValueObject> result = new ArrayList<>();
 		
 		KeyValueObject kvo = new KeyValueObject("VerifyData", "0x" + ByteHelper.bytesToHexString(_verifyData.getBytes()));
-		kvo.setHtmlHelpContent(TlsHtmlInfoLoader.loadHtmlInfoForFileName("messages/tlsmessages/handshake/TLS12_VerifyData.html"));
+		kvo.setHtmlInfoContent(TlsHtmlInfoLoader.loadHtmlInfoForFileName("messages/tlsmessages/handshake/TLS12_VerifyData.html"));
 		result.add(kvo);
 				
 		return result;

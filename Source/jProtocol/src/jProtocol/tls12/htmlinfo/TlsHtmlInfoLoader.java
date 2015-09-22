@@ -7,8 +7,15 @@ import java.io.InputStreamReader;
 
 public class TlsHtmlInfoLoader {
 
-	public static String loadHtmlInfoForFileName(String fileName) {
-		InputStream in = TlsHtmlInfoLoader.class.getResourceAsStream(fileName);
+	/**
+	 * Loads HTML documents from the current package  
+	 * 
+	 * @param filepath the filename and path of the document
+	 * 
+	 * @return the document content or an error message, if the document could not be read
+	 */
+	public static String loadHtmlInfoForFileName(String filepath) {
+		InputStream in = TlsHtmlInfoLoader.class.getResourceAsStream(filepath);
 
 		if (in != null) {
 			BufferedReader reader = new BufferedReader(new InputStreamReader(in));
@@ -35,7 +42,7 @@ public class TlsHtmlInfoLoader {
 			return sb.toString();
 		}
 		else {
-			return "Resource not found: " + fileName;
+			return "Resource not found: " + filepath;
 		}
 	}
 
