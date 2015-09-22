@@ -14,12 +14,23 @@ public class CommunicationChannelPresenter<T extends ProtocolDataUnit> implement
 	private CommunicationChannel<T> _channel;
 	private HtmlInfoView _htmlInfoView;
 	
+	/**
+	 * Creates a presenter for a communication channel.
+	 * 
+	 * @param channel the channel
+	 * @param htmlInfoView an info view
+	 */
 	public CommunicationChannelPresenter(CommunicationChannel<T> channel, HtmlInfoView htmlInfoView) {
 		_view = new CommunicationChannelView(this);
 		_channel = channel;
 		_htmlInfoView = htmlInfoView;
 	}
 	
+	/**
+	 * Returns the communication channel view
+	 * 
+	 * @return the view
+	 */
 	public JComponent getView() {
 		return _view.getView();
 	}

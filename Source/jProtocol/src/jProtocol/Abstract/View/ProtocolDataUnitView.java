@@ -31,6 +31,12 @@ public class ProtocolDataUnitView<T extends ProtocolDataUnit> {
 	private HtmlInfoUpdater _htmlInfoUpdater;
 	private JProtocolViewProvider<T> _provider;
 	
+	/**
+	 * Creates a view for showing a protocol data unit list and detail view. 
+	 * 
+	 * @param provider a view provider
+	 * @param htmlInfoUpdater an info updater to set the info view content
+	 */
 	public ProtocolDataUnitView(JProtocolViewProvider<T> provider, HtmlInfoUpdater htmlInfoUpdater) {
 		_provider = provider;
 		_htmlInfoUpdater = htmlInfoUpdater;
@@ -74,12 +80,22 @@ public class ProtocolDataUnitView<T extends ProtocolDataUnit> {
 		_view.add(tabbedPane, BorderLayout.PAGE_END);
 	}
 	
-	
+	/**
+	 * Returns the protocol data unit view.
+	 * 
+	 * @return the view
+	 */
 	public JComponent getView() {
 		return _view;
 	}
 
-	public void setProtocolDataUnits(List<T> pdus, T pduToSend) {
+	/**
+	 * Sets the protocol data units for the view.
+	 * 
+	 * @param pdus protocol data units which have already been sent
+	 * @param pduToSend the protocol data unit which will be sent next. Can be null.
+	 */
+	public void setProtocolDataUnitList(List<T> pdus, T pduToSend) {
 		_pduListView.removeAll();
 		for (int i = 0; i < pdus.size(); i++) {
 			T pdu = pdus.get(i);

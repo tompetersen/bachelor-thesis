@@ -15,6 +15,13 @@ public class JProtocolProtocolBuilder<T extends ProtocolDataUnit> implements Obs
 	private StateMachine<T> _client;
 	private StateMachine<T> _server;
 
+	/**
+	 * Creates a new protocol instance. 
+	 * 
+	 * @param client the client state machine
+	 * @param server the server state machine
+	 * @param viewProvider a view provider for the protocol
+	 */
 	public JProtocolProtocolBuilder(StateMachine<T> client, StateMachine<T> server, JProtocolViewProvider<T> viewProvider) {
 		_provider = viewProvider;
 		_client = client;

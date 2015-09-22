@@ -16,6 +16,9 @@ public class HtmlInfoView {
 	private JEditorPane _editorPane;
 	private JScrollPane _scrollPane;
 	
+	/**
+	 * Creates a HTML info view.
+	 */
 	public HtmlInfoView() {
         _editorPane = new JEditorPane();
         _editorPane.setEditable(false);
@@ -42,6 +45,11 @@ public class HtmlInfoView {
         _frame.setLocationRelativeTo(null);
 	}
 	
+	/**
+	 * Sets the info view HTML body content. A default header will be added. 
+	 * 
+	 * @param htmlBody the HTML body
+	 */
 	public void setHtmlBodyContent(String htmlBody) {
 		String html = "<html>\n"
         		+ "<head></head>\n"
@@ -52,6 +60,11 @@ public class HtmlInfoView {
 		_editorPane.setText(html);
 	}
 	
+	/**
+	 * Sets the info view HTML content. HTML header must be added.
+	 * 
+	 * @param htmlContent the html content
+	 */
 	public void setHtmlContent(String htmlContent) {
 		_editorPane.setText(htmlContent);
 		
@@ -60,6 +73,9 @@ public class HtmlInfoView {
 		scrollBar.setValue(scrollBar.getMinimum());
 	}
 	
+	/**
+	 * Makes the info view visible.
+	 */
 	public void show() {
 		_frame.setVisible(true);
 	}

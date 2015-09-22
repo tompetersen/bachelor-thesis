@@ -13,6 +13,13 @@ public class ProtocolDataUnitPresenter<T extends ProtocolDataUnit> implements Ob
 	private ProtocolDataUnitView<T> _view;
 	private CommunicationChannel<T> _channel;
 	
+	/**
+	 * A presenter for the protocol data unit view.
+	 * 
+	 * @param provider a view provider
+	 * @param channel the communication channel which transfers the protocol data units
+	 * @param htmlInfoUpdate an info updater to set the info view content
+	 */
 	public ProtocolDataUnitPresenter(JProtocolViewProvider<T> provider, CommunicationChannel<T> channel, HtmlInfoUpdater htmlInfoUpdate) {
 		_channel = channel;
 		_view = new ProtocolDataUnitView<T>(provider, htmlInfoUpdate);
@@ -20,6 +27,11 @@ public class ProtocolDataUnitPresenter<T extends ProtocolDataUnit> implements Ob
 		channel.addObserver(this);
 	}
 	
+	/**
+	 * Returns the view for the protocol data unit.
+	 * 
+	 * @return the view.
+	 */
 	public JComponent getView() {
 		return _view.getView();
 	}
@@ -29,6 +41,6 @@ public class ProtocolDataUnitPresenter<T extends ProtocolDataUnit> implements Ob
 		List<T> pdus = _channel.getSentProtocolDataUnits();
 		T pduToSend = _channel.getPduToSend();
 		
-		_view.setProtocolDataUnits(pdus, pduToSend);
+		_view.setProtocolDataUnitList(pdus, pduToSend);
 	}
 }

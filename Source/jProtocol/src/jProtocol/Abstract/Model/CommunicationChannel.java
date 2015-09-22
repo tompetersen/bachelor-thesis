@@ -39,6 +39,14 @@ public class CommunicationChannel<T extends ProtocolDataUnit> extends Observable
 		_server = server;
 	}
 
+	/**
+	 * Sends a protocol data unit from sender. The current thread will be paused until 
+	 * the user clicks the next message button if not sendAllMessagesWithoutBreak() has
+	 * been called before. 
+	 * 
+	 * @param pdu the protocol data unit
+	 * @param sender the sending state machine
+	 */
 	public void sendMessage(T pdu, StateMachine<T> sender) {
 		boolean clientMessage = (sender == _client);
 		pdu.setSentByClient(clientMessage);
@@ -67,6 +75,10 @@ public class CommunicationChannel<T extends ProtocolDataUnit> extends Observable
 		}
 	}
 
+	/**
+	 * Sends the next message, which has been set with sendMessage().
+	 * Gets called from the UI thread. 
+	 */
 	public void sendNextMessage() {
 		Runnable r = new Runnable() {
 			@Override
@@ -103,15 +115,29 @@ public class CommunicationChannel<T extends ProtocolDataUnit> extends Observable
 		new Thread(r).start();
 	}
 
+	/**
+	 * All messages will be sent without a paused thread, when this method has been called.
+	 * Gets called from the UI thread.
+	 */
 	public void sendAllMessagesWithoutBreak() {
 		_sendAllMessages = true;
 		sendNextMessage();
 	}
 
+	/**
+	 * Returns a list with all protocol data units which have been sent.
+	 * 
+	 * @return the protocol data unit list
+	 */
 	public List<T> getSentProtocolDataUnits() {
 		return _sentPdus;
 	}
 	
+	/**
+	 * Returns the current protocol data unit which will be sent when sendNextMessage() gets called.
+	 * 
+	 * @return the current protocol data unit to be sent
+	 */
 	public T getPduToSend() {
 		return _pduToSend;
 	}

@@ -19,6 +19,11 @@ public class CommunicationChannelView {
 		public void showHelpClicked();
 	}
 	
+	/**
+	 * Creates a communication channel view.
+	 * 
+	 * @param listener the listener for the view handling button clicks
+	 */
 	public CommunicationChannelView(final CommunicationChannelViewListener listener) {
 		_view = new JPanel(new FlowLayout(FlowLayout.RIGHT));
 		
@@ -55,10 +60,18 @@ public class CommunicationChannelView {
 		_view.add(_nextStepsButton);
 	}
 
+	/**
+	 * Returns the channel view.
+	 * 
+	 * @return the view
+	 */
 	public JComponent getView() {
 		return _view;
 	}
 	
+	/**
+	 * Enables the send next message buttons.
+	 */
 	public void enableNextStepView() {
 		_nextStepButton.setEnabled(true);
 		_nextStepsButton.setEnabled(true);

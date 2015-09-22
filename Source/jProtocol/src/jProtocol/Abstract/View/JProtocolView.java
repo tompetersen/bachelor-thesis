@@ -15,6 +15,14 @@ public class JProtocolView {
 	private JFrame _frame;
 	private JPanel _view;
 	
+	/**
+	 * Creates a complete protocol view including server, client and protocol data unit views. 
+	 * 
+	 * @param clientView the client view
+	 * @param serverView the server view
+	 * @param pduView the protocol data unit view
+	 * @param channelView the communication channel view
+	 */
 	public JProtocolView(JComponent clientView, JComponent serverView, JComponent pduView, JComponent channelView) {
 		_frame = new JFrame("jProtocol");
 		_frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
