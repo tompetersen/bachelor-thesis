@@ -2,6 +2,7 @@ package jProtocol.tls12.model.messages.handshake;
 
 import jProtocol.Abstract.View.keyvaluetree.KeyValueObject;
 import jProtocol.helper.ByteHelper;
+import jProtocol.tls12.htmlinfo.TlsHtmlInfoLoader;
 import jProtocol.tls12.model.exceptions.TlsDecodeErrorException;
 import jProtocol.tls12.model.values.TlsClientDhPublicKey;
 import java.util.ArrayList;
@@ -69,6 +70,11 @@ public class TlsClientKeyExchangeMessage_DHE extends TlsClientKeyExchangeMessage
 		result.add(kvo);
 				
 		return result;
+	}
+	
+	@Override
+	public String getBodyHtmlInfo() {
+		return TlsHtmlInfoLoader.loadHtmlInfoForFileName("messages/tlsmessages/handshake/TLS12_ClientKeyExchange_DHE.html");
 	}
 }
  

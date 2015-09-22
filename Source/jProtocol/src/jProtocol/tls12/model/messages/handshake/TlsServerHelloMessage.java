@@ -2,6 +2,7 @@ package jProtocol.tls12.model.messages.handshake;
 
 import jProtocol.Abstract.View.keyvaluetree.KeyValueObject;
 import jProtocol.helper.ByteHelper;
+import jProtocol.tls12.htmlinfo.TlsHtmlInfoLoader;
 import jProtocol.tls12.model.ciphersuites.TlsCipherSuite;
 import jProtocol.tls12.model.ciphersuites.TlsCipherSuiteRegistry;
 import jProtocol.tls12.model.exceptions.TlsDecodeErrorException;
@@ -168,6 +169,7 @@ public class TlsServerHelloMessage extends TlsHandshakeMessage {
 	
 	@Override
 	public List<KeyValueObject> getBodyViewData() {
+		//TODO: server hello html info
 		ArrayList<KeyValueObject> result = new ArrayList<>();
 		
 		KeyValueObject kvo = new KeyValueObject("ServerVersion", _serverVersion.toString());
@@ -183,5 +185,10 @@ public class TlsServerHelloMessage extends TlsHandshakeMessage {
 		result.add(kvo);
 				
 		return result;
+	}
+	
+	@Override
+	public String getBodyHtmlInfo() {
+		return TlsHtmlInfoLoader.loadHtmlInfoForFileName("messages/tlsmessages/handshake/TLS12_ServerHello.html");
 	}
 }

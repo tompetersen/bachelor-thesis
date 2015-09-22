@@ -1,10 +1,10 @@
 package jProtocol.tls12.model.messages.handshake;
 
-import java.util.ArrayList;
-import java.util.List;
 import jProtocol.Abstract.View.keyvaluetree.KeyValueObject;
 import jProtocol.tls12.model.exceptions.TlsDecodeErrorException;
 import jProtocol.tls12.model.values.TlsHandshakeType;
+import java.util.ArrayList;
+import java.util.List;
 
 public class TlsHelloRequestMessage extends TlsHandshakeMessage {
 
@@ -39,6 +39,11 @@ public class TlsHelloRequestMessage extends TlsHandshakeMessage {
 	@Override
 	public List<KeyValueObject> getBodyViewData() {
 		return new ArrayList<KeyValueObject>();
+	}
+	
+	@Override
+	public String getBodyHtmlInfo() {
+		return "";
 	}
 
 }

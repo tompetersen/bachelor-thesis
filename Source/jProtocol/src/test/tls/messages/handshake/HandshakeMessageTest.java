@@ -35,6 +35,11 @@ public class HandshakeMessageTest {
 		public List<KeyValueObject> getBodyViewData() {
 			return null;
 		}
+
+		@Override
+		public String getBodyHtmlInfo() {
+			return "";
+		}
 	}
 	
 	private TlsHandshakeType _handshakeType = TlsHandshakeType.client_hello;

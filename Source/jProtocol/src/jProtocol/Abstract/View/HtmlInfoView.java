@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import javax.swing.JEditorPane;
 import javax.swing.JFrame;
+import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.text.Document;
 import javax.swing.text.html.HTMLEditorKit;
@@ -13,11 +14,12 @@ public class HtmlInfoView {
 
 	private JFrame _frame;
 	private JEditorPane _editorPane;
+	private JScrollPane _scrollPane;
 	
 	public HtmlInfoView() {
         _editorPane = new JEditorPane();
         _editorPane.setEditable(false);
-        JScrollPane scrollPane = new JScrollPane(_editorPane);
+        _scrollPane = new JScrollPane(_editorPane);
         
         HTMLEditorKit kit = new HTMLEditorKit();
         _editorPane.setEditorKit(kit);
@@ -33,8 +35,9 @@ public class HtmlInfoView {
         _editorPane.setDocument(doc);
 
         _frame = new JFrame("Help");
-        _frame.getContentPane().add(scrollPane, BorderLayout.CENTER);
+        _frame.getContentPane().add(_scrollPane, BorderLayout.CENTER);
         _frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+        _frame.setAlwaysOnTop(true);
         _frame.setSize(new Dimension(300,200));
         _frame.setLocationRelativeTo(null);
 	}
@@ -51,6 +54,10 @@ public class HtmlInfoView {
 	
 	public void setHtmlContent(String htmlContent) {
 		_editorPane.setText(htmlContent);
+		
+		//Doesn't work?!
+		JScrollBar scrollBar = _scrollPane.getVerticalScrollBar();
+		scrollBar.setValue(scrollBar.getMinimum());
 	}
 	
 	public void show() {

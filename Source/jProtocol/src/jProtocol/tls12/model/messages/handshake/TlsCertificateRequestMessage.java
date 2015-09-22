@@ -48,4 +48,10 @@ public class TlsCertificateRequestMessage extends TlsHandshakeMessage {
 		return result;
 	}
 	
+	@Override
+	public String getBodyHtmlInfo() {
+		//TODO: Used for authenticated client -> view data for certificate request
+		return "";
+	}
+	
 }

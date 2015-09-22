@@ -1,6 +1,7 @@
 package jProtocol.tls12.model.messages.handshake;
 
 import jProtocol.Abstract.View.keyvaluetree.KeyValueObject;
+import jProtocol.tls12.htmlinfo.TlsHtmlInfoLoader;
 import jProtocol.tls12.model.exceptions.TlsDecodeErrorException;
 import jProtocol.tls12.model.values.TlsHandshakeType;
 import java.util.ArrayList;
@@ -38,6 +39,11 @@ public class TlsServerHelloDoneMessage extends TlsHandshakeMessage {
 	@Override
 	public List<KeyValueObject> getBodyViewData() {
 		return new ArrayList<KeyValueObject>();
+	}
+	
+	@Override
+	public String getBodyHtmlInfo() {
+		return TlsHtmlInfoLoader.loadHtmlInfoForFileName("messages/tlsmessages/handshake/TLS12_ServerHelloDone.html");
 	}
 	
 }

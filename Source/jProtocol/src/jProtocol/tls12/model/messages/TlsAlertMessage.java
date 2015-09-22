@@ -1,6 +1,7 @@
 package jProtocol.tls12.model.messages;
 
 import jProtocol.Abstract.View.keyvaluetree.KeyValueObject;
+import jProtocol.tls12.htmlinfo.TlsHtmlInfoLoader;
 import jProtocol.tls12.model.exceptions.TlsDecodeErrorException;
 import jProtocol.tls12.model.values.TlsAlert;
 import jProtocol.tls12.model.values.TlsContentType;
@@ -90,11 +91,18 @@ public class TlsAlertMessage extends TlsMessage {
 	@Override
 	public KeyValueObject getViewData() {
 		ArrayList<KeyValueObject> children = new ArrayList<KeyValueObject>();
-		children.add(new KeyValueObject("AlertLevel", _isFatal ? "2 - fatal" : "1 - warning"));
-		children.add(new KeyValueObject("AlertDescription", _alert.toString()));
+		
+		KeyValueObject kvo = new KeyValueObject("AlertLevel", _isFatal ? "2 - fatal" : "1 - warning");
+		kvo.setHtmlHelpContent(TlsHtmlInfoLoader.loadHtmlInfoForFileName("messages/tlsmessages/TLS12_Alert.html"));
+		children.add(kvo);
+		
+		kvo = new KeyValueObject("AlertDescription", _alert.toString());
+		kvo.setHtmlHelpContent(TlsHtmlInfoLoader.loadHtmlInfoForFileName("messages/tlsmessages/TLS12_AlertDescription.html"));
+		children.add(kvo);
 		
 		KeyValueObject result = new KeyValueObject("Content", children);
 		result.setValue("TlsAlert");
+		result.setHtmlHelpContent(TlsHtmlInfoLoader.loadHtmlInfoForFileName("messages/tlsmessages/TLS12_Alert.html"));
 		
 		return result;
 	}

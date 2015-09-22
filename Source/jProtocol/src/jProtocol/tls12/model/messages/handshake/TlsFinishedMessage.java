@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import jProtocol.Abstract.View.keyvaluetree.KeyValueObject;
 import jProtocol.helper.ByteHelper;
+import jProtocol.tls12.htmlinfo.TlsHtmlInfoLoader;
 import jProtocol.tls12.model.exceptions.TlsDecodeErrorException;
 import jProtocol.tls12.model.values.TlsHandshakeType;
 import jProtocol.tls12.model.values.TlsVerifyData;
@@ -54,8 +55,14 @@ public class TlsFinishedMessage extends TlsHandshakeMessage {
 		ArrayList<KeyValueObject> result = new ArrayList<>();
 		
 		KeyValueObject kvo = new KeyValueObject("VerifyData", "0x" + ByteHelper.bytesToHexString(_verifyData.getBytes()));
+		kvo.setHtmlHelpContent(TlsHtmlInfoLoader.loadHtmlInfoForFileName("messages/tlsmessages/handshake/TLS12_VerifyData.html"));
 		result.add(kvo);
 				
 		return result;
+	}
+	
+	@Override
+	public String getBodyHtmlInfo() {
+		return TlsHtmlInfoLoader.loadHtmlInfoForFileName("messages/tlsmessages/handshake/TLS12_Finished.html");
 	}
 }

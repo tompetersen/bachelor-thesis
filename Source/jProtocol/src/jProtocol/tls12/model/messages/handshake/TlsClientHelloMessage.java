@@ -2,6 +2,7 @@ package jProtocol.tls12.model.messages.handshake;
 
 import jProtocol.Abstract.View.keyvaluetree.KeyValueObject;
 import jProtocol.helper.ByteHelper;
+import jProtocol.tls12.htmlinfo.TlsHtmlInfoLoader;
 import jProtocol.tls12.model.ciphersuites.TlsCipherSuite;
 import jProtocol.tls12.model.ciphersuites.TlsCipherSuiteRegistry;
 import jProtocol.tls12.model.exceptions.TlsDecodeErrorException;
@@ -182,24 +183,30 @@ public class TlsClientHelloMessage extends TlsHandshakeMessage {
 
 	@Override
 	public List<KeyValueObject> getBodyViewData() {
-		ArrayList<KeyValueObject> result = new ArrayList<>();
+		//TODO: client hello hmtl info
+		ArrayList<KeyValueObject> resultList = new ArrayList<>();
 		
 		KeyValueObject kvo = new KeyValueObject("ClientVersion", _clientVersion.toString());
-		result.add(kvo);
+		resultList.add(kvo);
 		
 		kvo = new KeyValueObject("ClientRandom", _clientRandom.toString());
-		result.add(kvo);
+		resultList.add(kvo);
 		
 		kvo = new KeyValueObject("SessionID", _sessionId.toString());
-		result.add(kvo);
+		resultList.add(kvo);
 		
 		List<KeyValueObject> cipherSuites = new ArrayList<>();
 		for (TlsCipherSuite cs : _cipherSuites) {
 			cipherSuites.add(new KeyValueObject("", cs.getName() + " [" + Short.toString(cs.getCode()) + "]"));
 		}
 		kvo = new KeyValueObject("CipherSuites", cipherSuites);
-		result.add(kvo);
+		resultList.add(kvo);
 		
-		return result;
+		return resultList;
+	}
+
+	@Override
+	public String getBodyHtmlInfo() {
+		return TlsHtmlInfoLoader.loadHtmlInfoForFileName("messages/tlsmessages/handshake/TLS12_ClientHello.html");
 	}
 }

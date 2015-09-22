@@ -2,6 +2,7 @@ package jProtocol.tls12.model.messages.handshake;
 
 import jProtocol.Abstract.View.keyvaluetree.KeyValueObject;
 import jProtocol.helper.ByteHelper;
+import jProtocol.tls12.htmlinfo.TlsHtmlInfoLoader;
 import jProtocol.tls12.model.exceptions.TlsDecodeErrorException;
 import jProtocol.tls12.model.values.TlsCertificate;
 import jProtocol.tls12.model.values.TlsHandshakeType;
@@ -106,5 +107,10 @@ public class TlsCertificateMessage extends TlsHandshakeMessage {
 		result.add(kvo);
 				
 		return result;
+	}
+	
+	@Override
+	public String getBodyHtmlInfo() {
+		return TlsHtmlInfoLoader.loadHtmlInfoForFileName("messages/tlsmessages/handshake/TLS12_Certificate.html");
 	}
 }

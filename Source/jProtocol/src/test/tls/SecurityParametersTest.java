@@ -43,14 +43,6 @@ public class SecurityParametersTest {
 	public void testSetServerRandomNull() {
 		_parameters.setServerRandom(null);
 	}
-
-	@Test(expected = IllegalArgumentException.class)
-	public void testComputeMasterSecretWrongSize() {
-		byte[] random40 = new byte[40];
-		_parameters.setServerRandom(_tlsRandom);
-		_parameters.setClientRandom(_tlsRandom);
-		_parameters.computeMasterSecret(random40);
-	}
 	
 	@Test(expected = RuntimeException.class)
 	public void testComputeMasterSecretWithoutServerClientRandom() {

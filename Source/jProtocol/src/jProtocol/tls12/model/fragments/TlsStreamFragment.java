@@ -2,6 +2,7 @@ package jProtocol.tls12.model.fragments;
 
 import jProtocol.Abstract.View.keyvaluetree.KeyValueObject;
 import jProtocol.helper.ByteHelper;
+import jProtocol.tls12.htmlinfo.TlsHtmlInfoLoader;
 import jProtocol.tls12.model.ciphersuites.TlsStreamCipherSuite.TlsStreamEncryptionResult;
 import jProtocol.tls12.model.messages.TlsMessage;
 import jProtocol.tls12.view.TlsUiConstants;
@@ -44,15 +45,17 @@ public class TlsStreamFragment implements TlsFragment {
 		ArrayList<KeyValueObject> resultList = new ArrayList<>();
 		
 		KeyValueObject kvo = message.getViewData();
-		//kvo.setBackgroundColor(TlsUiConstants.ENCRYPTED_MESSAGE_FIELD_BACKGROUND);
+		kvo.setBackgroundColor(TlsUiConstants.ENCRYPTED_MESSAGE_FIELD_BACKGROUND);
 		resultList.add(kvo);
 		
 		String mac = ByteHelper.bytesToHexString(_encryptionResult.mac);
 		kvo = new KeyValueObject("MAC", mac.length() > 0 ? "0x" + mac : "");
-		//kvo.setBackgroundColor(TlsUiConstants.ENCRYPTED_MESSAGE_FIELD_BACKGROUND);
+		kvo.setBackgroundColor(TlsUiConstants.ENCRYPTED_MESSAGE_FIELD_BACKGROUND);
+		kvo.setHtmlHelpContent(TlsHtmlInfoLoader.loadHtmlInfoForFileName("messages/fragment/TLS12_Mac.html"));
 		resultList.add(kvo);
 		
 		KeyValueObject result = new KeyValueObject("StreamFragment", resultList);
+		result.setHtmlHelpContent(TlsHtmlInfoLoader.loadHtmlInfoForFileName("messages/fragment/TLS12_StreamFragment.html"));
 		
 		return result;
 	}

@@ -1,10 +1,10 @@
 package jProtocol.tls12.model.messages.handshake;
 
-import java.util.ArrayList;
-import java.util.List;
 import jProtocol.Abstract.View.keyvaluetree.KeyValueObject;
 import jProtocol.tls12.model.exceptions.TlsDecodeErrorException;
 import jProtocol.tls12.model.values.TlsHandshakeType;
+import java.util.ArrayList;
+import java.util.List;
 
 public class TlsCertificateVerifyMessage extends TlsHandshakeMessage {
 
@@ -46,5 +46,10 @@ public class TlsCertificateVerifyMessage extends TlsHandshakeMessage {
 				
 		return result;
 	}
-
+	
+	@Override
+	public String getBodyHtmlInfo() {
+		//TODO: Used for authenticated client -> view data for certificate request
+		return "";
+	}
 }

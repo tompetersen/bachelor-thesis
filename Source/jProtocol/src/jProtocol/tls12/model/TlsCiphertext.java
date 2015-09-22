@@ -6,6 +6,7 @@ import jProtocol.tls12.model.fragments.TlsFragment;
 import jProtocol.tls12.model.messages.TlsMessage;
 import jProtocol.tls12.model.values.TlsContentType;
 import jProtocol.tls12.model.values.TlsVersion;
+import jProtocol.tls12.htmlinfo.TlsHtmlInfoLoader;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
@@ -88,9 +89,18 @@ public class TlsCiphertext extends ProtocolDataUnit {
 	public List<KeyValueObject> getViewData() {
 		ArrayList<KeyValueObject> result = new ArrayList<>();
 		
-		result.add(new KeyValueObject("ContentType", 	_contentType.toString()));
-		result.add(new KeyValueObject("Version", 		_version.toString()));
-		result.add(new KeyValueObject("Length", 		Short.toString(_length)));
+		KeyValueObject kvo = new KeyValueObject("ContentType", _contentType.toString());
+		kvo.setHtmlHelpContent(TlsHtmlInfoLoader.loadHtmlInfoForFileName("messages/Tls12_ContentType.html"));
+		result.add(kvo);
+		
+		kvo = new KeyValueObject("Version", _version.toString());
+		kvo.setHtmlHelpContent(TlsHtmlInfoLoader.loadHtmlInfoForFileName("messages/Tls12_Version.html"));
+		result.add(kvo);
+		
+		kvo = new KeyValueObject("Length", Short.toString(_length));
+		kvo.setHtmlHelpContent(TlsHtmlInfoLoader.loadHtmlInfoForFileName("messages/Tls12_MessageLength.html"));
+		result.add(kvo);
+		
 		result.add(_fragment.getViewData(_message));
 		
 		return result;

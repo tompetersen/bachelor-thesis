@@ -2,6 +2,7 @@ package jProtocol.tls12.model.messages.handshake;
 
 import jProtocol.Abstract.View.keyvaluetree.KeyValueObject;
 import jProtocol.helper.ByteHelper;
+import jProtocol.tls12.htmlinfo.TlsHtmlInfoLoader;
 import jProtocol.tls12.model.exceptions.TlsDecodeErrorException;
 import jProtocol.tls12.model.values.TlsHandshakeType;
 import jProtocol.tls12.model.values.TlsServerDhParams;
@@ -145,19 +146,29 @@ public class TlsServerKeyExchangeMessage extends TlsHandshakeMessage {
 	public List<KeyValueObject> getBodyViewData() {
 		ArrayList<KeyValueObject> result = new ArrayList<>();
 		
-		KeyValueObject kvo = new KeyValueObject("DH Param dh_p", "0x" + ByteHelper.bytesToHexString(_dhParams.getDh_p()));
-		result.add(kvo);
+		ArrayList<KeyValueObject> serverParams = new ArrayList<>();
+		KeyValueObject kvo = new KeyValueObject("dh_p", "0x" + ByteHelper.bytesToHexString(_dhParams.getDh_p()));
+		serverParams.add(kvo);
 		
-		kvo = new KeyValueObject("DH Param dh_g", "0x" + ByteHelper.bytesToHexString(_dhParams.getDh_g()));
-		result.add(kvo);
+		kvo = new KeyValueObject("dh_g", "0x" + ByteHelper.bytesToHexString(_dhParams.getDh_g()));
+		serverParams.add(kvo);
 		
-		kvo = new KeyValueObject("DH Param dh_Ys", "0x" + ByteHelper.bytesToHexString(_dhParams.getDh_Ys()));
+		kvo = new KeyValueObject("dh_Ys", "0x" + ByteHelper.bytesToHexString(_dhParams.getDh_Ys()));
+		serverParams.add(kvo);
+		
+		kvo = new KeyValueObject("ServerDHParams", serverParams);
+		kvo.setHtmlHelpContent(TlsHtmlInfoLoader.loadHtmlInfoForFileName("messages/tlsmessages/handshake/TLS12_ServerDhParams.html"));
 		result.add(kvo);
 		
 		kvo = new KeyValueObject("Signed params", "0x" + ByteHelper.bytesToHexString(_signedParams));
+		kvo.setHtmlHelpContent(TlsHtmlInfoLoader.loadHtmlInfoForFileName("messages/tlsmessages/handshake/TLS12_SignedParams.html"));
 		result.add(kvo);
-				
+		
 		return result;
 	}
 
+	@Override
+	public String getBodyHtmlInfo() {
+		return TlsHtmlInfoLoader.loadHtmlInfoForFileName("messages/tlsmessages/handshake/TLS12_ServerKeyExchange.html");
+	}
 }

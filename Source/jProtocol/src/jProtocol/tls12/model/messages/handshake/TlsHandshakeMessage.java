@@ -2,6 +2,7 @@ package jProtocol.tls12.model.messages.handshake;
 
 import jProtocol.Abstract.View.keyvaluetree.KeyValueObject;
 import jProtocol.helper.ByteHelper;
+import jProtocol.tls12.htmlinfo.TlsHtmlInfoLoader;
 import jProtocol.tls12.model.ciphersuites.TlsCipherSuiteRegistry;
 import jProtocol.tls12.model.exceptions.TlsDecodeErrorException;
 import jProtocol.tls12.model.messages.TlsMessage;
@@ -155,15 +156,28 @@ public abstract class TlsHandshakeMessage extends TlsMessage {
 	@Override
 	public KeyValueObject getViewData() {
 		ArrayList<KeyValueObject> children = new ArrayList<KeyValueObject>();
-		children.add(new KeyValueObject("HandshakeType", getHandshakeType().toString()));
-		children.add(new KeyValueObject("Length", Integer.toString(getLength())));
-		children.addAll(getBodyViewData());
+		
+		KeyValueObject kvo = new KeyValueObject("HandshakeType", getHandshakeType().toString());
+		kvo.setHtmlHelpContent(TlsHtmlInfoLoader.loadHtmlInfoForFileName("messages/tlsmessages/handshake/TLS12_HandshakeType.html"));
+		children.add(kvo);
+		
+		kvo = new KeyValueObject("Length", Integer.toString(getLength()));
+		kvo.setHtmlHelpContent(TlsHtmlInfoLoader.loadHtmlInfoForFileName("messages/tlsmessages/handshake/TLS12_HandshakeLength.html"));
+		children.add(kvo);
+
+		KeyValueObject bodyKvo = new KeyValueObject("Body", getBodyViewData());
+		bodyKvo.setValue(getHandshakeType().toString());
+		bodyKvo.setHtmlHelpContent(getBodyHtmlInfo());
+		children.add(bodyKvo);
 		
 		KeyValueObject result = new KeyValueObject("Content", children);
-		result.setValue("TlsHandshake");//TODO: maybe getHandshakeType?
+		result.setValue("TlsHandshake");
+		result.setHtmlHelpContent(TlsHtmlInfoLoader.loadHtmlInfoForFileName("messages/tlsmessages/handshake/TLS12_Handshake.html"));
 		
 		return result;
 	}
 	
 	public abstract List<KeyValueObject> getBodyViewData();
+	
+	public abstract String getBodyHtmlInfo();
 }
