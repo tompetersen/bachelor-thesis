@@ -29,7 +29,7 @@ public class TlsWaitingForChangeCipherSpecState_Server extends TlsState {
 		
 			_stateMachine.changeReadStateToPendingState();
 			
-			_stateMachine.notifyObserversOfStateChangedXXX();
+			_stateMachine.notifyObserversOfStateChanged();
 		
 			setTlsState(TlsStateType.SERVER_IS_WAITING_FOR_FINISHED_STATE);
 		}

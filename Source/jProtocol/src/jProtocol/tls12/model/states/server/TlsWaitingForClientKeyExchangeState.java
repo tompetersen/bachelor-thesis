@@ -47,7 +47,7 @@ public class TlsWaitingForClientKeyExchangeState extends TlsState {
 			return;
 		}
 		
-		_stateMachine.notifyObserversOfStateChangedXXX();
+		_stateMachine.notifyObserversOfStateChanged();
 		
 		_stateMachine.addHandshakeMessageForVerifyData(clientKeyExchangeMessage);
 		setTlsState(TlsStateType.SERVER_IS_WAITING_FOR_CHANGE_CIPHER_SPEC_STATE);

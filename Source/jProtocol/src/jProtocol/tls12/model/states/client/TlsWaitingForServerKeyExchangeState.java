@@ -38,7 +38,7 @@ public class TlsWaitingForServerKeyExchangeState extends TlsState {
 			TlsClientStateMachine clientStateMachine = (TlsClientStateMachine) _stateMachine;
 			clientStateMachine.createClientDhKeyAgreementFromServerValues(serverParams);
 			
-			_stateMachine.notifyObserversOfStateChangedXXX();
+			_stateMachine.notifyObserversOfStateChanged();
 		}
 		catch (TlsAsymmetricOperationException e) {
 			setTlsState(TlsStateType.DECRYPT_ERROR_OCCURED_STATE);

@@ -24,7 +24,7 @@ public class TlsConnectionEstablishedState extends TlsState{
 		}
 		
 		_stateMachine.clearCachedApplicationDataMessage();
-		_stateMachine.notifyObserversOfStateChangedXXX();
+		_stateMachine.notifyObserversOfStateChanged();
 	}
 
 	@Override
@@ -41,7 +41,7 @@ public class TlsConnectionEstablishedState extends TlsState{
 			closeNotifyAlertReceived();
 		}
 		
-		_stateMachine.notifyObserversOfStateChangedXXX();
+		_stateMachine.notifyObserversOfStateChanged();
 	}
 
 	private void processApplicationData(TlsApplicationDataMessage m) {

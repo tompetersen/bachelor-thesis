@@ -76,14 +76,14 @@ public class CommunicationChannel<T extends ProtocolDataUnit> extends Observable
 					
 					if (_pduToSend.hasBeenSentByClient()) {
 						//clear state
-						_client.notifyObserversOfStateChangedXXX();
+						_client.notifyObserversOfStateChanged();
 						_server.receiveMessage(_pduToSend);
 						_pduToSend = null;
 						_clientCountdownLatch.countDown();
 					}
 					else {
 						//clear state
-						_server.notifyObserversOfStateChangedXXX();
+						_server.notifyObserversOfStateChanged();
 						_client.receiveMessage(_pduToSend);
 						_pduToSend = null;
 						_serverCountdownLatch.countDown();

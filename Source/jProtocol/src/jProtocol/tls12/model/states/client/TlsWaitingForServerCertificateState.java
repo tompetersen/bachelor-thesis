@@ -40,7 +40,7 @@ public class TlsWaitingForServerCertificateState extends TlsState {
 		TlsRsaCipher rsaCipher = new TlsRsaCipher(rsaPublicKey);
 		clientStateMachine.setRsaCipher(rsaCipher);
 		
-		_stateMachine.notifyObserversOfStateChangedXXX();
+		_stateMachine.notifyObserversOfStateChanged();
 		
 		if (_stateMachine.needsServerKeyExchangeMessage()) {
 			setTlsState(TlsStateType.CLIENT_IS_WAITING_FOR_SERVER_KEY_EXCHANGE_STATE);

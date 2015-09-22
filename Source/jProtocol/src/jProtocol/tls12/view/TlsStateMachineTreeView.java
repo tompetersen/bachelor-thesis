@@ -20,7 +20,6 @@ public class TlsStateMachineTreeView {
 	private TlsStateMachine _stateMachine;
 	private KeyValueTree _tree;
 	private JPanel _view;
-	private JTextField _protocolStateView;
 	private JTextField _statusView;
 	
 	public TlsStateMachineTreeView(TlsStateMachine stateMachine, HtmlInfoUpdater infoUpdater, String title) {
@@ -39,10 +38,6 @@ public class TlsStateMachineTreeView {
 		_statusView = new JTextField("");
 		constraints = GridBagConstraintsHelper.createNormalConstraints(0, 1, 1);
 		_view.add(_statusView, constraints);
-		
-		_protocolStateView = new JTextField("Computed master secret!");
-		constraints = GridBagConstraintsHelper.createNormalConstraints(0, 2, 1);
-		_view.add(_protocolStateView, constraints);
 	}
 	
 	public void updateView() {
