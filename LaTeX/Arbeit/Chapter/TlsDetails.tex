@@ -156,7 +156,7 @@ Für Blockchiffren im CBC-Modus wird ein IV benötigt (siehe Abschnitt \ref{sec_
 		\node[protocol] (type1) at (0,6) {type\\1 Byte};
 		\node[protocol] (version1) [right = of type1] {version\\2 Byte};
 		\node[protocol] (length1) [right = of version1] {length\\2 Byte};
-		\node[tlsmessage] (content1) [right = of length1] {content\\TLSMessage};
+		\node[tlsmessage] (content1) [right = of length1] {content\\};
 		\node[fragment_enc] (mac1) [right = of content1] {MAC\\};
 
 		\node[titlebox] (title1) at (0,5) {TLSCiphertext mit GenericStreamCipher-fragment};
@@ -165,7 +165,7 @@ Für Blockchiffren im CBC-Modus wird ein IV benötigt (siehe Abschnitt \ref{sec_
 		\node[protocol] (version2) [right = of type2] {version\\2 Byte};
 		\node[protocol] (length2) [right = of version2] {length\\2 Byte};
 		\node[fragment] (iv2) [right = of length2] {IV\\};
-		\node[tlsmessage] (content2) [right = of iv2] {content\\TLSMessage};
+		\node[tlsmessage] (content2) [right = of iv2] {content\\};
 		\node[fragment_enc] (mac2) [right = of content2] {MAC\\};
 		\node[fragment_enc] (pad2) [right = of mac2] {padding\\};
 		\node[fragment_enc] (padlength2) [right = of pad2] {padding\_length\\ 1 Byte};
@@ -176,7 +176,7 @@ Für Blockchiffren im CBC-Modus wird ein IV benötigt (siehe Abschnitt \ref{sec_
 		\node[protocol] (version3) [right = of type3] {version\\2 Byte};
 		\node[protocol] (length3) [right = of version3] {length\\2 Byte};
 		\node[fragment] (nonce3) [right = of length3] {nonce\_explicit\\};
-		\node[tlsmessage] (content3) [right = of nonce3] {content\\TLSMessage};
+		\node[tlsmessage] (content3) [right = of nonce3] {content\\};
 
 		\node[titlebox] (title3) at (0,0) {TLSCiphertext mit GenericAEADCipher-fragment};
 	\end{tikzpicture}
