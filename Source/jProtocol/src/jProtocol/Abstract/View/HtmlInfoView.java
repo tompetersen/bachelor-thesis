@@ -44,7 +44,7 @@ public class HtmlInfoView {
         _frame.getContentPane().add(_scrollPane, BorderLayout.CENTER);
         _frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         _frame.setAlwaysOnTop(true);
-        _frame.setSize(new Dimension(300,200));
+        _frame.setSize(new Dimension(400,400));
         _frame.setLocationRelativeTo(null);
 	}
 	

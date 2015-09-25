@@ -1,8 +1,17 @@
 <html>
-	<head>
-	</head>
-	<body>
-		<h1>SessionId</h1>
-		Die <b>SessionID</b> dient zur Identifikation einer Clientsitzung und besitzt eine Länge von maximal 32 (?) Bytes.
-	</body>
+<head>
+</head>
+<body>
+	<h1>Initialization vector</h1>
+	Some modes for block ciphers like CBC combine a block with the last
+	encrypted block before encryption. To enable this for the first block,
+	the IV is used instead of an encrypted block.
+	<div class="citation">
+		<p>The Initialization Vector (IV) SHOULD be chosen at random, and
+			MUST be unpredictable. [...] For block ciphers, the IV length is of
+			length SecurityParameters.record_iv_length, which is equal to the
+			SecurityParameters.block_size.</p>
+		<p class="source">TLS 1.2 specification, RFC 5246, p. 23</p>
+	</div>
+</body>
 </html>

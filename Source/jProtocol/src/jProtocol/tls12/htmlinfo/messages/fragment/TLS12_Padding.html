@@ -1,8 +1,16 @@
 <html>
-	<head>
-	</head>
-	<body>
-		<h1>SessionId</h1>
-		Die <b>SessionID</b> dient zur Identifikation einer Clientsitzung und besitzt eine Länge von maximal 32 (?) Bytes.
-	</body>
+<head>
+</head>
+<body>
+	<h1>Padding</h1>
+	<div class="citation">
+		<p>Padding that is added to force the length of the plaintext to be
+      an integral multiple of the block cipher’s block length. [...] Each uint8 in the padding data
+      vector MUST be filled with the padding length value.  The receiver
+      MUST check this padding and MUST use the bad_record_mac alert to
+      indicate padding errors.</p>
+		<p class="source">TLS 1.2 specification, RFC 5246, p. 23</p>
+	</div>
+	<p class="seealso">See also: padding length</p>
+</body>
 </html>

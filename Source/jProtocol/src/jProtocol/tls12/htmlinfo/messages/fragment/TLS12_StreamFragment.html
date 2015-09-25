@@ -1,15 +1,19 @@
 <html>
-	<head>
-	</head>
-	<body>
-		<h1>Stream Fragment</h1>
-		
-		//TODO: explanation stream cipher (gets MACed)
-		
-		<p>Stream fragments are also generated for the null cipher suite TLS_NULL_WITH_NULL_NULL,
-		consisting of the identity operation (i.e., the data is not
-   		encrypted, and the MAC size is zero, implying that no MAC is used).</p>
-   		
-   		<p><i>TLS 1.2 specification, RFC5246, p. 22</i></p>
-	</body>
+<head>
+</head>
+<body>
+	<h1>Stream fragment</h1>
+	<p>A stream fragment is constructed by using a stream cipher to
+		encrypt the message and an additional MAC (so-called
+		MAC-then-encrypt). An example for a stream cipher is RC4, which is
+		considered weak today, but is contained in TLS 1.2.</p>
+	<div class="citation">
+		<p>Stream fragments are also generated for the null cipher suite
+			TLS_NULL_WITH_NULL_NULL, consisting of the identity operation (i.e.,
+			the data is not encrypted, and the MAC size is zero, implying that no
+			MAC is used).</p>
+		<p class="source">TLS 1.2 specification, RFC 5246, p. 22</p>
+	</div>
+	<p class="seealso">See also: MAC</p>
+</body>
 </html>

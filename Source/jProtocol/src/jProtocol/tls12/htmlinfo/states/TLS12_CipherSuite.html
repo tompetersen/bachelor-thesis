@@ -19,5 +19,13 @@ CipherSuite TLS_DHE_RSA_WITH_AES_128_GCM_SHA256   = { 0x00,0x9E };
 		DHE_RSA, ...), the used cipher (AES_128_CBC, AES_128_GCM, ...) and a
 		hash function (SHA, SHA256, ...) used in HMAC, a special message
 		authentication code construction.</p>
+	<p>A special case is the cipher suite TLS_NULL_WITH_NULL_NULL,
+		which is the default for every new TLS connection.</p>
+	<div class="citation">
+		<p>If the cipher suite is TLS_NULL_WITH_NULL_NULL, encryption
+			consists of the identity operation (i.e., the data is not encrypted,
+			and the MAC size is zero, implying that no MAC is used).
+		<p class="source">TLS 1.2 specification, RFC 5246, p. 22</p>
+	</div>
 </body>
 </html>

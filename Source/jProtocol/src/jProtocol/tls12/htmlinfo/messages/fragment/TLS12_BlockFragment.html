@@ -1,11 +1,27 @@
 <html>
-	<head>
-	</head>
-	<body>
-		<h1>Block fragment</h1>
-		
-		//TODO: explanation block cipher (gets MACed)
-		
-		
-	</body>
+<head>
+</head>
+<body>
+	<h1>Block fragment</h1>
+	<p>A block fragment is constructed by using a block cipher to
+		encrypt the message and an additional MAC (so-called
+		MAC-then-encrypt). Block ciphers operate on fixed size blocks, so
+		messages of arbitrary length must be padded to meet this requirement.
+		An example for block ciphers is AES used in CBC mode in TLS.</p>
+	<p>
+	<div class="citation">
+		<p>Example: If the block length is 8 bytes, the content length
+			(TLSCompressed.length) is 61 bytes, and the MAC length is 20 bytes,
+			then the length before padding is 82 bytes (this does not include the
+			IV. Thus, the padding length modulo 8 must be equal to 6 in order to
+			make the total length an even multiple of 8 bytes (the block length).
+			The padding length can be 6, 14, 22, and so on, through 254. If the
+			padding length were the minimum necessary, 6, the padding would be 6
+			bytes, each containing the value 6. Thus, the last 8 octets of the
+			GenericBlockCipher before block encryption would be xx 06 06 06 06 06
+			06 06, where xx is the last octet of the MAC.</p>
+		<p class="source">TLS 1.2 specification, RFC 5246, p. 23</p>
+	</div>
+	<p class="seealso">See also: IV, MAC, Padding, padding length</p>
+</body>
 </html>

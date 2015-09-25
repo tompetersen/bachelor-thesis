@@ -1,8 +1,18 @@
 <html>
-	<head>
-	</head>
-	<body>
-		<h1>SessionId</h1>
-		Die <b>SessionID</b> dient zur Identifikation einer Clientsitzung und besitzt eine Länge von maximal 32 (?) Bytes.
-	</body>
+<head>
+</head>
+<body>
+	<h1>Padding length</h1>
+	<div class="citation">
+		<p>The padding length MUST be such that the total size of the
+      GenericBlockCipher structure is a multiple of the cipher’s block
+      length. Legal values range from zero to 255, inclusive. This
+      length specifies the length of the padding field exclusive of the
+      padding_length field itself.</p>
+		<p class="source">TLS 1.2 specification, RFC 5246, p. 23</p>
+	</div>
+	<p class="seealso">See also: padding</p>
+</body>
 </html>
+
+

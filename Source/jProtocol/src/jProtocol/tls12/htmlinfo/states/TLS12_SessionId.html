@@ -1,26 +1,26 @@
 <html>
-	<head>
-	</head>
-	<body>
-		<h1>SessionId</h1>
-		<div class="citation">
+<head>
+</head>
+<body>
+	<h1>SessionId</h1>
+	<div class="citation">
 		<p>The ClientHello message includes a variable-length session
-	   identifier. If not empty, the value identifies a session between the
-	   same client and server whose security parameters the client wishes to
-	   reuse. The session identifier MAY be from an earlier connection, 
-	   this connection, or from another currently active connection. The
-	   second option is useful if the client only wishes to update the
-	   random structures and derived values of a connection, and the third
-	   option makes it possible to establish several independent secure
-	   connections without repeating the full handshake protocol. These
-	   independent connections may occur sequentially or simultaneously; a
-	   SessionID becomes valid when the handshake negotiating it completes
-	   with the exchange of Finished messages and persists until it is
-	   removed due to aging or because a fatal error was encountered on a
-	   connection associated with the session. The actual contents of the
-	   SessionID are defined by the server.</p>
-	   
-	   <p class="source">TLS 1.2 specification, RFC 5246, p. 40</p>
-	   </div>
-	</body>
+			identifier. If not empty, the value identifies a session between the
+			same client and server whose security parameters the client wishes to
+			reuse. The session identifier MAY be from an earlier connection, this
+			connection, or from another currently active connection. The second
+			option is useful if the client only wishes to update the random
+			structures and derived values of a connection, and the third option
+			makes it possible to establish several independent secure connections
+			without repeating the full handshake protocol. These independent
+			connections may occur sequentially or simultaneously; a SessionID
+			becomes valid when the handshake negotiating it completes with the
+			exchange of Finished messages and persists until it is removed due to
+			aging or because a fatal error was encountered on a connection
+			associated with the session. The actual contents of the SessionID are
+			defined by the server.</p>
+
+		<p class="source">TLS 1.2 specification, RFC 5246, p. 40</p>
+	</div>
+</body>
 </html>

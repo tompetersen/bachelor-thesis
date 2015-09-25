@@ -1,21 +1,28 @@
 <html>
-	<head>
-	</head>
-	<body>
-		<h1>Mac</h1>
-		
-		//TODO: explanation mac
-		
-		 <p>The MAC is generated as:</p>
-<pre>
+<head>
+</head>
+<body>
+	<h1>MAC</h1>
+
+	<div class="citation">
+		<p>A Message Authentication Code is a one-way hash computed from a
+			message and some secret data. It is difficult to forge without
+			knowing the secret data. Its purpose is to detect if the message has
+			been altered.</p>
+		<p class="source">TLS 1.2 specification, RFC5246, p. 80</p>
+
+		<p>The MAC is generated as:</p>
+		<pre>
 MAC(MAC_write_key, seq_num +
                    TLSCompressed.type +
                    TLSCompressed.version +
                    TLSCompressed.length +
                    TLSCompressed.fragment);
-</pre>		
-		 <p>where "+" denotes concatenation.</p>
-		 
-		 <p><i>TLS 1.2 specification, RFC5246, p. 22</i></p>
-	</body>
+</pre>
+		<p>where "+" denotes concatenation.</p>
+		<p class="source">TLS 1.2 specification, RFC5246, p. 22</p>
+	</div>
+	
+	<p class="seealso">See also: Client/Server write MAC key</p>
+</body>
 </html>

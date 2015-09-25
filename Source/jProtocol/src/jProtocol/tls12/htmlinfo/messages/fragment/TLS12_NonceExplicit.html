@@ -1,8 +1,21 @@
 <html>
-	<head>
-	</head>
-	<body>
-		<h1>SessionId</h1>
-		Die <b>SessionID</b> dient zur Identifikation einer Clientsitzung und besitzt eine Länge von maximal 32 (?) Bytes.
-	</body>
+<head>
+</head>
+<body>
+	<h1>Explicit nonce</h1>
+	<div class="citation">
+		<p>Each AEAD cipher suite MUST specify how the nonce supplied to
+			the AEAD operation is constructed, and what is the length of the
+			GenericAEADCipher.nonce_explicit part. In many cases, it is
+			appropriate to use the partially implicit nonce technique described
+			in Section 3.2.1 of [AEAD]; with record_iv_length being the length of
+			the explicit part. In this case, the implicit part SHOULD be derived
+			from key_block as client_write_iv and server_write_iv (as described
+			in Section 6.3), and the explicit part is included in
+			GenericAEAEDCipher.nonce_explicit.</p>
+		<p class="source">TLS 1.2 specification, RFC 5246, p. 25</p>
+	</div>
+	<p class="seealso">See also: AEAD fragment</p>
+</body>
 </html>
+

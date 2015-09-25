@@ -1,9 +1,23 @@
 <html>
-	<head>
-	</head>
-	<body>
-		<h1>AEAD fragment</h1>
-		
-		
-	</body>
+<head>
+</head>
+<body>
+	<h1>AEAD fragment</h1>
+	An AEAD fragment is constructed by using an AEAD (Authenticated Encryption with Additional Data) cipher, 
+	which provides secrecy (for the message) and integrity (for the message and the additional data) without 
+	using an additional MAC. Examples for AEAD ciphers are AES-GCM or AES-CCM.
+	<div class="citation">
+		<p>AEAD ciphers take as input a single key, a nonce, a plaintext,
+			and "additional data" to be included in the authentication check, as
+			described in Section 2.1 of [AEAD]. The key is either the
+			client_write_key or the server_write_key. No MAC key is used. [...]</p>
+		<p>The additional authenticated data, which we denote as
+			additional_data, is defined as follows:</p>
+		<pre>
+additional_data = seq_num + TLSCompressed.type +
+                  TLSCompressed.version + TLSCompressed.length;</pre>
+		<p>where "+" denotes concatenation.</p>
+		<p class="source">TLS 1.2 specification, RFC 5246, p. 24</p>
+	</div>
+</body>
 </html>
