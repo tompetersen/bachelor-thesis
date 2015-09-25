@@ -1,8 +1,21 @@
 <html>
-	<head>
-	</head>
-	<body>
-		<h1>SessionId</h1>
-		Die <b>SessionID</b> dient zur Identifikation einer Clientsitzung und besitzt eine Länge von maximal 32 (?) Bytes.
-	</body>
+<head>
+</head>
+<body>
+	<h1>Diffie-Hellman</h1>
+	<p>The Diffie-Hellman-algorithm is a way to exchange a key securely
+		about an unsecure channel.</p>
+	<p>
+		The two parties which want to communicate agree on a multiplicative
+		group modulo the prime p and a generator g of this group. Party A
+		chooses a random value X_a and computes Y_a = g^(X_a) mod p.<br />
+		The same does party B: Y_b = g^(X_b) mod p. Y_a and Y_b are the public
+		keys of A and B and are sent to the other party.
+	</p>
+	<p>Now A can compute the exchanged key as K = Y_b^X_a mod p. B gets
+		the same key by computing K = Y_a^X_b mod p. An adversary not knowing
+		X_a or X_b has no simple possibility to compute K.
+	<p class="seealso">See also: server key exchange message, client
+		key exchange message</p>
+</body>
 </html>

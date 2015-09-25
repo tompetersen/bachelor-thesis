@@ -4,31 +4,45 @@ import jProtocol.Abstract.Model.ProtocolDataUnit;
 import jProtocol.Abstract.View.HtmlInfoUpdater;
 import javax.swing.JComponent;
 
+/**
+ * A view provider provides views which will be shown in the main application.
+ * It needs views for the client, server and a protocol data unit dependent
+ * detail view, as well as methods to handle client and server view updates.
+ * 
+ * 
+ * 
+ * @author Tom Petersen
+ *
+ * @param <T> 
+ */
 public interface JProtocolViewProvider<T extends ProtocolDataUnit> {
 	
 	/**
-	 * Should return a view with details of the protocol data unit.
+	 * Should return a view with details of the protocol data unit. This method will be called for
+	 * every protocol data unit which is selected in the protocol data unit list.
 	 * 
 	 * @param pdu the protocol data unit
-	 * @param htmlInfoUpdater an updater to set the info window content
+	 * @param htmlInfoUpdater an updater to set the info view content
 	 * 
 	 * @return the detailed view 
 	 */
 	public JComponent getDetailedViewForProtocolDataUnit(T pdu, HtmlInfoUpdater htmlInfoUpdater);
 	
 	/**
-	 * Should return a view displaying the client state.
+	 * Should return a view displaying the client state. This method will be only be called once
+	 * on application startup, so the view should be stored to react to state updates.
 	 * 
-	 * @param htmlInfoUpdater an updater to set the info window content
+	 * @param htmlInfoUpdater an updater to set the info view content
 	 * 
 	 * @return the client view
 	 */
 	public JComponent getViewForClientStateMachine(HtmlInfoUpdater htmlInfoUpdater);
 
 	/**
-	 * Should return a view displaying the server state.
+	 * Should return a view displaying the server state. This method will be only be called once
+	 * on application startup, so the view should be stored to react to state updates.
 	 * 
-	 * @param htmlInfoUpdater an updater to set the info window content
+	 * @param htmlInfoUpdater an updater to set the info view content
 	 * 
 	 * @return the server view
 	 */

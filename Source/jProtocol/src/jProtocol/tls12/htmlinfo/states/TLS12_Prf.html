@@ -1,0 +1,29 @@
+<html>
+<head>
+</head>
+<body>
+	<h1>Pseudorandom function (PRF)</h1>
+	<div class="citation">
+		<p> In addition, a construction is required to do expansion of secrets
+   into blocks of data for the purposes of key generation or validation.
+   This pseudorandom function (PRF) takes as input a secret, a seed, and
+   an identifying label and produces an output of arbitrary length.</p>
+   <p> First, we define a data expansion function, P_hash(secret, data),
+   that uses a single hash function to expand a secret and seed into an
+   arbitrary quantity of output:</p>
+		<pre>
+P_hash(secret, seed) = HMAC_hash(secret, A(1) + seed) +
+                       HMAC_hash(secret, A(2) + seed) +
+                       HMAC_hash(secret, A(3) + seed) + ...
+with
+     A(0) = seed
+     A(i) = HMAC_hash(secret, A(i-1))</pre>
+		<p> where + indicates concatenation. P_hash can be iterated as many times as necessary to produce the
+   required quantity of data. [...] TLS’s PRF is created by applying P_hash to the secret as:</p>
+		<pre>
+PRF(secret, label, seed) = P_hash(secret, label + seed)
+</pre>
+		<p class="source">TLS 1.2 specification, RFC 5246, p. 14</p>
+	</div>
+</body>
+</html>

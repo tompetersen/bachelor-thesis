@@ -21,6 +21,12 @@ import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeSelectionModel;
 
+/**
+ * A KeyValueTree can display lists of KeyValueObjects with children and has 
+ * the ability to highlight changed objects after an update.
+ * 
+ * @author Tom Petersen, 2015
+ */
 public class KeyValueTree implements TreeSelectionListener {
 
 	@SuppressWarnings("serial")

@@ -1,8 +1,23 @@
 <html>
-	<head>
-	</head>
-	<body>
-		<h1>SessionId</h1>
-		Die <b>SessionID</b> dient zur Identifikation einer Clientsitzung und besitzt eine Länge von maximal 32 (?) Bytes.
-	</body>
+<head>
+</head>
+<body>
+	<h1>Cipher suites</h1>
+	<div class="citation">
+		<p>The authentication, encryption, and MAC algorithms are
+			determined by the cipher_suite selected by the server and revealed in
+			the ServerHello message.</p>
+		<p class="source">TLS 1.2 specification, RFC 5246, p. 64</p>
+	</div>
+	<p>Examples for cipher suites are:</p>
+	<pre>
+CipherSuite TLS_RSA_WITH_AES_128_CBC_SHA          = { 0x00,0x2F };
+CipherSuite TLS_DHE_RSA_WITH_AES_256_CBC_SHA256   = { 0x00,0x6B };
+CipherSuite TLS_DHE_RSA_WITH_AES_128_GCM_SHA256   = { 0x00,0x9E };
+</pre>
+	<p>A cipher suite defines the used key exchange algorithm (RSA,
+		DHE_RSA, ...), the used cipher (AES_128_CBC, AES_128_GCM, ...) and a
+		hash function (SHA, SHA256, ...) used in HMAC, a special message
+		authentication code construction.</p>
+</body>
 </html>

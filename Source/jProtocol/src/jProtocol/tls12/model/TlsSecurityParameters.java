@@ -30,6 +30,7 @@ public class TlsSecurityParameters {
 	private TlsSessionId _sessionId;
 	private TlsVersion _version;
 	
+	private byte[] _premastersecret;
 	private byte[] _masterSecret; //48
 	private TlsRandom _clientRandom; //32
 	private TlsRandom _serverRandom; //32
@@ -118,8 +119,21 @@ public class TlsSecurityParameters {
 		}
 		return _serverRandom;
 	}
+	
+	public boolean hasSetPreMasterSecret() {
+		return (_premastersecret != null);
+	}
+	
+	public byte[] getPreMasterSecret() {
+		if (_premastersecret == null) {
+			throw new RuntimeException("Pre master secret must be set first!");
+		}
+		return _premastersecret;
+	}
 
 	public void computeMasterSecret(byte[] premastersecret) {
+		_premastersecret = premastersecret;
+		
 		if (_clientRandom == null || _serverRandom == null) {
 			throw new RuntimeException("Client and server random values must be set before computing the master secret!");
 		}

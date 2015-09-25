@@ -385,6 +385,11 @@ public abstract class TlsStateMachine extends StateMachine<TlsCiphertext> {
 		kvo.setHtmlInfoContent(TlsHtmlInfoLoader.loadHtmlInfoForFileName("states/TLS12_Random.html"));
 		result.add(kvo);
 		
+		String preMasterSecret = _securityParameters.hasSetPreMasterSecret() ? "0x" + ByteHelper.bytesToHexString(_securityParameters.getPreMasterSecret()) : "";
+		kvo = new KeyValueObject("Pre master secret", preMasterSecret);
+		kvo.setHtmlInfoContent(TlsHtmlInfoLoader.loadHtmlInfoForFileName("states/TLS12_PreMasterSecret.html"));
+		result.add(kvo);
+		
 		String masterSecret = _securityParameters.hasComputedMasterSecret() ? "0x" + ByteHelper.bytesToHexString(_securityParameters.getMasterSecret()) : "";
 		kvo = new KeyValueObject("Master secret", masterSecret);
 		kvo.setHtmlInfoContent(TlsHtmlInfoLoader.loadHtmlInfoForFileName("states/TLS12_MasterSecret.html"));

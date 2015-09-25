@@ -28,12 +28,15 @@ public class HtmlInfoView {
         _editorPane.setEditorKit(kit);
         
         StyleSheet styleSheet = kit.getStyleSheet();
-        //TODO: styling the html info view
-        styleSheet.addRule("body {color:#000; font-family:times; margin: 4px; }");
-        styleSheet.addRule("h1 {color: blue;}");
-        styleSheet.addRule("h2 {color: #ff0000;}");
-        styleSheet.addRule("pre {padding: 5px; background-color: #EEEEEE; line-height: 70%;}");
-
+        styleSheet.addRule("body {color:#000; font-family:times; margin: 5px; }");
+        styleSheet.addRule("h1 {margin-top:0px;}");
+        styleSheet.addRule("p {margin-top: 3px; margin-bottom: 3px;}");
+        styleSheet.addRule("pre {padding: 5px; color: #FFFFFF; background-color: #555555; border: 1px solid #CCCCCC; line-height: 70%;}");
+        
+        styleSheet.addRule(".citation {padding: 5px; margin-top: 5px; margin-bottom: 5px; border:1px solid #CCCCCC; background-color: #EEEEEE; }");
+        styleSheet.addRule(".source {font-style: italic; text-align: right; margin-top: 5px;}");
+        styleSheet.addRule(".seealso {color: blue;}");
+        
         Document doc = kit.createDefaultDocument();
         _editorPane.setDocument(doc);
 

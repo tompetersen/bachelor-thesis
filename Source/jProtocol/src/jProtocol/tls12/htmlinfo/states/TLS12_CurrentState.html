@@ -1,8 +1,17 @@
 <html>
-	<head>
-	</head>
-	<body>
-		<h1>SessionId</h1>
-		Die <b>SessionID</b> dient zur Identifikation einer Clientsitzung und besitzt eine Länge von maximal 32 (?) Bytes.
-	</body>
+<head>
+</head>
+<body>
+	<h1>Current state</h1>
+	<div class="citation">
+		<p> A TLS connection state is the operating environment of the TLS Record
+   Protocol. It specifies a compression algorithm, an encryption
+   algorithm, and a MAC algorithm. In addition, the parameters for
+   these algorithms are known: the MAC key and the bulk encryption keys
+   for the connection in both the read and the write directions. [...] <br />
+   All records are processed under the current read and write states.</p>
+		<p class="source">TLS 1.2 specification, RFC 5246, p. 16</p>
+	</div>
+	<p class="seealso">See also: Pending state</p>
+</body>
 </html>

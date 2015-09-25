@@ -1,8 +1,42 @@
 <html>
-	<head>
-	</head>
-	<body>
-		<h1>SessionId</h1>
-		Die <b>SessionID</b> dient zur Identifikation einer Clientsitzung und besitzt eine Länge von maximal 32 (?) Bytes.
-	</body>
+<head>
+</head>
+<body>
+	<h1>Certificate</h1>
+	<div class="citation">
+		<p>As part of the X.509 protocol (a.k.a. ISO Authentication
+      framework), certificates are assigned by a trusted Certificate
+      Authority and provide a strong binding between a party’s identity
+      or some other attributes and its public key.</p>
+		<p class="source">TLS 1.2 specification, RFC 5246, p. 79</p>
+	</div>
+	<p>In real application certificates have a more complicated format than the one used in this software. 
+	Such a certificate could look like this:</p>
+<pre>
+Certificate:
+   Data:
+       Version: 1 (0x0)
+       Serial Number: 7829 (0x1e95)
+       Signature Algorithm: md5WithRSAEncryption
+       Issuer: C=ZA, ST=Western Cape, L=Cape Town, O=Thawte Consulting cc,
+               OU=Certification Services Division,
+               CN=Thawte Server CA/emailAddress=server-certs@thawte.com
+       Validity   
+           Not Before: Jul  9 16:04:02 1998 GMT
+           Not After : Jul  9 16:04:02 1999 GMT
+       Subject: C=US, ST=Maryland, L=Pasadena, O=Brent Baccala,
+                OU=FreeSoft, CN=www.freesoft.org/emailAddress=baccala@freesoft.org
+       Subject Public Key Info:
+           Public Key Algorithm: rsaEncryption
+           RSA Public Key: (1024 bit)
+               Modulus (1024 bit):
+                   00:b4:31:98:0a:c4:bc:62:c1:88:aa:dc:b0:c8:[...]
+               Exponent: 65537 (0x10001)
+   Signature Algorithm: md5WithRSAEncryption
+       93:5f:8f:5f:c5:af:bf:0a:ab:a5:6d:fb:24:5f:b6:59:5d:[...]</pre>
+       <p class="source">Source: https://en.wikipedia.org/wiki/X.509</p>
+       
+</body>
 </html>
+
+ 
