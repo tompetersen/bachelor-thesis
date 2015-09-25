@@ -7,7 +7,11 @@ Im folgenden Kapitel wird nun auf die im Rahmen dieser Arbeit entwickelte Softwa
 \begin{mdframed}
 Zugrundeliegend: Gemeinsamkeit von Protokollen, Erweiterbarkeit/Pluginfähigkeit, ...
 
+Analyse (Rückgriff auf Didaktik-Kapitel)
+
 Warum Java? (UHH als Einstieg-> für alle verständlich und auch erweiterbar, ...)
+
+\hrulefill{}
 
 Welche TLS-Version? Oder SSL 2.0? Aus welchen Gründen? (1.2, aktuell, demonstriert Funktionsweise und Verhinderung von Angriffen; zum \inquotes{Durchklicken} von Angriffen wäre SSL schöner, ...)
 
@@ -25,14 +29,26 @@ Ausgelassen:
 \item sichere Schlüsselverwaltung, RSA-Bleichenbacher (Noch implementieren?) 
 \end{itemize}
 
-Analyse (Rückgriff auf Didaktik-Kapitel)
 \end{mdframed}
 
-Die Wahl der Programmiersprache fiel auf Java, da diese Sprache an der Universität Hamburg in der ersten Semestern zum Einsatz kommt und von den Studierenden zwingend gelernt werden muss. Auf diese Weise sollte die entwickelte Software auch von anderen Studierenden erweitert oder zumindest problemlos verstanden werden können. Zur Erzeugung der Benutzeroberfläche wurde die in der Java-Runtime verfügbare Bibliothek Swing genutzt, da diese ebenfalls in den an der Universität Hamburg verwendet wird.
+Die Software ist speziell für den Einsatz in der Hochschullehre gedacht und soll dazu dienen Protokolle und ihre internen Abläufe darzustellen und durch zusätzliche Interaktivität exploratives Lernen zu ermöglichen. Eine Vorgabe war die Möglichkeit der Erweiterbarkeit der Software um weitere Protokolle. 
 
-Für diese Arbeit wurde die TLS 1.2-Spezifikation umgesetzt. Hierdurch lässt sich die zum jetzigen Zeitpunkt aktuelle Version explorieren und insbesondere Abwehrmechanismen gegen Angriffe auf ältere Protokollversionen erkennen. Um diese Angriffe beobachten zu können, hätte sich auch eine ältere Protokollversion wie SSL 2.0 angeboten. Durch die Erweiterbarkeit der Software wäre dieses eine Möglichkeit für spätere Arbeiten.
+Um diese Vorgabe zu ermöglichen, wurden zu Beginn der Entwicklungsarbeit die Gemeinsamkeiten von Protokollen herausgearbeitet, um diese abstrakt umsetzen zu können. So müssen anschließend lediglich protokollspezifische Eigenschaften in Erweiterungen implementiert werden. Die Software soll sich auf Protokolle mit zwei Parteien beschränken. Zwischen diesen Parteien werden Nachrichten eines festen Formats (sogenannte Protokolldateneinheiten) über einen Kanal ausgetauscht. Die Abfolge verschiedener Nachrichtentypen und die bei ihrem Empfang stattfindenden Verarbeitungsschritte sind durch das Protokoll festgelegt. Zusätzlich besitzen die Parteien einen internen Zustand\footnote{
+	Um Verwechslungen mit den im nächsten Absatz eingeführten Automatenzuständen zu vermeiden, wird der Zustand einer Partei im Folgenden immer als interner Zustand bezeichnet.
+}, der beispielsweise als Resultat empfangener Nachrichten verändert werden kann. 
 
-Einige Funktionen der Spezifikation wurden nicht implementiert. Dies geschah aus Gründen der Komplexitätsreduktion zum besseren Verständnis oder schlicht aus Zeitgründen, insbesondere wenn die Funktion wenig zum Verständnis beigetragen hätte. Im Folgenden soll kurz auf diese Funktionen und darauf, warum sie ausgelassen wurden, eingegangen werden.\\
+Aus diesen Voraussetzungen wurde ein abstrakter Rahmen entwickelt, der für konkrete Protokolle erweitert werden muss. Um die Parteien, ihre internen Zustände und die Verarbeitungsschritte bei Nachrichtenempfang strukturiert entwickeln zu können, werden die Parteien wie endliche Automaten betrachtet. Es können verschiedene Zustände implementiert werden, um strukturiert unterschiedliches Verhalten bei dem Erhalt von Nachrichten zu erlangen. Der Automat besitzt jeweils immer genau einen aktuellen Zustand, an den eingehende Nachrichten weitergeleitet werden. Abhängig vom gewünschten Verhalten können aus dem aktuellen Zustand heraus der aktuelle Zustand neu gesetzt und Nachrichten gesendet werden. Der Automat kann seinen Zuständen zusätzlich Zugriff auf den internen Zustand der Partei bereitstellen.
+
+Anschließend wurde prototypisch eine Benutzeroberfläche entwickelt, die auf Basis dieser Überlegungen auch einen visuellen Rahmen bereitstellt, der für konkrete Protokolle gefüllt werden kann. \todo{Sketch UI} Es musste möglich sein, den internen Zustand der beiden Parteien darzustellen, der jedoch vom betrachteten Protokoll abhängig ist. Ebenso sollte zu jeder protokollabhängigen Nachricht neben ihrer reinen Repräsentation als Bytefolge auch noch eine Möglichkeit angeboten werden ihre Bedeutung darzustellen. Zusätzlich sollte es möglich sein, dem Verlauf des Protokoll schrittweise zu folgen, um ablaufende Prozesse und Veränderungen an den internen Zuständen zu erkennen.\\
+Mit diesen Möglichkeiten werden auch die Forderungen an exploratives Lernen und Simulationen aus Abschnitt \ref{sec_exploration}, insbesondere der Sichtenwechsel und die Anzeige nicht sichtbarer Prozesse, erfüllt.
+
+Für diese Arbeit wurde die TLS 1.2-Spezifikation als Erweiterung des abstrakten Rahmens umgesetzt. Hierdurch lässt sich die zum jetzigen Zeitpunkt aktuelle Version explorieren und insbesondere Abwehrmechanismen gegen Angriffe auf ältere Protokollversionen erkennen. Um diese Angriffe beobachten zu können, hätte sich auch eine ältere Protokollversion wie SSL 2.0 angeboten. Durch die Erweiterbarkeit der Software wäre dieses eine Möglichkeit für spätere Arbeiten.
+
+Im ersten Schritt wurden für Client und Server auf Basis der TLS-Spezifikation Automatenmodelle entwickelt, die abhängig von empfangenen Nachrichten Zustandswechsel und gesendete Nachrichten abbilden. Die Modelle sind im Anhang \ref{cha_tls_state_machines} zu finden. An den Zustandsübergängen sind jeweils die empfangenen Nachrichten in orange dargestellt, die zu diesem Übergang führen. Ist keine Nachricht angegeben, so findet direkt nach Eintritt in den Zustand der Zustandswechsel statt. Mit OnEnter gekennzeichnete Kästen an Zuständen zeigen in blau Nachrichten, die gesendet werden sollen, wenn ein Zustand aktueller Zustand wird. Kästen an Zustandsübergängen stehen für Aktionen, die von außen von dem Automaten verlangt werden (beispielsweise ein Verbindungsaufbauwunsch). In diese Kästen werden zu sendende Nachrichten ebenfalls in blau dargestellt. In eckigen Klammern werden Bedingungen für Zustandsübergänge und andere Aktionen angegeben. Der Startzustand wird durch die Unterstreichung des Namens gekennzeichnet.
+ 
+Danach wurde eine einfache Möglichkeit für die Darstellung der internen Zustände von Server und Client, sowie für die Bedeutungsdarstellung von Nachrichten ausgearbeitet. Hierbei sollten insbesondere auch die Zustandsveränderungen kenntlich gemacht werden, um abgelaufene Vorgänge zu verdeutlichen. Die Wahl fiel auf eine baumartige Struktur aus Objekten, denen ein Titel und ein Wert sowie eine optionale Liste von Kindelementen zugewiesen werden kann. Veränderungen zwischen zwei Zuständen sollten durch Kennzeichnung der geänderten Objekte geschehen. \todo{Sketch?}
+
+Anschließend wurde die TLS-Spezifikation auf Funktionen untersucht, die nicht implementiert werden sollten. Dies geschah aus Gründen der Komplexitätsreduktion zum besseren Verständnis oder schlicht aus Zeitgründen, insbesondere wenn die Funktion wenig zum Verständnis beigetragen hätte. Im Folgenden soll kurz auf diese Funktionen und darauf, warum sie ausgelassen wurden, eingegangen werden.\\
 Auf TLS-Extensions wurde komplett verzichtet, da sie nicht für das grundsätzliche Verständnis von TLS notwendig sind, sondern eher technische Erweiterungen des Standards darstellen, um bestimmte Funktionen nachzurüsten oder Verhalten zu erzwingen.\\
 Auch die Möglichkeit TLS-Plaintexte vor dem Verschlüsseln zu komprimieren wurde nicht implementiert, da die Funktion wenig zum Verständnis beiträgt und zusätzlich aufgrund ihrer Angreifbarkeit in der nächsten Protokollversion nicht mehr enthalten sein wird (vgl. Abschnitt \ref{sec_attack_crime}).\\
 TLS unterstützt optional zusätzliche Clientauthentifizierung. Diese wird allerdings in vielen Anwendungsfällen, wie beim dem verschlüsselten Abruf einer Internetseite über HTTPS, nicht genutzt und unterscheidet sich prinzipiell nicht übermäßig von der Serverauthentifizierung. Daher wurde in der Software darauf verzichtet.\\
@@ -52,18 +68,11 @@ Probleme/Schwierigkeiten bei der Umsetzung, ...
 - TLS: PDU-Struktur (insbesondere Fragment und CipherArten), Automaten (Security Parameters, Current/Pending States, ...), States (allgemein immer für Warten auf oder Received...), Crypto, Package-Struktur
 \end{mdframed}
 
-\begin{figure}[H]
-	\centering
-	\includegraphics[scale=0.75, angle = 90]{Diagrams/client_state_machine.png} %
-	\caption{Der Automat für den TLS-Client}
-	\label{fig_tls_client_state_machine}
-\end{figure}
 
-\begin{figure}[H]
-	\centering
-	\includegraphics[scale=0.75, angle = 90]{Diagrams/server_state_machine.png} %
-	\caption{Der Automat für den TLS-Server}
-	\label{fig_tls_server_state_machine}
-\end{figure}
+
+Die Wahl der Programmiersprache fiel auf Java, da diese Sprache an der Universität Hamburg in der ersten Semestern zum Einsatz kommt und von den Studierenden zwingend gelernt werden muss. Auf diese Weise sollte die entwickelte Software auch von anderen Studierenden erweitert oder zumindest problemlos verstanden werden können. Zur Erzeugung der Benutzeroberfläche wurde die in der Java-Runtime verfügbare Bibliothek Swing genutzt, da diese ebenfalls in den an der Universität Hamburg verwendet wird.
+
+
+Entwurfsmuster Zustand genutzt \todo{Quelle}
 
 \section{Tutorial: So schreibe ich ein Plugin, ...}
