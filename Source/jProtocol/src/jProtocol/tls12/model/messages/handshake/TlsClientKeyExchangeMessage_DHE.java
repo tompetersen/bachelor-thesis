@@ -67,6 +67,7 @@ public class TlsClientKeyExchangeMessage_DHE extends TlsClientKeyExchangeMessage
 		ArrayList<KeyValueObject> result = new ArrayList<>();
 		
 		KeyValueObject kvo = new KeyValueObject("DH Param dh_Yc", "0x" + ByteHelper.bytesToHexString(_dhPublicKey.getPublicKey()));
+		kvo.setHtmlInfoContent(TlsHtmlInfoLoader.loadHtmlInfoForFileName("messages/tlsmessages/handshake/TLS12_ClientKeyExchange_ClientDhPublic.html"));
 		result.add(kvo);
 				
 		return result;
@@ -74,7 +75,7 @@ public class TlsClientKeyExchangeMessage_DHE extends TlsClientKeyExchangeMessage
 	
 	@Override
 	public String getBodyHtmlInfo() {
-		return TlsHtmlInfoLoader.loadHtmlInfoForFileName("messages/tlsmessages/handshake/TLS12_ClientKeyExchange_DHE.html");
+		return TlsHtmlInfoLoader.loadHtmlInfoForFileName("messages/tlsmessages/handshake/TLS12_ClientKeyExchange.html");
 	}
 }
  

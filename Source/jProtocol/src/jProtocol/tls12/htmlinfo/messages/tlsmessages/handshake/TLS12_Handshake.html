@@ -1,8 +1,31 @@
 <html>
-	<head>
-	</head>
-	<body>
-		<h1>SessionId</h1>
-		Die <b>SessionID</b> dient zur Identifikation einer Clientsitzung und besitzt eine Länge von maximal 32 (?) Bytes.
-	</body>
+<head>
+</head>
+<body>
+	<h1>Handshake message</h1>
+	<div class="citation">
+		<p>The cryptographic parameters of the session state are produced
+			by the TLS Handshake Protocol, which operates on top of the TLS
+			record layer. When a TLS client and server first start communicating,
+			they agree on a protocol version, select cryptographic algorithms,
+			optionally authenticate each other, and use public-key encryption
+			techniques to generate shared secrets.</p>
+		<p>The TLS Handshake Protocol involves the following steps:</p>
+		<ul>
+			<li>Exchange hello messages to agree on algorithms, exchange
+				random values, and check for session resumption.</li>
+			<li>Exchange the necessary cryptographic parameters to allow the
+				client and server to agree on a premaster secret.</li>
+			<li>Exchange certificates and cryptographic information to allow
+				the client and server to authenticate themselves.</li>
+			<li>Generate a master secret from the premaster secret and
+				exchanged random values.</li>
+			<li>Provide security parameters to the record layer.</li>
+			<li>Allow the client and server to verify that their peer has
+				calculated the same security parameters and that the handshake
+				occurred without tampering by an attacker.</li>
+		</ul>
+		<p class="source">TLS 1.2 specification, RFC 5246, p. 34</p>
+	</div>
+</body>
 </html>

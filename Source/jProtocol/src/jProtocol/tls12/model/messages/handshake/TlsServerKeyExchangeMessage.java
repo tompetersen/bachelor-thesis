@@ -157,11 +157,11 @@ public class TlsServerKeyExchangeMessage extends TlsHandshakeMessage {
 		serverParams.add(kvo);
 		
 		kvo = new KeyValueObject("ServerDHParams", serverParams);
-		kvo.setHtmlInfoContent(TlsHtmlInfoLoader.loadHtmlInfoForFileName("messages/tlsmessages/handshake/TLS12_ServerDhParams.html"));
+		kvo.setHtmlInfoContent(TlsHtmlInfoLoader.loadHtmlInfoForFileName("messages/tlsmessages/handshake/TLS12_ServerKeyExchange_ServerDhParams.html"));
 		result.add(kvo);
 		
 		kvo = new KeyValueObject("Signed params", "0x" + ByteHelper.bytesToHexString(_signedParams));
-		kvo.setHtmlInfoContent(TlsHtmlInfoLoader.loadHtmlInfoForFileName("messages/tlsmessages/handshake/TLS12_SignedParams.html"));
+		kvo.setHtmlInfoContent(TlsHtmlInfoLoader.loadHtmlInfoForFileName("messages/tlsmessages/handshake/TLS12_ServerKeyExchange_SignedParams.html"));
 		result.add(kvo);
 		
 		return result;

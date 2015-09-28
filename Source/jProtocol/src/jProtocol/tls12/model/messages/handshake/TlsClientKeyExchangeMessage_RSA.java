@@ -72,6 +72,7 @@ public class TlsClientKeyExchangeMessage_RSA extends TlsClientKeyExchangeMessage
 		ArrayList<KeyValueObject> result = new ArrayList<>();
 		
 		KeyValueObject kvo = new KeyValueObject("EncyptedPreMasterSecret", "0x" + ByteHelper.bytesToHexString(_encPreMasterSecret.getEncryptedPreMasterSecret()));
+		kvo.setHtmlInfoContent(TlsHtmlInfoLoader.loadHtmlInfoForFileName("messages/tlsmessages/handshake/TLS12_ClientKeyExchange_EncryptedPreMasterSecret.html"));
 		result.add(kvo);
 				
 		return result;
@@ -79,6 +80,6 @@ public class TlsClientKeyExchangeMessage_RSA extends TlsClientKeyExchangeMessage
 	
 	@Override
 	public String getBodyHtmlInfo() {
-		return TlsHtmlInfoLoader.loadHtmlInfoForFileName("messages/tlsmessages/handshake/TLS12_ClientKeyExchange_RSA.html");
+		return TlsHtmlInfoLoader.loadHtmlInfoForFileName("messages/tlsmessages/handshake/TLS12_ClientKeyExchange.html");
 	}
 }

@@ -169,19 +169,22 @@ public class TlsServerHelloMessage extends TlsHandshakeMessage {
 	
 	@Override
 	public List<KeyValueObject> getBodyViewData() {
-		//TODO: server hello html info
 		ArrayList<KeyValueObject> result = new ArrayList<>();
 		
 		KeyValueObject kvo = new KeyValueObject("ServerVersion", _serverVersion.toString());
+		kvo.setHtmlInfoContent(TlsHtmlInfoLoader.loadHtmlInfoForFileName("messages/tlsmessages/handshake/TLS12_ServerHello_Version.html"));
 		result.add(kvo);
 		
 		kvo = new KeyValueObject("ServerRandom", _serverRandom.toString());
+		kvo.setHtmlInfoContent(TlsHtmlInfoLoader.loadHtmlInfoForFileName("states/TLS12_Random.html"));
 		result.add(kvo);
 		
 		kvo = new KeyValueObject("SessionID", _sessionId.toString());
+		kvo.setHtmlInfoContent(TlsHtmlInfoLoader.loadHtmlInfoForFileName("messages/tlsmessages/handshake/TLS12_ServerHello_SessionId.html"));
 		result.add(kvo);
 		
 		kvo = new KeyValueObject("CipherSuite", _cipherSuite.getName() + " [" + Short.toString(_cipherSuite.getCode()) + "]");
+		kvo.setHtmlInfoContent(TlsHtmlInfoLoader.loadHtmlInfoForFileName("messages/tlsmessages/handshake/TLS12_ServerHello_CipherSuite.html"));
 		result.add(kvo);
 				
 		return result;

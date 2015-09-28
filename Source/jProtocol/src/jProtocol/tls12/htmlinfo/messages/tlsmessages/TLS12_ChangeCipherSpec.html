@@ -1,8 +1,23 @@
 <html>
-	<head>
-	</head>
-	<body>
-		<h1>SessionId</h1>
-		Die <b>SessionID</b> dient zur Identifikation einer Clientsitzung und besitzt eine Länge von maximal 32 (?) Bytes.
-	</body>
+<head>
+</head>
+<body>
+	<h1>Change Cipher Spec message</h1>
+	<div class="citation">
+		<p>The change cipher spec protocol exists to signal transitions in
+			ciphering strategies. The protocol consists of a single message,
+			which is encrypted and compressed under the current (not the pending)
+			connection state. The message consists of a single byte of value
+			1.[...]</p>
+		<p>The ChangeCipherSpec message is sent by both the client and the
+			server to notify the receiving party that subsequent records will be
+			protected under the newly negotiated CipherSpec and keys. Reception
+			of this message causes the receiver to instruct the record layer to
+			immediately copy the read pending state into the read current state.
+			Immediately after sending this message, the sender MUST instruct the
+			record layer to make the write pending state the write active state.</p>
+		<p class="source">TLS 1.2 specification, RFC 5246, p. 28</p>
+	</div>
+	<p class="seealso">See also: XXX</p>
+</body>
 </html>

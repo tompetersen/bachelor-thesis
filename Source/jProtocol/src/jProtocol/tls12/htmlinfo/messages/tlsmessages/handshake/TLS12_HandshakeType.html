@@ -1,8 +1,24 @@
 <html>
-	<head>
-	</head>
-	<body>
-		<h1>SessionId</h1>
-		Die <b>SessionID</b> dient zur Identifikation einer Clientsitzung und besitzt eine Länge von maximal 32 (?) Bytes.
-	</body>
+<head>
+</head>
+<body>
+	<h1>Handshake type</h1>
+	<p>The type of the handshake message.</p>
+	<div class="citation">
+		<pre>
+enum {
+    hello_request(0), 
+    client_hello(1), 
+    server_hello(2),
+    certificate(11), 
+    server_key_exchange (12),
+    certificate_request(13), 
+    server_hello_done(14),
+    certificate_verify(15), 
+    client_key_exchange(16),
+    finished(20), (255)
+} HandshakeType;</pre>
+		<p class="source">TLS 1.2 specification, RFC 5246, p. 37</p>
+	</div>
+</body>
 </html>

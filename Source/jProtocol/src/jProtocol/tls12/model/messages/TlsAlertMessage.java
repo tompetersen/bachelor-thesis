@@ -93,11 +93,11 @@ public class TlsAlertMessage extends TlsMessage {
 		ArrayList<KeyValueObject> children = new ArrayList<KeyValueObject>();
 		
 		KeyValueObject kvo = new KeyValueObject("AlertLevel", _isFatal ? "2 - fatal" : "1 - warning");
-		kvo.setHtmlInfoContent(TlsHtmlInfoLoader.loadHtmlInfoForFileName("messages/tlsmessages/TLS12_Alert.html"));
+//		kvo.setHtmlInfoContent(TlsHtmlInfoLoader.loadHtmlInfoForFileName("messages/tlsmessages/TLS12_AlertLevel.html"));
 		children.add(kvo);
 		
 		kvo = new KeyValueObject("AlertDescription", _alert.toString());
-		kvo.setHtmlInfoContent(TlsHtmlInfoLoader.loadHtmlInfoForFileName("messages/tlsmessages/TLS12_AlertDescription.html"));
+//		kvo.setHtmlInfoContent(TlsHtmlInfoLoader.loadHtmlInfoForFileName("messages/tlsmessages/TLS12_AlertDescription.html"));
 		children.add(kvo);
 		
 		KeyValueObject result = new KeyValueObject("Content", children);

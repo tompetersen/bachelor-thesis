@@ -1,8 +1,22 @@
 <html>
-	<head>
-	</head>
-	<body>
-		<h1>SessionId</h1>
-		Die <b>SessionID</b> dient zur Identifikation einer Clientsitzung und besitzt eine Länge von maximal 32 (?) Bytes.
-	</body>
+<head>
+</head>
+<body>
+	<h1>Finished message</h1>
+	<div class="citation">
+		<p> A Finished message is always sent immediately after a change
+      cipher spec message to verify that the key exchange and
+      authentication processes were successful.  It is essential that a
+      change cipher spec message be received between the other handshake
+      messages and the Finished message.</p>
+		
+		<p> The Finished message is the first one protected with the just
+      negotiated algorithms, keys, and secrets.  Recipients of Finished
+      messages MUST verify that the contents are correct.  Once a side
+      has sent its Finished message and received and validated the
+      Finished message from its peer, it may begin to send and receive
+      application data over the connection.</p>
+		<p class="source">TLS 1.2 specification, RFC 5246, p. 63</p>
+	</div>
+</body>
 </html>

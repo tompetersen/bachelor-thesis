@@ -1,8 +1,24 @@
 <html>
-	<head>
-	</head>
-	<body>
-		<h1>SessionId</h1>
-		Die <b>SessionID</b> dient zur Identifikation einer Clientsitzung und besitzt eine Länge von maximal 32 (?) Bytes.
-	</body>
+<head>
+</head>
+<body>
+	<h1>Server certificate message</h1>
+	<div class="citation">
+		<p>The server MUST send a Certificate message whenever the agreed-
+			upon key exchange method uses certificates for authentication (this
+			includes all key exchange methods defined in this document except
+			DH_anon). This message will always immediately follow the ServerHello
+			message.</p>
+		<p>The certificate list is a sequence (chain) of certificates. The
+			sender’s certificate MUST come first in the list. Each following
+			certificate MUST directly certify the one preceding it. Because
+			certificate validation requires that root keys be distributed
+			independently, the self-signed certificate that specifies the root
+			certificate authority MAY be omitted from the chain, under the
+			assumption that the remote end must already possess it in order to
+			validate it in any case.</p>
+		<p class="source">TLS 1.2 specification, RFC 5246, p. 47</p>
+	</div>
+	<p class="seealso">See also: Certificate</p>
+</body>
 </html>

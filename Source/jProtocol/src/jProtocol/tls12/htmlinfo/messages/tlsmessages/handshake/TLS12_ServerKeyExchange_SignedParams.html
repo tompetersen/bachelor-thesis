@@ -1,0 +1,18 @@
+<html>
+<head>
+</head>
+<body>
+	<h1>Signed params</h1>
+	<div class="citation">
+		<p>For non-anonymous key exchanges, a signature over the server’s
+			key exchange parameters.</p>
+		<pre>
+digitally-signed struct {
+    opaque client_random[32];
+    opaque server_random[32];
+    ServerDHParams params;
+} signed_params;</pre>
+		<p class="source">TLS 1.2 specification, RFC 5246, p. 52</p>
+	</div>
+</body>
+</html>

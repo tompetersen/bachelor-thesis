@@ -1,0 +1,30 @@
+<html>
+<head>
+</head>
+<body>
+	<h1>Verify data</h1>
+	<p>By sending correct verify data the parties prove that they both
+		know the same master secret and the exchanged handshake messages
+		were not altered.</p>
+	<div class="citation">
+		<pre>
+verify_data = PRF(master_secret, 
+                  finished_label, 
+                  Hash(handshake_messages))[0..verify_data_length-1];</pre>
+		<p>
+			<b>finished_label</b>: For Finished messages sent by the client, the
+			string "client finished". For Finished messages sent by the server,
+			the string "server finished".
+		</p>
+		<p>
+			<b>handshake_messages</b>: All of the data from all messages in this
+			handshake (not including any HelloRequest messages) up to, but not
+			including, this message. This is only data visible at the handshake
+			layer and does not include record layer headers. This is the
+			concatenation of all the Handshake structures as defined in Section
+			7.4, exchanged thus far.
+		</p>
+		<p class="source">TLS 1.2 specification, RFC 5246, p. 63</p>
+	</div>
+</body>
+</html>

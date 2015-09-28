@@ -183,23 +183,26 @@ public class TlsClientHelloMessage extends TlsHandshakeMessage {
 
 	@Override
 	public List<KeyValueObject> getBodyViewData() {
-		//TODO: client hello hmtl info
 		ArrayList<KeyValueObject> resultList = new ArrayList<>();
 		
-		KeyValueObject kvo = new KeyValueObject("ClientVersion", _clientVersion.toString());
+		KeyValueObject kvo = new KeyValueObject("Client version", _clientVersion.toString());
+		kvo.setHtmlInfoContent(TlsHtmlInfoLoader.loadHtmlInfoForFileName("messages/tlsmessages/handshake/TLS12_ClientHello_Version.html"));
 		resultList.add(kvo);
 		
-		kvo = new KeyValueObject("ClientRandom", _clientRandom.toString());
+		kvo = new KeyValueObject("Client random", _clientRandom.toString());
+		kvo.setHtmlInfoContent(TlsHtmlInfoLoader.loadHtmlInfoForFileName("states/TLS12_Random.html"));
 		resultList.add(kvo);
 		
-		kvo = new KeyValueObject("SessionID", _sessionId.toString());
+		kvo = new KeyValueObject("Session ID", _sessionId.toString());
+		kvo.setHtmlInfoContent(TlsHtmlInfoLoader.loadHtmlInfoForFileName("messages/tlsmessages/handshake/TLS12_ClientHello_SessionId.html"));
 		resultList.add(kvo);
 		
 		List<KeyValueObject> cipherSuites = new ArrayList<>();
 		for (TlsCipherSuite cs : _cipherSuites) {
 			cipherSuites.add(new KeyValueObject("", cs.getName() + " [" + Short.toString(cs.getCode()) + "]"));
 		}
-		kvo = new KeyValueObject("CipherSuites", cipherSuites);
+		kvo = new KeyValueObject("Cipher suite list", cipherSuites);
+		kvo.setHtmlInfoContent(TlsHtmlInfoLoader.loadHtmlInfoForFileName("messages/tlsmessages/handshake/TLS12_ClientHello_CipherSuite.html"));
 		resultList.add(kvo);
 		
 		return resultList;

@@ -1,8 +1,19 @@
 <html>
-	<head>
-	</head>
-	<body>
-		<h1>SessionId</h1>
-		Die <b>SessionID</b> dient zur Identifikation einer Clientsitzung und besitzt eine Länge von maximal 32 (?) Bytes.
-	</body>
+<head>
+</head>
+<body>
+	<h1>Server hello done</h1>
+	<div class="citation">
+		<p>The ServerHelloDone message is sent by the server to indicate
+			the end of the ServerHello and associated messages. After sending
+			this message, the server will wait for a client response.</p>
+		<p>This message means that the server is done sending messages to
+			support the key exchange, and the client can proceed with its phase
+			of the key exchange.</p>
+		<p>Upon receipt of the ServerHelloDone message, the client SHOULD
+			verify that the server provided a valid certificate, if required, and
+			check that the server hello parameters are acceptable.</p>
+		<p class="source">TLS 1.2 specification, RFC 5246, p. 55</p>
+	</div>
+</body>
 </html>

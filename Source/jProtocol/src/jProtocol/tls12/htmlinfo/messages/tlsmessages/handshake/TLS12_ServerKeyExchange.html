@@ -1,8 +1,24 @@
 <html>
-	<head>
-	</head>
-	<body>
-		<h1>SessionId</h1>
-		Die <b>SessionID</b> dient zur Identifikation einer Clientsitzung und besitzt eine Länge von maximal 32 (?) Bytes.
-	</body>
+<head>
+</head>
+<body>
+	<h1>Server key exchange message</h1>
+	<div class="citation">
+		<p>
+			This message will be sent immediately after the server Certificate
+			message (or the ServerHello message, if this is an anonymous
+			negotiation). The ServerKeyExchange message is sent by the server
+			only when the server Certificate message (if sent) does not contain
+			enough data to allow the client to exchange a premaster secret. This
+			is true for the following key exchange methods:<br /> DHE_DSS<br />
+			DHE_RSA<br /> DH_anon
+		</p>
+		<p>This message conveys cryptographic information to allow the
+			client to communicate the premaster secret: a Diffie-Hellman public
+			key with which the client can complete a key exchange (with the
+			result being the premaster secret) or a public key for some other
+			algorithm.</p>
+		<p class="source">TLS 1.2 specification, RFC 5246, p. 50</p>
+	</div>
+</body>
 </html>
