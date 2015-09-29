@@ -1,6 +1,7 @@
 package jProtocol.Abstract.View.keyvaluetree;
 
 import jProtocol.Abstract.View.HtmlInfoUpdater;
+import jProtocol.Abstract.View.UiConstants;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -175,7 +176,7 @@ public class KeyValueTree implements TreeSelectionListener {
 
 	private void setCorrectComparisonDependentColorForObject(KeyValueObject newObj, KeyValueObject oldObj) {
 		if (!newObj.equals(oldObj)) {
-			newObj.setBackgroundColor(Color.YELLOW);
+			newObj.setBackgroundColor(UiConstants.KEY_VALUE_TREE_HIGHLIGHT_COLOR);
 		}
 
 		if (newObj.hasChildren()) {
@@ -212,7 +213,7 @@ public class KeyValueTree implements TreeSelectionListener {
 	}
 
 	private void colorNodeRecursively(KeyValueObject kvo) {
-		kvo.setBackgroundColor(Color.YELLOW);
+		kvo.setBackgroundColor(UiConstants.KEY_VALUE_TREE_HIGHLIGHT_COLOR);
 
 		if (kvo.hasChildren()) {
 			for (KeyValueObject child : kvo.getChildList()) {

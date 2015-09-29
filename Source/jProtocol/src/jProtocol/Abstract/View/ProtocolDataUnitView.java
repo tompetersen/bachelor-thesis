@@ -9,8 +9,8 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import java.util.List;
-import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -26,7 +26,9 @@ public class ProtocolDataUnitView<T extends ProtocolDataUnit> {
 	private JScrollPane _pduView;
 	private JLabel _pduBytesLabel;
 	private JPanel _pduListView;
+	private List<PduView> _pduViews;
 	private JScrollPane _pduListViewScroller;
+	private int _currentShownPduIndex;
 	
 	private HtmlInfoUpdater _htmlInfoUpdater;
 	private JProtocolViewProvider<T> _provider;
@@ -43,6 +45,8 @@ public class ProtocolDataUnitView<T extends ProtocolDataUnit> {
 		
 		_view = new JPanel();
 		_view.setLayout(new BoxLayout(_view, BoxLayout.Y_AXIS));
+		_currentShownPduIndex = -1;
+		_pduViews = new ArrayList<PduView>();
 		
 		createPduList();
 		createPduDetailView();
@@ -97,16 +101,24 @@ public class ProtocolDataUnitView<T extends ProtocolDataUnit> {
 	 */
 	public void setProtocolDataUnitList(List<T> pdus, T pduToSend) {
 		_pduListView.removeAll();
+		_pduViews.clear();
+		
 		for (int i = 0; i < pdus.size(); i++) {
 			T pdu = pdus.get(i);
-			JComponent pduView = createSinglePduView(pdu);
-			_pduListView.add(pduView);
+			PduView pduView = createSinglePduView(pdu, i, UiConstants.LIST_PDU_BACKGROUND);
+			_pduViews.add(pduView);
+			_pduListView.add(pduView.getView());
 		}
 		
 		if (pduToSend != null) {
-			JComponent pduToSendView = createSinglePduView(pduToSend);
-			pduToSendView.setBackground(Color.YELLOW);
-			_pduListView.add(pduToSendView);
+			PduView pduToSendView = createSinglePduView(pduToSend, pdus.size(), UiConstants.LIST_SENDING_PDU_BACKGROUND);
+			_pduViews.add(pduToSendView);
+			_pduListView.add(pduToSendView.getView());
+		}
+		
+		if (_currentShownPduIndex > -1) {
+			PduView pduView = _pduViews.get(_currentShownPduIndex);
+			pduView.setCurrentBackground(UiConstants.LIST_CHOSEN_PDU_BACKGROUND);
 		}
 		
 		_pduListViewScroller.validate();
@@ -115,24 +127,27 @@ public class ProtocolDataUnitView<T extends ProtocolDataUnit> {
 		vertical.setValue(vertical.getMaximum());	
 	}
 	
-	private JComponent createSinglePduView(final T pdu) {
-		JPanel result = new JPanel();
-		result.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-		result.setBackground(Color.GRAY);
+	private PduView createSinglePduView(final T pdu, final int index, Color defaultBackground) {
+		final PduView pduView = new PduView(pdu.toString(), "detailText", pdu.hasBeenSentByClient(), defaultBackground);
 		
-		result.setMaximumSize(new Dimension(280, 50));
-		result.setMinimumSize(new Dimension(280, 50));
-		result.setPreferredSize(new Dimension(280, 50));
-		
-		result.add(new JLabel((pdu.hasBeenSentByClient() ? "-> " : "<- ") + pdu.toString()));
-		result.addMouseListener(new MouseAdapter() {
+		pduView.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
+				//clear current selection bg color
+				if (_currentShownPduIndex > -1) {
+					PduView selectedPduView = _pduViews.get(_currentShownPduIndex);
+					selectedPduView.setDefaultBackground();
+				}
+				
+				//selection bg color
+				_currentShownPduIndex = index;
+				pduView.setCurrentBackground(UiConstants.LIST_CHOSEN_PDU_BACKGROUND);
+				
 				setPduInView(pdu);
 			}
 		});
 		
-		return result;
+		return pduView;
 	}
 	
 	private void setPduInView(T pdu) {
