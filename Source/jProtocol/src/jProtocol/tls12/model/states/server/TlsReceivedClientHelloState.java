@@ -1,6 +1,7 @@
 package jProtocol.tls12.model.states.server;
 
 import jProtocol.tls12.model.crypto.TlsPseudoRandomNumberGenerator;
+import jProtocol.tls12.model.exceptions.TlsAsymmetricOperationException;
 import jProtocol.tls12.model.messages.TlsMessage;
 import jProtocol.tls12.model.messages.handshake.TlsCertificateMessage;
 import jProtocol.tls12.model.messages.handshake.TlsHandshakeMessage;
@@ -63,7 +64,14 @@ public class TlsReceivedClientHelloState extends TlsState {
 		
 		if (algorithm == TlsKeyExchangeAlgorithm.dhe_rsa) {
 			TlsServerStateMachine serverStateMachine = (TlsServerStateMachine) _stateMachine;
-			TlsHandshakeMessage message = new TlsServerKeyExchangeMessage(serverStateMachine.getServerDhParams(), serverStateMachine.getSignedDhParams());
+			TlsHandshakeMessage message;
+			try {
+				message = new TlsServerKeyExchangeMessage(serverStateMachine.getServerDhParams(), serverStateMachine.getSignedDhParams());
+			}
+			catch (TlsAsymmetricOperationException e) {
+				//Invalid signature will fail verification on client side
+				message = new TlsServerKeyExchangeMessage(serverStateMachine.getServerDhParams(), new byte[0]);
+			}
 			
 			_stateMachine.addHandshakeMessageForVerifyData(message);
 			sendTlsMessage(message);

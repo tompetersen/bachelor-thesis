@@ -1,5 +1,7 @@
 package jProtocol.tls12.model.values;
 
+import java.nio.ByteBuffer;
+
 public class TlsServerDhParams {
 
 	private byte[] _dh_p; 	// The prime modulus used for the Diffie-Hellman operation.
@@ -22,5 +24,15 @@ public class TlsServerDhParams {
 
 	public byte[] getDh_Ys() {
 		return _dh_Ys;
+	}
+	
+	public byte[] getBytes() {
+		ByteBuffer result = ByteBuffer.allocate(_dh_p.length + _dh_g.length + _dh_Ys.length);
+		
+		result.put(_dh_p);
+		result.put(_dh_g);
+		result.put(_dh_Ys);
+		
+		return result.array();
 	}
 }

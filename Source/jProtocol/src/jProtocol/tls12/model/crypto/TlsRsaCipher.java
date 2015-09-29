@@ -8,6 +8,8 @@ import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.security.Signature;
+import java.security.SignatureException;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
 import javax.crypto.BadPaddingException;
@@ -33,18 +35,20 @@ public class TlsRsaCipher {
 	private PrivateKey _privateKey;
 	private PublicKey _publicKey;
 	private Cipher _cipher;
+	private Signature _signature;
 
 	/**
-	 * Creates a new rsa cipher object and generates a new key pair (use on
+	 * Creates a new RSA cipher object and generates a new key pair (use on
 	 * server side).
 	 */
 	public TlsRsaCipher() {
 		createCipher();
+		createSignature();
 		generateKeyPair();
 	}
 
 	/**
-	 * Creates a new rsa cipher object with just a public key (use on client
+	 * Creates a new RSA cipher object with just a public key (use on client
 	 * side).
 	 * Only encrypt should be called.
 	 * 
@@ -52,6 +56,8 @@ public class TlsRsaCipher {
 	 */
 	public TlsRsaCipher(byte[] encodedPublicKey) {
 		createCipher();
+		createSignature();
+		
 		try {
 			createPublicKey(encodedPublicKey);
 		}
@@ -66,6 +72,15 @@ public class TlsRsaCipher {
 		}
 		catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
 			throw new RuntimeException("Cipher for RSA not found on this machine!");
+		}
+	}
+	
+	private void createSignature() {
+		try {
+			_signature = Signature.getInstance("SHA1WithRSA");
+		}
+		catch (NoSuchAlgorithmException e) {
+			throw new RuntimeException("Signature for SHA1WithRSA not found on this machine!");
 		}
 	}
 
@@ -108,7 +123,7 @@ public class TlsRsaCipher {
 	}
 
 	/**
-	 * RSA-encrypts the data with the stored public key.
+	 * RSA encrypts the data with the stored public key.
 	 * 
 	 * @param data the data
 	 * 
@@ -131,7 +146,7 @@ public class TlsRsaCipher {
 	}
 
 	/**
-	 * RSA-decrypts the data with the stored private key.
+	 * RSA decrypts the data with the stored private key.
 	 * 
 	 * @param encryptedData the encrypted data
 	 * 
@@ -155,5 +170,56 @@ public class TlsRsaCipher {
 		}
 
 		return decryptedData;
+	}
+	
+	/* Signature:
+	 * 
+	 * http://www.java2s.com/Tutorial/Java/0490__Security/SimpleDigitalSignatureExample.htm 
+	 */
+	
+	/**
+	 * Computes a SHA1 RSA signature with the private key of this cipher.
+	 * 
+	 * @param dataToSign the data to be signed
+	 * 
+	 * @return the signature 
+	 * 
+	 * @throws TlsAsymmetricOperationException if an invalid key was provided or the signing process failed
+	 */
+	public byte[] signData(byte[] dataToSign) throws TlsAsymmetricOperationException {
+		if (_privateKey == null) {
+			throw new RuntimeException("Private Key in RSA cipher has not been set (TLS client mode).");
+		}
+		
+		try {
+		    _signature.initSign(_privateKey);
+		    _signature.update(dataToSign);
+	    
+			return _signature.sign();
+		}
+		catch (InvalidKeyException | SignatureException e) {
+			throw new TlsAsymmetricOperationException("Private key decryption failed: " + e.getLocalizedMessage());
+		}
+	}
+	
+	/**
+	 * Checks a given signature for some data with the public key of this cipher.
+	 * 
+	 * @param data the data which was signed
+	 * @param signature the computed signature
+	 * 
+	 * @return true if the signature can be verified, false otherwise
+	 * 
+	 * @throws TlsAsymmetricOperationException if an invalid key was provided or the verifying process failed
+	 */
+	public boolean checkSignature(byte[] data, byte[] signature) throws TlsAsymmetricOperationException {
+		try {
+			_signature.initVerify(_publicKey);
+			_signature.update(data);
+			return _signature.verify(signature);
+		}
+		catch (InvalidKeyException | SignatureException e) {
+			throw new TlsAsymmetricOperationException("Private key decryption failed: " + e.getLocalizedMessage());
+		}
 	}
 }

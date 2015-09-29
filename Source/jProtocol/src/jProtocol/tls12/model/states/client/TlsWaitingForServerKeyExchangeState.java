@@ -31,19 +31,25 @@ public class TlsWaitingForServerKeyExchangeState extends TlsState {
 		
 		TlsServerDhParams serverParams = keyExchangeMessage.getDhParams();
 		byte[] signedParams = keyExchangeMessage.getSignedParams();
-		
-		//TODO: check signed params with server public key
+
+		TlsClientStateMachine clientStateMachine = (TlsClientStateMachine) _stateMachine;
 		
 		try {
-			TlsClientStateMachine clientStateMachine = (TlsClientStateMachine) _stateMachine;
+			if (!clientStateMachine.checkDhParamSignature(serverParams, signedParams)) {
+				setTlsState(TlsStateType.DECRYPT_ERROR_OCCURED_STATE);
+				return;
+			}
+			else {
+				MyLogger.info("Successfully checked server params signature.");
+			}
 			clientStateMachine.createClientDhKeyAgreementFromServerValues(serverParams);
-			
-			_stateMachine.notifyObserversOfStateChanged();
 		}
 		catch (TlsAsymmetricOperationException e) {
 			setTlsState(TlsStateType.DECRYPT_ERROR_OCCURED_STATE);
 			return;
 		}
+		
+		_stateMachine.notifyObserversOfStateChanged();
 		
 		setTlsState(TlsStateType.CLIENT_IS_WAITING_FOR_SERVER_HELLO_DONE_STATE);
 	}

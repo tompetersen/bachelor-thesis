@@ -1,5 +1,6 @@
 package jProtocol.tls12.model.states;
 
+import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.List;
 import jProtocol.helper.ByteHelper;
@@ -40,6 +41,20 @@ public class TlsClientStateMachine extends TlsStateMachine {
 	@Override
 	public TlsServerDhParams getServerDhParams() {
 		return _serverDhParams;
+	}
+	
+	public boolean checkDhParamSignature(TlsServerDhParams params, byte[] signedParams) throws TlsAsymmetricOperationException {
+		byte[] clientRandom = _securityParameters.getClientRandom().getBytes();
+		byte[] serverRandom = _securityParameters.getServerRandom().getBytes();
+		byte[] paramsBytes = params.getBytes();
+
+		ByteBuffer dataToSign = ByteBuffer.allocate(clientRandom.length + serverRandom.length + paramsBytes.length);
+		
+		dataToSign.put(clientRandom);
+		dataToSign.put(serverRandom);
+		dataToSign.put(paramsBytes);
+		
+		return _rsaCipher.checkSignature(dataToSign.array(), signedParams);
 	}
 	
 	@Override

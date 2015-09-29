@@ -10,6 +10,7 @@ import jProtocol.tls12.model.values.TlsCertificate;
 import jProtocol.tls12.model.values.TlsClientDhPublicKey;
 import jProtocol.tls12.model.values.TlsServerDhParams;
 import jProtocol.tls12.model.values.TlsVerifyData;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -51,15 +52,24 @@ public class TlsServerStateMachine extends TlsStateMachine {
 		return _serverDhKeyAgreement.getServerDhParams();
 	}
 	
-	public byte[] getSignedDhParams() {
+	public byte[] getSignedDhParams() throws TlsAsymmetricOperationException {
 		/*  digitally-signed struct {
               opaque client_random[32];
               opaque server_random[32];
               ServerDHParams params;
           } signed_params;*/
-		//TODO: signed struct
 		
-		return new byte[0];
+		byte[] clientRandom = _securityParameters.getClientRandom().getBytes();
+		byte[] serverRandom = _securityParameters.getServerRandom().getBytes();
+		byte[] params = getServerDhParams().getBytes();
+
+		ByteBuffer dataToSign = ByteBuffer.allocate(clientRandom.length + serverRandom.length + params.length);
+		
+		dataToSign.put(clientRandom);
+		dataToSign.put(serverRandom);
+		dataToSign.put(params);
+		
+		return _rsaCipher.signData(dataToSign.array());
 	}
 
 	@Override
