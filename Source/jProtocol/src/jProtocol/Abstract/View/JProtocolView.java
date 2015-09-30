@@ -2,17 +2,14 @@ package jProtocol.Abstract.View;
 
 import jProtocol.helper.GridBagConstraintsHelper;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import javax.swing.JComponent;
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 public class JProtocolView {
 
-	private JFrame _frame;
 	private JPanel _view;
 	
 	/**
@@ -24,10 +21,6 @@ public class JProtocolView {
 	 * @param channelView the communication channel view
 	 */
 	public JProtocolView(JComponent clientView, JComponent serverView, JComponent pduView, JComponent channelView) {
-		_frame = new JFrame("jProtocol");
-		_frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		_frame.setBackground(Color.WHITE);
-		
 		_view = new JPanel(new GridBagLayout());
 		_view.setBackground(Color.WHITE);
 		
@@ -50,13 +43,10 @@ public class JProtocolView {
 		constraints = GridBagConstraintsHelper.createNormalConstraints(0, 1, 3, insets);
 		constraints.weighty = 0;
 		_view.add(channelView, constraints);
-		
-		_frame.add(_view);
 	}
 	
-	public void show() {
-		_frame.setSize(new Dimension(800, 600));
-		_frame.setVisible(true);
+	public JComponent getView() {
+		return _view;
 	}
 
 }

@@ -2,6 +2,7 @@ package jProtocol.Abstract.View.keyvaluetree;
 
 import jProtocol.Abstract.View.HtmlInfoUpdater;
 import jProtocol.Abstract.View.UiConstants;
+import jProtocol.Abstract.View.images.ImageLoader;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -9,7 +10,7 @@ import java.awt.Font;
 import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
-import javax.swing.JButton;
+import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -35,7 +36,7 @@ public class KeyValueTree implements TreeSelectionListener {
 		JLabel keyLabel = new JLabel(" ");
 		JLabel valueLabel = new JLabel(" ");
 		JPanel renderer = new JPanel();
-		JButton infoButton = new JButton("i");
+		JLabel infoImage = new JLabel(new ImageIcon(ImageLoader.getInfoIcon(12, 12)));
 
 		DefaultTreeCellRenderer defaultRenderer = new DefaultTreeCellRenderer();
 		Color backgroundSelectionColor;
@@ -44,17 +45,16 @@ public class KeyValueTree implements TreeSelectionListener {
 		public KeyValueCellRenderer() {
 			renderer.add(keyLabel);
 			keyLabel.setFont(new Font("SansSerif", Font.BOLD, 12));
-			keyLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 10));
+			keyLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 5));
 
-			renderer.add(infoButton);
-			infoButton.setVisible(true);
+			renderer.add(infoImage);
+			infoImage.setVisible(true);
 
 			renderer.add(valueLabel);
 			valueLabel.setFont(new Font("Monospaced", Font.PLAIN, 12));
-			valueLabel.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
+			valueLabel.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 0));
 
 			renderer.setLayout(new BoxLayout(renderer, BoxLayout.X_AXIS));
-			// renderer.setBorder(BorderFactory.createLineBorder(Color.RED));
 
 			backgroundSelectionColor = defaultRenderer.getBackgroundSelectionColor();
 			backgroundNonSelectionColor = defaultRenderer.getBackgroundNonSelectionColor();
@@ -71,9 +71,9 @@ public class KeyValueTree implements TreeSelectionListener {
 					valueLabel.setText(kvo.getValue());
 
 					boolean showInfoButton = kvo.getHtmlInfoContent() != null;
-					infoButton.setVisible(showInfoButton);
+					infoImage.setVisible(showInfoButton);
 
-					int neededWidth = keyLabel.getPreferredSize().width + valueLabel.getPreferredSize().width + infoButton.getPreferredSize().width + 10;
+					int neededWidth = keyLabel.getPreferredSize().width + valueLabel.getPreferredSize().width + infoImage.getPreferredSize().width + 10;
 					renderer.setPreferredSize(new Dimension(neededWidth, 20));
 
 					if (selected) {

@@ -42,6 +42,7 @@ public class TlsStateMachineTreeView {
 		_view.add(pane, constraints);
 		
 		_statusView = new JTextField("");
+		_statusView.setEditable(false);
 		constraints = GridBagConstraintsHelper.createNormalConstraints(0, 1, 1);
 		_view.add(_statusView, constraints);
 	}

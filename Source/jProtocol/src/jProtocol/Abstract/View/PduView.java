@@ -1,5 +1,6 @@
 package jProtocol.Abstract.View;
 
+import jProtocol.helper.ColorHelper;
 import jProtocol.helper.GridBagConstraintsHelper;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -18,6 +19,7 @@ public class PduView {
 
 	private JPanel _view;
 	private Color _defaultBackground;
+	private Color _preEnterBackground;
 	
 	public PduView(String title, String detailText, boolean sentByClient, Color defaultBackground) {
 		_defaultBackground = defaultBackground;
@@ -82,6 +84,7 @@ public class PduView {
 	}
 	
 	public void setCurrentBackground(Color background) {
+		_preEnterBackground = background;
 		_view.setBackground(background);
 	}
 	
@@ -91,6 +94,15 @@ public class PduView {
 
 	public JComponent getView() {
 		return _view;
+	}
+	
+	public void mouseEnteredView() {
+		_preEnterBackground = _view.getBackground();
+		_view.setBackground(ColorHelper.slightlyBrighterColorForColor(_preEnterBackground));
+	}
+	
+	public void mouseLeftView() {
+		_view.setBackground(_preEnterBackground);
 	}
 
 }

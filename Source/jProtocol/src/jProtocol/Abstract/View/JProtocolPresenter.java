@@ -3,6 +3,7 @@ package jProtocol.Abstract.View;
 import jProtocol.Abstract.JProtocolViewProvider;
 import jProtocol.Abstract.Model.CommunicationChannel;
 import jProtocol.Abstract.Model.ProtocolDataUnit;
+import javax.swing.JComponent;
 
 public class JProtocolPresenter<T extends ProtocolDataUnit> {
 
@@ -25,8 +26,8 @@ public class JProtocolPresenter<T extends ProtocolDataUnit> {
 		_view = new JProtocolView(clientPresenter.getView(), serverPresenter.getView(), pduPresenter.getView(), ccPresenter.getView());
 	}
 
-	public void showView() {
-		_view.show();
+	public JComponent getView() {
+		return _view.getView();
 	}
 	
 }

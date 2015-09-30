@@ -58,6 +58,7 @@ public class ProtocolDataUnitView<T extends ProtocolDataUnit> {
 		_pduListView.setBackground(Color.WHITE);
 		
 		_pduListViewScroller = new JScrollPane(_pduListView, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		_pduListViewScroller.getVerticalScrollBar().setUnitIncrement(16);
 		_pduListViewScroller.setPreferredSize(new Dimension(300, 300));
 		
 		_view.add(_pduListViewScroller, BorderLayout.CENTER);
@@ -127,7 +128,7 @@ public class ProtocolDataUnitView<T extends ProtocolDataUnit> {
 		vertical.setValue(vertical.getMaximum());	
 	}
 	
-	private PduView createSinglePduView(final T pdu, final int index, Color defaultBackground) {
+	private PduView createSinglePduView(final T pdu, final int index, final Color defaultBackground) {
 		final PduView pduView = new PduView(pdu.toString(), "detailText", pdu.hasBeenSentByClient(), defaultBackground);
 		
 		pduView.addMouseListener(new MouseAdapter() {
@@ -144,6 +145,16 @@ public class ProtocolDataUnitView<T extends ProtocolDataUnit> {
 				pduView.setCurrentBackground(UiConstants.LIST_CHOSEN_PDU_BACKGROUND);
 				
 				setPduInView(pdu);
+			}
+
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				pduView.mouseEnteredView();
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e) {
+				pduView.mouseLeftView();
 			}
 		});
 		

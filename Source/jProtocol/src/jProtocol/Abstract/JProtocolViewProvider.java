@@ -9,11 +9,9 @@ import javax.swing.JComponent;
  * It needs views for the client, server and a protocol data unit dependent
  * detail view, as well as methods to handle client and server view updates.
  * 
- * 
- * 
  * @author Tom Petersen
  *
- * @param <T> 
+ * @param <T> The protocol data unit the protocol uses.
  */
 public interface JProtocolViewProvider<T extends ProtocolDataUnit> {
 	
