@@ -2,8 +2,7 @@ package jProtocol.tls12.model.ciphersuites;
 
 import jProtocol.tls12.model.ciphersuites.impl.TlsCipherSuite_DHE_RSA_WITH_AES_128_GCM_SHA256;
 import jProtocol.tls12.model.ciphersuites.impl.TlsCipherSuite_NULL_WITH_NULL_NULL;
-import jProtocol.tls12.model.ciphersuites.impl.TlsCipherSuite_RSA_WITH_AES_128_CBC_SHA;
-import jProtocol.tls12.model.ciphersuites.impl.TlsCipherSuite_RSA_WITH_AES_128_GCM_SHA256;
+import jProtocol.tls12.model.exceptions.TlsInvalidCipherSuiteException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -19,7 +18,7 @@ public class TlsCipherSuiteRegistry {
 		//TODO: Add cipher suites (maybe automagically)
 		TlsCipherSuite cs = new TlsCipherSuite_NULL_WITH_NULL_NULL();
 		_supportedCipherSuites.put(cs.getCode(), cs);
-//		
+		
 //		cs = new TlsCipherSuite_RSA_WITH_AES_128_CBC_SHA();
 //		_supportedCipherSuites.put(cs.getCode(), cs);
 //		
@@ -30,23 +29,23 @@ public class TlsCipherSuiteRegistry {
 		_supportedCipherSuites.put(cs.getCode(), cs);
 	}
 	
-	public TlsCipherSuite cipherSuiteFromValue(short value) {
+	public TlsCipherSuite cipherSuiteFromValue(short value) throws TlsInvalidCipherSuiteException {
 		TlsCipherSuite suite = _supportedCipherSuites.get(value);
 		if (suite != null) {
 			return suite;
 		}
 		else {
-			throw new IllegalArgumentException("Cipher suite for value " + value + " not found!");
+			throw new TlsInvalidCipherSuiteException("Cipher suite for value " + value + " not found!");
 		}
 	}
 	
-	public short valueFromCipherSuite(TlsCipherSuite cipherSuite) {
+	public short valueFromCipherSuite(TlsCipherSuite cipherSuite) throws TlsInvalidCipherSuiteException {
 		for (short s : _supportedCipherSuites.keySet()) {
 			if (_supportedCipherSuites.get(s).getClass().equals(cipherSuite.getClass())) {
 				return s;
 			}
 		}
-		throw new IllegalArgumentException("Value for cipher suite " + cipherSuite.getName() + " not found!");
+		throw new TlsInvalidCipherSuiteException("Value for cipher suite " + cipherSuite.getName() + " not found!");
 	}
 	
 	public List<TlsCipherSuite> allCipherSuites() {
@@ -56,6 +55,11 @@ public class TlsCipherSuiteRegistry {
 	}
 	
 	public TlsCipherSuite getNullCipherSuite() {
-		return cipherSuiteFromValue((short) 0);
+		try {
+			return cipherSuiteFromValue((short) 0);
+		}
+		catch (TlsInvalidCipherSuiteException e) {
+			throw new RuntimeException("Tls NULL cipher suite not found !?");
+		}
 	}
 }
