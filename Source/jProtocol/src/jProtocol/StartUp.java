@@ -34,6 +34,9 @@ public class StartUp {
 		_frame.setMinimumSize(new Dimension(800, 600));
 		addMenu(_frame);
 		_frame.setVisible(true);
+		
+		//TODO: remove
+		startProtocolClicked();
 	}
 
 	private void addMenu(JFrame frame) {
@@ -64,7 +67,18 @@ public class StartUp {
 				exitClicked();
 			}
 		});
-		fileMenu.add(menuItem);		
+		fileMenu.add(menuItem);	
+		
+		menuItem = new JMenuItem("About protocol");
+		menuItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				aboutProtocolClicked();
+			}
+		});
+		helpMenu.add(menuItem);
+		
+		helpMenu.addSeparator();
 		
 		menuItem = new JMenuItem("About");
 		menuItem.addActionListener(new ActionListener() {
@@ -97,6 +111,10 @@ public class StartUp {
 	}
 	
 	private void aboutClicked() {
+		
+	}
+	
+	private void aboutProtocolClicked() {
 		
 	}
 }

@@ -24,6 +24,8 @@ public class CommunicationChannelPresenter<T extends ProtocolDataUnit> implement
 		_view = new CommunicationChannelView(this);
 		_channel = channel;
 		_htmlInfoView = htmlInfoView;
+		
+		_channel.addObserver(this);
 	}
 	
 	/**

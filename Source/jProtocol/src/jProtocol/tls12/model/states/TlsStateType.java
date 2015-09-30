@@ -40,6 +40,10 @@ public enum TlsStateType {
 		return _type;
 	}
 	
+	public boolean isInitialState() {
+		return (_type == 1 || _type == 51);
+	}
+	
 	public boolean isHandshakeState() {
 		return (_type > 0 && _type < 100);
 	}

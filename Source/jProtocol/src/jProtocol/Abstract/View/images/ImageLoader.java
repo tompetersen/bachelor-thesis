@@ -10,6 +10,30 @@ import javax.imageio.ImageIO;
 
 public class ImageLoader {
 
+	public static BufferedImage getInfoIcon(int width, int height) {
+		return loadImageForFileName("info1.png", width, height);
+	}
+	
+	public static BufferedImage getSendIcon(int width, int height) {
+		return loadImageForFileName("send3.png", width, height);
+	}
+	
+	public static BufferedImage getCloseIcon(int width, int height) {
+		return loadImageForFileName("close6.png", width, height);
+	}
+	
+	public static BufferedImage getNextIcon(int width, int height) {
+		return loadImageForFileName("angle2.png", width, height);
+	}
+	
+	public static BufferedImage getNextNextIcon(int width, int height) {
+		return loadImageForFileName("double30.png", width, height);
+	}
+	
+	public static BufferedImage getConnectIcon(int width, int height) {
+		return loadImageForFileName("screen156.png", width, height);
+	}
+	
 	/**
 	 * Loads images from the current package  
 	 * 
@@ -44,9 +68,5 @@ public class ImageLoader {
 		else {
 			return new BufferedImage(0, 0, BufferedImage.TYPE_INT_RGB);
 		}
-	}
-
-	public static BufferedImage getInfoIcon(int width, int height) {
-		return loadImageForFileName("info1.png", width, height);
 	}
 }

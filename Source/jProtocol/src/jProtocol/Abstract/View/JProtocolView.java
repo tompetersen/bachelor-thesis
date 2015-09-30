@@ -24,7 +24,7 @@ public class JProtocolView {
 		_view = new JPanel(new GridBagLayout());
 		_view.setBackground(Color.WHITE);
 		
-		Insets insets = new Insets(5, 5, 5, 5);
+		Insets insets = new Insets(10, 10, 10, 10);
 
 		GridBagConstraints constraints = GridBagConstraintsHelper.createNormalConstraints(0, 0, 1, insets);
 		constraints.weighty = 1;

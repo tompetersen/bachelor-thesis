@@ -40,7 +40,7 @@ public class HtmlInfoView {
         Document doc = kit.createDefaultDocument();
         _editorPane.setDocument(doc);
 
-        _frame = new JFrame("Help");
+        _frame = new JFrame("Info");
         _frame.getContentPane().add(_scrollPane, BorderLayout.CENTER);
         _frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         _frame.setAlwaysOnTop(true);

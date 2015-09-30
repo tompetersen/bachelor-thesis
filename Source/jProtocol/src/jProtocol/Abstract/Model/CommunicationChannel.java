@@ -42,12 +42,15 @@ public class CommunicationChannel<T extends ProtocolDataUnit> extends Observable
 	/**
 	 * Sends a protocol data unit from sender. The current thread will be paused until 
 	 * the user clicks the next message button if not sendAllMessagesWithoutBreak() has
-	 * been called before. 
+	 * been called before. A channel can just deliver a single message at the same time.
 	 * 
 	 * @param pdu the protocol data unit
 	 * @param sender the sending state machine
 	 */
 	public void sendMessage(T pdu, StateMachine<T> sender) {
+		if (_pduToSend != null) {
+			throw new RuntimeException("Channel is currently delivering message!");
+		}
 		boolean clientMessage = (sender == _client);
 		pdu.setSentByClient(clientMessage);
 
@@ -84,20 +87,18 @@ public class CommunicationChannel<T extends ProtocolDataUnit> extends Observable
 			@Override
 			public void run() {
 				if (_pduToSend != null) {
-					_sentPdus.add(_pduToSend);
+					T pdu = _pduToSend;
+					_pduToSend = null;
+					_sentPdus.add(pdu);
 					
-					if (_pduToSend.hasBeenSentByClient()) {
-						//clear state
+					if (pdu.hasBeenSentByClient()) {
 						_client.notifyObserversOfStateChanged();
-						_server.receiveMessage(_pduToSend);
-						_pduToSend = null;
+						_server.receiveMessage(pdu);
 						_clientCountdownLatch.countDown();
 					}
 					else {
-						//clear state
 						_server.notifyObserversOfStateChanged();
-						_client.receiveMessage(_pduToSend);
-						_pduToSend = null;
+						_client.receiveMessage(pdu);
 						_serverCountdownLatch.countDown();
 					}
 					
