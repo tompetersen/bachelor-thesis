@@ -6,7 +6,6 @@ import jProtocol.Abstract.View.images.ImageLoader;
 import jProtocol.tls12.model.states.TlsStateMachine;
 import jProtocol.tls12.model.states.TlsStateType;
 import jProtocol.tls12.model.values.TlsApplicationData;
-import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.nio.charset.StandardCharsets;
@@ -40,41 +39,40 @@ public class TlsServerView {
 		_treeView = new TlsStateMachineTreeView(server, htmlInfoUpdater, "Server");
 		_view.add(_treeView.getView());
 		
-		JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		JPanel buttonPanel = new JPanel();
+		buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
 		final int buttonImageSize = UiConstants.BUTTON_IMAGE_SIZE;
 		
-		_sendButton = new JButton("Send data", new ImageIcon(ImageLoader.getSendIcon(buttonImageSize, buttonImageSize)));
-		_sendButton.setHorizontalTextPosition(JButton.RIGHT);
-		_sendButton.setVerticalTextPosition(JButton.CENTER);
-		_sendButton.setEnabled(false);
-		_sendButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				new Thread(new Runnable() {
+		_sendButton = ButtonHelper.createImageButton("Send data", 
+				new ImageIcon(ImageLoader.getSendIcon(buttonImageSize, buttonImageSize)),
+				new ActionListener() {
 					@Override
-					public void run() {
-						server.sendData(new TlsApplicationData("Daten, Daten, Daten!".getBytes(StandardCharsets.US_ASCII)));
+					public void actionPerformed(ActionEvent e) {
+						new Thread(new Runnable() {
+							@Override
+							public void run() {
+								server.sendData(new TlsApplicationData("Daten, Daten, Daten!".getBytes(StandardCharsets.US_ASCII)));
+							}
+						}).start();
 					}
-				}).start();
-			}
-		});
+				});
+		_sendButton.setEnabled(false);
 		buttonPanel.add(_sendButton);
 		
-		_closeButton = new JButton("Close", new ImageIcon(ImageLoader.getCloseIcon(buttonImageSize, buttonImageSize)));
-		_closeButton.setHorizontalTextPosition(JButton.RIGHT);
-		_closeButton.setVerticalTextPosition(JButton.CENTER);
-		_closeButton.setEnabled(false);
-		_closeButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				new Thread(new Runnable() {
+		_closeButton = ButtonHelper.createImageButton("Close", 
+				new ImageIcon(ImageLoader.getCloseIcon(buttonImageSize, buttonImageSize)),
+				new ActionListener() {
 					@Override
-					public void run() {
-						server.closeConnection();
+					public void actionPerformed(ActionEvent e) {
+						new Thread(new Runnable() {
+							@Override
+							public void run() {
+								server.closeConnection();
+							}
+						}).start();
 					}
-				}).start();
-			}
-		});
+				});
+		_closeButton.setEnabled(false);
 		buttonPanel.add(_closeButton);
 		
 		_view.add(buttonPanel);

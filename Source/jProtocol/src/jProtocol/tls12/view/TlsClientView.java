@@ -6,7 +6,6 @@ import jProtocol.Abstract.View.images.ImageLoader;
 import jProtocol.tls12.model.states.TlsStateMachine;
 import jProtocol.tls12.model.states.TlsStateType;
 import jProtocol.tls12.model.values.TlsApplicationData;
-import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.nio.charset.StandardCharsets;
@@ -41,62 +40,59 @@ public class TlsClientView {
 		_treeView = new TlsStateMachineTreeView(client, htmlInfoUpdater, "Client");
 		_view.add(_treeView.getView());
 		
-		JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		JPanel buttonPanel = new JPanel();
+		buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
 		final int buttonImageSize = UiConstants.BUTTON_IMAGE_SIZE;
 		
-		_connectButton = new JButton("Connect", new ImageIcon(ImageLoader.getConnectIcon(buttonImageSize, buttonImageSize)));
-		_connectButton.setHorizontalTextPosition(JButton.RIGHT);
-		_connectButton.setVerticalTextPosition(JButton.CENTER);
-		
-		_connectButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				new Thread(new Runnable() {
+		_connectButton = ButtonHelper.createImageButton("Connect", 
+				new ImageIcon(ImageLoader.getConnectIcon(buttonImageSize, buttonImageSize)), 
+				new ActionListener() {
 					@Override
-					public void run() {
-						client.openConnection();
+					public void actionPerformed(ActionEvent e) {
+						new Thread(new Runnable() {
+							@Override
+							public void run() {
+								client.openConnection();
+							}
+						}).start();
 					}
-				}).start();
-			}
-		});
+				});
 		buttonPanel.add(_connectButton);
 		
-		_sendButton = new JButton("Send data", new ImageIcon(ImageLoader.getSendIcon(buttonImageSize, buttonImageSize)));
-		_sendButton.setHorizontalTextPosition(JButton.RIGHT);
-		_sendButton.setVerticalTextPosition(JButton.CENTER);
-		_sendButton.setEnabled(false);
-		_sendButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				new Thread(new Runnable() {
+		_sendButton = ButtonHelper.createImageButton("Send data", 
+				new ImageIcon(ImageLoader.getSendIcon(buttonImageSize, buttonImageSize)),
+				new ActionListener() {
 					@Override
-					public void run() {
-						_isSending = true;
-						setButtonEnabledValues(false, false, false);
-						client.sendData(new TlsApplicationData("Daten, Daten, Daten!".getBytes(StandardCharsets.US_ASCII)));
-						_isSending = false;
-						setButtonEnabledValues(false, true, true);
+					public void actionPerformed(ActionEvent e) {
+						new Thread(new Runnable() {
+							@Override
+							public void run() {
+								_isSending = true;
+								setButtonEnabledValues(false, false, false);
+								client.sendData(new TlsApplicationData("Daten, Daten, Daten!".getBytes(StandardCharsets.US_ASCII)));
+								_isSending = false;
+								setButtonEnabledValues(false, true, true);
+							}
+						}).start();
 					}
-				}).start();
-			}
-		});
+				});
+		_sendButton.setEnabled(false);
 		buttonPanel.add(_sendButton);
 		
-		_closeButton = new JButton("Close", new ImageIcon(ImageLoader.getCloseIcon(buttonImageSize, buttonImageSize)));
-		_closeButton.setHorizontalTextPosition(JButton.RIGHT);
-		_closeButton.setVerticalTextPosition(JButton.CENTER);
-		_closeButton.setEnabled(false);
-		_closeButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				new Thread(new Runnable() {
+		_closeButton = ButtonHelper.createImageButton("Close", 
+				new ImageIcon(ImageLoader.getCloseIcon(buttonImageSize, buttonImageSize)),
+				new ActionListener() {
 					@Override
-					public void run() {
-						client.closeConnection();
+					public void actionPerformed(ActionEvent e) {
+						new Thread(new Runnable() {
+							@Override
+							public void run() {
+								client.closeConnection();
+							}
+						}).start();
 					}
-				}).start();
-			}
-		});
+				});
+		_closeButton.setEnabled(false);
 		buttonPanel.add(_closeButton);
 		
 		_view.add(buttonPanel);
