@@ -6,6 +6,7 @@ import jProtocol.tls12.htmlinfo.TlsHtmlInfoLoader;
 import jProtocol.tls12.model.ciphersuites.TlsCipherSuite;
 import jProtocol.tls12.model.ciphersuites.TlsCipherSuiteRegistry;
 import jProtocol.tls12.model.exceptions.TlsDecodeErrorException;
+import jProtocol.tls12.model.exceptions.TlsInvalidCipherSuiteException;
 import jProtocol.tls12.model.values.TlsHandshakeType;
 import jProtocol.tls12.model.values.TlsRandom;
 import jProtocol.tls12.model.values.TlsSessionId;
@@ -118,7 +119,12 @@ public class TlsClientHelloMessage extends TlsHandshakeMessage {
 		for (int i = parsedBytes; i < parsedBytes + cipherSuitesLength; i+= 2) {
 			byte[] csBytes = {unparsedContent[i], unparsedContent[i+1]}; 
 			short csCode = (short)ByteHelper.twoByteArrayToInt(csBytes);
-			cipherSuites.add(registry.cipherSuiteFromValue(csCode));
+			try {
+				cipherSuites.add(registry.cipherSuiteFromValue(csCode));
+			}
+			catch (TlsInvalidCipherSuiteException e) {
+				throw new TlsDecodeErrorException("CipherSuite for code [" + csCode + "] not found!");
+			}
 		}
 		parsedBytes += cipherSuitesLength;
 		

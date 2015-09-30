@@ -74,7 +74,7 @@ public class TlsCiphertext extends ProtocolDataUnit {
 	 * 
 	 * @return the bytes
 	 */
-	public byte[] getBytes() {
+	public byte[] getMessageBytes() {
 		return _bytes;
 	}
 	

@@ -1,8 +1,9 @@
 package jProtocol.Abstract.Model;
 
 public abstract class ProtocolDataUnit {
-	
+
 	private boolean _sentByClient;
+	private byte[] _alteredBytes;
 
 	/**
 	 * Returns if this is a client sent protocol data unit.
@@ -21,11 +22,31 @@ public abstract class ProtocolDataUnit {
 	public void setSentByClient(boolean sentByClient) {
 		_sentByClient = sentByClient;
 	}
-	
+
 	/**
-	 * Should return the byte representation of this protocol data unit.
+	 * Sets new bytes for this protocol data unit, so protocol behaviour can be
+	 * explored.
+	 * 
+	 * @param alteredBytes the new bytes
+	 */
+	public void setAlteredBytes(byte[] alteredBytes) {
+		_alteredBytes = alteredBytes;
+	}
+
+	/**
+	 * Returns the bytes of this protocol data unit. If the bytes have been
+	 * altered, the new bytes are returned.
+	 * 
+	 * @return the bytes (altered if set)
+	 */
+	public byte[] getBytes() {
+		return (_alteredBytes != null) ? _alteredBytes : getMessageBytes();
+	}
+
+	/**
+	 * Should return the byte representation of this message.
 	 * 
 	 * @return the bytes
 	 */
-	public abstract byte[] getBytes();
+	public abstract byte[] getMessageBytes();
 }

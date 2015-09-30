@@ -19,7 +19,7 @@ public class ImageLoader {
 	}
 	
 	public static BufferedImage getCloseIcon(int width, int height) {
-		return loadImageForFileName("close6.png", width, height);
+		return loadImageForFileName("cancel30.png", width, height);
 	}
 	
 	public static BufferedImage getNextIcon(int width, int height) {
@@ -32,6 +32,22 @@ public class ImageLoader {
 	
 	public static BufferedImage getConnectIcon(int width, int height) {
 		return loadImageForFileName("screen156.png", width, height);
+	}
+	
+	public static BufferedImage getEditIcon(int width, int height) {
+		return loadImageForFileName("edit45.png", width, height);
+	}
+	
+	public static BufferedImage getHandshakeIcon(int width, int height) {
+		return loadImageForFileName("agreement2.png", width, height);
+	}
+	
+	public static BufferedImage getEstablishedIcon(int width, int height) {
+		return loadImageForFileName("lock91.png", width, height);
+	}
+	
+	public static BufferedImage getErrorIcon(int width, int height) {
+		return loadImageForFileName("triangle38.png", width, height);
 	}
 	
 	/**

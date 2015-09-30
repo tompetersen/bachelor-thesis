@@ -1,6 +1,7 @@
 package jProtocol.Abstract.View;
 
 import jProtocol.Abstract.View.images.ImageLoader;
+import jProtocol.helper.ButtonHelper;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -31,39 +32,36 @@ public class CommunicationChannelView {
 		
 		final int buttonImageSize = UiConstants.BUTTON_IMAGE_SIZE;
 		
-		_nextStepButton = new JButton("Next message", new ImageIcon(ImageLoader.getNextIcon(buttonImageSize, buttonImageSize)));
-		_nextStepButton.setHorizontalTextPosition(JButton.RIGHT);
-		_nextStepButton.setVerticalTextPosition(JButton.CENTER);
-		_nextStepButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				_nextStepButton.setEnabled(false);
-				_nextStepsButton.setEnabled(false);
-				listener.nextStepClicked();
-			}
-		});
+		_nextStepButton = ButtonHelper.createImageButton("Next message", 
+				new ImageIcon(ImageLoader.getNextIcon(buttonImageSize, buttonImageSize)),
+				new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						_nextStepButton.setEnabled(false);
+						_nextStepsButton.setEnabled(false);
+						listener.nextStepClicked();
+					}
+				});
 		
-		_nextStepsButton = new JButton("All messages", new ImageIcon(ImageLoader.getNextNextIcon(buttonImageSize, buttonImageSize)));
-		_nextStepsButton.setHorizontalTextPosition(JButton.RIGHT);
-		_nextStepsButton.setVerticalTextPosition(JButton.CENTER);
-		_nextStepsButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				_nextStepButton.setEnabled(false);
-				_nextStepsButton.setEnabled(false);
-				listener.nextStepsClicked();
-			}
-		});
+		_nextStepsButton = ButtonHelper.createImageButton("All messages", 
+				new ImageIcon(ImageLoader.getNextNextIcon(buttonImageSize, buttonImageSize)),
+				new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						_nextStepButton.setEnabled(false);
+						_nextStepsButton.setEnabled(false);
+						listener.nextStepsClicked();
+					}
+				});
 		
-		JButton helpButton = new JButton("Show info", new ImageIcon(ImageLoader.getInfoIcon(buttonImageSize, buttonImageSize)));
-		helpButton.setHorizontalTextPosition(JButton.RIGHT);
-		helpButton.setVerticalTextPosition(JButton.CENTER);
-		helpButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				listener.showHelpClicked();
-			}
-		});
+		JButton helpButton = ButtonHelper.createImageButton("Show info", 
+				new ImageIcon(ImageLoader.getInfoIcon(buttonImageSize, buttonImageSize)),
+				new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						listener.showHelpClicked();
+					}
+				});
 		
 		_view.add(helpButton);
 		_view.add(_nextStepButton);

@@ -25,7 +25,7 @@ public class EchoProtocolDataUnit extends ProtocolDataUnit {
 	}
 
 	@Override
-	public byte[] getBytes() {
+	public byte[] getMessageBytes() {
 		return _payload.getBytes(StandardCharsets.US_ASCII);
 	}
 	

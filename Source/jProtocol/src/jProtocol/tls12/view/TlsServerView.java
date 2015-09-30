@@ -3,6 +3,7 @@ package jProtocol.tls12.view;
 import jProtocol.Abstract.View.HtmlInfoUpdater;
 import jProtocol.Abstract.View.UiConstants;
 import jProtocol.Abstract.View.images.ImageLoader;
+import jProtocol.helper.ButtonHelper;
 import jProtocol.tls12.model.states.TlsStateMachine;
 import jProtocol.tls12.model.states.TlsStateType;
 import jProtocol.tls12.model.values.TlsApplicationData;
