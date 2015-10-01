@@ -101,4 +101,9 @@ public class TlsBlockFragment implements TlsFragment {
 		
 		return result;
 	}	
+	
+	@Override
+	public String getFragmentName() {
+		return "Block fragment";
+	}
 }

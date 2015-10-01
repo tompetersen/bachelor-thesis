@@ -59,5 +59,10 @@ public class TlsAeadFragment implements TlsFragment {
 		
 		return result;
 	}
+
+	@Override
+	public String getFragmentName() {
+		return "AEAD fragment";
+	}
 	
 }

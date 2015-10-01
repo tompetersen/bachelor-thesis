@@ -59,4 +59,9 @@ public class TlsStreamFragment implements TlsFragment {
 		
 		return result;
 	}
+	
+	@Override
+	public String getFragmentName() {
+		return "Stream fragment";
+	}
 }

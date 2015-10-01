@@ -54,6 +54,7 @@ public abstract class TlsState extends State<TlsCiphertext> {
 	
 	private void handleAlertMessage(TlsAlertMessage message) {
 		MyLogger.severe("Received alert message: " + message.getAlert().toString());
+		setTlsState(TlsStateType.RECEIVED_FATAL_ALERT_MESSAGE_STATE);
 	}
 	
 	/**

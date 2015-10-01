@@ -41,11 +41,13 @@ public class PduView {
 		JLabel pduDetailText = new JLabel(detailText);
 		pduDetailText.setFont(new Font("SansSerif", Font.PLAIN, 12));
 		
-		GridBagConstraints constraints = GridBagConstraintsHelper.createNormalConstraints(1, 0, 1);
+		Insets labelInsets = new Insets(2, 5, 2, 5);
+		
+		GridBagConstraints constraints = GridBagConstraintsHelper.createNormalConstraints(1, 0, 1, labelInsets);
 		constraints.weightx = 1;
 		_view.add(pduText, constraints);
 		
-		constraints = GridBagConstraintsHelper.createNormalConstraints(1, 1, 1);
+		constraints = GridBagConstraintsHelper.createNormalConstraints(1, 1, 1, labelInsets);
 		constraints.weightx = 1;
 		_view.add(pduDetailText, constraints);
 		

@@ -26,7 +26,10 @@ public abstract class TlsAlertState extends TlsState {
 	public void onEnter() {
 		super.onEnter();
 		
-		sendTlsMessage(getAlertMessageToSend());
+		TlsAlertMessage alertMessage = getAlertMessageToSend();
+		if (alertMessage != null) {
+			sendTlsMessage(alertMessage);
+		}
 		//MyLogger.severe("Would send alert message: " + getAlertMessageToSend().getAlert().toString());
 		//setTlsState(TlsStateType.INITIAL_SERVER_STATE);
 	}

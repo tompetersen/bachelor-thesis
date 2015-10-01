@@ -214,7 +214,7 @@ public class ProtocolDataUnitView<T extends ProtocolDataUnit> {
 	}
 
 	private PduView createSinglePduView(final T pdu, final int index, final Color defaultBackground) {
-		final PduView pduView = new PduView(pdu.toString(), "detailText", pdu.hasBeenSentByClient(), defaultBackground);
+		final PduView pduView = new PduView(pdu.getTitle(), pdu.getSubtitle(), pdu.hasBeenSentByClient(), defaultBackground);
 
 		pduView.addMouseListener(new MouseAdapter() {
 			@Override

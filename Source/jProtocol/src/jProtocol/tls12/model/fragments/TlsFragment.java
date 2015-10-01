@@ -28,4 +28,6 @@ public interface TlsFragment {
 	public byte[] getContent();	
 	
 	public KeyValueObject getViewData(TlsMessage message);
+	
+	public String getFragmentName();
 }

@@ -21,6 +21,7 @@ import jProtocol.tls12.model.states.TlsStateMachineEvent.TlsStateMachineEventTyp
 import jProtocol.tls12.model.states.alert.TlsDecodeErrorOccuredState;
 import jProtocol.tls12.model.states.alert.TlsDecryptErrorOccuredState;
 import jProtocol.tls12.model.states.alert.TlsReceivedBadRecordMessageState;
+import jProtocol.tls12.model.states.alert.TlsReceivedFatalAlertMessageState;
 import jProtocol.tls12.model.states.alert.TlsReceivedUnexpectedMessageState;
 import jProtocol.tls12.model.states.client.TlsInitialClientState;
 import jProtocol.tls12.model.states.client.TlsReceivedServerHelloDoneState;
@@ -106,6 +107,7 @@ public abstract class TlsStateMachine extends StateMachine<TlsCiphertext> {
 		addState(TlsStateType.RECEIVED_BAD_RECORD_MESSAGE_STATE.getType(), 					new TlsReceivedBadRecordMessageState(this));
 		addState(TlsStateType.DECODE_ERROR_OCCURED_STATE.getType(), 						new TlsDecodeErrorOccuredState(this));
 		addState(TlsStateType.DECRYPT_ERROR_OCCURED_STATE.getType(), 						new TlsDecryptErrorOccuredState(this));
+		addState(TlsStateType.RECEIVED_FATAL_ALERT_MESSAGE_STATE.getType(), 						new TlsReceivedFatalAlertMessageState(this));
 	}
 	
 	public void setTlsState(TlsStateType stateType, TlsState sender) {

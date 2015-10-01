@@ -49,4 +49,18 @@ public abstract class ProtocolDataUnit {
 	 * @return the bytes
 	 */
 	public abstract byte[] getMessageBytes();
+	
+	/**
+	 * Should return the title of the protocol data unit, used in the UI list.
+	 * 
+	 * @return the protocol data unit title
+	 */
+	public abstract String getTitle();
+	
+	/**
+	 * Should return the subtitle of the protocol data unit, used in the UI list.
+	 * 
+	 * @return the protocol data unit title
+	 */
+	public abstract String getSubtitle();
 }

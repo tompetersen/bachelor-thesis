@@ -37,6 +37,11 @@ public class CiphertextTest {
 		public KeyValueObject getViewData(TlsMessage message) {
 			return null;
 		}
+
+		@Override
+		public String getFragmentName() {
+			return "";
+		}
 	}
 
 	private byte[] _applicationData = {1,2,3};
