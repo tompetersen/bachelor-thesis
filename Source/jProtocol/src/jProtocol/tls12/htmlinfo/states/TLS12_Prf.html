@@ -19,7 +19,7 @@ with
      A(0) = seed
      A(i) = HMAC_hash(secret, A(i-1))</pre>
 		<p> where + indicates concatenation. P_hash can be iterated as many times as necessary to produce the
-   required quantity of data. [...] TLS’s PRF is created by applying P_hash to the secret as:</p>
+   required quantity of data. [...] TLS's PRF is created by applying P_hash to the secret as:</p>
 		<pre>
 PRF(secret, label, seed) = P_hash(secret, label + seed)
 </pre>
