@@ -1,8 +1,9 @@
 package jProtocol;
 
-import jProtocol.Abstract.JProtocolProtocolBuilder;
-import jProtocol.tls12.Tls12Provider;
-import jProtocol.tls12.model.TlsCiphertext;
+import jProtocol.Abstract.JProtocolBuilder;
+import jProtocol.Abstract.PluginChooser;
+import jProtocol.Abstract.ProtocolRegistry;
+import jProtocol.Abstract.Model.ProtocolDataUnit;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -17,16 +18,17 @@ import javax.swing.UIManager;
 public class StartUp {
 
 	JFrame _frame;
-	
+
 	public static void main(String[] args) {
 		new StartUp();
 	}
 
 	public StartUp() {
 		try {
-	      UIManager.setLookAndFeel( UIManager.getSystemLookAndFeelClassName() );
-	    }
-	    catch (Exception e) { }
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		}
+		catch (Exception e) {
+		}
 
 		_frame = new JFrame("jProtocol");
 		_frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -34,8 +36,8 @@ public class StartUp {
 		_frame.setMinimumSize(new Dimension(800, 600));
 		addMenu(_frame);
 		_frame.setVisible(true);
-		
-		//TODO: remove
+
+		// TODO: remove
 		startProtocolClicked();
 	}
 
@@ -44,7 +46,7 @@ public class StartUp {
 
 		JMenu fileMenu = new JMenu("File");
 		menuBar.add(fileMenu);
-		
+
 		JMenu helpMenu = new JMenu("Help");
 		menuBar.add(helpMenu);
 
@@ -59,7 +61,7 @@ public class StartUp {
 		fileMenu.add(menuItem);
 
 		fileMenu.addSeparator();
-		
+
 		menuItem = new JMenuItem("Exit");
 		menuItem.addActionListener(new ActionListener() {
 			@Override
@@ -67,8 +69,8 @@ public class StartUp {
 				exitClicked();
 			}
 		});
-		fileMenu.add(menuItem);	
-		
+		fileMenu.add(menuItem);
+
 		menuItem = new JMenuItem("About protocol");
 		menuItem.addActionListener(new ActionListener() {
 			@Override
@@ -77,9 +79,9 @@ public class StartUp {
 			}
 		});
 		helpMenu.add(menuItem);
-		
+
 		helpMenu.addSeparator();
-		
+
 		menuItem = new JMenuItem("About");
 		menuItem.addActionListener(new ActionListener() {
 			@Override
@@ -88,7 +90,7 @@ public class StartUp {
 			}
 		});
 		helpMenu.add(menuItem);
-		
+
 		frame.setJMenuBar(menuBar);
 	}
 
@@ -96,25 +98,33 @@ public class StartUp {
 		_frame.getContentPane().removeAll();
 		_frame.revalidate();
 		_frame.repaint();
-		
-		//TODO: Protocol loading
-		Tls12Provider provider = new Tls12Provider();
-		JProtocolProtocolBuilder<TlsCiphertext> builder = new JProtocolProtocolBuilder<>(provider, provider);
-		
+
+		JProtocolBuilder<? extends ProtocolDataUnit> builder = getProtocolFromPluginChooser();
+
 		_frame.getContentPane().add(builder.getView());
 		_frame.revalidate();
 		_frame.repaint();
 	}
-	
+
+	private JProtocolBuilder<? extends ProtocolDataUnit> getProtocolFromPluginChooser() {
+		//TODO: as fields
+		ProtocolRegistry registry = new ProtocolRegistry();
+		PluginChooser pluginChooser = new PluginChooser(registry);
+
+		pluginChooser.showChooser();
+
+		return pluginChooser.getSelectedProtocol();
+	}
+
 	private void exitClicked() {
 		System.exit(0);
 	}
-	
+
 	private void aboutClicked() {
-		
+
 	}
-	
+
 	private void aboutProtocolClicked() {
-		
+
 	}
 }
