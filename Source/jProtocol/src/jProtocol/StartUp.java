@@ -37,7 +37,6 @@ public class StartUp {
 		addMenu(_frame);
 		_frame.setVisible(true);
 
-		// TODO: remove
 		startProtocolClicked();
 	}
 
@@ -95,21 +94,23 @@ public class StartUp {
 	}
 
 	private void startProtocolClicked() {
-		_frame.getContentPane().removeAll();
-		_frame.revalidate();
-		_frame.repaint();
-
 		JProtocolBuilder<? extends ProtocolDataUnit> builder = getProtocolFromPluginChooser();
 
-		_frame.getContentPane().add(builder.getView());
-		_frame.revalidate();
-		_frame.repaint();
+		if (builder != null) {
+			_frame.getContentPane().removeAll();
+			_frame.revalidate();
+			_frame.repaint();
+			
+			_frame.getContentPane().add(builder.getView());
+			_frame.revalidate();
+			_frame.repaint();
+		}
 	}
 
 	private JProtocolBuilder<? extends ProtocolDataUnit> getProtocolFromPluginChooser() {
 		//TODO: as fields
 		ProtocolRegistry registry = new ProtocolRegistry();
-		PluginChooser pluginChooser = new PluginChooser(registry);
+		PluginChooser pluginChooser = new PluginChooser(registry, _frame);
 
 		pluginChooser.showChooser();
 

@@ -11,10 +11,9 @@ public class TlsVersion {
 	}
 	
 	public TlsVersion(byte major, byte minor) {
-		//TODO: version check!
-		if (major != 3 || minor != 3) {
-			throw new IllegalArgumentException("Unsupported TLS version [" + major + "," + minor + "]!" );
-		}
+//		if (major != 3 || minor != 3) {
+//			throw new IllegalArgumentException("Unsupported TLS version [" + major + "," + minor + "]!" );
+//		}
 		
 		_majorVersion = major;
 		_minorVersion = minor;

@@ -23,10 +23,20 @@ public class TlsInitialServerState extends TlsState {
 		if (_stateMachine.canPerformAbbreviatedHandshakeForSessionId(chm.getSessionId())) {
 			//TODO: Used for abbreviated handshake -> implement if necessary
 		}
-		setClientHelloMessageValues(chm);
-		_stateMachine.addHandshakeMessageForVerifyData(chm);
 		
-		setTlsState(TlsStateType.SERVER_RECEIVED_CLIENT_HELLO_STATE);
+		if (checkTlsVersion(chm)) {
+			setClientHelloMessageValues(chm);
+			_stateMachine.addHandshakeMessageForVerifyData(chm);
+			
+			setTlsState(TlsStateType.SERVER_RECEIVED_CLIENT_HELLO_STATE);
+		}
+		else {
+			setTlsState(TlsStateType.PROTOCOL_VERSION_ERROR_OCCURED_STATE);
+		}
+	}
+	
+	private boolean checkTlsVersion(TlsClientHelloMessage chm) {
+		return _stateMachine.isSupportedVersion(chm.getClientVersion());
 	}
 	
 	private void setClientHelloMessageValues(TlsClientHelloMessage chm) {

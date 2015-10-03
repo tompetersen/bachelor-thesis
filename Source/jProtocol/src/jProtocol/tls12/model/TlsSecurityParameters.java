@@ -63,9 +63,7 @@ public class TlsSecurityParameters {
 	
 	public TlsVersion getVersion() {
 		if (_version == null) {
-			//TODO: tls version
-			return TlsVersion.getTls12Version();
-			//throw new RuntimeException("Version must be set first!");
+			throw new RuntimeException("Version must be set first!");
 		}
 		return _version;
 	}

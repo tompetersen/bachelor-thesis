@@ -20,6 +20,7 @@ import jProtocol.tls12.model.messages.handshake.TlsHandshakeMessage;
 import jProtocol.tls12.model.states.TlsStateMachineEvent.TlsStateMachineEventType;
 import jProtocol.tls12.model.states.alert.TlsDecodeErrorOccuredState;
 import jProtocol.tls12.model.states.alert.TlsDecryptErrorOccuredState;
+import jProtocol.tls12.model.states.alert.TlsProtocolVersionErrorOccuredState;
 import jProtocol.tls12.model.states.alert.TlsReceivedBadRecordMessageState;
 import jProtocol.tls12.model.states.alert.TlsReceivedFatalAlertMessageState;
 import jProtocol.tls12.model.states.alert.TlsReceivedUnexpectedMessageState;
@@ -107,7 +108,8 @@ public abstract class TlsStateMachine extends StateMachine<TlsCiphertext> {
 		addState(TlsStateType.RECEIVED_BAD_RECORD_MESSAGE_STATE.getType(), 					new TlsReceivedBadRecordMessageState(this));
 		addState(TlsStateType.DECODE_ERROR_OCCURED_STATE.getType(), 						new TlsDecodeErrorOccuredState(this));
 		addState(TlsStateType.DECRYPT_ERROR_OCCURED_STATE.getType(), 						new TlsDecryptErrorOccuredState(this));
-		addState(TlsStateType.RECEIVED_FATAL_ALERT_MESSAGE_STATE.getType(), 						new TlsReceivedFatalAlertMessageState(this));
+		addState(TlsStateType.PROTOCOL_VERSION_ERROR_OCCURED_STATE.getType(), 				new TlsProtocolVersionErrorOccuredState(this));
+		addState(TlsStateType.RECEIVED_FATAL_ALERT_MESSAGE_STATE.getType(), 				new TlsReceivedFatalAlertMessageState(this));
 	}
 	
 	public void setTlsState(TlsStateType stateType, TlsState sender) {
@@ -196,12 +198,10 @@ public abstract class TlsStateMachine extends StateMachine<TlsCiphertext> {
 	}
 	
 	public boolean isSupportedVersion(TlsVersion version) {
-		//TODO: version check?
 		return version.equals(TlsVersion.getTls12Version());
 	}
 	
 	public TlsVersion getHighestSupportedVersion() {
-		//TODO: supportedVersions
 		return TlsVersion.getTls12Version();
 	}
 	
@@ -247,7 +247,8 @@ public abstract class TlsStateMachine extends StateMachine<TlsCiphertext> {
 		if (list == null || list.isEmpty()) {
 			throw new IllegalArgumentException("Cipher suite list must not be null or empty!");
 		}
-		//TODO: Choose Cipher suite
+		
+		//first client cipher suite list entry is chosen as cipher suite 
 		setPendingCipherSuite(list.get(0));
 	}
 	

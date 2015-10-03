@@ -11,6 +11,7 @@ import java.awt.event.ActionListener;
 import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
@@ -24,13 +25,13 @@ public class PluginChooser {
 	private String _currentProtocolName;
 	
 
-	public PluginChooser(ProtocolRegistry registry) {
+	public PluginChooser(ProtocolRegistry registry, JFrame parentFrame) {
 		_protocolRegistry = registry;
 		
-		_pluginChooser = new JDialog();
-		_pluginChooser.setTitle("Start Protocol");
+		_pluginChooser = new JDialog(parentFrame, "Start Protocol");
 		_pluginChooser.setSize(300, 300);
 		_pluginChooser.setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
+		_pluginChooser.setLocationRelativeTo(parentFrame);
 
 		List<String> protocols = registry.getProtocolList();
 		String[] columnNames = { "Protocol" };
