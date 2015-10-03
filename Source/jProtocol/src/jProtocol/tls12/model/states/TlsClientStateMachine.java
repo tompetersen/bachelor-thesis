@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import jProtocol.helper.ByteHelper;
 import jProtocol.helper.MyLogger;
+import jProtocol.tls12.model.ciphersuites.TlsCipherSuiteRegistry;
 import jProtocol.tls12.model.ciphersuites.TlsEncryptionParameters;
 import jProtocol.tls12.model.crypto.TlsClientDhKeyAgreement;
 import jProtocol.tls12.model.crypto.TlsRsaCipher;
@@ -21,7 +22,9 @@ public class TlsClientStateMachine extends TlsStateMachine {
 	private List<TlsCertificate> _serverCertificateList; 
 	private TlsRsaCipher _rsaCipher;
 	
-	public TlsClientStateMachine() {
+	public TlsClientStateMachine(TlsCipherSuiteRegistry registry) {
+		super(registry);
+		
 		setTlsState(TlsStateType.CLIENT_INITIAL_STATE);
 	}
 	

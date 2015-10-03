@@ -65,8 +65,8 @@ public abstract class TlsStateMachine extends StateMachine<TlsCiphertext> {
 	private TlsCipherSuiteRegistry _cipherSuiteRegistry;
 	private List<TlsApplicationDataMessage> _cachedApplicationDataMessages;
 	
-	public TlsStateMachine() {
-		_cipherSuiteRegistry = new TlsCipherSuiteRegistry();
+	public TlsStateMachine(TlsCipherSuiteRegistry cipherSuiteRegistry) {
+		_cipherSuiteRegistry = cipherSuiteRegistry;
 		_securityParameters = new TlsSecurityParameters();
 
 		TlsCipherSuite nullCipherSuite = _cipherSuiteRegistry.getNullCipherSuite();

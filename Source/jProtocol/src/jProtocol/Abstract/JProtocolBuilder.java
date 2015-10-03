@@ -64,4 +64,13 @@ public class JProtocolBuilder<T extends ProtocolDataUnit> implements Observer {
 	public JComponent getView() {
 		return _presenter.getView();
 	}
+	
+	/**
+	 * Returns the settings view for the protocol.
+	 * 
+	 * @return the settings view
+	 */
+	public JComponent getSettingsView() {
+		return _provider.getSettingsView();
+	}
 }

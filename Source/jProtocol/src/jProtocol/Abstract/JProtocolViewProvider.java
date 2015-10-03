@@ -37,7 +37,7 @@ public interface JProtocolViewProvider<T extends ProtocolDataUnit> {
 	public JComponent getViewForClientStateMachine(HtmlInfoUpdater htmlInfoUpdater);
 
 	/**
-	 * Should return a view displaying the server state. This method will be only be called once
+	 * Should return a view displaying the server state. This method will only be called once
 	 * on application startup, so the view should be stored to react to state updates.
 	 * 
 	 * @param htmlInfoUpdater an updater to set the info view content
@@ -57,4 +57,12 @@ public interface JProtocolViewProvider<T extends ProtocolDataUnit> {
 	 * The client view should be updated to display the new state.
 	 */
 	public void updateClientView();
+	
+	/**
+	 * Should return a view displaying (optional) settings for the protocol. Will be shown in 
+	 * the start protocol view. Settings changes must be handled by the provider itself.  
+	 * 
+	 * @return a preferences view
+	 */
+	public JComponent getSettingsView();
 }

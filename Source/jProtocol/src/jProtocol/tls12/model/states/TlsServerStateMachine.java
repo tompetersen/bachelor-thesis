@@ -2,6 +2,7 @@ package jProtocol.tls12.model.states;
 
 import jProtocol.helper.ByteHelper;
 import jProtocol.helper.MyLogger;
+import jProtocol.tls12.model.ciphersuites.TlsCipherSuiteRegistry;
 import jProtocol.tls12.model.ciphersuites.TlsEncryptionParameters;
 import jProtocol.tls12.model.crypto.TlsRsaCipher;
 import jProtocol.tls12.model.crypto.TlsServerDhKeyAgreement;
@@ -22,7 +23,9 @@ public class TlsServerStateMachine extends TlsStateMachine {
 	private List<TlsCertificate> _certificateList; 
 	private TlsRsaCipher _rsaCipher;
 	
-	public TlsServerStateMachine() {
+	public TlsServerStateMachine(TlsCipherSuiteRegistry registry) {
+		super(registry);
+		
 		createCertificate();
 		createServerDhKeyAgreement();
 		

@@ -6,24 +6,29 @@ import jProtocol.Abstract.Model.StateMachine;
 import jProtocol.Abstract.View.HtmlInfoUpdater;
 import jProtocol.Abstract.View.keyvaluetree.KeyValueTree;
 import jProtocol.tls12.model.TlsCiphertext;
+import jProtocol.tls12.model.ciphersuites.TlsCipherSuiteRegistry;
 import jProtocol.tls12.model.states.TlsClientStateMachine;
 import jProtocol.tls12.model.states.TlsServerStateMachine;
 import jProtocol.tls12.model.states.TlsStateMachine;
 import jProtocol.tls12.view.TlsClientView;
 import jProtocol.tls12.view.TlsServerView;
+import jProtocol.tls12.view.TlsSettingsView;
 import javax.swing.JComponent;
 
 public class Tls12Provider implements JProtocolViewProvider<TlsCiphertext>, JProtocolStateMachineProvider<TlsCiphertext> {
 	
 	private TlsStateMachine _client;
 	private TlsStateMachine _server;
+	private TlsCipherSuiteRegistry _registry;
 	
 	private TlsClientView _clientView;
 	private TlsServerView _serverView;
 
 	public Tls12Provider() {
-		_client = new TlsClientStateMachine();
-		_server = new TlsServerStateMachine();
+		_registry = new TlsCipherSuiteRegistry();
+		
+		_client = new TlsClientStateMachine(_registry);
+		_server = new TlsServerStateMachine(_registry);
 	}
 
 	@Override
@@ -65,5 +70,11 @@ public class Tls12Provider implements JProtocolViewProvider<TlsCiphertext>, JPro
 	@Override
 	public void updateClientView() {
 		_clientView.updateView();
+	}
+
+	@Override
+	public JComponent getSettingsView() {
+		TlsSettingsView view = new TlsSettingsView(_registry);
+		return view.getView();
 	}
 }

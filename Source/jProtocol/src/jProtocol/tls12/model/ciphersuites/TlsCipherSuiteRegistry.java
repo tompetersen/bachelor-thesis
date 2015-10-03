@@ -2,6 +2,8 @@ package jProtocol.tls12.model.ciphersuites;
 
 import jProtocol.tls12.model.ciphersuites.impl.TlsCipherSuite_DHE_RSA_WITH_AES_128_GCM_SHA256;
 import jProtocol.tls12.model.ciphersuites.impl.TlsCipherSuite_NULL_WITH_NULL_NULL;
+import jProtocol.tls12.model.ciphersuites.impl.TlsCipherSuite_RSA_WITH_AES_128_CBC_SHA;
+import jProtocol.tls12.model.ciphersuites.impl.TlsCipherSuite_RSA_WITH_AES_128_GCM_SHA256;
 import jProtocol.tls12.model.exceptions.TlsInvalidCipherSuiteException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,11 +21,11 @@ public class TlsCipherSuiteRegistry {
 		TlsCipherSuite cs = new TlsCipherSuite_NULL_WITH_NULL_NULL();
 		_supportedCipherSuites.put(cs.getCode(), cs);
 		
-//		cs = new TlsCipherSuite_RSA_WITH_AES_128_CBC_SHA();
-//		_supportedCipherSuites.put(cs.getCode(), cs);
-//		
-//		cs = new TlsCipherSuite_RSA_WITH_AES_128_GCM_SHA256();
-//		_supportedCipherSuites.put(cs.getCode(), cs);
+		cs = new TlsCipherSuite_RSA_WITH_AES_128_CBC_SHA();
+		_supportedCipherSuites.put(cs.getCode(), cs);
+		
+		cs = new TlsCipherSuite_RSA_WITH_AES_128_GCM_SHA256();
+		_supportedCipherSuites.put(cs.getCode(), cs);
 		
 		cs = new TlsCipherSuite_DHE_RSA_WITH_AES_128_GCM_SHA256();
 		_supportedCipherSuites.put(cs.getCode(), cs);
@@ -48,6 +50,11 @@ public class TlsCipherSuiteRegistry {
 		throw new TlsInvalidCipherSuiteException("Value for cipher suite " + cipherSuite.getName() + " not found!");
 	}
 	
+	/**
+	 * Returns all implemented cipher suites which can be used for a secure connection. TLS_NULL_WITH_NULL_NULL is not included.
+	 * 
+	 * @return a list of all implemented cipher suites
+	 */
 	public List<TlsCipherSuite> allCipherSuites() {
 		List <TlsCipherSuite> result = new ArrayList<TlsCipherSuite>(_supportedCipherSuites.values());
 		result.remove(getNullCipherSuite());
