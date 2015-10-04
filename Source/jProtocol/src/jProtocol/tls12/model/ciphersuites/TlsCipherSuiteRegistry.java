@@ -6,6 +6,8 @@ import jProtocol.tls12.model.ciphersuites.impl.TlsCipherSuite_RSA_WITH_AES_128_C
 import jProtocol.tls12.model.ciphersuites.impl.TlsCipherSuite_RSA_WITH_AES_128_GCM_SHA256;
 import jProtocol.tls12.model.exceptions.TlsInvalidCipherSuiteException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,9 +15,11 @@ import java.util.Map;
 public class TlsCipherSuiteRegistry {
 	
 	private Map<Short, TlsCipherSuite> _supportedCipherSuites;
+	private short _preferredCipherSuite;
 	
 	public TlsCipherSuiteRegistry() {
 		_supportedCipherSuites = new HashMap<Short, TlsCipherSuite>();
+		_preferredCipherSuite = -1;
 		
 		//TODO: Add cipher suites (maybe automagically)
 		TlsCipherSuite cs = new TlsCipherSuite_NULL_WITH_NULL_NULL();
@@ -58,7 +62,30 @@ public class TlsCipherSuiteRegistry {
 	public List<TlsCipherSuite> allCipherSuites() {
 		List <TlsCipherSuite> result = new ArrayList<TlsCipherSuite>(_supportedCipherSuites.values());
 		result.remove(getNullCipherSuite());
+		Collections.sort(result, new Comparator<TlsCipherSuite>() {
+			@Override
+			public int compare(TlsCipherSuite o1, TlsCipherSuite o2) {
+				if (o1.getCode() == _preferredCipherSuite) {
+					return -1;
+				}
+				else if (o2.getCode() == _preferredCipherSuite) {
+					return 1;
+				}
+				else {
+					return o1.getName().compareTo(o2.getName());
+				}
+			}
+		});
+		
 		return result;
+	}
+	
+	public void setPreferredCipherSuite(short cipherSuiteCode) {
+		_preferredCipherSuite = cipherSuiteCode;
+	}
+	
+	public short getPreferredCipherSuite() {
+		return _preferredCipherSuite;
 	}
 	
 	public TlsCipherSuite getNullCipherSuite() {

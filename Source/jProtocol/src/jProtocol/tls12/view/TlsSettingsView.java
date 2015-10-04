@@ -15,9 +15,11 @@ import javax.swing.JRadioButton;
 public class TlsSettingsView implements ActionListener {
 
 	private JPanel _settingsView;
-	private Short _chosenCipherSuite;
+	private TlsCipherSuiteRegistry _cipherSuiteRegistry;
 	
 	public TlsSettingsView(TlsCipherSuiteRegistry cipherSuiteRegistry) {
+		_cipherSuiteRegistry = cipherSuiteRegistry;
+		
 		_settingsView = new JPanel();
 		_settingsView.setLayout(new BoxLayout(_settingsView, BoxLayout.Y_AXIS));
 		_settingsView.setBackground(Color.WHITE);
@@ -27,25 +29,26 @@ public class TlsSettingsView implements ActionListener {
 		for (TlsCipherSuite cs : cipherSuiteList) {
 			JRadioButton rb = new JRadioButton(cs.getName());
 			rb.setBackground(Color.WHITE);
-			group.add(rb);
-			_settingsView.add(rb);
 			rb.setActionCommand(Short.toString(cs.getCode()));
 			rb.addActionListener(this);
-			rb.setSelected(true);
+			
+			group.add(rb);
+			_settingsView.add(rb);
+			
+			if (_cipherSuiteRegistry.getPreferredCipherSuite() == cs.getCode()) {
+				rb.setSelected(true);
+			}
+//			_cipherSuiteRegistry.setPreferredCipherSuite(cs.getCode());
 		}
 	}
 	
 	public JComponent getView() {
 		return _settingsView;
 	}
-	
-	public short getChosenCipherSuite() {
-		return _chosenCipherSuite;
-	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		Short csCode = Short.parseShort(e.getActionCommand());
-		_chosenCipherSuite = csCode;
+		_cipherSuiteRegistry.setPreferredCipherSuite(csCode);
 	}
 }

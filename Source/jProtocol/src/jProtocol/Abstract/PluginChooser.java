@@ -14,6 +14,7 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
@@ -75,6 +76,18 @@ public class PluginChooser {
 		_pluginChooserPanel = new JPanel(new GridBagLayout());
 		
 		GridBagConstraints constraints = GridBagConstraintsHelper.createNormalConstraints(0, 0, 1);
+		constraints.weighty = 0;
+		constraints.weightx = 0;
+		constraints.fill = GridBagConstraints.BOTH;
+		_pluginChooserPanel.add(new JLabel("Protocols"), constraints);
+		
+		constraints = GridBagConstraintsHelper.createNormalConstraints(1, 0, 1);
+		constraints.weighty = 0;
+		constraints.weightx = 1;
+		constraints.fill = GridBagConstraints.BOTH;
+		_pluginChooserPanel.add(new JLabel("Protocol Settings"), constraints);
+		
+		constraints = GridBagConstraintsHelper.createNormalConstraints(0, 1, 1);
 		constraints.weighty = 1;
 		constraints.weightx = 0;
 		constraints.fill = GridBagConstraints.BOTH;
@@ -82,13 +95,13 @@ public class PluginChooser {
 
 		_currentSettingsView = new JPanel();
 		_currentSettingsView.setBackground(Color.WHITE);
-		constraints = GridBagConstraintsHelper.createNormalConstraints(1, 0, 1);
+		constraints = GridBagConstraintsHelper.createNormalConstraints(1, 1, 1);
 		constraints.weighty = 1;
 		constraints.weightx = 1;
 		constraints.fill = GridBagConstraints.BOTH;
 		_pluginChooserPanel.add(_currentSettingsView, constraints);
 		
-		constraints = GridBagConstraintsHelper.createNormalConstraints(0, 1, 2);
+		constraints = GridBagConstraintsHelper.createNormalConstraints(0, 2, 2);
 		constraints.fill = GridBagConstraints.BOTH;
 		constraints.weighty = 0;
 		_pluginChooserPanel.add(chooseButton, constraints);
@@ -101,7 +114,7 @@ public class PluginChooser {
 		
 		_currentSettingsView = getSelectedProtocol().getSettingsView();
 		
-		GridBagConstraints constraints = GridBagConstraintsHelper.createNormalConstraints(1, 0, 1);
+		GridBagConstraints constraints = GridBagConstraintsHelper.createNormalConstraints(1, 1, 1);
 		constraints.weighty = 1;
 		constraints.fill = GridBagConstraints.BOTH;
 		_pluginChooserPanel.add(_currentSettingsView, constraints);
