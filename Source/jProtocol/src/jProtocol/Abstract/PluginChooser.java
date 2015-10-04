@@ -58,7 +58,9 @@ public class PluginChooser {
 		ListSelectionModel selectionModel = table.getSelectionModel();
 		selectionModel.addListSelectionListener(new ListSelectionListener() {
 		    public void valueChanged(ListSelectionEvent e) {
-		        int row = e.getFirstIndex();
+		    	ListSelectionModel lsm = (ListSelectionModel)e.getSource();
+		    	int row = lsm.getMinSelectionIndex();
+//		        int row = e.getFirstIndex();
 		        _currentProtocolName = (String)data[row][0];
 		        
 		        setSettingsViewForSelectedProtocol();

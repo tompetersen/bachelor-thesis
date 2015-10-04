@@ -9,6 +9,7 @@ import java.util.List;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.JComponent;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
@@ -23,6 +24,8 @@ public class TlsSettingsView implements ActionListener {
 		_settingsView = new JPanel();
 		_settingsView.setLayout(new BoxLayout(_settingsView, BoxLayout.Y_AXIS));
 		_settingsView.setBackground(Color.WHITE);
+		
+		_settingsView.add(new JLabel("Choose the used cipher suite:"));
 		
 		ButtonGroup group = new ButtonGroup();
 		List<TlsCipherSuite> cipherSuiteList = cipherSuiteRegistry.allCipherSuites();

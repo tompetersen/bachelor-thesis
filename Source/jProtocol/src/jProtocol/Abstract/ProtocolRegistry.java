@@ -1,6 +1,7 @@
 package jProtocol.Abstract;
 
 import jProtocol.Abstract.Model.ProtocolDataUnit;
+import jProtocol.echoprotocol.EchoProvider;
 import jProtocol.tls12.Tls12Provider;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,6 +19,9 @@ public class ProtocolRegistry {
 		
 		Tls12Provider provider = new Tls12Provider();
 		_protocolMap.put("TLS 1.2", new JProtocolBuilder<>(provider, provider));
+		
+		EchoProvider echoProvider = new EchoProvider();
+		_protocolMap.put("EchoProtocol", new JProtocolBuilder<>(echoProvider, echoProvider));
 	}
 	
 	public List<String> getProtocolList() {
