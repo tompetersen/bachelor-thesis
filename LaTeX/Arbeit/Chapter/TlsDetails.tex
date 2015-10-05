@@ -67,6 +67,7 @@ In der unteren Schicht befindet sich das \recordprotocol{}, das die Daten von de
 \end{figure}
 
 \section{Record Protocol}
+\label{sec_record_protocol}
 \todo{Kapitel evtl. hinter den Handshake? Und vorher auf Schlüsselberechnung eingehen?}
 Die zu sendenden Protokolldaten werden von dem \recordprotocol{} in maximal \(2^{14}\) Byte große Pakete fragmentiert und optional komprimiert. Danach wird je nach während des Handshakes verhandelten kryptographischen Funktionen (vgl. Abschnitt \ref{sec_tls_handshake}) die Integrität der Daten durch Berechnen und Anhängen eines MACs gesichert und die Nachricht danach zusammen mit dem MAC verschlüsselt\footnote{
 	Diese Reihenfolge der Operationen wird MAC-then-Encrypt genannt.

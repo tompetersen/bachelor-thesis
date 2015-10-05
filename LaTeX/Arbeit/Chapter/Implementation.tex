@@ -1,6 +1,9 @@
 \chapter{Implementierung}
 
-Im folgenden Kapitel wird nun auf die im Rahmen dieser Arbeit entwickelte Software eingegangen. Dazu werden zuerst allgemeine Entscheidungen erläutert, die vor der Implementation getroffen wurden. Danach wird die Implementation beschrieben, wobei einige wichtige Details näher betrachtet werden sollen. Anschließend werden anhand eines Beispiels einige Hinweise gegeben, was bei der Erweiterung der Software um weitere Protokolle zu beachten ist.
+Im folgenden Kapitel wird nun auf die im Rahmen dieser Arbeit entwickelte Anwendung eingegangen. 
+Dazu werden zuerst allgemeine Entscheidungen erläutert, die vor der Implementation getroffen wurden. 
+Danach wird die Implementation beschrieben, wobei einige wichtige Details näher betrachtet werden sollen. 
+Anschließend werden anhand eines Beispiels einige Hinweise gegeben, was bei der Erweiterung der Anwendung um weitere Protokolle zu beachten ist.
 
 \section{Architekturentscheidungen}
 
@@ -31,36 +34,43 @@ Ausgelassen:
 
 \end{mdframed}
 
-Die Software ist speziell für den Einsatz in der Hochschullehre gedacht und soll dazu dienen Protokolle und ihre internen Abläufe darzustellen und durch zusätzliche Interaktivität exploratives Lernen zu ermöglichen. Eine Vorgabe war die Möglichkeit der Erweiterbarkeit der Software um weitere Protokolle. 
+% Abstrakt
 
-Um diese Vorgabe zu ermöglichen, wurden zu Beginn der Entwicklungsarbeit die Gemeinsamkeiten von Protokollen herausgearbeitet, um diese abstrakt umsetzen zu können. So müssen anschließend lediglich protokollspezifische Eigenschaften in Erweiterungen implementiert werden. Die Software soll sich auf Protokolle mit zwei Parteien beschränken. Zwischen diesen Parteien werden Nachrichten eines festen Formats (sogenannte Protokolldateneinheiten) über einen Kanal ausgetauscht. Die Abfolge verschiedener Nachrichtentypen und die bei ihrem Empfang stattfindenden Verarbeitungsschritte sind durch das Protokoll festgelegt. Zusätzlich besitzen die Parteien einen internen Zustand\footnote{
+Die Anwendung ist speziell für den Einsatz in der Hochschullehre gedacht und soll dazu dienen Protokolle und ihre internen Abläufe darzustellen und durch zusätzliche Interaktivität exploratives Lernen zu ermöglichen. Eine Vorgabe war die Möglichkeit der Erweiterbarkeit der Anwendung um weitere Protokolle. 
+
+Um diese Vorgabe zu ermöglichen, wurden zu Beginn der Entwicklungsarbeit die Gemeinsamkeiten von Protokollen herausgearbeitet, um diese abstrakt umsetzen zu können. So müssen anschließend lediglich protokollspezifische Eigenschaften in Erweiterungen implementiert werden. Die Anwendung soll sich auf Protokolle mit zwei Parteien beschränken. Zwischen diesen Parteien werden Nachrichten eines festen Formats (sogenannte Protokolldateneinheiten) über einen Kanal ausgetauscht. Die Abfolge verschiedener Nachrichtentypen und die bei ihrem Empfang stattfindenden Verarbeitungsschritte sind durch das Protokoll festgelegt. Zusätzlich besitzen die Parteien einen internen Zustand\footnote{
 	Um Verwechslungen mit den im nächsten Absatz eingeführten Automatenzuständen zu vermeiden, wird der Zustand einer Partei im Folgenden immer als interner Zustand bezeichnet.
 }, der beispielsweise als Resultat empfangener Nachrichten verändert werden kann. 
 
-Aus diesen Voraussetzungen wurde ein abstrakter Rahmen entwickelt, der für konkrete Protokolle erweitert werden muss. Um die Parteien, ihre internen Zustände und die Verarbeitungsschritte bei Nachrichtenempfang strukturiert entwickeln zu können, werden die Parteien wie endliche Automaten betrachtet. Es können verschiedene Zustände implementiert werden, um strukturiert unterschiedliches Verhalten bei dem Erhalt von Nachrichten zu erlangen. Der Automat besitzt jeweils immer genau einen aktuellen Zustand, an den eingehende Nachrichten weitergeleitet werden. Abhängig vom gewünschten Verhalten können aus dem aktuellen Zustand heraus der aktuelle Zustand neu gesetzt und Nachrichten gesendet werden. Der Automat kann seinen Zuständen zusätzlich Zugriff auf den internen Zustand der Partei bereitstellen.
+Aus diesen Voraussetzungen wurde ein abstrakter Rahmen entwickelt, der für konkrete Protokolle erweitert werden muss. Um die Parteien, ihre internen Zustände und die Verarbeitungsschritte bei Nachrichtenempfang strukturiert entwickeln zu können, werden die Parteien als endliche Automaten betrachtet. Es können verschiedene Zustände implementiert werden, um strukturiert unterschiedliches Verhalten bei dem Erhalt von Nachrichten zu erlangen. Der Automat besitzt jeweils immer genau einen aktuellen Zustand, an den eingehende Nachrichten weitergeleitet werden. Abhängig vom gewünschten Verhalten können aus dem aktuellen Zustand heraus der aktuelle Zustand neu gesetzt und Nachrichten gesendet werden. Der Automat kann seinen Zuständen zusätzlich Zugriff auf den internen Zustand der Partei bereitstellen.
+\todo{?  channel, pdu, ...}
 
-Anschließend wurde prototypisch eine Benutzeroberfläche entwickelt, die auf Basis dieser Überlegungen auch einen visuellen Rahmen bereitstellt, der für konkrete Protokolle gefüllt werden kann. \todo{Sketch UI} Es musste möglich sein, den internen Zustand der beiden Parteien darzustellen, der jedoch vom betrachteten Protokoll abhängig ist. Ebenso sollte zu jeder protokollabhängigen Nachricht neben ihrer reinen Repräsentation als Bytefolge auch noch eine Möglichkeit angeboten werden ihre Bedeutung darzustellen. Zusätzlich sollte es möglich sein, dem Verlauf des Protokoll schrittweise zu folgen, um ablaufende Prozesse und Veränderungen an den internen Zuständen zu erkennen.\\
-Mit diesen Möglichkeiten werden auch die Forderungen an exploratives Lernen und Simulationen aus Abschnitt \ref{sec_exploration}, insbesondere der Sichtenwechsel und die Anzeige nicht sichtbarer Prozesse, erfüllt.
+Anschließend wurde prototypisch eine Benutzeroberfläche entwickelt, die auf Basis dieser Überlegungen auch einen visuellen Rahmen bereitstellt, der für konkrete Protokolle gefüllt werden kann. \todo{Sketch UI} Es musste möglich sein, den internen Zustand der beiden Parteien darzustellen, der jedoch vom betrachteten Protokoll abhängig ist. Ebenso sollte zu jeder protokollabhängigen Nachricht neben ihrer reinen Repräsentation als Bytefolge auch noch eine Möglichkeit angeboten werden ihre Bedeutung darzustellen. Zusätzlich sollte es möglich sein, dem Verlauf des Protokoll schrittweise zu folgen, um ablaufende Prozesse und Veränderungen an den internen Zuständen zu erkennen. Für das Verständnis von Protokollverhalten bei (absichtlich oder unabsichtlich) veränderten Nachrichten wäre auch eine Möglichkeit für das Bearbeiten von Nachrichten sinnvoll.\\
+Mit diesen Möglichkeiten werden auch die Forderungen an exploratives Lernen und Simulationen aus Abschnitt \ref{sec_exploration}, insbesondere der Sichtenwechsel, die Anzeige nicht sichtbarer Prozesse und die Interaktivität, erfüllt.
 
-Für diese Arbeit wurde die TLS 1.2-Spezifikation als Erweiterung des abstrakten Rahmens umgesetzt. Hierdurch lässt sich die zum jetzigen Zeitpunkt aktuelle Version explorieren und insbesondere Abwehrmechanismen gegen Angriffe auf ältere Protokollversionen erkennen. Um diese Angriffe beobachten zu können, hätte sich auch eine ältere Protokollversion wie SSL 2.0 angeboten. Durch die Erweiterbarkeit der Software wäre dieses eine Möglichkeit für spätere Arbeiten.
+% Tls 1.2
+
+Für diese Arbeit wurde die TLS 1.2-Spezifikation als Erweiterung des abstrakten Rahmens umgesetzt. Hierdurch lässt sich die zum jetzigen Zeitpunkt aktuelle Version explorieren und insbesondere Abwehrmechanismen gegen Angriffe auf ältere Protokollversionen erkennen. Um diese Angriffe beobachten zu können, hätte sich auch eine ältere Protokollversion wie SSL 2.0 angeboten. Durch die Erweiterbarkeit der Anwendung wäre dieses eine Möglichkeit für spätere Arbeiten.
 
 Im ersten Schritt wurden für Client und Server auf Basis der TLS-Spezifikation Automatenmodelle entwickelt, die abhängig von empfangenen Nachrichten Zustandswechsel und gesendete Nachrichten abbilden. Die Modelle sind im Anhang \ref{cha_tls_state_machines} zu finden. An den Zustandsübergängen sind jeweils die empfangenen Nachrichten in orange dargestellt, die zu diesem Übergang führen. Ist keine Nachricht angegeben, so findet direkt nach Eintritt in den Zustand der Zustandswechsel statt. Mit OnEnter gekennzeichnete Kästen an Zuständen zeigen in blau Nachrichten, die gesendet werden sollen, wenn ein Zustand aktueller Zustand wird. Kästen an Zustandsübergängen stehen für Aktionen, die von außen von dem Automaten verlangt werden (beispielsweise ein Verbindungsaufbauwunsch). In diese Kästen werden zu sendende Nachrichten ebenfalls in blau dargestellt. In eckigen Klammern werden Bedingungen für Zustandsübergänge und andere Aktionen angegeben. Der Startzustand wird durch die Unterstreichung des Namens gekennzeichnet.
  
 Danach wurde eine einfache Möglichkeit für die Darstellung der internen Zustände von Server und Client, sowie für die Bedeutungsdarstellung von Nachrichten ausgearbeitet. Hierbei sollten insbesondere auch die Zustandsveränderungen kenntlich gemacht werden, um abgelaufene Vorgänge zu verdeutlichen. Die Wahl fiel auf eine baumartige Struktur aus Objekten, denen ein Titel und ein Wert sowie eine optionale Liste von Kindelementen zugewiesen werden kann. Veränderungen zwischen zwei Zuständen sollten durch Kennzeichnung der geänderten Objekte geschehen. \todo{Sketch?}
 
-Anschließend wurde die TLS-Spezifikation auf Funktionen untersucht, die nicht implementiert werden sollten. Dies geschah aus Gründen der Komplexitätsreduktion zum besseren Verständnis oder schlicht aus Zeitgründen, insbesondere wenn die Funktion wenig zum Verständnis beigetragen hätte. Im Folgenden soll kurz auf diese Funktionen und darauf, warum sie ausgelassen wurden, eingegangen werden.\\
+% Tls 1.2 nicht implementiert
+
+Anschließend wurde die TLS-Spezifikation auf Funktionen untersucht, die nicht implementiert werden sollten. Dies geschah aus Gründen der Komplexitätsreduktion zum besseren Verständnis oder schlicht aus Zeitgründen, insbesondere wenn die Funktion wenig zum Verständnis beigetragen hätte. Im Folgenden soll kurz auf diese Funktionen und auf die Gründe, aus denen sie ausgelassen wurden, eingegangen werden.\\
 Auf TLS-Extensions wurde komplett verzichtet, da sie nicht für das grundsätzliche Verständnis von TLS notwendig sind, sondern eher technische Erweiterungen des Standards darstellen, um bestimmte Funktionen nachzurüsten oder Verhalten zu erzwingen.\\
 Auch die Möglichkeit TLS-Plaintexte vor dem Verschlüsseln zu komprimieren wurde nicht implementiert, da die Funktion wenig zum Verständnis beiträgt und zusätzlich aufgrund ihrer Angreifbarkeit in der nächsten Protokollversion nicht mehr enthalten sein wird (vgl. Abschnitt \ref{sec_attack_crime}).\\
-TLS unterstützt optional zusätzliche Clientauthentifizierung. Diese wird allerdings in vielen Anwendungsfällen, wie beim dem verschlüsselten Abruf einer Internetseite über HTTPS, nicht genutzt und unterscheidet sich prinzipiell nicht übermäßig von der Serverauthentifizierung. Daher wurde in der Software darauf verzichtet.\\
+TLS unterstützt optional zusätzliche Clientauthentifizierung. Diese wird allerdings in vielen Anwendungsfällen, wie beim dem verschlüsselten Abruf einer Internetseite über HTTPS, nicht genutzt und unterscheidet sich prinzipiell nicht übermäßig von der Serverauthentifizierung. Daher wurde in der Anwedung darauf verzichtet.\\
 Weiterhin wurden nur einige \ciphersuites implementiert. Hierbei wurde jedoch darauf geachtet, dass sowohl Block- und AEAD-Chiffren zur Ver- und Entschlüsselung als auch RSA und das Diffie-Hellman-Verfahren zum Schlüsselaustausch verwendet wurden. Auf die Implementierung von \ciphersuites, die sich lediglich in Schlüssellängen von bereits implementierten \ciphersuites unterschieden oder deren Chiffren bzw. Schlüsselaustauschalgorithmen bereits durch andere \ciphersuites abgedeckt waren, wurde bewusst verzichtet.\\
 Auch die sichere Verwaltung von Schlüsseln im Dateisystem, sowie die Entfernung verwendeter Schlüssel aus dem Speicher, auf die in produktiv verwendeten Systemen geachtet werden muss, wurde hier aus naheliegenden Gründen vernachlässigt.\\
-\todo{Abbreviated Handshake? Wahrscheinlich schon!}
-Ein letzter Punkt, der in der Software nicht implementiert wurde, ist die Zertifikatsvalidierung. Diese ist zwar entscheidend für den sicheren Aufbau einer Verbindung, hat aber eher indirekt mit der der Protokollspezifikation zu tun. Daher wurde aus Zeitgründen auf diese Funktion verzichtet, die sich jedoch für spätere Arbeiten anbieten würde.
+Aus Zeitgründen wurde auch auf die Wiederaufnahme bestehender Sitzungen verzichtet (siehe Abschnitt \ref{sec_session_connection}). Der verkürzte Handshake hat eher praktische Bedeutung, da auf erneute Aushandlung kryptographischer Verfahren und damit mehrere Nachrichten während des Handshakes verzichtet werden kann und die Wiederaufnahme der Verbindung somit weniger Zeit in Anspruch nimmt. Eine spätere Erweiterung der Anwedung um diese Funktion wäre jedoch sinnvoll, um das Verständnis von TLS zu vertiefen.\\
+Ein letzter Punkt, der in der Anwedung nicht implementiert wurde, ist die Zertifikatsvalidierung. Diese ist zwar entscheidend für den sicheren Aufbau einer Verbindung, hat aber eher indirekt mit der der Protokollspezifikation zu tun. Daher wurde aus Zeitgründen auf diese Funktion verzichtet, die sich jedoch für spätere Arbeiten anbieten würde.
 
 \section{Implementation notes}
 
 \begin{mdframed}
-Entwurf (UML ist toll, Automatenmodelle, ...), Implementierung, Tests, Evaluation...
+Entwurf (UML ist toll,  ...), Implementierung, Tests, Evaluation...
 
 Probleme/Schwierigkeiten bei der Umsetzung, ...
 
@@ -70,9 +80,50 @@ Probleme/Schwierigkeiten bei der Umsetzung, ...
 
 
 
-Die Wahl der Programmiersprache fiel auf Java, da diese Sprache an der Universität Hamburg in der ersten Semestern zum Einsatz kommt und von den Studierenden zwingend gelernt werden muss. Auf diese Weise sollte die entwickelte Software auch von anderen Studierenden erweitert oder zumindest problemlos verstanden werden können. Zur Erzeugung der Benutzeroberfläche wurde die in der Java-Runtime verfügbare Bibliothek Swing genutzt, da diese ebenfalls in den an der Universität Hamburg verwendet wird.
+Die Wahl der Programmiersprache fiel auf Java, da diese Sprache an der Universität Hamburg in der ersten Semestern zum Einsatz kommt und von den Studierenden zwingend gelernt werden muss. Auf diese Weise sollte die entwickelte Anwedung auch von anderen Studierenden erweitert oder zumindest problemlos verstanden werden können. Zur Erzeugung der Benutzeroberfläche wurde die in der Java-Runtime verfügbare Bibliothek Swing genutzt, da diese ebenfalls in einigen Veranstaltungen an der Universität Hamburg verwendet wird.
 
+\subsection{Abstrakter Rahmen für die Anwendung}
 
-Entwurfsmuster Zustand genutzt \todo{Quelle}
+% abstract model
+
+Protokollnachrichten werden durch die abstrakte Klasse \sourceobject{ProtocolDataUnit} dargestellt. In Unterklassen muss die Byte-Repräsentation einer Nachricht sowie Titel und Untertitel für die Darstellung auf der Benutzeroberfläche implementiert werden.
+
+Für den abstrakten Rahmen wurden die Parteien als endliche Automaten modelliert. Für diese Modellierung wird das Entwurfsmuster Zustand \todo{reference state pattern} verwendet. \\
+Die abstrakte Klasse \sourceobject{StateMachine} bildet das Grundgerüst für einen Automaten und die abstrakte Klasse \sourceobject{State} wird zur Implementierung der jeweiligen Automatenzustände verwendet. In einem \sourceobject{StateMachine}-Objekt kann der aktuelle Zustand gesetzt und abgefragt, sowie Nachrichten gesendet werden. Die möglichen Zustände müssen dem Objekt vorher mitgeteilt werden. Zur Beobachtung von Zustandsänderungen wird das Beobachter-Muster verwendet. \todo{reference observer pattern}  \\
+Unterklassen von \sourceobject{State} implementieren das Verhalten bei Empfang einer Nachricht und bei Betreten und Verlassen des Zustand. Außerdem ermöglichen sie das Senden von Nachrichten und das Setzen des aktuellen Zustands des besitzenden \sourceobject{StateMachine}-Objekts.\todo{UML1 - komplett StateMachine, State, Channel, PDU}
+
+Für die Übertragung von Nachrichten wird ein \sourceobject{CommunicationChannel}-Objekt genutzt, dass die Übermittlung von Nachrichten zwischen den beiden an dem Protokollablauf beteiligten \sourceobject{StateMachine}-Objekten übernimmt. Außerdem ist in diesem Objekt auch die Thread-Synchronisierung implementiert, die dafür sorgt, dass der Protokollablauf beim Senden einer Nachricht pausiert wird. Dies ermöglicht das schrittweise Verfolgen der gesendeten Nachrichten und der Veränderungen des internen Zustands der Kommunikationspartner. Auch \sourceobject{CommunicationChannel}-Objekte können beobachtet werden, um über zu sendende oder gesendete Nachrichten informiert zu werden.
+
+Um Protokollerweiterungen eine typsichere Umgebung zu bieten, besitzen die \sourceobject{StateMachine}-, \sourceobject{State}- und \sourceobject{CommunicationChannel}-Klassen einen generischen Parameter vom Typ einer Unterklasse von \sourceobject{ProtocolDataUnit}. Hierdurch können Unterklassen ihren Nachrichtentyp angeben und sich auf die durch Java gewährleistete Typsicherheit verlassen.
+\todo{listing of headers?}
+
+% abstract view
+
+Für die Darstellung des Protokollablaufs wurde ein Gerüst entwickelt, das die im vorherigen Abschnitt beschriebenen Gemeinsamkeiten von Protokollen abbildet. Für die internen Zustände der Parteien werden zwei Bereiche angelegt, die durch konkrete Protokolle bereitgestellt werden müssen. Außerdem wird eine Liste von bereits gesendeten bzw. als nächstes gesendeten Nachrichten angezeigt, die es ermöglicht bei Auswahl einer Nachricht Details zu dieser anzuzeigen. Dabei wird für jede Nachricht die Darstellung als Bytekette und eine protokollspezifische Detailansicht, die ebenfalls durch konkrete Protokolle bereitgestellt werden muss, angeboten. Zusätzlich kann ein weiteres Fenster angezeigt werden, dass es ermöglicht Informationen zu gewünschten zustands- oder nachrichtenabhängigen Daten anzubieten.\\
+Für die Interaktion wird ein Bedienfeld angezeigt, dass die Nachrichtensteuerung bereitstellt und das Informationsfenster öffnet. In der Nachrichtendetaildarstellung können die Bytes einer Nachricht vor dem Senden verändert werden.
+\todo{Screenshot UI}
+
+% abstract provider and builder
+
+Um Erweiterungen die Bereitstellung fehlender Elemente und nötiger Objekte zu ermöglichen, wurden die Interfaces \sourceobject{ViewProvider} und \sourceobject{StateMachineProvider} erstellt, die eine Erweiterung implementieren muss. Objekte, die diese Interfaces implementieren, ermöglichen es das Gerüst mit protokollspezifischen Details zu füllen. \sourceobject{ViewProvider} sorgen für die Bereitstellung von Fensterelementen für die internen Zustände der Parteien, für die Detailansicht einer Nachricht und für optionale Einstellmöglichkeiten zu dem Protokollablauf. \sourceobject{StateMachineProvider} sind zuständig für die entsprechenden \sourceobject{StateMachine}-Objekte für die beiden Parteien. Diese werden dann durch einen \sourceobject{ProtocolBuilder} mit einem \sourceobject{CommunicationChannel} und den entsprechenden Fensterelementen verknüpft.\todo{UML2 - Providers, ProtocolBuilder oder zusammen mit UML1?}
+
+Beim Laden einer neuen Protokollsimulation wird eine Liste vorhandener Protokolle und bei Auswahl eines Eintrags die entsprechende Einstellungsansicht angezeigt. Wenn eine Protokollsimulation gestartet wird, wird das vom \sourceobject{ProtocolBuilder} zur Verfügung gestellte Fensterelement in die Anwendung eingebettet.
+
+\subsection{Erweiterung der Anwendung um TLS 1.2}
+
+% tls 12 model
+
+Als Protokollnachricht dient die Klasse \sourceobject{TlsCiphertext}. Bei ihrer Modellierung wurde versucht analog zu der Spezifikation vorzugehen und auch Benennungen möglichst einheitlich zu halten. Sie enthält Felder für den \sourceobject{TlsContentType}, die \sourceobject{TlsVersion} und ihre Länge, sowie ein \sourceobject{TlsFragment}, das die eigentliche Nachricht der oberen TLS-Protokollschicht enthält. \\
+Abhängig von der aktuellen \ciphersuite{} wird dieses \sourceobject{TlsFragment} verschlüsselt und mit einem MAC versehen und enthält weitere Felder für bei der Verschlüsselung benötigte Werte (siehe Abschnitt \ref{sec_record_protocol} und insbesondere Abbildung \ref{fig_tls_cipher_types}). \\
+Die Nachrichten der oberen Schicht werden durch für jedes Teilprotokoll bestehende Unterklassen von \sourceobject{TlsMessage} dargestellt. Neben \sourceobject{TlsAlertMessage}, \sourceobject{TlsChangeCipherSpecMessage} und \sourceobject{TlsApplicationDataMessage} wurde für jeden HandshakeType eine eigene Klasse erstellt. Alle diese Nachrichten enthalten zwei Konstruktoren, die die Erstellung aus benötigten Werten und die Erstellung durch das Parsen übertragener Bytes ermöglichen. 
+	
+	%state machine, states, security paramaters, connection state
+	
+	%crypto cipher suites
+
+% tls 12 view
+
++ Keyvaluetree 
++ HTML info
 
 \section{Tutorial: So schreibe ich ein Plugin, ...}
