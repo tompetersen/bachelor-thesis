@@ -11,7 +11,7 @@ import jProtocol.Abstract.Model.StateMachine;
  * 
  * @param <T> The protocol data unit the protocol uses.
  */
-public interface JProtocolStateMachineProvider<T extends ProtocolDataUnit> {
+public interface StateMachineProvider<T extends ProtocolDataUnit> {
 
 	/**
 	 * Should return the server state machine. This method will be called once

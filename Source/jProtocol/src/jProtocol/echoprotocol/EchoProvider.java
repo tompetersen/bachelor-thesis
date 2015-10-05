@@ -1,7 +1,7 @@
 package jProtocol.echoprotocol;
 
-import jProtocol.Abstract.JProtocolStateMachineProvider;
-import jProtocol.Abstract.JProtocolViewProvider;
+import jProtocol.Abstract.StateMachineProvider;
+import jProtocol.Abstract.ViewProvider;
 import jProtocol.Abstract.Model.StateMachine;
 import jProtocol.Abstract.View.HtmlInfoUpdater;
 import jProtocol.echoprotocol.model.EchoClient;
@@ -11,7 +11,7 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-public class EchoProvider implements JProtocolViewProvider<EchoProtocolDataUnit>, JProtocolStateMachineProvider<EchoProtocolDataUnit> {
+public class EchoProvider implements ViewProvider<EchoProtocolDataUnit>, StateMachineProvider<EchoProtocolDataUnit> {
 
 	@Override
 	public StateMachine<EchoProtocolDataUnit> getServerStateMachine() {

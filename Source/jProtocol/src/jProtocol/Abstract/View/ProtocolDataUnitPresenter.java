@@ -1,6 +1,6 @@
 package jProtocol.Abstract.View;
 
-import jProtocol.Abstract.JProtocolViewProvider;
+import jProtocol.Abstract.ViewProvider;
 import jProtocol.Abstract.Model.CommunicationChannel;
 import jProtocol.Abstract.Model.ProtocolDataUnit;
 import java.util.List;
@@ -20,7 +20,7 @@ public class ProtocolDataUnitPresenter<T extends ProtocolDataUnit> implements Ob
 	 * @param channel the communication channel which transfers the protocol data units
 	 * @param htmlInfoUpdate an info updater to set the info view content
 	 */
-	public ProtocolDataUnitPresenter(JProtocolViewProvider<T> provider, CommunicationChannel<T> channel, HtmlInfoUpdater htmlInfoUpdate) {
+	public ProtocolDataUnitPresenter(ViewProvider<T> provider, CommunicationChannel<T> channel, HtmlInfoUpdater htmlInfoUpdate) {
 		_channel = channel;
 		_view = new ProtocolDataUnitView<T>(provider, htmlInfoUpdate);
 		

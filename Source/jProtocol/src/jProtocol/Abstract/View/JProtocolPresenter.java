@@ -1,6 +1,6 @@
 package jProtocol.Abstract.View;
 
-import jProtocol.Abstract.JProtocolViewProvider;
+import jProtocol.Abstract.ViewProvider;
 import jProtocol.Abstract.Model.CommunicationChannel;
 import jProtocol.Abstract.Model.ProtocolDataUnit;
 import javax.swing.JComponent;
@@ -16,7 +16,7 @@ public class JProtocolPresenter<T extends ProtocolDataUnit> {
 	 * @param channel the communication channel
 	 * @param htmlInfoUpdater an info updater
 	 */
-	public JProtocolPresenter(JProtocolViewProvider<T> provider, CommunicationChannel<T> channel, DefaultHtmlInfoUpdater htmlInfoUpdater) {
+	public JProtocolPresenter(ViewProvider<T> provider, CommunicationChannel<T> channel, DefaultHtmlInfoUpdater htmlInfoUpdater) {
 		StateMachinePresenter clientPresenter = new StateMachinePresenter(provider.getViewForClientStateMachine(htmlInfoUpdater));
 		StateMachinePresenter serverPresenter = new StateMachinePresenter(provider.getViewForServerStateMachine(htmlInfoUpdater));
 		

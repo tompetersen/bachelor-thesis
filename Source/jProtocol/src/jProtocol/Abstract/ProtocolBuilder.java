@@ -10,9 +10,9 @@ import java.util.Observable;
 import java.util.Observer;
 import javax.swing.JComponent;
 
-public class JProtocolBuilder<T extends ProtocolDataUnit> implements Observer {
+public class ProtocolBuilder<T extends ProtocolDataUnit> implements Observer {
 
-	private JProtocolViewProvider<T> _provider;
+	private ViewProvider<T> _provider;
 	private StateMachine<T> _client;
 	private StateMachine<T> _server;
 
@@ -26,7 +26,7 @@ public class JProtocolBuilder<T extends ProtocolDataUnit> implements Observer {
 	 * @param viewProvider
 	 *            a view provider for the protocol
 	 */
-	public JProtocolBuilder(JProtocolStateMachineProvider<T> stateMachineProvider, JProtocolViewProvider<T> viewProvider) {
+	public ProtocolBuilder(StateMachineProvider<T> stateMachineProvider, ViewProvider<T> viewProvider) {
 		_provider = viewProvider;
 		_client = stateMachineProvider.getClientStateMachine();
 		_server = stateMachineProvider.getServerStateMachine();

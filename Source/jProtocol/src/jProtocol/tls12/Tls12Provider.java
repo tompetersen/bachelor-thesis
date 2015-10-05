@@ -1,7 +1,7 @@
 package jProtocol.tls12;
 
-import jProtocol.Abstract.JProtocolStateMachineProvider;
-import jProtocol.Abstract.JProtocolViewProvider;
+import jProtocol.Abstract.StateMachineProvider;
+import jProtocol.Abstract.ViewProvider;
 import jProtocol.Abstract.Model.StateMachine;
 import jProtocol.Abstract.View.HtmlInfoUpdater;
 import jProtocol.Abstract.View.keyvaluetree.KeyValueTree;
@@ -15,7 +15,7 @@ import jProtocol.tls12.view.TlsServerView;
 import jProtocol.tls12.view.TlsSettingsView;
 import javax.swing.JComponent;
 
-public class Tls12Provider implements JProtocolViewProvider<TlsCiphertext>, JProtocolStateMachineProvider<TlsCiphertext> {
+public class Tls12Provider implements ViewProvider<TlsCiphertext>, StateMachineProvider<TlsCiphertext> {
 	
 	private TlsStateMachine _client;
 	private TlsStateMachine _server;

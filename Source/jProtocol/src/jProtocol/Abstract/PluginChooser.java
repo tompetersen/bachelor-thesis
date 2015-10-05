@@ -129,7 +129,7 @@ public class PluginChooser {
 		_pluginChooser.setVisible(true);
 	}
 	
-	public JProtocolBuilder<? extends ProtocolDataUnit> getSelectedProtocol() {
+	public ProtocolBuilder<? extends ProtocolDataUnit> getSelectedProtocol() {
 		return _protocolRegistry.getProtocolBuilderForName(_currentProtocolName);
 	}
 

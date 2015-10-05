@@ -1,6 +1,6 @@
 package jProtocol;
 
-import jProtocol.Abstract.JProtocolBuilder;
+import jProtocol.Abstract.ProtocolBuilder;
 import jProtocol.Abstract.PluginChooser;
 import jProtocol.Abstract.ProtocolRegistry;
 import jProtocol.Abstract.Model.ProtocolDataUnit;
@@ -94,7 +94,7 @@ public class StartUp {
 	}
 
 	private void startProtocolClicked() {
-		JProtocolBuilder<? extends ProtocolDataUnit> builder = getProtocolFromPluginChooser();
+		ProtocolBuilder<? extends ProtocolDataUnit> builder = getProtocolFromPluginChooser();
 
 		if (builder != null) {
 			_frame.getContentPane().removeAll();
@@ -107,7 +107,7 @@ public class StartUp {
 		}
 	}
 
-	private JProtocolBuilder<? extends ProtocolDataUnit> getProtocolFromPluginChooser() {
+	private ProtocolBuilder<? extends ProtocolDataUnit> getProtocolFromPluginChooser() {
 		//TODO: as fields
 		ProtocolRegistry registry = new ProtocolRegistry();
 		PluginChooser pluginChooser = new PluginChooser(registry, _frame);

@@ -10,7 +10,7 @@ import java.util.Map;
 
 public class ProtocolRegistry {
 
-	private Map<String, JProtocolBuilder<? extends ProtocolDataUnit>> _protocolMap;
+	private Map<String, ProtocolBuilder<? extends ProtocolDataUnit>> _protocolMap;
 	
 	public ProtocolRegistry() {
 		_protocolMap = new HashMap<>();
@@ -18,17 +18,17 @@ public class ProtocolRegistry {
 		//TODO: register protocols
 		
 		Tls12Provider provider = new Tls12Provider();
-		_protocolMap.put("TLS 1.2", new JProtocolBuilder<>(provider, provider));
+		_protocolMap.put("TLS 1.2", new ProtocolBuilder<>(provider, provider));
 		
 		EchoProvider echoProvider = new EchoProvider();
-		_protocolMap.put("EchoProtocol", new JProtocolBuilder<>(echoProvider, echoProvider));
+		_protocolMap.put("EchoProtocol", new ProtocolBuilder<>(echoProvider, echoProvider));
 	}
 	
 	public List<String> getProtocolList() {
 		return new ArrayList<>(_protocolMap.keySet());
 	}
 	
-	public JProtocolBuilder<? extends ProtocolDataUnit> getProtocolBuilderForName(String name) {
+	public ProtocolBuilder<? extends ProtocolDataUnit> getProtocolBuilderForName(String name) {
 		return _protocolMap.get(name);
 	}
 	

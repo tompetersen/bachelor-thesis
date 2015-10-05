@@ -1,6 +1,6 @@
 package jProtocol.Abstract.View;
 
-import jProtocol.Abstract.JProtocolViewProvider;
+import jProtocol.Abstract.ViewProvider;
 import jProtocol.Abstract.Model.ProtocolDataUnit;
 import jProtocol.Abstract.View.resources.ImageLoader;
 import jProtocol.helper.ButtonHelper;
@@ -32,7 +32,7 @@ import javax.swing.SwingConstants;
 public class ProtocolDataUnitView<T extends ProtocolDataUnit> {
 
 	private HtmlInfoUpdater _htmlInfoUpdater;
-	private JProtocolViewProvider<T> _provider;
+	private ViewProvider<T> _provider;
 	
 	private JPanel _view;
 	private JScrollPane _pduView;
@@ -53,7 +53,7 @@ public class ProtocolDataUnitView<T extends ProtocolDataUnit> {
 	 * @param provider a view provider
 	 * @param htmlInfoUpdater an info updater to set the info view content
 	 */
-	public ProtocolDataUnitView(JProtocolViewProvider<T> provider, HtmlInfoUpdater htmlInfoUpdater) {
+	public ProtocolDataUnitView(ViewProvider<T> provider, HtmlInfoUpdater htmlInfoUpdater) {
 		_provider = provider;
 		_htmlInfoUpdater = htmlInfoUpdater;
 

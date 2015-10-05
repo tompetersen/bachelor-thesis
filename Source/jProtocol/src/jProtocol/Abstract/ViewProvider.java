@@ -13,7 +13,7 @@ import javax.swing.JComponent;
  *
  * @param <T> The protocol data unit the protocol uses.
  */
-public interface JProtocolViewProvider<T extends ProtocolDataUnit> {
+public interface ViewProvider<T extends ProtocolDataUnit> {
 	
 	/**
 	 * Should return a view with details of the protocol data unit. This method will be called for
