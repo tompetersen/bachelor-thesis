@@ -2,7 +2,7 @@ package jProtocol.Abstract.View;
 
 import jProtocol.Abstract.JProtocolViewProvider;
 import jProtocol.Abstract.Model.ProtocolDataUnit;
-import jProtocol.Abstract.View.images.ImageLoader;
+import jProtocol.Abstract.View.resources.ImageLoader;
 import jProtocol.helper.ButtonHelper;
 import jProtocol.helper.ByteHelper;
 import java.awt.BorderLayout;

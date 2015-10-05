@@ -2,7 +2,7 @@ package jProtocol.Abstract.View.keyvaluetree;
 
 import jProtocol.Abstract.View.HtmlInfoUpdater;
 import jProtocol.Abstract.View.UiConstants;
-import jProtocol.Abstract.View.images.ImageLoader;
+import jProtocol.Abstract.View.resources.ImageLoader;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;

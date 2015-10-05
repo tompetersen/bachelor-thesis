@@ -1,6 +1,6 @@
 package jProtocol.Abstract.View;
 
-import jProtocol.Abstract.View.images.ImageLoader;
+import jProtocol.Abstract.View.resources.ImageLoader;
 import jProtocol.helper.ButtonHelper;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
