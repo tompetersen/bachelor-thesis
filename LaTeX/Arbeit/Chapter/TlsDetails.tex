@@ -1,17 +1,4 @@
-\lstdefinestyle{default}{
-	numbers=none,
-	frame=leftline,
-	escapeinside={§}{§},
-	emph={}
-}
 
-\lstdefinestyle{tls}{
-	numbers=none,
-	frame=none,%leftline,
-	escapeinside={§}{§},
-	emph={HelloRequest,ClientHello,ServerHello,Certificate,ServerKeyExchange,CertificateRequest,ServerHelloDone,ClientKeyExchange,CertificateVerify,ChangeCipherSpec,Finished,TLSCompressed,TLSCiphertext,TLSPlaintext,SecurityParameters},
-	emphstyle=\textbf
-}
 
 \lstset{style=tls}
 
@@ -148,10 +135,10 @@ Für Blockchiffren im CBC-Modus wird ein IV benötigt (siehe Abschnitt \ref{sec_
 \begin{figure}[H]
 	\centering
 	\begin{tikzpicture}[node distance=0cm, outer sep = 0pt]
-		\tikzstyle{protocol} =		[draw, rectangle, minimum height=1.2cm, minimum width=2cm, fill=gray!20, align = center, anchor=south west]
+		\tikzstyle{protocol} =		[draw, rectangle, minimum height=1.2cm, minimum width=2cm, fill=white, align = center, anchor=south west]
 		\tikzstyle{tlsmessage} = 	[draw, rectangle, minimum height=1.2cm, minimum width=2cm, fill=blue!15, align = center, anchor=south west, double=black, double distance=1pt]
-		\tikzstyle{fragment_enc} = 	[draw, rectangle, minimum height=1.2cm, minimum width=2cm, fill=orange!30, align = center, anchor=south west, double=black, double distance=1pt]
-		\tikzstyle{fragment} = 		[draw, rectangle, minimum height=1.2cm, minimum width=2cm, fill=orange!30, align = center, anchor=south west]
+		\tikzstyle{fragment_enc} = 	[draw, rectangle, minimum height=1.2cm, minimum width=2cm, fill=gray!20, align = center, anchor=south west, double=black, double distance=1pt]
+		\tikzstyle{fragment} = 		[draw, rectangle, minimum height=1.2cm, minimum width=2cm, fill=gray!20, align = center, anchor=south west]
 		\tikzstyle{titlebox} = 		[draw = white, rectangle, minimum width=2cm, align = center, anchor=south west]
 
 		\node[protocol] (type1) at (0,6) {type\\1 Byte};

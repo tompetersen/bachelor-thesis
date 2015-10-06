@@ -62,7 +62,7 @@ Anschließend wurde die TLS-Spezifikation auf Funktionen untersucht, die nicht i
 Auf TLS-Extensions wurde komplett verzichtet, da sie nicht für das grundsätzliche Verständnis von TLS notwendig sind, sondern eher technische Erweiterungen des Standards darstellen, um bestimmte Funktionen nachzurüsten oder Verhalten zu erzwingen.\\
 Auch die Möglichkeit TLS-Plaintexte vor dem Verschlüsseln zu komprimieren wurde nicht implementiert, da die Funktion wenig zum Verständnis beiträgt und zusätzlich aufgrund ihrer Angreifbarkeit in der nächsten Protokollversion nicht mehr enthalten sein wird (vgl. Abschnitt \ref{sec_attack_crime}).\\
 TLS unterstützt optional zusätzliche Clientauthentifizierung. Diese wird allerdings in vielen Anwendungsfällen, wie beim dem verschlüsselten Abruf einer Internetseite über HTTPS, nicht genutzt und unterscheidet sich prinzipiell nicht übermäßig von der Serverauthentifizierung. Daher wurde in der Anwedung darauf verzichtet.\\
-Weiterhin wurden nur einige \ciphersuites implementiert. Hierbei wurde jedoch darauf geachtet, dass sowohl Block- und AEAD-Chiffren zur Ver- und Entschlüsselung als auch RSA und das Diffie-Hellman-Verfahren zum Schlüsselaustausch verwendet wurden. Auf die Implementierung von \ciphersuites, die sich lediglich in Schlüssellängen von bereits implementierten \ciphersuites unterschieden oder deren Chiffren bzw. Schlüsselaustauschalgorithmen bereits durch andere \ciphersuites abgedeckt waren, wurde bewusst verzichtet.\\
+Weiterhin wurden nur einige \ciphersuites implementiert. Hierbei wurde jedoch darauf geachtet, dass sowohl Block- und AEAD-Chiffren zur Ver- und Entschlüsselung als auch RSA und das Diffie-Hellman-Verfahren zum Schlüsselaustausch verwendet wurden. Auf die Implementierung von \ciphersuites, die sich lediglich in Schlüssellängen von bereits implementierten \ciphersuites unterscheiden oder deren Chiffren bzw. Schlüsselaustauschalgorithmen bereits durch andere \ciphersuites abgedeckt waren, wurde bewusst verzichtet. Aus Zeitgründen und da von der Verwendung bereits abgeraten wird, wurde auch auf die Implementierung einer \ciphersuite{} mit der Stromchiffre RC4 verzichtet.\\
 Auch die sichere Verwaltung von Schlüsseln im Dateisystem, sowie die Entfernung verwendeter Schlüssel aus dem Speicher, auf die in produktiv verwendeten Systemen geachtet werden muss, wurde hier aus naheliegenden Gründen vernachlässigt.\\
 Aus Zeitgründen wurde auch auf die Wiederaufnahme bestehender Sitzungen verzichtet (siehe Abschnitt \ref{sec_session_connection}). Der verkürzte Handshake hat eher praktische Bedeutung, da auf erneute Aushandlung kryptographischer Verfahren und damit mehrere Nachrichten während des Handshakes verzichtet werden kann und die Wiederaufnahme der Verbindung somit weniger Zeit in Anspruch nimmt. Eine spätere Erweiterung der Anwedung um diese Funktion wäre jedoch sinnvoll, um das Verständnis von TLS zu vertiefen.\\
 Ein letzter Punkt, der in der Anwedung nicht implementiert wurde, ist die Zertifikatsvalidierung. Diese ist zwar entscheidend für den sicheren Aufbau einer Verbindung, hat aber eher indirekt mit der der Protokollspezifikation zu tun. Daher wurde aus Zeitgründen auf diese Funktion verzichtet, die sich jedoch für spätere Arbeiten anbieten würde.
@@ -113,13 +113,60 @@ Beim Laden einer neuen Protokollsimulation wird eine Liste vorhandener Protokoll
 
 % tls 12 model
 
+	% TlsCiphertext and included fragment/message
 Als Protokollnachricht dient die Klasse \sourceobject{TlsCiphertext}. Bei ihrer Modellierung wurde versucht analog zu der Spezifikation vorzugehen und auch Benennungen möglichst einheitlich zu halten. Sie enthält Felder für den \sourceobject{TlsContentType}, die \sourceobject{TlsVersion} und ihre Länge, sowie ein \sourceobject{TlsFragment}, das die eigentliche Nachricht der oberen TLS-Protokollschicht enthält. \\
 Abhängig von der aktuellen \ciphersuite{} wird dieses \sourceobject{TlsFragment} verschlüsselt und mit einem MAC versehen und enthält weitere Felder für bei der Verschlüsselung benötigte Werte (siehe Abschnitt \ref{sec_record_protocol} und insbesondere Abbildung \ref{fig_tls_cipher_types}). \\
 Die Nachrichten der oberen Schicht werden durch für jedes Teilprotokoll bestehende Unterklassen von \sourceobject{TlsMessage} dargestellt. Neben \sourceobject{TlsAlertMessage}, \sourceobject{TlsChangeCipherSpecMessage} und \sourceobject{TlsApplicationDataMessage} wurde für jeden HandshakeType eine eigene Klasse erstellt. Alle diese Nachrichten enthalten zwei Konstruktoren, die die Erstellung aus benötigten Werten und die Erstellung durch das Parsen übertragener Bytes ermöglichen. 
-	
+
 	%state machine, states, security paramaters, connection state
-	
+
+Als Unterklasse der \sourceobject{StateMachine}-Klasse wurde \sourceobject{TlsStateMachine} implementiert. Diese Klasse bietet Zugriff auf alle notwendigen, internen Zustandsinformationen von TLS-Client und -Server. Ein Objekt vom Typ \sourceobject{TlsSecurityParameters} bietet Zugriff auf während des Handshakes ausgehandelte Verfahren und Informationen wie SessionId, Random-Werte und das berechnete \mastersecret{}. Objekte vom Type \sourceobject{TlsConnectionState} bilden den current read und write state, sowie den pending state. \todo{Verweis auf Kapitel über ChangeCipherSpec} In ihnen werden ausgehandelte \ciphersuite{} und Schlüssel sowie die aktuelle Sequenznummer verwaltet. Bei Empfang oder nach dem Senden einer \changecipherspec{}-Nachricht kann der pending state zum current state gemacht werden.\\
+Für Client und Server wurde jeweils eine Unterklasse \sourceobject{TlsClientStateMachine} und \sourceobject{TlsServerStateMachine} erstellt, die unterschiedliches Verhalten der beiden Parteien enthalten. Insbesondere im Bereich der asymmetrischen Kryptographie sind diese Unterschiede so groß, dass der Mehraufwand gerechtfertigt ist. Beispielsweise besitzt der Server ein RSA-Schlüsselpaar, dessen geheimer Schlüssel zum Entschlüsseln des vom Client ausgewählten \premastersecret{} oder zum Signieren der Diffie-Hellman-Parameter genutzt wird. Der Client ist im Gegensatz dazu lediglich im Besitz des öffentlichen Serverschlüssels zum Verschlüsseln des \premastersecret{}s oder zum Überprüfen der Parametersignatur.
+
+Entsprechend den Automatenmodellen im Anhang \ref{cha_tls_state_machines} wurden für alle Zustände entsprechende Unterklassen von \sourceobject{TlsState}, einer Unterklasse von \sourceobject{State}, erstellt. Jede dieser Unterklassen definiert die Typen von TLS-Nachrichten der oberen Schicht, die sie erwartet, und implementiert das Verhalten bei Empfang einer solchen Nachricht. Beispielsweise erwartet der Clientzustand \sourceobject{TlsWaitingForServerHelloState} lediglich Handshake-Nachrichten vom Typ \serverhello{}. Bei Empfang einer solchen Nachricht werden die entsprechenden Felder für TlsVersion, ServerRandom, SessionID und \ciphersuite{} gesetzt und der aktuelle Zustand der \sourceobject{TlsClientStateMachine} auf den nachfolgenden Zustand gesetzt. Diese Umsetzung ist in Listing \ref{lst_state_example} zu finden. Nach dem gleichen Prinzip wird das Verhalten in allen anderen Zuständen implementiert.
+
+\todo{UML3 - StateMachine -> TlsStateMachine -> Client/ServerStateMachine, State-> TlsState -> Ein Beispiel, SecurityParameters, ConnectionState}
+
+\lstset{style=java, caption={Implementierung des Zustands \sourceobject{TlsWaitingForServerHelloState}}, label=lst_state_example}
+\begin{lstlisting}
+public class TlsWaitingForServerHelloState extends TlsState {
+	...
+	%%@Override%%
+	public boolean expectedTlsMessage(TlsMessage message) {
+		return isHandshakeMessageOfType(message, TlsHandshakeType.server_hello);
+	}
+
+	%%@Override%%
+	public void receivedTlsMessage(TlsMessage message) {
+		...
+		setServerHelloValues(message);
+		setTlsState(TlsStateType.CLIENT_IS_WAITING_FOR_CERTIFICATE_STATE)
+	}
+
+	private void setServerHelloValues(TlsServerHelloMessage message) {
+		...
+		_stateMachine.setVersion(version);
+		_stateMachine.setServerRandom(message.getServerRandom());
+		_stateMachine.setSessionId(message.getSessionId());
+		_stateMachine.setPendingCipherSuite(message.getCipherSuite());
+	}
+}
+\end{lstlisting}
+
+In der Oberklasse \sourceobject{TlsState} werden eingehende Nachrichten entschlüsselt. Dieser Vorgang wird in den folgenden Absätzen näher beleuchtet. Danach werden die Nachrichten je nach gesetztem ContentType geparst. Fehler bei diesem Vorgang führen zu einem Übergang in einen Fehlerzustand und Senden einer Alert-Nachricht. Anschließend wird überprüft, ob die geparste Nachricht von dem aktuellen Zustand erwartet wird. Ist dies nicht der Fall, so wird ebenfalls ein Fehlerzustand gesetzt und eine Alert-Nachricht gesendet.
+
 	%crypto cipher suites
+Im TLS-Protokoll werden die verwendeten Algorithmen und Schlüssellängen durch \ciphersuites{} zur Verfügung gestellt (siehe Abschnitt \ref{sec_cipher_suites}). Durch das Interface \sourceobject{TlsCipherSuite} werden diese Werte zu Verfügung gestellt. Für die Anwendung wurden verschiedene \sourceobject{TlsCiphersuite}-implementierende Klassen entwickelt, die verschiedene Algorithmen zum Schlüsselaustausch und zur Verschlüsselung beinhalten:
+\begin{itemize}
+\item TLS\_DHE\_RSA\_WITH\_AES\_128\_CBC\_SHA
+\item TLS\_DHE\_RSA\_WITH\_AES\_128\_GCM\_SHA256
+\item TLS\_RSA\_WITH\_AES\_128\_CBC\_SHA
+\item TLS\_RSA\_WITH\_AES\_128\_GCM\_SHA256
+\end{itemize}
+Durch diese Wahl der \ciphersuites{} können sowohl der Diffie-Hellman- als auch der RSA-Schlüsselaustausch beobachtet werden. Außerdem ist die Verschlüsselung per Blockchiffre (AES im CBC-Modus) oder AEAD-Chiffre (AES im GCM-Modus) möglich. \\
+Für die kryptographischen Algorithmen wurde auf die Implementierungen der Java-Bibliothek zurückgegriffen. Die TLS-spezifische PseudoRandomFunction wurde eigenständig entwickelt und durch Testvektoren auf ihre Richtigkeit hin überprüft. Ebenso wurde auch die Verknüpfung der Algorithmen für die Ver- und Entschlüsselung, also beispielsweise die Berechnung von MAC, Padding und Paddinglänge und die anschließende Verschlüsselung, für Block- und AEAD-Chiffren selber in den Klassen \sourceobject{TlsBlockCipherSuite} und \sourceobject{TlsAeadCipherSuite} implementiert. Konkrete \ciphersuites{} füllen lediglich die vorgegebenen Rahmen und bieten Zugriff auf Schlüssellängen und die verwendeten Algorithmen.
+
+In der \sourceobject{TlsState}-Klasse werden zu sendende Nachrichten durch die im current write state gesetzte \ciphersuite{} von \sourceobject{TlsPlaintext}- in \sourceobject{TlsCiphertext}-Objekte umgewandelt und anschließend gesendet. Beim Empfang von Nachrichten wird dieser Prozess umgekehrt durchlaufen. Bei auftretenden Fehlern wie einem falschen Schlüssel oder einem ungültigen MAC erfolgt wiederum der Übergang in einen Fehlerzustand und das Senden einer Alert-Nachricht.
 
 % tls 12 view
 

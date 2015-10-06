@@ -40,6 +40,33 @@
 \newcommand{\inquotes}[1]{\glqq#1\grqq}
 \newcommand{\sourceobject}[1]{\texttt{#1}}
 
+%listings
+\lstdefinestyle{default}{
+	numbers=none,
+	frame=leftline,
+	escapeinside={§}{§},
+	emph={}
+}
+
+\lstdefinestyle{tls}{
+	numbers=none,
+	frame=none,%leftline,
+	escapeinside={§}{§},
+	emph={HelloRequest,ClientHello,ServerHello,Certificate,ServerKeyExchange,CertificateRequest,ServerHelloDone,ClientKeyExchange,CertificateVerify,ChangeCipherSpec,Finished,TLSCompressed,TLSCiphertext,TLSPlaintext,SecurityParameters},
+	emphstyle=\textbf
+}
+
+\definecolor{pgrey}{rgb}{0.46,0.45,0.48}
+\lstdefinestyle{java}{
+	language=Java,
+	numbers=left,
+	frame=leftline,
+	escapeinside={§}{§},
+	emph={},
+	moredelim=[is][\textcolor{pgrey}]{\%\%}{\%\%}
+}
+
+
 % Labelformat
 %\label{fig_XYZ} Abbildungen
 %\label{sec_XYZ} Abschnitte
