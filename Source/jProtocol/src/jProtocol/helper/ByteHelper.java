@@ -17,6 +17,10 @@ public class ByteHelper {
 	 * @return the resulting byte array
 	 */
 	public static byte[] hexStringToBytes(String s) {
+		if (s.length() % 2 != 0) {
+			throw new RuntimeException("Hexstring must have even length.");
+		}
+		
 	    int len = s.length();
 	    byte[] data = new byte[len / 2];
 	    for (int i = 0; i < len; i += 2) {

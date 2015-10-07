@@ -12,6 +12,8 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -22,6 +24,7 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
@@ -33,6 +36,8 @@ public class ProtocolDataUnitView<T extends ProtocolDataUnit> {
 
 	private HtmlInfoUpdater _htmlInfoUpdater;
 	private ViewProvider<T> _provider;
+	
+	private JTabbedPane _pduTabbedPane;
 	
 	private JPanel _view;
 	private JScrollPane _pduView;
@@ -79,16 +84,16 @@ public class ProtocolDataUnitView<T extends ProtocolDataUnit> {
 	}
 
 	private void createPduDetailView() {
-		JTabbedPane tabbedPane = new JTabbedPane();
+		_pduTabbedPane = new JTabbedPane();
 		
-		tabbedPane.setMinimumSize(new Dimension(300, 300));
-		tabbedPane.setMaximumSize(new Dimension(300, 300));
-		tabbedPane.setPreferredSize(new Dimension(300, 300));
+		_pduTabbedPane.setMinimumSize(new Dimension(300, 300));
+		_pduTabbedPane.setMaximumSize(new Dimension(300, 300));
+		_pduTabbedPane.setPreferredSize(new Dimension(300, 300));
 
-		tabbedPane.addTab("Bytes", getBytesTab());
-		tabbedPane.addTab("Details", getDetailsTab());
-		tabbedPane.addTab("Actions", getActionTab());		
-		_view.add(tabbedPane, BorderLayout.PAGE_END);
+		_pduTabbedPane.addTab("Bytes", getBytesTab());
+		_pduTabbedPane.addTab("Details", getDetailsTab());
+		_pduTabbedPane.addTab("Actions", getActionTab());		
+		_view.add(_pduTabbedPane, BorderLayout.PAGE_END);
 	}
 	
 	private JComponent getBytesTab(){
@@ -133,19 +138,28 @@ public class ProtocolDataUnitView<T extends ProtocolDataUnit> {
 	
 	private void editPduBytes() {
 		if (_currentShownPduIndex > -1) {
-			T pdu = (_currentShownPduIndex < _sentPdus.size()) ? _sentPdus.get(_currentShownPduIndex) : _pduToSend;
+			final T pdu = (_currentShownPduIndex < _sentPdus.size()) ? _sentPdus.get(_currentShownPduIndex) : _pduToSend;
 			byte[] currentBytes = pdu.getBytes();
 			
 			final JDialog dialog = new JDialog();
 			dialog.setTitle("Edit bytes");
 			dialog.setModal(true);
 			dialog.setSize(200, 200);
+			dialog.setLocationRelativeTo(_pduTabbedPane);
 			
 			JPanel dialogContent = new JPanel(new BorderLayout(5,5));
 			dialogContent.setBackground(Color.WHITE);
 			
-			JTextArea textArea = new JTextArea(ByteHelper.bytesToHexString(currentBytes));
+			final JTextArea textArea = new JTextArea(ByteHelper.bytesToHexString(currentBytes));
 			textArea.setLineWrap(true);
+			textArea.addKeyListener(new KeyAdapter() {
+				public void keyTyped(KeyEvent e) {
+				      char c = e.getKeyChar();
+				      if (!isHexChar(c)) {
+				         e.consume();  // ignore event
+				      }
+				   }
+			});
 			dialogContent.add(textArea, BorderLayout.CENTER);
 			
 			JButton button = ButtonHelper.createImageButton("End editing",  
@@ -153,16 +167,26 @@ public class ProtocolDataUnitView<T extends ProtocolDataUnit> {
 					new ActionListener() {
 						@Override
 						public void actionPerformed(ActionEvent e) {
-							dialog.dispose();
+							String content = textArea.getText();
+							if (content.length() % 2 == 0) {
+								pdu.setAlteredBytes(ByteHelper.hexStringToBytes(content));
+								dialog.dispose();
+							}
+							else {
+								JOptionPane.showMessageDialog(dialog, "Hex representation of the message must have an even length!", "Bad input", JOptionPane.ERROR_MESSAGE);
+							}
 						}
 					});
 			dialogContent.add(button, BorderLayout.SOUTH);
 			
 			dialog.add(dialogContent);
 			dialog.setVisible(true);
-			
-			pdu.setAlteredBytes(ByteHelper.hexStringToBytes(textArea.getText()));
 		}
+	}
+	
+	private boolean isHexChar(char c) {
+		c = Character.toLowerCase(c);
+		return (c >= '0' && c <= '9') || (c >= 'a' && c<= 'f');
 	}
 
 	/**
