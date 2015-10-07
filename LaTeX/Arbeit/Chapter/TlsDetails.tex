@@ -27,9 +27,11 @@ SSL wurde von der Firma Netscape entwickelt und zuerst in ihrem Browser, dem Net
 }.\\
 Inzwischen ist TLS das \inquotes{gegenwärtig meistverwendete Verschlüsselungsprotokoll im Internet}\cite{schmeh09}. Gründe hierfür sind dem Autor zufolge insbesondere die leichte Integrierbarkeit in bestehende Strukturen, die \inquotes{[im Gegensatz zu IPSec] deutlich schnörkelloser[e] und einfacher[e]} Protokollspezifikation und auch die marktreife Verfügbarkeit in den frühen 90er Jahren.
 
-\section{Funktionsweise und Teilprotokolle}
+In den folgenden Abschnitten wird die Funktionsweise von TLS anhand der aktuellen Version 1.2 im Detail betrachtet. Dazu wird zunächst ein Überblick über die Teilprotokolle gegeben und diese anschließend genauer beleuchtet. Abschließend werden kurz Unterschiede zu anderen Protokollversionen betrachtet und auf bestehende Implementierungen der Spezifikation eingegangen.
 
-Die Informationen in diesem Abschnitt stammen überwiegend aus der TLS 1.2-Spezifikation \cite{tls12}. Für einen ersten Überblick wurde \cite{eckert13} genutzt.
+\section{Teilprotokolle}
+
+Die Informationen in diesem und den folgenden Abschnitt stammen überwiegend aus der TLS 1.2-Spezifikation \cite{tls12}. Für einen ersten Überblick wurde \cite{eckert13} genutzt.
 \todo{Zum Einstieg grobe Funktionsbeschreibung, evtl. schon mit Grafik über Verbindungsaufbau?, Grafik der TLS-Protokolle}
 
 TLS besteht aus zwei Schichten. In der oberen Schicht sind vier Teilprotokolle spezifiziert: das \handshakeprotocol{}, das zum Aushandeln von kryptographischen Algorithmen und zur Vereinbarung von Schlüsselmaterial dient, das \changecipherspecprotocol{}, das den Beginn der Nutzung dieser Algorithmen regelt, das \alertprotocol{}, das das Versenden von Fehlerinformationen in der Verbindung übernimmt und das \applicationdataprotocol{}, das für den Austausch von Anwendungsdaten genutzt wird. Auf diese Protokolle soll später eingegangen werden.\\ 
@@ -53,7 +55,7 @@ In der unteren Schicht befindet sich das \recordprotocol{}, das die Daten von de
 	\label{fig_tls_protocol_hierarchie}
 \end{figure}
 
-\section{Record Protocol}
+\section{\recordprotocol{}}
 \label{sec_record_protocol}
 \todo{Kapitel evtl. hinter den Handshake? Und vorher auf Schlüsselberechnung eingehen?}
 Die zu sendenden Protokolldaten werden von dem \recordprotocol{} in maximal \(2^{14}\) Byte große Pakete fragmentiert und optional komprimiert. Danach wird je nach während des Handshakes verhandelten kryptographischen Funktionen (vgl. Abschnitt \ref{sec_tls_handshake}) die Integrität der Daten durch Berechnen und Anhängen eines MACs gesichert und die Nachricht danach zusammen mit dem MAC verschlüsselt\footnote{
@@ -192,7 +194,7 @@ P_hash(secret, seed) = HMAC_hash(secret, A(1) + seed) +
 
 Aus \datafield{secret}, \datafield{label} und \datafield{seed} können so beliebige Mengen von pseudozufälligen Bits generiert werden (sieht man einmal von der Periode der Funktion ab).
 
-Nach der \clientkeyexchange{}-Nachricht sind Client und Server im Besitz des \premastersecret{}. Aus diesem und den in den Hello-Nachrichten übertragenen Zufallswerten (vgl. Abschnitte \ref{sec_handshake_client_hello} und \ref{sec_handshake_server_hello}) wird nun auf beiden Seiten das \mastersecret{} folgendermaßen generiert:
+Nach der \clientkeyexchange{}-Nachricht (siehe Abschnitt \ref{sec_handshake_client_key_exchange}) sind Client und Server im Besitz des \premastersecret{}. Aus diesem und den in den Hello-Nachrichten übertragenen Zufallswerten (siehe Abschnitte \ref{sec_handshake_client_hello} und \ref{sec_handshake_server_hello}) wird nun auf beiden Seiten das \mastersecret{} folgendermaßen generiert:
 
 \begin{lstlisting}
 master_secret = PRF(pre_master_secret, 
@@ -220,7 +222,7 @@ key_block = PRF(SecurityParameters.master_secret,
 \end{lstlisting}
 
 
-\section{TLS-Handshake}
+\section{Der TLS-Handshake}
 
 \label{sec_tls_handshake}
 
@@ -385,6 +387,7 @@ Mit dieser Nachricht signalisiert der Server das Ende des \serverhello{} und zug
 Wenn von dem Server eine Clientauthentifizierung gefordert wurde, kann der Client in dieser Nachricht seine Zertifikatskette senden. Das Format entspricht dem der \servercertificate{}-Nachricht.
 
 \subsection{ClientKeyExchange}
+\label{sec_handshake_client_key_exchange}
 
 \begin{lstlisting}
 struct {
@@ -435,8 +438,9 @@ struct {
 Diese Nachricht wird gesendet, falls ein Clientzertifikat vom Server angefordert wurde. Sie besteht aus einem mit dem geheimen Schlüssel des Clients signierten Hash der bisherigen Handshake-Nachrichten und dient zur Authentifikation des Clients.
 
 \subsection{ChangeCipherSpec}
+\todo{Irgendwo schon erwähnt oder bei der Einführung? EIGENE section für ChangeCipherSpec und current/pending states}
 
-Diese Nachricht gehört zum \changecipherspecprotocol{}. Es enthält lediglich diese eine Nachricht mit dem Wert 1. Das Empfangen signalisiert dem Empfänger, dass alle nachfolgend gesendeten Nachrichten mit den ausgehandelten kryptographischen Verfahren und Schlüsseln geschützt werden. Dazu werden read pending state (bei Empfang der Nachricht) und write pending state (nach Senden der Nachricht) in die current states kopiert.\todo{Irgendwo schon erwähnt oder bei der Einführung? EIGENE section für ChangeCipherSpec und current/pending states}
+Diese Nachricht gehört zum \changecipherspecprotocol{} (siehe Abschnitt \ref{sec_change_cipher_spec}). Auf diese Nachricht folgende Nachrichten werden mit den ausgehandelten Verfahren und Schlüsseln geschützt.
 
 \subsection{Finished}
 
@@ -446,7 +450,7 @@ struct {
 } Finished;
 \end{lstlisting}
 
-Die \finished{}-Nachricht dient zur Verifikation von erfolgreichem Schlüsselaustausch und Authentifikation. Diese Nachricht ist wie erwähnt die erste, die von den ausgehandelten Verfahren und Schlüsseln geschützt wird. Daher kann hier überprüft werden, ob der Handshake erfolgreich verlaufen ist und beiden Kommunikationspartnern die gleichen Informationen vorliegen.
+Die \finished{}-Nachricht dient zur Verifikation von erfolgreichem Schlüsselaustausch und Authentifikation. Wie erwähnt ist dies die erste von den ausgehandelten Verfahren und Schlüsseln geschützte Nachricht. Daher kann hier überprüft werden, ob der Handshake erfolgreich verlaufen ist und beiden Kommunikationspartnern die gleichen Informationen vorliegen.
 
 Die Nachricht besteht aus einem Hash über die bisher gesendeten bzw. empfangenen Nachrichten des \handshakeprotocol{}s zusammen mit dem \mastersecret{}:
 
@@ -483,11 +487,18 @@ struct {
 \end{lstlisting}
 Diese Informationen enthalten Angaben zu verwendeter \ciphersuite{}, zum Kompressionsalgorithmus und das \mastersecret{}. Sie werden vom \recordprotocol{} für die Verschlüsselung und Authentifizierung von Nachrichten verwendet.
 
-\section{Alert Protocol}
+\section{\changecipherspecprotocol{}}
+\label{sec_change_cipher_spec}
+
+Das \changecipherspecprotocol{} enthält lediglich eine Nachricht mit dem Wert 1. Das Empfangen dieser Nachricht signalisiert dem Empfänger, dass alle nachfolgend gesendeten Nachrichten mit den ausgehandelten kryptographischen Verfahren und Schlüsseln geschützt werden.\\
+Gedanklich existieren bei der Ausführung des TLS-Handshakes vier Verbindungszustände: jeweils zwei Zustände für das Lesen und Schreiben, einer davon für den aktuellen Zustand (der sogenannte current read/write state) und einer für den Zustand, der ausgehandelte wird (der sogenannte pending read/write state). Während des Handshakes werden Verfahren und Schlüssel in den pending states gesetzt. Bei Empfang einer \changecipherspec{}-Nachricht wird der pending read state in den current read state kopiert, sodass alle nachfolgenden empfangenen Nachrichten unter den neuen Schlüsseln und Verfahren verarbeitet werden. Entsprechend wird nach dem Senden der \changecipherspec{}-Nachricht der pending write state in den current write state kopiert. Alle nun gesendeten Nachrichten werden nun ebenfalls durch ausgehandelte Verfahren geschützt.\\
+Zu Beginn einer Verbindung ist in den current read/write states die \ciphersuite{} TLS\_NULL\_WITH\_NULL\_NULL gesetzt (vgl. Abschnitt \ref{sec_cipher_suites}).
+
+\section{\alertprotocol{}}
 
 Das \alertprotocol{} dient dazu, Fehler zu versenden, die während der Kommunikation auftreten. Hierbei kann es sich zum Beispiel um fehlgeschlagene Überprüfung von entschlüsselten Nachrichten (\badrecordmac{}) oder fehlerhafte Zertifikatsüberprüfung (\badcertificate{}) handeln. Unterschieden wird zwischen Fehlern (fatal alert), die sofort zum Schließen der Sitzung führen, und Warnungen (warning alert). Eine Übersicht über alle Fehler findet sich in Abschnitt 7.2 von \cite{tls12}.
 
-\section{Application Data Protocol}
+\section{\applicationdataprotocol{}}
 
 Das \applicationdataprotocol{} ist zuständig für das Durchreichen von Anwendungsdaten, die von der Anwendungsschicht gesendet werden sollen. Die Daten werden durch das \recordprotocol{} übertragen und damit durch die während des Handshakes ausgehandelten Verfahren geschützt.
 
