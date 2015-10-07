@@ -12,7 +12,7 @@ public class TlsDecodeErrorOccuredState extends TlsAlertState {
 
 	@Override
 	public TlsAlertMessage getAlertMessageToSend() {
-		return new TlsAlertMessage(TlsAlert.decrypt_error, true);
+		return new TlsAlertMessage(TlsAlert.decode_error, true);
 	}
 
 }
