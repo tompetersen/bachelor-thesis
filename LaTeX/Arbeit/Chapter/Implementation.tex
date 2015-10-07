@@ -1,54 +1,29 @@
 \chapter{Implementierung}
 
 Im folgenden Kapitel wird nun auf die im Rahmen dieser Arbeit entwickelte Anwendung eingegangen. 
-Dazu werden zuerst allgemeine Entscheidungen erläutert, die vor der Implementation getroffen wurden. 
-Danach wird die Implementation beschrieben, wobei einige wichtige Details näher betrachtet werden sollen. 
+Die Anwendung ist speziell für den Einsatz in der Hochschullehre gedacht und soll dazu dienen Protokolle und ihre internen Abläufe darzustellen und durch zusätzliche Interaktivität exploratives Lernen zu ermöglichen. Eine Vorgabe war die Möglichkeit der Erweiterbarkeit der Anwendung um weitere Protokolle. \\
+Im ersten Abschnitt werden allgemeine Entscheidungen erläutert, die getroffen wurden, um diese Vorgabe zu ermöglichen. Außerdem werden Überlegungen für die Erweiterung der Anwendung um das TLS-Protokoll dargelegt.\\
+Danach wird die Implementation beschrieben, wobei zuerst auf die Umsetzung der allgemeinen Anwendung eingegangen wird und danach auf die konkrete Umsetzung des TLS-Protokolls.
+
 Anschließend werden anhand eines Beispiels einige Hinweise gegeben, was bei der Erweiterung der Anwendung um weitere Protokolle zu beachten ist.
 
-\section{Architekturentscheidungen}
+\section{Analyse und Entwurf}
 
-\begin{mdframed}
-Zugrundeliegend: Gemeinsamkeit von Protokollen, Erweiterbarkeit/Pluginfähigkeit, ...
+\subsection{Abstrakter Rahmen für die Anwendung}
 
-Analyse (Rückgriff auf Didaktik-Kapitel)
-
-Warum Java? (UHH als Einstieg-> für alle verständlich und auch erweiterbar, ...)
-
-\hrulefill{}
-
-Welche TLS-Version? Oder SSL 2.0? Aus welchen Gründen? (1.2, aktuell, demonstriert Funktionsweise und Verhinderung von Angriffen; zum \inquotes{Durchklicken} von Angriffen wäre SSL schöner, ...)
-
-Welche Dinge werden betrachtet, welche ausgelassen (Extensions, Zertifikatvalidierung, ...), aus welchen Gründen?
-
-Ausgelassen:
-\begin{itemize}
-\item TLS-Extensions
-\item Zertifikatsvalidierung, PKI und Verwandtes
-\item Komprimierung
-\item eingeschränkte Anzahl von CipherSuites (und Schlüsselaustausch)
-\item Ältere Versionen
-\item Clientauthentifizierung
-\item Fragmentierung oder mehrere TlsMessages in einem Record
-\item sichere Schlüsselverwaltung, RSA-Bleichenbacher (Noch implementieren?) 
-\end{itemize}
-
-\end{mdframed}
-
-% Abstrakt
-
-Die Anwendung ist speziell für den Einsatz in der Hochschullehre gedacht und soll dazu dienen Protokolle und ihre internen Abläufe darzustellen und durch zusätzliche Interaktivität exploratives Lernen zu ermöglichen. Eine Vorgabe war die Möglichkeit der Erweiterbarkeit der Anwendung um weitere Protokolle. 
-
-Um diese Vorgabe zu ermöglichen, wurden zu Beginn der Entwicklungsarbeit die Gemeinsamkeiten von Protokollen herausgearbeitet, um diese abstrakt umsetzen zu können. So müssen anschließend lediglich protokollspezifische Eigenschaften in Erweiterungen implementiert werden. Die Anwendung soll sich auf Protokolle mit zwei Parteien beschränken. Zwischen diesen Parteien werden Nachrichten eines festen Formats (sogenannte Protokolldateneinheiten) über einen Kanal ausgetauscht. Die Abfolge verschiedener Nachrichtentypen und die bei ihrem Empfang stattfindenden Verarbeitungsschritte sind durch das Protokoll festgelegt. Zusätzlich besitzen die Parteien einen internen Zustand\footnote{
+Um die Vorgabe der Erweiterbarkeit der Anwendung zu ermöglichen, wurden zu Beginn der Entwicklungsarbeit die Gemeinsamkeiten von Protokollen herausgearbeitet, um diese abstrakt umsetzen zu können. So müssen anschließend lediglich protokollspezifische Eigenschaften in Erweiterungen implementiert werden.\\
+Die Anwendung soll sich auf Protokolle mit zwei Parteien beschränken. Zwischen diesen Parteien werden Nachrichten eines festen Formats (sogenannte Protokolldateneinheiten) über einen Kanal ausgetauscht. Die Abfolge verschiedener Nachrichtentypen und die bei ihrem Empfang stattfindenden Verarbeitungsschritte sind durch das Protokoll festgelegt. Zusätzlich besitzen die Parteien einen internen Zustand\footnote{
 	Um Verwechslungen mit den im nächsten Absatz eingeführten Automatenzuständen zu vermeiden, wird der Zustand einer Partei im Folgenden immer als interner Zustand bezeichnet.
 }, der beispielsweise als Resultat empfangener Nachrichten verändert werden kann. 
 
-Aus diesen Voraussetzungen wurde ein abstrakter Rahmen entwickelt, der für konkrete Protokolle erweitert werden muss. Um die Parteien, ihre internen Zustände und die Verarbeitungsschritte bei Nachrichtenempfang strukturiert entwickeln zu können, werden die Parteien als endliche Automaten betrachtet. Es können verschiedene Zustände implementiert werden, um strukturiert unterschiedliches Verhalten bei dem Erhalt von Nachrichten zu erlangen. Der Automat besitzt jeweils immer genau einen aktuellen Zustand, an den eingehende Nachrichten weitergeleitet werden. Abhängig vom gewünschten Verhalten können aus dem aktuellen Zustand heraus der aktuelle Zustand neu gesetzt und Nachrichten gesendet werden. Der Automat kann seinen Zuständen zusätzlich Zugriff auf den internen Zustand der Partei bereitstellen.
-\todo{?  channel, pdu, ...}
+Aus diesen Voraussetzungen wurde ein abstrakter Rahmen entwickelt, der für konkrete Protokolle erweitert werden muss.
+Für ein Protokoll sollte eine Art von Nachrichten bestehen, die von den Parteien gesendet und empfangen werden kann. Dazu muss ein Kanal zwischen den Parteien bestehen, über den das Senden geschehen kann.\\
+Um die Parteien, ihre internen Zustände und die Verarbeitungsschritte bei Nachrichtenempfang strukturiert entwickeln zu können, werden die Parteien als endliche Automaten betrachtet. Es können verschiedene Zustände implementiert werden, um strukturiert unterschiedliches Verhalten bei dem Erhalt von Nachrichten zu erlangen. Der Automat besitzt jeweils immer genau einen aktuellen Zustand, an den eingehende Nachrichten weitergeleitet werden. Abhängig vom gewünschten Verhalten können aus dem aktuellen Zustand heraus der aktuelle Zustand neu gesetzt und Nachrichten gesendet werden. Der Automat kann seinen Zuständen zusätzlich Zugriff auf den internen Zustand der Partei bereitstellen.
 
 Anschließend wurde prototypisch eine Benutzeroberfläche entwickelt, die auf Basis dieser Überlegungen auch einen visuellen Rahmen bereitstellt, der für konkrete Protokolle gefüllt werden kann. \todo{Sketch UI} Es musste möglich sein, den internen Zustand der beiden Parteien darzustellen, der jedoch vom betrachteten Protokoll abhängig ist. Ebenso sollte zu jeder protokollabhängigen Nachricht neben ihrer reinen Repräsentation als Bytefolge auch noch eine Möglichkeit angeboten werden ihre Bedeutung darzustellen. Zusätzlich sollte es möglich sein, dem Verlauf des Protokoll schrittweise zu folgen, um ablaufende Prozesse und Veränderungen an den internen Zuständen zu erkennen. Für das Verständnis von Protokollverhalten bei (absichtlich oder unabsichtlich) veränderten Nachrichten wäre auch eine Möglichkeit für das Bearbeiten von Nachrichten sinnvoll.\\
 Mit diesen Möglichkeiten werden auch die Forderungen an exploratives Lernen und Simulationen aus Abschnitt \ref{sec_exploration}, insbesondere der Sichtenwechsel, die Anzeige nicht sichtbarer Prozesse und die Interaktivität, erfüllt.
 
-% Tls 1.2
+\subsection{Erweiterung der Anwendung um TLS 1.2}
 
 Für diese Arbeit wurde die TLS 1.2-Spezifikation als Erweiterung des abstrakten Rahmens umgesetzt. Hierdurch lässt sich die zum jetzigen Zeitpunkt aktuelle Version explorieren und insbesondere Abwehrmechanismen gegen Angriffe auf ältere Protokollversionen erkennen. Um diese Angriffe beobachten zu können, hätte sich auch eine ältere Protokollversion wie SSL 2.0 angeboten. Durch die Erweiterbarkeit der Anwendung wäre dieses eine Möglichkeit für spätere Arbeiten.
 
@@ -67,20 +42,9 @@ Auch die sichere Verwaltung von Schlüsseln im Dateisystem, sowie die Entfernung
 Aus Zeitgründen wurde auch auf die Wiederaufnahme bestehender Sitzungen verzichtet (siehe Abschnitt \ref{sec_session_connection}). Der verkürzte Handshake hat eher praktische Bedeutung, da auf erneute Aushandlung kryptographischer Verfahren und damit mehrere Nachrichten während des Handshakes verzichtet werden kann und die Wiederaufnahme der Verbindung somit weniger Zeit in Anspruch nimmt. Eine spätere Erweiterung der Anwedung um diese Funktion wäre jedoch sinnvoll, um das Verständnis von TLS zu vertiefen.\\
 Ein letzter Punkt, der in der Anwedung nicht implementiert wurde, ist die Zertifikatsvalidierung. Diese ist zwar entscheidend für den sicheren Aufbau einer Verbindung, hat aber eher indirekt mit der der Protokollspezifikation zu tun. Daher wurde aus Zeitgründen auf diese Funktion verzichtet, die sich jedoch für spätere Arbeiten anbieten würde.
 
-\section{Implementation notes}
+\section{Implementierung}
 
-\begin{mdframed}
-Entwurf (UML ist toll,  ...), Implementierung, Tests, Evaluation...
-
-Probleme/Schwierigkeiten bei der Umsetzung, ...
-
-- Abstrakt \& Architektur: Automaten und States, ViewProvider, ...\\
-- TLS: PDU-Struktur (insbesondere Fragment und CipherArten), Automaten (Security Parameters, Current/Pending States, ...), States (allgemein immer für Warten auf oder Received...), Crypto, Package-Struktur
-\end{mdframed}
-
-
-
-Die Wahl der Programmiersprache fiel auf Java, da diese Sprache an der Universität Hamburg in der ersten Semestern zum Einsatz kommt und von den Studierenden zwingend gelernt werden muss. Auf diese Weise sollte die entwickelte Anwedung auch von anderen Studierenden erweitert oder zumindest problemlos verstanden werden können. Zur Erzeugung der Benutzeroberfläche wurde die in der Java-Runtime verfügbare Bibliothek Swing genutzt, da diese ebenfalls in einigen Veranstaltungen an der Universität Hamburg verwendet wird.
+Die Wahl der Programmiersprache für die Anwendung fiel auf Java, da diese Sprache an der Universität Hamburg in der ersten Semestern zum Einsatz kommt und von den Studierenden zwingend gelernt werden muss. Auf diese Weise sollte die entwickelte Anwendung auch von anderen Studierenden erweitert oder zumindest problemlos verstanden werden können. Zur Erzeugung der Benutzeroberfläche wurde die in der Java-Runtime verfügbare Bibliothek Swing genutzt, da diese ebenfalls in einigen Veranstaltungen an der Universität Hamburg verwendet wird.
 
 \subsection{Abstrakter Rahmen für die Anwendung}
 
@@ -100,7 +64,8 @@ Um Protokollerweiterungen eine typsichere Umgebung zu bieten, besitzen die \sour
 % abstract view
 
 Für die Darstellung des Protokollablaufs wurde ein Gerüst entwickelt, das die im vorherigen Abschnitt beschriebenen Gemeinsamkeiten von Protokollen abbildet. Für die internen Zustände der Parteien werden zwei Bereiche angelegt, die durch konkrete Protokolle bereitgestellt werden müssen. Außerdem wird eine Liste von bereits gesendeten bzw. als nächstes gesendeten Nachrichten angezeigt, die es ermöglicht bei Auswahl einer Nachricht Details zu dieser anzuzeigen. Dabei wird für jede Nachricht die Darstellung als Bytekette und eine protokollspezifische Detailansicht, die ebenfalls durch konkrete Protokolle bereitgestellt werden muss, angeboten. Zusätzlich kann ein weiteres Fenster angezeigt werden, dass es ermöglicht Informationen zu gewünschten zustands- oder nachrichtenabhängigen Daten anzubieten.\\
-Für die Interaktion wird ein Bedienfeld angezeigt, dass die Nachrichtensteuerung bereitstellt und das Informationsfenster öffnet. In der Nachrichtendetaildarstellung können die Bytes einer Nachricht vor dem Senden verändert werden.
+Für die Interaktion wird ein Bedienfeld angezeigt, dass die Nachrichtensteuerung bereitstellt und das Informationsfenster öffnet. In der Nachrichtendetaildarstellung können die Bytes einer Nachricht vor dem Senden verändert werden.\\
+Für die Verknüpfung der Datenschicht mit der Benutzeroberfläche wurde das Entwurfsmuster Model-View-Presenter \todo{Quelle} gewählt, um eine strukturierte Trennung der Schichten zu ermöglichen.
 \todo{Screenshot UI}
 
 % abstract provider and builder
@@ -170,7 +135,10 @@ In der \sourceobject{TlsState}-Klasse werden zu sendende Nachrichten durch die i
 
 % tls 12 view
 
-+ Keyvaluetree 
-+ HTML info
+Für die Benutzeroberfläche wurde den Überlegungen im vorherigen Abschnitt entsprechend für Client und Server ein auf der Swing-Komponente \sourceobject{JTree} basierendes Fensterelement entwickelt. Der interne Zustand der Parteien wird durch Titel-Wert-Paare und optionale Kindelemente dargestellt. Die Klasse \sourceobject{TlsStateMachine} enthält eine Methode, die die Paare für den aktuellen Zustand zurückliefert. Bei Zustandsänderungen, die durch das Beobachter-Muster kommuniziert werden, werden der alte und neue Zustand verglichen und neue oder geänderte Einträge gekennzeichnet, sodass Auswirkungen von empfangenen Nachrichten sichtbar werden. Zusätzlich wurde zu den jeweiligen Einträgen jeweils ein erklärender Informationstext mit Auszügen aus der Spezifikation erstellt, um ein besseres Verständnis der Abläufe zu unterstützen.\\
+Zusätzlich enthalten die Fensterelemente Buttons für die verfügbaren Aktionen wie das Verbinden oder das Senden von Daten bei bestehender Verbindung.\todo{Screenshot ServerClientBaum}
+
+Das gleiche Fensterelement wie für Server und Client wurde auch für die Detaildarstellung von Nachrichten verwendet. Auch für die jeweiligen Nachrichtenfelder wurden Informationstexte erstellt, die beim Verstehen der Protokolls helfen sollen.
+\todo{Screenshot PDU details}
 
 \section{Tutorial: So schreibe ich ein Plugin, ...}

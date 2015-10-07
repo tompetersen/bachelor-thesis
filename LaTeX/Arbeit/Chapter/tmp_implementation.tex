@@ -1,0 +1,40 @@
+\section{Architekturentscheidungen}
+
+\begin{mdframed}
+Zugrundeliegend: Gemeinsamkeit von Protokollen, Erweiterbarkeit/Pluginfähigkeit, ...
+
+Analyse (Rückgriff auf Didaktik-Kapitel)
+
+Warum Java? (UHH als Einstieg-> für alle verständlich und auch erweiterbar, ...)
+
+\hrulefill{}
+
+Welche TLS-Version? Oder SSL 2.0? Aus welchen Gründen? (1.2, aktuell, demonstriert Funktionsweise und Verhinderung von Angriffen; zum \inquotes{Durchklicken} von Angriffen wäre SSL schöner, ...)
+
+Welche Dinge werden betrachtet, welche ausgelassen (Extensions, Zertifikatvalidierung, ...), aus welchen Gründen?
+
+Ausgelassen:
+\begin{itemize}
+\item TLS-Extensions
+\item Zertifikatsvalidierung, PKI und Verwandtes
+\item Komprimierung
+\item eingeschränkte Anzahl von CipherSuites (und Schlüsselaustausch)
+\item Ältere Versionen
+\item Clientauthentifizierung
+\item Fragmentierung oder mehrere TlsMessages in einem Record
+\item sichere Schlüsselverwaltung, RSA-Bleichenbacher (Noch implementieren?) 
+\end{itemize}
+
+\end{mdframed}
+
+
+\section{Implementation notes}
+
+\begin{mdframed}
+Entwurf (UML ist toll,  ...), Implementierung, Tests, Evaluation...
+
+Probleme/Schwierigkeiten bei der Umsetzung, ...
+
+- Abstrakt \& Architektur: Automaten und States, ViewProvider, ...\\
+- TLS: PDU-Struktur (insbesondere Fragment und CipherArten), Automaten (Security Parameters, Current/Pending States, ...), States (allgemein immer für Warten auf oder Received...), Crypto, Package-Struktur
+\end{mdframed}
