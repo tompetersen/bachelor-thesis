@@ -1,5 +1,7 @@
 package jProtocol.Abstract.Model;
 
+import java.util.Arrays;
+
 public abstract class ProtocolDataUnit {
 
 	private boolean _sentByClient;
@@ -30,7 +32,21 @@ public abstract class ProtocolDataUnit {
 	 * @param alteredBytes the new bytes
 	 */
 	public void setAlteredBytes(byte[] alteredBytes) {
-		_alteredBytes = alteredBytes;
+		if (!Arrays.equals(alteredBytes, getMessageBytes())) {
+			_alteredBytes = alteredBytes;
+		}
+		else {
+			_alteredBytes = null;
+		}
+	}
+	
+	/**
+	 * Returns whether this message bytes have been altered by the user before sending.
+	 * 
+	 * @return true, if the bytes have been altered
+	 */
+	public boolean hasAlteredBytes() {
+		return (_alteredBytes != null);
 	}
 
 	/**

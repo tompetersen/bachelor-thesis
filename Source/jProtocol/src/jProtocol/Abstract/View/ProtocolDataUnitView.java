@@ -171,6 +171,7 @@ public class ProtocolDataUnitView<T extends ProtocolDataUnit> {
 							if (content.length() % 2 == 0) {
 								pdu.setAlteredBytes(ByteHelper.hexStringToBytes(content));
 								dialog.dispose();
+								setPduInView(pdu);
 							}
 							else {
 								JOptionPane.showMessageDialog(dialog, "Hex representation of the message must have an even length!", "Bad input", JOptionPane.ERROR_MESSAGE);
@@ -273,9 +274,8 @@ public class ProtocolDataUnitView<T extends ProtocolDataUnit> {
 	private void setPduInView(T pdu) {
 		JComponent newPduView = _provider.getDetailedViewForProtocolDataUnit(pdu, _htmlInfoUpdater);
 		setPduDetailView(newPduView);
-
-		String bytes = ByteHelper.bytesToHexString(pdu.getBytes());
-		setByteTabValue(bytes);
+		
+		setByteTabValue(pdu);
 	}
 
 	private void setPduDetailView(JComponent pduView) {
@@ -285,7 +285,9 @@ public class ProtocolDataUnitView<T extends ProtocolDataUnit> {
 		_pduView.repaint();
 	}
 
-	private void setByteTabValue(String bytes) {
+	private void setByteTabValue(T pdu) {
+		String bytes = ByteHelper.bytesToHexString(pdu.getBytes());
+		
 		int length = bytes.length();
 		StringBuilder builder = new StringBuilder("<html>");
 
@@ -302,7 +304,8 @@ public class ProtocolDataUnitView<T extends ProtocolDataUnit> {
 		}
 
 		builder.append("</html>");
-
+		
 		_pduBytesLabel.setText(builder.toString());
+		_pduBytesLabel.setForeground(pdu.hasAlteredBytes() ? UiConstants.ALTERED_BYTES_FOREGROUND_COLOR : Color.BLACK);
 	}
 }

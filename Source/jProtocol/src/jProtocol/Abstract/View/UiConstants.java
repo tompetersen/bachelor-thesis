@@ -12,4 +12,6 @@ public class UiConstants {
 	public static Color LIST_CHOSEN_PDU_BACKGROUND = new Color(0x78, 0xD1, 0x5E);
 
 	public static Color KEY_VALUE_TREE_HIGHLIGHT_COLOR = new Color(0xF0, 0xE8, 0x64);
+	
+	public static Color ALTERED_BYTES_FOREGROUND_COLOR = new Color(0xDB, 0x40, 0x38);
 }
