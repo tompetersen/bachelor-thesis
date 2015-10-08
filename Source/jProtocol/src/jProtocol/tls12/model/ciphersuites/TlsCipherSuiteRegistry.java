@@ -1,5 +1,6 @@
 package jProtocol.tls12.model.ciphersuites;
 
+import jProtocol.helper.MyLogger;
 import jProtocol.tls12.model.ciphersuites.impl.TlsCipherSuite_DHE_RSA_WITH_AES_128_CBC_SHA;
 import jProtocol.tls12.model.ciphersuites.impl.TlsCipherSuite_DHE_RSA_WITH_AES_128_GCM_SHA256;
 import jProtocol.tls12.model.ciphersuites.impl.TlsCipherSuite_NULL_WITH_NULL_NULL;
@@ -14,31 +15,51 @@ import java.util.List;
 import java.util.Map;
 
 public class TlsCipherSuiteRegistry {
-	
+
 	private Map<Short, TlsCipherSuite> _supportedCipherSuites;
 	private short _preferredCipherSuite;
-	
+
 	public TlsCipherSuiteRegistry() {
 		_supportedCipherSuites = new HashMap<Short, TlsCipherSuite>();
 		_preferredCipherSuite = -1;
-		
-		//TODO: Add cipher suites (maybe automagically)
+
+		// TODO: Add cipher suites (maybe automagically)
 		TlsCipherSuite cs = new TlsCipherSuite_NULL_WITH_NULL_NULL();
 		_supportedCipherSuites.put(cs.getCode(), cs);
+
+		try {
+			cs = new TlsCipherSuite_RSA_WITH_AES_128_CBC_SHA();
+			_supportedCipherSuites.put(cs.getCode(), cs);
+		}
+		catch (Exception e) {
+			MyLogger.info("Couldn't register TLS_RSA_WITH_AES_128_CBC_SHA: " + e.getLocalizedMessage());
+		}
+
+		try {
+			cs = new TlsCipherSuite_RSA_WITH_AES_128_GCM_SHA256();
+			_supportedCipherSuites.put(cs.getCode(), cs);
+		}
+		catch (Exception e) {
+			MyLogger.info("Couldn't register TLS_RSA_WITH_AES_128_GCM_SHA256: " + e.getLocalizedMessage());
+		}
 		
-		cs = new TlsCipherSuite_RSA_WITH_AES_128_CBC_SHA();
-		_supportedCipherSuites.put(cs.getCode(), cs);
+		try {
+			cs = new TlsCipherSuite_DHE_RSA_WITH_AES_128_GCM_SHA256();
+			_supportedCipherSuites.put(cs.getCode(), cs);
+		}
+		catch (Exception e) {
+			MyLogger.info("Couldn't register TLS_DHE_RSA_WITH_AES_128_GCM_SHA256: " + e.getLocalizedMessage());
+		}
 		
-		cs = new TlsCipherSuite_RSA_WITH_AES_128_GCM_SHA256();
-		_supportedCipherSuites.put(cs.getCode(), cs);
-		
-		cs = new TlsCipherSuite_DHE_RSA_WITH_AES_128_GCM_SHA256();
-		_supportedCipherSuites.put(cs.getCode(), cs);
-		
-		cs = new TlsCipherSuite_DHE_RSA_WITH_AES_128_CBC_SHA();
-		_supportedCipherSuites.put(cs.getCode(), cs);
+		try {
+			cs = new TlsCipherSuite_DHE_RSA_WITH_AES_128_CBC_SHA();
+			_supportedCipherSuites.put(cs.getCode(), cs);
+		}
+		catch (Exception e) {
+			MyLogger.info("Couldn't register TLS_DHE_RSA_WITH_AES_128_CBC_SHA: " + e.getLocalizedMessage());
+		}
 	}
-	
+
 	public TlsCipherSuite cipherSuiteFromValue(short value) throws TlsInvalidCipherSuiteException {
 		TlsCipherSuite suite = _supportedCipherSuites.get(value);
 		if (suite != null) {
@@ -48,7 +69,7 @@ public class TlsCipherSuiteRegistry {
 			throw new TlsInvalidCipherSuiteException("Cipher suite for value " + value + " not found!");
 		}
 	}
-	
+
 	public short valueFromCipherSuite(TlsCipherSuite cipherSuite) throws TlsInvalidCipherSuiteException {
 		for (short s : _supportedCipherSuites.keySet()) {
 			if (_supportedCipherSuites.get(s).getClass().equals(cipherSuite.getClass())) {
@@ -57,14 +78,15 @@ public class TlsCipherSuiteRegistry {
 		}
 		throw new TlsInvalidCipherSuiteException("Value for cipher suite " + cipherSuite.getName() + " not found!");
 	}
-	
+
 	/**
-	 * Returns all implemented cipher suites which can be used for a secure connection. TLS_NULL_WITH_NULL_NULL is not included.
+	 * Returns all implemented cipher suites which can be used for a secure
+	 * connection. TLS_NULL_WITH_NULL_NULL is not included.
 	 * 
 	 * @return a list of all implemented cipher suites
 	 */
 	public List<TlsCipherSuite> allCipherSuites() {
-		List <TlsCipherSuite> result = new ArrayList<TlsCipherSuite>(_supportedCipherSuites.values());
+		List<TlsCipherSuite> result = new ArrayList<TlsCipherSuite>(_supportedCipherSuites.values());
 		result.remove(getNullCipherSuite());
 		Collections.sort(result, new Comparator<TlsCipherSuite>() {
 			@Override
@@ -80,18 +102,18 @@ public class TlsCipherSuiteRegistry {
 				}
 			}
 		});
-		
+
 		return result;
 	}
-	
+
 	public void setPreferredCipherSuite(short cipherSuiteCode) {
 		_preferredCipherSuite = cipherSuiteCode;
 	}
-	
+
 	public short getPreferredCipherSuite() {
 		return _preferredCipherSuite;
 	}
-	
+
 	public TlsCipherSuite getNullCipherSuite() {
 		try {
 			return cipherSuiteFromValue((short) 0);
