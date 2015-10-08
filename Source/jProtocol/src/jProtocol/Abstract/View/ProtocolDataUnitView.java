@@ -51,6 +51,7 @@ public class ProtocolDataUnitView<T extends ProtocolDataUnit> {
 	private List<T> _sentPdus;
 	private T _pduToSend;
 	
+	private JButton _editBytesButton;
 
 	/**
 	 * Creates a view for showing a protocol data unit list and detail view.
@@ -121,17 +122,18 @@ public class ProtocolDataUnitView<T extends ProtocolDataUnit> {
 		actionTab.setLayout(new BoxLayout(actionTab, BoxLayout.Y_AXIS));
 		actionTab.setBackground(Color.WHITE);
 		
-		JButton editButton = new JButton("Edit Bytes", new ImageIcon(ImageLoader.getEditIcon(UiConstants.BUTTON_IMAGE_SIZE, UiConstants.BUTTON_IMAGE_SIZE)));
-		editButton.setHorizontalTextPosition(JButton.RIGHT);
-		editButton.setVerticalTextPosition(JButton.CENTER);
-		editButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-		editButton.addActionListener(new ActionListener() {
+		_editBytesButton = new JButton("Edit Bytes", new ImageIcon(ImageLoader.getEditIcon(UiConstants.BUTTON_IMAGE_SIZE, UiConstants.BUTTON_IMAGE_SIZE)));
+		_editBytesButton.setHorizontalTextPosition(JButton.RIGHT);
+		_editBytesButton.setVerticalTextPosition(JButton.CENTER);
+		_editBytesButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+		_editBytesButton.setEnabled(false);
+		_editBytesButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				editPduBytes();
 			}
 		});
-		actionTab.add(editButton);
+		actionTab.add(_editBytesButton);
 		
 		return actionTab;
 	}
@@ -274,8 +276,8 @@ public class ProtocolDataUnitView<T extends ProtocolDataUnit> {
 	private void setPduInView(T pdu) {
 		JComponent newPduView = _provider.getDetailedViewForProtocolDataUnit(pdu, _htmlInfoUpdater);
 		setPduDetailView(newPduView);
-		
 		setByteTabValue(pdu);
+		_editBytesButton.setEnabled(pdu == _pduToSend);
 	}
 
 	private void setPduDetailView(JComponent pduView) {
