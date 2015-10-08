@@ -77,6 +77,8 @@ public class TlsServerView {
 		buttonPanel.add(_closeButton);
 		
 		_view.add(buttonPanel);
+		
+		updateView();
 	}
 	
 	/**

@@ -33,7 +33,7 @@ public class PluginChooser {
 		_protocolRegistry = registry;
 		
 		_pluginChooser = new JDialog(parentFrame, "Start Protocol");
-		_pluginChooser.setSize(400, 200);
+		_pluginChooser.setSize(600, 400);
 		_pluginChooser.setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
 		_pluginChooser.setLocationRelativeTo(parentFrame);
 

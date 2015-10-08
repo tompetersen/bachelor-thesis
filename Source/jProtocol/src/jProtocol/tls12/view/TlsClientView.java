@@ -97,6 +97,8 @@ public class TlsClientView {
 		buttonPanel.add(_closeButton);
 		
 		_view.add(buttonPanel);
+		
+		updateView();
 	}
 	
 	/**
