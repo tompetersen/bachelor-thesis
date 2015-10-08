@@ -5,7 +5,7 @@
 
 \label{cha_attacks}
 
-Eine gute Übersicht zu bisherigen Angriffen auf TLS findet sich in \cite{meyer13}. Viele Schwächen früherer Protokollversionen bis SSL 3 sind in \cite{wagner96} zu finden.\todo{JEDEN Angriff auf angreifbare Version und Änderungen in neuen Versionen überprüfen.}
+Eine gute Übersicht zu bisherigen Angriffen auf TLS findet sich in \cite{meyer13}. Viele Schwächen früherer Protokollversionen bis SSL 3 sind in \cite{wagner96} zu finden.
 
 \section{Version Rollback}
 
@@ -152,7 +152,7 @@ In \cite{logjam15} beschreiben die Autoren mehrere Angriffe gegen die Nutzung vo
 \section{Zertifikate und Verwandtes}
 
 \label{sec_certificates}
-
+\todo{Klammern ausformulieren (Ephraim)}
 Viele Probleme, die in den letzten Jahren aufgetreten sind, betreffen nicht das TLS-Protokoll direkt, sondern die Erstellung und Validierung von (insbesondere) Server-Zertifikaten, und seien deshalb nur am Rande erwähnt. Ein guter Überblick ist in \cite{meyer13} zu finden.
 
 Oftmals richteten sich diese Angriffe gegen mangelnde Zertifikatvalidierung in TLS-Implementierungen (keine Validierung, keine Überprüfung des Servernamens, Akzeptanz unsignierter oder abgelaufener Zertifikate, ...) oder wenig Sorgfalt bei der Zertifikaterstellung durch Certificate Authorities (Nutzung von MD5, fehlerhafte Validierung von übermittelten Servernamen, fehlerhafte Ausgabe von intermediate-Zertifikaten, mangelhaft abgesicherte Server, ...).

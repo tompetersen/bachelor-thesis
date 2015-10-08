@@ -20,7 +20,14 @@ Aus diesen Voraussetzungen wurde ein abstrakter Rahmen entwickelt, der für konk
 Für ein Protokoll sollte eine Art von Nachrichten bestehen, die von den Parteien gesendet und empfangen werden kann. Dazu muss ein Kanal zwischen den Parteien bestehen, über den das Senden geschehen kann.\\
 Um die Parteien, ihre internen Zustände und die Verarbeitungsschritte bei Nachrichtenempfang strukturiert entwickeln zu können, werden die Parteien als endliche Automaten betrachtet. Es können verschiedene Zustände implementiert werden, um strukturiert unterschiedliches Verhalten bei dem Erhalt von Nachrichten zu erlangen. Der Automat besitzt jeweils immer genau einen aktuellen Zustand, an den eingehende Nachrichten weitergeleitet werden. Abhängig vom gewünschten Verhalten können aus dem aktuellen Zustand heraus der aktuelle Zustand neu gesetzt und Nachrichten gesendet werden. Der Automat kann seinen Zuständen zusätzlich Zugriff auf den internen Zustand der Partei bereitstellen.
 
-Anschließend wurde prototypisch eine Benutzeroberfläche entwickelt, die auf Basis dieser Überlegungen auch einen visuellen Rahmen bereitstellt, der für konkrete Protokolle gefüllt werden kann. \todo{Sketch UI} Es musste möglich sein, den internen Zustand der beiden Parteien darzustellen, der jedoch vom betrachteten Protokoll abhängig ist. Ebenso sollte zu jeder protokollabhängigen Nachricht neben ihrer reinen Repräsentation als Bytefolge auch noch eine Möglichkeit angeboten werden ihre Bedeutung darzustellen. Zusätzlich sollte es möglich sein, dem Verlauf des Protokoll schrittweise zu folgen, um ablaufende Prozesse und Veränderungen an den internen Zuständen zu erkennen. Für das Verständnis von Protokollverhalten bei (absichtlich oder unabsichtlich) veränderten Nachrichten wäre auch eine Möglichkeit für das Bearbeiten von Nachrichten sinnvoll.\\
+\begin{figure}
+	\centering
+	\includegraphics[width=15cm]{Diagrams/SketchUI.png} %
+	\caption{Prototyp für die Benutzeroberfläche}
+	\label{fig_ui_sketch}
+\end{figure}
+
+Anschließend wurde prototypisch eine Benutzeroberfläche entwickelt, die auf Basis dieser Überlegungen auch einen visuellen Rahmen bereitstellt, der für konkrete Protokolle gefüllt werden kann. Ein Prototyp ist in Abbildung\ref{fig_ui_sketch} zu sehen. Es musste möglich sein, den internen Zustand der beiden Parteien darzustellen, der jedoch vom betrachteten Protokoll abhängig ist. Ebenso sollte zu jeder protokollabhängigen Nachricht neben ihrer reinen Repräsentation als Bytefolge auch noch eine Möglichkeit angeboten werden ihre Bedeutung darzustellen. Zusätzlich sollte es möglich sein, dem Verlauf des Protokoll schrittweise zu folgen, um ablaufende Prozesse und Veränderungen an den internen Zuständen zu erkennen. Für das Verständnis von Protokollverhalten bei (absichtlich oder unabsichtlich) veränderten Nachrichten wäre auch eine Möglichkeit für das Bearbeiten von Nachrichten sinnvoll.\\
 Mit diesen Möglichkeiten werden auch die Forderungen an exploratives Lernen und Simulationen aus Abschnitt \ref{sec_exploration}, insbesondere der Sichtenwechsel, die Anzeige nicht sichtbarer Prozesse und die Interaktivität, erfüllt.
 
 \subsection{Erweiterung der Anwendung um TLS 1.2}
@@ -49,12 +56,20 @@ Die Wahl der Programmiersprache für die Anwendung fiel auf Java, da diese Sprac
 \subsection{Abstrakter Rahmen für die Anwendung}
 
 % abstract model
+Ein UML-Diagramm der entwickelten Klassen für den abstrakten Rahmen ist in Abbildung \ref{fig_uml_abstract_state_machine} zu finden. Im Folgenden werden diese Klassen im Detail betrachtet.
 
 Protokollnachrichten werden durch die abstrakte Klasse \sourceobject{ProtocolDataUnit} dargestellt. In Unterklassen muss die Byte-Repräsentation einer Nachricht sowie Titel und Untertitel für die Darstellung auf der Benutzeroberfläche implementiert werden.
 
 Für den abstrakten Rahmen wurden die Parteien als endliche Automaten modelliert. Für diese Modellierung wird das Entwurfsmuster Zustand \todo{reference state pattern} verwendet. \\
 Die abstrakte Klasse \sourceobject{StateMachine} bildet das Grundgerüst für einen Automaten und die abstrakte Klasse \sourceobject{State} wird zur Implementierung der jeweiligen Automatenzustände verwendet. In einem \sourceobject{StateMachine}-Objekt kann der aktuelle Zustand gesetzt und abgefragt, sowie Nachrichten gesendet werden. Die möglichen Zustände müssen dem Objekt vorher mitgeteilt werden. Zur Beobachtung von Zustandsänderungen wird das Beobachter-Muster verwendet. \todo{reference observer pattern}  \\
 Unterklassen von \sourceobject{State} implementieren das Verhalten bei Empfang einer Nachricht und bei Betreten und Verlassen des Zustand. Außerdem ermöglichen sie das Senden von Nachrichten und das Setzen des aktuellen Zustands des besitzenden \sourceobject{StateMachine}-Objekts.\todo{UML1 - komplett StateMachine, State, Channel, PDU}
+
+\begin{figure}
+	\centering
+	\includegraphics[scale=0.9]{Diagrams/uml/abstract_pdu_state_machine_channel.pdf} %scale=0.8
+	\caption{UML-Diagramm der Umsetzung des abstrakten Rahmens}
+	\label{fig_uml_abstract_state_machine}
+\end{figure}
 
 Für die Übertragung von Nachrichten wird ein \sourceobject{CommunicationChannel}-Objekt genutzt, dass die Übermittlung von Nachrichten zwischen den beiden an dem Protokollablauf beteiligten \sourceobject{StateMachine}-Objekten übernimmt. Außerdem ist in diesem Objekt auch die Thread-Synchronisierung implementiert, die dafür sorgt, dass der Protokollablauf beim Senden einer Nachricht pausiert wird. Dies ermöglicht das schrittweise Verfolgen der gesendeten Nachrichten und der Veränderungen des internen Zustands der Kommunikationspartner. Auch \sourceobject{CommunicationChannel}-Objekte können beobachtet werden, um über zu sendende oder gesendete Nachrichten informiert zu werden.
 
@@ -66,11 +81,18 @@ Um Protokollerweiterungen eine typsichere Umgebung zu bieten, besitzen die \sour
 Für die Darstellung des Protokollablaufs wurde ein Gerüst entwickelt, das die im vorherigen Abschnitt beschriebenen Gemeinsamkeiten von Protokollen abbildet. Für die internen Zustände der Parteien werden zwei Bereiche angelegt, die durch konkrete Protokolle bereitgestellt werden müssen. Außerdem wird eine Liste von bereits gesendeten bzw. als nächstes gesendeten Nachrichten angezeigt, die es ermöglicht bei Auswahl einer Nachricht Details zu dieser anzuzeigen. Dabei wird für jede Nachricht die Darstellung als Bytekette und eine protokollspezifische Detailansicht, die ebenfalls durch konkrete Protokolle bereitgestellt werden muss, angeboten. Zusätzlich kann ein weiteres Fenster angezeigt werden, dass es ermöglicht Informationen zu gewünschten zustands- oder nachrichtenabhängigen Daten anzubieten.\\
 Für die Interaktion wird ein Bedienfeld angezeigt, dass die Nachrichtensteuerung bereitstellt und das Informationsfenster öffnet. In der Nachrichtendetaildarstellung können die Bytes einer Nachricht vor dem Senden verändert werden.\\
 Für die Verknüpfung der Datenschicht mit der Benutzeroberfläche wurde das Entwurfsmuster Model-View-Presenter \todo{Quelle} gewählt, um eine strukturierte Trennung der Schichten zu ermöglichen.
-\todo{Screenshot UI}
+\todo{Screenshot UI? Eher nicht...Sketch vorhanden}
 
 % abstract provider and builder
 
-Um Erweiterungen die Bereitstellung fehlender Elemente und nötiger Objekte zu ermöglichen, wurden die Interfaces \sourceobject{ViewProvider} und \sourceobject{StateMachineProvider} erstellt, die eine Erweiterung implementieren muss. Objekte, die diese Interfaces implementieren, ermöglichen es das Gerüst mit protokollspezifischen Details zu füllen. \sourceobject{ViewProvider} sorgen für die Bereitstellung von Fensterelementen für die internen Zustände der Parteien, für die Detailansicht einer Nachricht und für optionale Einstellmöglichkeiten zu dem Protokollablauf. \sourceobject{StateMachineProvider} sind zuständig für die entsprechenden \sourceobject{StateMachine}-Objekte für die beiden Parteien. Diese werden dann durch einen \sourceobject{ProtocolBuilder} mit einem \sourceobject{CommunicationChannel} und den entsprechenden Fensterelementen verknüpft.\todo{UML2 - Providers, ProtocolBuilder oder zusammen mit UML1?}
+Um Erweiterungen die Bereitstellung fehlender Elemente und nötiger Objekte zu ermöglichen, wurden die Interfaces \sourceobject{ViewProvider} und \sourceobject{StateMachineProvider} erstellt, die eine Erweiterung implementieren muss. Objekte, die diese Interfaces implementieren, ermöglichen es das Gerüst mit protokollspezifischen Details zu füllen. \sourceobject{ViewProvider} sorgen für die Bereitstellung von Fensterelementen für die internen Zustände der Parteien, für die Detailansicht einer Nachricht und für optionale Einstellmöglichkeiten zu dem Protokollablauf. \sourceobject{StateMachineProvider} sind zuständig für die entsprechenden \sourceobject{StateMachine}-Objekte für die beiden Parteien. Diese werden dann durch einen \sourceobject{ProtocolBuilder} mit einem \sourceobject{CommunicationChannel} und den entsprechenden Fensterelementen verknüpft. In Abbildung \ref{fig_uml_abstract_provider_builder} ist ein UML-Diagramm zu finden, das diese Zusammenhänge visualisiert. \todo{UML2 - Providers, ProtocolBuilder oder zusammen mit UML1?}
+
+\begin{figure}
+	\centering
+	\includegraphics[scale=0.9]{Diagrams/uml/abstract_provider_builder.pdf} %scale=0.8
+	\caption{UML-Diagramm von Provider- und ProtocolBuilder-Klassen für die Bereitstellung von Erweiterungen}
+	\label{fig_uml_abstract_provider_builder}
+\end{figure}
 
 Beim Laden einer neuen Protokollsimulation wird eine Liste vorhandener Protokolle und bei Auswahl eines Eintrags die entsprechende Einstellungsansicht angezeigt. Wenn eine Protokollsimulation gestartet wird, wird das vom \sourceobject{ProtocolBuilder} zur Verfügung gestellte Fensterelement in die Anwendung eingebettet.
 
@@ -85,12 +107,21 @@ Die Nachrichten der oberen Schicht werden durch für jedes Teilprotokoll bestehe
 
 	%state machine, states, security paramaters, connection state
 
-Als Unterklasse der \sourceobject{StateMachine}-Klasse wurde \sourceobject{TlsStateMachine} implementiert. Diese Klasse bietet Zugriff auf alle notwendigen, internen Zustandsinformationen von TLS-Client und -Server. Ein Objekt vom Typ \sourceobject{TlsSecurityParameters} bietet Zugriff auf während des Handshakes ausgehandelte Verfahren und Informationen wie SessionId, Random-Werte und das berechnete \mastersecret{}. Objekte vom Type \sourceobject{TlsConnectionState} bilden den current read und write state, sowie den pending state. \todo{Verweis auf Kapitel über ChangeCipherSpec} In ihnen werden ausgehandelte \ciphersuite{} und Schlüssel sowie die aktuelle Sequenznummer verwaltet. Bei Empfang oder nach dem Senden einer \changecipherspec{}-Nachricht kann der pending state zum current state gemacht werden.\\
+Im Folgenden werden die implementierten Klassen für das TLS-Automatenmodell beschrieben. Ein UML-Diagramm ist in Abbildung \ref{fig_uml_tls_state_machine} zu finden.
+
+Als Unterklasse der \sourceobject{StateMachine}-Klasse wurde \sourceobject{TlsStateMachine} implementiert. Diese Klasse bietet Zugriff auf alle notwendigen, internen Zustandsinformationen von TLS-Client und -Server. Ein Objekt vom Typ \sourceobject{TlsSecurityParameters} bietet Zugriff auf während des Handshakes ausgehandelte Verfahren und Informationen wie SessionId, Random-Werte und das berechnete \mastersecret{}. Objekte vom Type \sourceobject{TlsConnectionState} bilden den current read und write state, sowie den pending state (vgl. Abschnitt \ref{sec_change_cipher_spec}). In ihnen werden ausgehandelte \ciphersuite{} und Schlüssel sowie die aktuelle Sequenznummer verwaltet. Bei Empfang oder nach dem Senden einer \changecipherspec{}-Nachricht kann der pending state zum current state gemacht werden.\\
 Für Client und Server wurde jeweils eine Unterklasse \sourceobject{TlsClientStateMachine} und \sourceobject{TlsServerStateMachine} erstellt, die unterschiedliches Verhalten der beiden Parteien enthalten. Insbesondere im Bereich der asymmetrischen Kryptographie sind diese Unterschiede so groß, dass der Mehraufwand gerechtfertigt ist. Beispielsweise besitzt der Server ein RSA-Schlüsselpaar, dessen geheimer Schlüssel zum Entschlüsseln des vom Client ausgewählten \premastersecret{} oder zum Signieren der Diffie-Hellman-Parameter genutzt wird. Der Client ist im Gegensatz dazu lediglich im Besitz des öffentlichen Serverschlüssels zum Verschlüsseln des \premastersecret{}s oder zum Überprüfen der Parametersignatur.
 
-Entsprechend den Automatenmodellen im Anhang \ref{cha_tls_state_machines} wurden für alle Zustände entsprechende Unterklassen von \sourceobject{TlsState}, einer Unterklasse von \sourceobject{State}, erstellt. Jede dieser Unterklassen definiert die Typen von TLS-Nachrichten der oberen Schicht, die sie erwartet, und implementiert das Verhalten bei Empfang einer solchen Nachricht. Beispielsweise erwartet der Clientzustand \sourceobject{TlsWaitingForServerHelloState} lediglich Handshake-Nachrichten vom Typ \serverhello{}. Bei Empfang einer solchen Nachricht werden die entsprechenden Felder für TlsVersion, ServerRandom, SessionID und \ciphersuite{} gesetzt und der aktuelle Zustand der \sourceobject{TlsClientStateMachine} auf den nachfolgenden Zustand gesetzt. Diese Umsetzung ist in Listing \ref{lst_state_example} zu finden. Nach dem gleichen Prinzip wird das Verhalten in allen anderen Zuständen implementiert.
-
 \todo{UML3 - StateMachine -> TlsStateMachine -> Client/ServerStateMachine, State-> TlsState -> Ein Beispiel, SecurityParameters, ConnectionState}
+
+\begin{figure}
+	\centering
+	\includegraphics[scale=0.9]{Diagrams/uml/tls_state_machine.pdf} 
+	\caption{UML-Diagramm der Klassen für das Tls-Automatenmodell}
+	\label{fig_uml_tls_state_machine}
+\end{figure}
+
+Entsprechend den Automatenmodellen im Anhang \ref{cha_tls_state_machines} wurden für alle Zustände entsprechende Unterklassen von \sourceobject{TlsState}, einer Unterklasse von \sourceobject{State}, erstellt. Jede dieser Unterklassen definiert die Typen von TLS-Nachrichten der oberen Schicht, die sie erwartet, und implementiert das Verhalten bei Empfang einer solchen Nachricht. Beispielsweise erwartet der Clientzustand \sourceobject{TlsWaitingForServerHelloState} lediglich Handshake-Nachrichten vom Typ \serverhello{}. Bei Empfang einer solchen Nachricht werden die entsprechenden Felder für TlsVersion, ServerRandom, SessionID und \ciphersuite{} gesetzt und der aktuelle Zustand der \sourceobject{TlsClientStateMachine} auf den nachfolgenden Zustand gesetzt. Diese Umsetzung ist in Listing \ref{lst_state_example} zu finden. Nach dem gleichen Prinzip wird das Verhalten in allen anderen Zuständen implementiert. 
 
 \lstset{style=java, caption={Implementierung des Zustands \sourceobject{TlsWaitingForServerHelloState}}, label=lst_state_example}
 \begin{lstlisting}
