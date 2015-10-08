@@ -1,9 +1,11 @@
 package jProtocol;
 
-import jProtocol.Abstract.ProtocolBuilder;
 import jProtocol.Abstract.PluginChooser;
+import jProtocol.Abstract.ProtocolBuilder;
 import jProtocol.Abstract.ProtocolRegistry;
 import jProtocol.Abstract.Model.ProtocolDataUnit;
+import jProtocol.Abstract.View.HtmlInfoView;
+import jProtocol.Abstract.View.resources.HtmlAboutLoader;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -17,7 +19,9 @@ import javax.swing.UIManager;
 
 public class StartUp {
 
-	JFrame _frame;
+	private JFrame _frame;
+	private HtmlInfoView _aboutView;
+	private ProtocolBuilder<? extends ProtocolDataUnit> _currentBuilder;
 
 	public static void main(String[] args) {
 		new StartUp();
@@ -29,6 +33,8 @@ public class StartUp {
 		}
 		catch (Exception e) {
 		}
+		
+		_aboutView = new HtmlInfoView();
 
 		_frame = new JFrame("jProtocol");
 		_frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -94,21 +100,21 @@ public class StartUp {
 	}
 
 	private void startProtocolClicked() {
-		ProtocolBuilder<? extends ProtocolDataUnit> builder = getProtocolFromPluginChooser();
+		_currentBuilder = getProtocolFromPluginChooser();
 
-		if (builder != null) {
+		if (_currentBuilder != null) {
 			_frame.getContentPane().removeAll();
 			_frame.revalidate();
 			_frame.repaint();
 			
-			_frame.getContentPane().add(builder.getView());
+			_frame.getContentPane().add(_currentBuilder.getView());
 			_frame.revalidate();
 			_frame.repaint();
 		}
 	}
 
 	private ProtocolBuilder<? extends ProtocolDataUnit> getProtocolFromPluginChooser() {
-		//TODO: as fields
+		//TODO: as fields?
 		ProtocolRegistry registry = new ProtocolRegistry();
 		PluginChooser pluginChooser = new PluginChooser(registry, _frame);
 
@@ -122,10 +128,14 @@ public class StartUp {
 	}
 
 	private void aboutClicked() {
-
+		_aboutView.setHtmlContent(HtmlAboutLoader.getHtmlAboutContent());
+		_aboutView.show();
 	}
 
 	private void aboutProtocolClicked() {
-
+		if (_currentBuilder != null) {
+			_aboutView.setHtmlContent(_currentBuilder.getHtmlAboutContent());
+			_aboutView.show();
+		}
 	}
 }

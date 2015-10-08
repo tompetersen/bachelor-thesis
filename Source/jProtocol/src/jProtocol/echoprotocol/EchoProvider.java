@@ -56,4 +56,9 @@ public class EchoProvider implements ViewProvider<EchoProtocolDataUnit>, StateMa
 		return new JPanel();
 	}
 
+	@Override
+	public String getHtmlAboutContent() {
+		return "<html><head></head><body><h1>Content</h1><p>Some text...</p></body></html>";
+	}
+
 }

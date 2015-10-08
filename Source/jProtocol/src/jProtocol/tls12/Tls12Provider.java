@@ -5,6 +5,7 @@ import jProtocol.Abstract.ViewProvider;
 import jProtocol.Abstract.Model.StateMachine;
 import jProtocol.Abstract.View.HtmlInfoUpdater;
 import jProtocol.Abstract.View.keyvaluetree.KeyValueTree;
+import jProtocol.tls12.htmlinfo.TlsHtmlInfoLoader;
 import jProtocol.tls12.model.TlsCiphertext;
 import jProtocol.tls12.model.ciphersuites.TlsCipherSuiteRegistry;
 import jProtocol.tls12.model.states.TlsClientStateMachine;
@@ -76,5 +77,10 @@ public class Tls12Provider implements ViewProvider<TlsCiphertext>, StateMachineP
 	public JComponent getSettingsView() {
 		TlsSettingsView view = new TlsSettingsView(_registry);
 		return view.getView();
+	}
+
+	@Override
+	public String getHtmlAboutContent() {
+		return TlsHtmlInfoLoader.loadHtmlInfoForFileName("about.html");
 	}
 }

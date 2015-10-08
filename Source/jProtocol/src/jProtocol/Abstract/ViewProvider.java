@@ -65,4 +65,12 @@ public interface ViewProvider<T extends ProtocolDataUnit> {
 	 * @return a preferences view
 	 */
 	public JComponent getSettingsView();
+	
+	
+	/**
+	 * Should return the HTML content which is displayed in the 'about protocol' view.
+	 * 
+	 * @return the HTML content
+	 */
+	public String getHtmlAboutContent();
 }

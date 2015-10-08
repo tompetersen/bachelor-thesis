@@ -73,4 +73,13 @@ public class ProtocolBuilder<T extends ProtocolDataUnit> implements Observer {
 	public JComponent getSettingsView() {
 		return _provider.getSettingsView();
 	}
+	
+	/**
+	 * Returns the HTML about content for the protocol.
+	 * 
+	 * @return the HTML about content
+	 */
+	public String getHtmlAboutContent() {
+		return _provider.getHtmlAboutContent();
+	}
 }
