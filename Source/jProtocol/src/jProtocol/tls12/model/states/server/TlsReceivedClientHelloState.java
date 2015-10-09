@@ -13,8 +13,10 @@ import jProtocol.tls12.model.states.TlsState;
 import jProtocol.tls12.model.states.TlsStateMachine;
 import jProtocol.tls12.model.states.TlsStateType;
 import jProtocol.tls12.model.values.TlsCertificate;
+import jProtocol.tls12.model.values.TlsExtension;
 import jProtocol.tls12.model.values.TlsKeyExchangeAlgorithm;
 import jProtocol.tls12.model.values.TlsRandom;
+import java.util.ArrayList;
 import java.util.List;
 
 public class TlsReceivedClientHelloState extends TlsState {
@@ -44,7 +46,8 @@ public class TlsReceivedClientHelloState extends TlsState {
 				_stateMachine.getVersion(), 
 				random, 
 				_stateMachine.getSessionId(), 
-				_stateMachine.getPendingCipherSuite());
+				_stateMachine.getPendingCipherSuite(),
+				new ArrayList<TlsExtension>()); //TODO: Used for TLS extensions -> implement if necessary
 		
 		_stateMachine.addHandshakeMessageForVerifyData(serverHelloMessage);
 		

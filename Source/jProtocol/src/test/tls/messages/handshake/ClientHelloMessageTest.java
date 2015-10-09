@@ -7,6 +7,7 @@ import jProtocol.tls12.model.ciphersuites.TlsCipherSuite;
 import jProtocol.tls12.model.ciphersuites.impl.TlsCipherSuite_RSA_WITH_AES_128_CBC_SHA;
 import jProtocol.tls12.model.messages.handshake.TlsClientHelloMessage;
 import jProtocol.tls12.model.messages.handshake.TlsHandshakeMessage;
+import jProtocol.tls12.model.values.TlsExtension;
 import jProtocol.tls12.model.values.TlsHandshakeType;
 import jProtocol.tls12.model.values.TlsRandom;
 import jProtocol.tls12.model.values.TlsSessionId;
@@ -27,6 +28,7 @@ public class ClientHelloMessageTest {
 	private TlsSessionId _sessionId;
 	private TlsCipherSuite _testCipherSuite = new TlsCipherSuite_RSA_WITH_AES_128_CBC_SHA();
 	private List<TlsCipherSuite> _cipherSuites;
+	private List<TlsExtension> _extensions;
 	
 	@Before
 	public void setUp() {
@@ -38,33 +40,34 @@ public class ClientHelloMessageTest {
 		
 		_cipherSuites = new ArrayList<>();
 		_cipherSuites.add(_testCipherSuite);
+		_extensions = new ArrayList<>();
 		
-		_testMessage = new TlsClientHelloMessage(_version, _clientRandom, _sessionId, _cipherSuites);
+		_testMessage = new TlsClientHelloMessage(_version, _clientRandom, _sessionId, _cipherSuites, _extensions);
 	}
 	
 	@Test(expected = IllegalArgumentException.class)
 	public void testNullVersionParameter() {
-		new TlsClientHelloMessage(null, _clientRandom, _sessionId, _cipherSuites);
+		new TlsClientHelloMessage(null, _clientRandom, _sessionId, _cipherSuites, _extensions);
 	}
 	
 	@Test(expected = IllegalArgumentException.class)
 	public void testNullRandomParameter() {
-		new TlsClientHelloMessage(_version, null, _sessionId, _cipherSuites);
+		new TlsClientHelloMessage(_version, null, _sessionId, _cipherSuites, _extensions);
 	}
 	
 	@Test(expected = IllegalArgumentException.class)
 	public void testNullSessionIdParameter() {
-		new TlsClientHelloMessage(_version, _clientRandom, null, _cipherSuites);
+		new TlsClientHelloMessage(_version, _clientRandom, null, _cipherSuites, _extensions);
 	}
 	
 	@Test(expected = IllegalArgumentException.class)
 	public void testNullCipherSuitesParameter() {
-		new TlsClientHelloMessage(_version, _clientRandom, _sessionId, null);
+		new TlsClientHelloMessage(_version, _clientRandom, _sessionId, null, _extensions);
 	}
 	
 	@Test(expected = IllegalArgumentException.class)
 	public void testEmptyCipherSuitesParameter() {
-		new TlsClientHelloMessage(_version, _clientRandom, _sessionId, new ArrayList<TlsCipherSuite>());
+		new TlsClientHelloMessage(_version, _clientRandom, _sessionId, new ArrayList<TlsCipherSuite>(), _extensions);
 	}
 	
 	@Test
@@ -73,6 +76,8 @@ public class ClientHelloMessageTest {
 		expected += 32; //random
 		expected += 1 + _sessionId.getLength(); //sessionId and length byte
 		expected += 2 + 2 * _cipherSuites.size(); //ciphersuites and length bytes
+		expected += 1 + 1; //compression method and length field
+		expected += 2; //extension list length field
 		
 		assertEquals(expected, _testMessage.getBodyBytes().length);
 	}

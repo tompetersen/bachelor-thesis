@@ -41,13 +41,17 @@ public abstract class TlsState extends State<TlsCiphertext> {
 				handleAlertMessage((TlsAlertMessage)message);
 			}
 			else {
+				MyLogger.severe(message.getContentType().toString() + " unexpected!");
 				setTlsState(TlsStateType.RECEIVED_UNEXPECTED_MESSAGE_STATE);
 			}
 		} catch (TlsBadRecordMacException e) {
+			MyLogger.severe(e.getLocalizedMessage());
 			setTlsState(TlsStateType.RECEIVED_BAD_RECORD_MESSAGE_STATE);
 		} catch (TlsBadPaddingException e) {
+			MyLogger.severe(e.getLocalizedMessage());
 			setTlsState(TlsStateType.RECEIVED_BAD_RECORD_MESSAGE_STATE);
 		} catch (TlsDecodeErrorException e) {
+			MyLogger.severe(e.getLocalizedMessage());
 			setTlsState(TlsStateType.DECODE_ERROR_OCCURED_STATE);
 		}
 	}

@@ -7,9 +7,11 @@ import jProtocol.tls12.model.messages.handshake.TlsClientHelloMessage;
 import jProtocol.tls12.model.states.TlsState;
 import jProtocol.tls12.model.states.TlsStateMachine;
 import jProtocol.tls12.model.states.TlsStateType;
+import jProtocol.tls12.model.values.TlsExtension;
 import jProtocol.tls12.model.values.TlsRandom;
 import jProtocol.tls12.model.values.TlsSessionId;
 import jProtocol.tls12.model.values.TlsVersion;
+import java.util.ArrayList;
 import java.util.List;
 
 public class TlsInitialClientState extends TlsState {
@@ -46,12 +48,12 @@ public class TlsInitialClientState extends TlsState {
 		
 		List<TlsCipherSuite> cipherSuites = _stateMachine.allCipherSuites();		
 		
-		TlsClientHelloMessage clientHello = new TlsClientHelloMessage(version, random, sessionId, cipherSuites);
+		//TODO: Used for TLS extensions -> implement if necessary
+		List<TlsExtension> extensionList = new ArrayList<>();
+		
+		TlsClientHelloMessage clientHello = new TlsClientHelloMessage(version, random, sessionId, cipherSuites, extensionList);
 		_stateMachine.addHandshakeMessageForVerifyData(clientHello);
 		
 		sendTlsMessage(clientHello);
-	}
-
-	
-	
+	}	
 }

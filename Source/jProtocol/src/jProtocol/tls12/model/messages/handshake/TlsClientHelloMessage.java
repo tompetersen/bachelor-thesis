@@ -7,6 +7,7 @@ import jProtocol.tls12.model.ciphersuites.TlsCipherSuite;
 import jProtocol.tls12.model.ciphersuites.TlsCipherSuiteRegistry;
 import jProtocol.tls12.model.exceptions.TlsDecodeErrorException;
 import jProtocol.tls12.model.exceptions.TlsInvalidCipherSuiteException;
+import jProtocol.tls12.model.values.TlsExtension;
 import jProtocol.tls12.model.values.TlsHandshakeType;
 import jProtocol.tls12.model.values.TlsRandom;
 import jProtocol.tls12.model.values.TlsSessionId;
@@ -38,16 +39,18 @@ public class TlsClientHelloMessage extends TlsHandshakeMessage {
 	private static final int RANDOM_LENGTH = 28;
 	private static final int SESSION_ID_LENGTH_FIELD_LENGTH = 1;
 	private static final int CIPHER_SUITES_LENGTH_FIELD_LENGTH = 2;
+	private static final int COMPRESSION_LENGTH_FIELD_LENGTH = 1;
+	private static final int EXTENSIONS_LENGTH_FIELD_LENGTH = 2;
 	
 	private TlsVersion _clientVersion;			//2
 	private TlsRandom _clientRandom; 			//4 + 28
 	private TlsSessionId _sessionId; 			//empty or 1..32 [Length: 1]
 	private List<TlsCipherSuite> _cipherSuites; //1.. [Length: 2]
 
-	// private byte[] _compressionMethod; 		//1.. [Length: 1]
-	// private Extension[] _extensions;			//0.. [Length: 2]
+	private byte _compressionMethod; 			//1.. [Length: 1]
+	private List<TlsExtension> _extensions;		//0.. [Length: 2]
 	
-	public TlsClientHelloMessage(TlsVersion clientVersion, TlsRandom clientRandom, TlsSessionId sessionId, List<TlsCipherSuite> cipherSuites) {
+	public TlsClientHelloMessage(TlsVersion clientVersion, TlsRandom clientRandom, TlsSessionId sessionId, List<TlsCipherSuite> cipherSuites, List<TlsExtension> extensionList) {
 		if (clientVersion == null) {
 			throw new IllegalArgumentException("Client version must be set!");
 		}
@@ -60,11 +63,19 @@ public class TlsClientHelloMessage extends TlsHandshakeMessage {
 		if (cipherSuites == null || cipherSuites.size() < 1) {
 			throw new IllegalArgumentException("Cipher Suites must not be empty!");
 		}
-
+		if (extensionList == null) {
+			throw new IllegalArgumentException("Extension list must be set!");
+		}
+		
 		_clientVersion = clientVersion;
 		_clientRandom = clientRandom;
 		_sessionId = sessionId;
 		_cipherSuites = cipherSuites;
+		
+		//TODO: Used for compression methods other than null compression -> Implement if necessary
+		_compressionMethod = 0; //Compression method null
+		
+		_extensions = extensionList;
 	}
 	
 	public TlsClientHelloMessage(byte[] unparsedContent, TlsCipherSuiteRegistry registry) throws TlsDecodeErrorException {
@@ -74,7 +85,7 @@ public class TlsClientHelloMessage extends TlsHandshakeMessage {
 		
 		//initial length check
 		int unparsedLength = unparsedContent.length;
-		if (unparsedLength < VERSION_LENGTH + UNIX_TIME_LENGTH + RANDOM_LENGTH + SESSION_ID_LENGTH_FIELD_LENGTH) { //version, random, sessionId length field
+		if (unparsedLength < VERSION_LENGTH + UNIX_TIME_LENGTH + RANDOM_LENGTH + SESSION_ID_LENGTH_FIELD_LENGTH + COMPRESSION_LENGTH_FIELD_LENGTH + EXTENSIONS_LENGTH_FIELD_LENGTH) { //version, random, sessionId length field
 			throw new TlsDecodeErrorException("Invalid client hello message - contains not enough information!");
 		}
 		
@@ -111,7 +122,7 @@ public class TlsClientHelloMessage extends TlsHandshakeMessage {
 		int cipherSuitesLength = ByteHelper.twoByteArrayToInt(cipherSuitesLengthBytes);
 		parsedBytes += CIPHER_SUITES_LENGTH_FIELD_LENGTH;
 		
-		if (parsedBytes + cipherSuitesLength != unparsedLength) {
+		if (parsedBytes + cipherSuitesLength > unparsedLength + COMPRESSION_LENGTH_FIELD_LENGTH) {
 			throw new TlsDecodeErrorException("Invalid client hello message - contains invalid cipher suite length!");
 		}
 		
@@ -128,11 +139,50 @@ public class TlsClientHelloMessage extends TlsHandshakeMessage {
 		}
 		parsedBytes += cipherSuitesLength;
 		
+		//parse compression method
+		byte compressionLength = unparsedContent[parsedBytes];
+		if (parsedBytes + compressionLength > unparsedLength + EXTENSIONS_LENGTH_FIELD_LENGTH) {
+			throw new TlsDecodeErrorException("Invalid client hello message - contains invalid cipher suite length!");
+		}
+		//TODO: Used for compression methods other than null compression -> Implement if necessary
+		byte compressionMethod = unparsedContent[parsedBytes + 1];
+		parsedBytes += COMPRESSION_LENGTH_FIELD_LENGTH + compressionLength;
+		
+		//parse extension list
+		byte[] extensionsLengthBytes = {unparsedContent[parsedBytes], unparsedContent[parsedBytes + 1]};
+		int extensionsLength = ByteHelper.twoByteArrayToInt(extensionsLengthBytes);
+		parsedBytes += EXTENSIONS_LENGTH_FIELD_LENGTH;
+		
+		if (parsedBytes + extensionsLength != unparsedLength) {
+			throw new TlsDecodeErrorException("Invalid client hello message - contains invalid cipher suite length!");
+		}
+		
+		List<TlsExtension> extensions = new ArrayList<>();
+		for (int i = parsedBytes; i < parsedBytes + extensionsLength;) {
+			byte[] extensionTypeBytes = {unparsedContent[i], unparsedContent[i+1]}; 
+			short extensionType = (short)ByteHelper.twoByteArrayToInt(extensionTypeBytes);
+			i+= TlsExtension.EXTENSION_TYPE_FIELD_LENGTH;
+			
+			byte[] extensionLengthBytes = {unparsedContent[i], unparsedContent[i+1]}; 
+			int extensionLength = ByteHelper.twoByteArrayToInt(extensionLengthBytes);
+			i+= TlsExtension.EXTENSION_LENGTH_FIELD_LENGTH;
+			
+			byte[] extensionData = new byte[extensionLength];
+			System.arraycopy(unparsedContent, i, extensionData, 0, extensionLength);
+			i+= extensionLength;
+			
+			TlsExtension extension = new TlsExtension(extensionType, extensionData);
+			extensions.add(extension);
+		}
+		parsedBytes += extensionsLength;
+		
 		//set values
 		_clientVersion = version;
 		_clientRandom = random;
 		_sessionId = sessionId;
 		_cipherSuites = cipherSuites;
+		_compressionMethod = compressionMethod;
+		_extensions = extensions;
 	}
 
 	@Override
@@ -142,7 +192,23 @@ public class TlsClientHelloMessage extends TlsHandshakeMessage {
 
 	@Override
 	public byte[] getBodyBytes() {
-		ByteBuffer b = ByteBuffer.allocate(VERSION_LENGTH + UNIX_TIME_LENGTH + RANDOM_LENGTH + SESSION_ID_LENGTH_FIELD_LENGTH + _sessionId.getLength() + CIPHER_SUITES_LENGTH_FIELD_LENGTH + 2 * _cipherSuites.size());
+		int length = VERSION_LENGTH;
+		length += UNIX_TIME_LENGTH;
+		length += RANDOM_LENGTH;
+		length += SESSION_ID_LENGTH_FIELD_LENGTH + _sessionId.getLength();
+		length += CIPHER_SUITES_LENGTH_FIELD_LENGTH + 2 * _cipherSuites.size();
+		length += COMPRESSION_LENGTH_FIELD_LENGTH + 1;
+		
+		length += EXTENSIONS_LENGTH_FIELD_LENGTH;
+		short extensionListLength = 0;
+		for (TlsExtension extension : _extensions) {
+			extensionListLength += TlsExtension.EXTENSION_LENGTH_FIELD_LENGTH;
+			extensionListLength += TlsExtension.EXTENSION_TYPE_FIELD_LENGTH;
+			extensionListLength += extension.getExtensionData().length;
+		}
+		length += extensionListLength;
+		
+		ByteBuffer b = ByteBuffer.allocate(length);
 		
 		//version
 		b.put(_clientVersion.getMajorVersion());
@@ -164,9 +230,27 @@ public class TlsClientHelloMessage extends TlsHandshakeMessage {
 			b.putShort(cs.getCode());
 		}
 		
+		//Compression
+		//TODO: Used for compression methods other than null compression -> Implement if necessary
+		b.put((byte)1);//compression length
+		b.put(_compressionMethod);
+		
+		//Extensions
+		b.putShort(extensionListLength);//0 as length field
+		for (TlsExtension extension : _extensions) {
+			b.putShort(extension.getExtensionType());
+			byte[] extensionData = extension.getExtensionData();
+			b.putShort((short)extensionData.length);
+			b.put(extensionData);
+		}
+		
 		return b.array();
 	}
 	
+	public List<TlsExtension> getExtensions() {
+		return _extensions;
+	}
+
 	public TlsVersion getClientVersion() {
 		return _clientVersion;
 	}
@@ -209,6 +293,23 @@ public class TlsClientHelloMessage extends TlsHandshakeMessage {
 		}
 		kvo = new KeyValueObject("Cipher suite list", cipherSuites);
 		kvo.setHtmlInfoContent(TlsHtmlInfoLoader.loadHtmlInfoForFileName("messages/tlsmessages/handshake/TLS12_ClientHello_CipherSuite.html"));
+		resultList.add(kvo);
+		
+		//compression
+		//TODO: Used for compression methods other than null compression -> Implement if necessary
+		List<KeyValueObject> compressionMethods = new ArrayList<>();
+		compressionMethods.add(new KeyValueObject("Compression method", Byte.toString(_compressionMethod)));
+		kvo = new KeyValueObject("Compression method list", compressionMethods);
+		kvo.setHtmlInfoContent(TlsHtmlInfoLoader.loadHtmlInfoForFileName("messages/tlsmessages/handshake/TLS12_ClientHello_Compression.html"));
+		resultList.add(kvo);
+		
+		//extension list
+		List<KeyValueObject> extensions = new ArrayList<>();
+		for (TlsExtension extension : _extensions) {
+			extensions.add(new KeyValueObject(Short.toString(extension.getExtensionType()), "extension data"));
+		}
+		kvo = new KeyValueObject("Extension list", extensions);
+		kvo.setHtmlInfoContent(TlsHtmlInfoLoader.loadHtmlInfoForFileName("messages/tlsmessages/handshake/TLS12_ClientHello_ExtensionList.html"));
 		resultList.add(kvo);
 		
 		return resultList;
