@@ -1,12 +1,14 @@
 package jProtocol.tls12.model.states.server;
 
 import jProtocol.helper.MyLogger;
+import jProtocol.tls12.model.crypto.TlsPseudoRandomNumberGenerator;
 import jProtocol.tls12.model.messages.TlsMessage;
 import jProtocol.tls12.model.messages.handshake.TlsClientHelloMessage;
 import jProtocol.tls12.model.states.TlsState;
 import jProtocol.tls12.model.states.TlsStateMachine;
 import jProtocol.tls12.model.states.TlsStateType;
 import jProtocol.tls12.model.values.TlsHandshakeType;
+import jProtocol.tls12.model.values.TlsSessionId;
 
 public class TlsInitialServerState extends TlsState {
 
@@ -41,7 +43,9 @@ public class TlsInitialServerState extends TlsState {
 	
 	private void setClientHelloMessageValues(TlsClientHelloMessage chm) {
 		_stateMachine.setClientRandom(chm.getClientRandom());
-		_stateMachine.setSessionId(chm.getSessionId());	
+		//TODO: Used for abbreviated handshake -> Implement if necessary
+//		_stateMachine.setSessionId(chm.getSessionId());	
+		_stateMachine.setSessionId(new TlsSessionId(TlsPseudoRandomNumberGenerator.nextBytes(10)));
 		_stateMachine.setPendingCipherSuiteFromList(chm.getCipherSuites());	
 		_stateMachine.setVersion(chm.getClientVersion());
 	}

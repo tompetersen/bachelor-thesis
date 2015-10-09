@@ -6,7 +6,7 @@ import java.nio.charset.StandardCharsets;
 
 public class TlsCertificate {
 
-	private static final String CERT_HEADER = "Certificate [PublicKey: ";
+	private static final String CERT_HEADER = "Certificate for PublicKey: ";
 	
 	private String _certificateContent;
 	private byte[] _rsaPublicKey;

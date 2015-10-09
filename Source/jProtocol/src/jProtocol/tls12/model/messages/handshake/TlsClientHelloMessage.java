@@ -289,7 +289,7 @@ public class TlsClientHelloMessage extends TlsHandshakeMessage {
 		
 		List<KeyValueObject> cipherSuites = new ArrayList<>();
 		for (TlsCipherSuite cs : _cipherSuites) {
-			cipherSuites.add(new KeyValueObject("", cs.getName() + " [" + Short.toString(cs.getCode()) + "]"));
+			cipherSuites.add(new KeyValueObject("", cs.getName() + " [0x" + ByteHelper.bytesToHexString(ByteHelper.intToTwoByteArray(cs.getCode())) + "]"));
 		}
 		kvo = new KeyValueObject("Cipher suite list", cipherSuites);
 		kvo.setHtmlInfoContent(TlsHtmlInfoLoader.loadHtmlInfoForFileName("messages/tlsmessages/handshake/TLS12_ClientHello_CipherSuite.html"));

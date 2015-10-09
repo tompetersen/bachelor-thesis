@@ -43,7 +43,8 @@ public class TlsInitialClientState extends TlsState {
 		
 		TlsVersion version = _stateMachine.getHighestSupportedVersion();
 		
-		byte[] sessionIdBytes = TlsPseudoRandomNumberGenerator.nextBytes(10);
+		//TODO: Used for abbreviated handshake -> Implement if necessary
+		byte[] sessionIdBytes = {};
 		TlsSessionId sessionId = new TlsSessionId(sessionIdBytes);
 		
 		List<TlsCipherSuite> cipherSuites = _stateMachine.allCipherSuites();		

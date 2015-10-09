@@ -55,6 +55,9 @@ public class TlsVersion {
 
 	@Override
 	public String toString() {
-		return "TlsVersion[" + _minorVersion + ", " + _majorVersion + "]";
+		String result = "[" + _minorVersion + "," + _majorVersion + "]";
+		result += (this.equals(getTls12Version()) ? " TLS 1.2" : "");
+		
+		return result;
 	}
 }

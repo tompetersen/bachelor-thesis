@@ -1,6 +1,6 @@
 package jProtocol.tls12.model.values;
 
-import java.util.Arrays;
+import jProtocol.helper.ByteHelper;
 
 public class TlsSessionId {
 
@@ -31,6 +31,6 @@ public class TlsSessionId {
 
 	@Override
 	public String toString() {
-		return "TlsSessionId[" + Arrays.toString(_sessionId) + "]";
+		return (_sessionId.length > 0) ? "0x" + ByteHelper.bytesToHexString(_sessionId) : "";
 	}
 }
