@@ -1,5 +1,10 @@
 package jProtocol.tls12.model.values;
 
+/**
+ * An enumeration of possible TLS alerts.
+ *  
+ * @author Tom Petersen
+ */
 public enum TlsAlert {
 	close_notify 				((byte)0), 	
 	unexpected_message 			((byte)10),	//fatal
@@ -27,12 +32,20 @@ public enum TlsAlert {
 	no_renegotiation 			((byte)100),//warning
 	unsupported_extension 		((byte)110);
 	
+	/**
+	 * Returns an alert from the describing value.
+	 * 
+	 * @param b the value
+	 * 
+	 * @return the alert
+	 */
 	public static TlsAlert alertFromValue(byte b) {
 		for (TlsAlert a : TlsAlert.values()) {
 			if (b == a.getValue()) {
 				return a;
 			}
 		}
+		//TODO: Decode error
 		throw new IllegalArgumentException("No Alert for value " + b + "!");
 	}	
 		
@@ -42,6 +55,11 @@ public enum TlsAlert {
 		_value = value;
 	}
 	
+	/**
+	 * The describing value of the alert.
+	 * 
+	 * @return the value
+	 */
 	public byte getValue() {
 		return _value;
 	}

@@ -10,6 +10,11 @@ public class TlsCipherSuite_RSA_WITH_AES_128_GCM_SHA256 extends TlsAeadCipherSui
 
 	private TlsAesGcmCipher _cipher;
 	
+	/**
+	 * Creates a cipher suite object with
+	 * - RSA key exchange
+	 * - AES 128 in gcm mode encryption (AEAD algorithm)
+	 */
 	public TlsCipherSuite_RSA_WITH_AES_128_GCM_SHA256() {
 		_cipher = new TlsAesGcmCipher(); 
 	}

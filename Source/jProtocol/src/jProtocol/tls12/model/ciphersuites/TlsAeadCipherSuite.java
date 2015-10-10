@@ -11,15 +11,13 @@ import jProtocol.tls12.model.values.TlsKeyExchangeAlgorithm;
 import jProtocol.tls12.model.values.TlsMacAlgorithm;
 import java.util.Arrays;
 
-/*
- *  additional_data = seq_num + TLSCompressed.type + TLSCompressed.version + TLSCompressed.length;
- *  
- *  Nonce? explicit, implicit - how to compute?
- */
 public abstract class TlsAeadCipherSuite implements TlsCipherSuite {
 
-	public static int NONCE_EXPLICIT_LENGTH = 8; //in bytes
-	
+	/**
+	 * A class representing an encryption result of an AEAD cipher suite operation.
+	 * 
+	 * @author Tom Petersen
+	 */
 	public class TlsAeadEncryptionResult {
 		//the plain fields
 		public byte[] nonce_explicit;		
@@ -36,6 +34,8 @@ public abstract class TlsAeadCipherSuite implements TlsCipherSuite {
 			this.aeadCiphered = aeadCiphered;
 		}
 	}
+	
+	private static int NONCE_EXPLICIT_LENGTH = 8; //in bytes
 	
 	@Override
 	public TlsCiphertext plaintextToCiphertext(TlsPlaintext plaintext, TlsEncryptionParameters parameters) {
@@ -121,8 +121,35 @@ public abstract class TlsAeadCipherSuite implements TlsCipherSuite {
 		return new TlsPlaintext(ByteHelper.concatenate(headerBytes, decryptedFragment), registry, algorithm);
 	}
 	
+	/**
+	 * The encrypt operation must be implemented by concrete cipher suites. 
+	 * It encrypts plaintext bytes and authenticates them and additional data 
+	 * bytes using a key and a nonce.
+	 * 
+	 * @param key the key
+	 * @param nonce the nonce
+	 * @param additionalData the additional data
+	 * @param plaintext the plaintext
+	 * 
+	 * @return the encrypted bytes
+	 */
 	public abstract byte[] encrypt(byte[] key, byte[] nonce, byte[] additionalData, byte[] plaintext);
 	
+	/**
+	 * the decrypt operation must be implemented by concrete cipher suites.
+	 * It authenticates the ciphertext and additional data and decrypts the 
+	 * encrypted bytes using a key and a nonce. 
+	 * 
+	 * @param key the key
+	 * @param nonce the nonce
+	 * @param additionalData the additional data
+	 * @param ciphertext the ciphertext
+	 * 
+	 * @return the decrypted bytes
+	 * 
+	 * @throws TlsBadRecordMacException if the ciphertext could not be authenticated. 
+	 * 		Reasons may be an invalid key, an invalid nonce, invalid additional data or an altered ciphertext.
+	 */
 	public abstract byte[] decrypt(byte[] key, byte[] nonce, byte[] additionalData, byte[] ciphertext) throws TlsBadRecordMacException;
 
 	/**
@@ -137,9 +164,9 @@ public abstract class TlsAeadCipherSuite implements TlsCipherSuite {
 		return TlsCipherType.aead;
 	}
 	
-	/*
-	 * Implicit authentication of AEAD ciphers requires no explicit MAC.
-	 */
+/*
+ * Implicit authentication of AEAD ciphers requires no explicit MAC.
+ */
 	@Override
 	public TlsMacAlgorithm getMacAlgorithm() {
 		return null;

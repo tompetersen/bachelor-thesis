@@ -12,6 +12,11 @@ public class TlsStreamFragment implements TlsFragment {
 
 	private TlsStreamEncryptionResult _encryptionResult;
 	
+	/**
+	 * Creates a stream fragment from stream encryption result.
+	 * 
+	 * @param encResult the encryption result
+	 */
 	public TlsStreamFragment(TlsStreamEncryptionResult encResult) {
 		_encryptionResult = encResult;
 	}

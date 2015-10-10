@@ -7,6 +7,9 @@ public class TlsHash {
 
 	private MessageDigest _digest; 
 	
+	/**
+	 * Creates a object offering hash calculations with SHA256.
+	 */
 	public TlsHash() {
 		try {
 			_digest = MessageDigest.getInstance("SHA-256");
@@ -15,6 +18,13 @@ public class TlsHash {
 		}
 	}
 
+	/**
+	 * Computes the hash value for the input bytes.
+	 * 
+	 * @param input the input
+	 * 
+	 * @return the hash
+	 */
 	public byte[] hash(byte[] input) {
 		_digest.update(input);
 		return _digest.digest();

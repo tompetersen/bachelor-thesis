@@ -1,5 +1,11 @@
 package jProtocol.tls12.model.values;
 
+/**
+ * A class representing possible TlsExtensions.
+ * TODO: Used for tls extensions -> implement subclasses if necessary or do it your way
+ * 
+ * @author Tom Petersen
+ */
 public class TlsExtension {
 	
 /*	 
@@ -18,6 +24,12 @@ public class TlsExtension {
 	private short _extensionType;
 	private byte[] _data;
 	
+	/**
+	 * Creates an extension object with a type and extension data.
+	 * 
+	 * @param extensionType the type
+	 * @param extensionData the data
+	 */
 	public TlsExtension(short extensionType, byte[] extensionData) {
 		super();
 		
@@ -25,10 +37,20 @@ public class TlsExtension {
 		_data = extensionData;
 	}
 
+	/**
+	 * Returns the extensions type.
+	 * 
+	 * @return the type
+	 */
 	public short getExtensionType() {
 		return _extensionType;
 	}
 
+	/**
+	 * Returns the extension data
+	 * 
+	 * @return the data
+	 */
 	public byte[] getExtensionData() {
 		return _data;
 	}	

@@ -19,6 +19,9 @@ public class TlsCipherSuiteRegistry {
 	private Map<Short, TlsCipherSuite> _supportedCipherSuites;
 	private short _preferredCipherSuite;
 
+	/**
+	 * Creates a cipher suite registry offering access to implemented cipher suites.
+	 */
 	public TlsCipherSuiteRegistry() {
 		_supportedCipherSuites = new HashMap<Short, TlsCipherSuite>();
 		_preferredCipherSuite = -1;
@@ -60,23 +63,23 @@ public class TlsCipherSuiteRegistry {
 		}
 	}
 
-	public TlsCipherSuite cipherSuiteFromValue(short value) throws TlsInvalidCipherSuiteException {
-		TlsCipherSuite suite = _supportedCipherSuites.get(value);
+	/**
+	 * Returns a TLSCipherSuite object registered for the code (see p.75 TLS 1.2 specification RFC 5246). 
+	 * 
+	 * @param code the cipher suite code
+	 * 
+	 * @return the cipher suite 
+	 * 
+	 * @throws TlsInvalidCipherSuiteException if no cipher suite is registered for the code
+	 */
+	public TlsCipherSuite cipherSuiteFromCode(short code) throws TlsInvalidCipherSuiteException {
+		TlsCipherSuite suite = _supportedCipherSuites.get(code);
 		if (suite != null) {
 			return suite;
 		}
 		else {
-			throw new TlsInvalidCipherSuiteException("Cipher suite for value " + value + " not found!");
+			throw new TlsInvalidCipherSuiteException("Cipher suite for value " + code + " not found!");
 		}
-	}
-
-	public short valueFromCipherSuite(TlsCipherSuite cipherSuite) throws TlsInvalidCipherSuiteException {
-		for (short s : _supportedCipherSuites.keySet()) {
-			if (_supportedCipherSuites.get(s).getClass().equals(cipherSuite.getClass())) {
-				return s;
-			}
-		}
-		throw new TlsInvalidCipherSuiteException("Value for cipher suite " + cipherSuite.getName() + " not found!");
 	}
 
 	/**
@@ -106,17 +109,33 @@ public class TlsCipherSuiteRegistry {
 		return result;
 	}
 
+	/**
+	 * Sets the preferred cipher suite for the connection. 
+	 * Should be called before connecting for the client.
+	 * 
+	 * @param cipherSuiteCode the preferred cipher suite code
+	 */
 	public void setPreferredCipherSuite(short cipherSuiteCode) {
 		_preferredCipherSuite = cipherSuiteCode;
 	}
 
+	/**
+	 * Returns the preferred cipher suite code. 
+	 * 
+	 * @return the preferred cipher suite code or -1 if no cipher suite is preferred
+	 */
 	public short getPreferredCipherSuite() {
 		return _preferredCipherSuite;
 	}
 
+	/**
+	 * Returns the cipher suite TLS_NULL_WITH_NULL_NULL (no encryption or mac).
+	 * 
+	 * @return the TLS null cipher suite
+	 */
 	public TlsCipherSuite getNullCipherSuite() {
 		try {
-			return cipherSuiteFromValue((short) 0);
+			return cipherSuiteFromCode((short) 0);
 		}
 		catch (TlsInvalidCipherSuiteException e) {
 			throw new RuntimeException("Tls NULL cipher suite not found !?");

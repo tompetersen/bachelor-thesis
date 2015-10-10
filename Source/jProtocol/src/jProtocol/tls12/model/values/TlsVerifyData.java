@@ -11,6 +11,11 @@ public class TlsVerifyData {
 	
 	private byte[] _verifyData;
 	
+	/**
+	 * Creates a verify data object.
+	 * 
+	 * @param verifyData the verify data bytes
+	 */
 	public TlsVerifyData(byte verifyData[]) {
 		if (verifyData == null ||verifyData.length != VERIFY_DATA_LENGTH) {
 			throw new IllegalArgumentException("Verify data must be " + VERIFY_DATA_LENGTH + " bytes long!");
@@ -37,6 +42,11 @@ public class TlsVerifyData {
 		return true;
 	}
 
+	/**
+	 * Returns the byte representation of the verify data.
+	 * 
+	 * @return the bytes
+	 */
 	public byte[] getBytes() {
 		return _verifyData;
 	}

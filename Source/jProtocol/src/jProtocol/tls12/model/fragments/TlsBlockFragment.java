@@ -13,6 +13,11 @@ public class TlsBlockFragment implements TlsFragment {
 	private TlsBlockEncryptionResult _encryptionResult;
 	private byte[] _sentBytes;
 	
+	/**
+	 * Creates a block fragment from block encryption result.
+	 * 
+	 * @param encResult the encryption result
+	 */
 	public TlsBlockFragment(TlsBlockEncryptionResult encResult) {
 		_encryptionResult = encResult;
 		_sentBytes = ByteHelper.concatenate(_encryptionResult.iv, _encryptionResult.blockCiphered);

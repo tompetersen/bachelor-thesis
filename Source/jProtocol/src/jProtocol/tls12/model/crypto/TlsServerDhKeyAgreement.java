@@ -52,6 +52,11 @@ public class TlsServerDhKeyAgreement {
 		}
 	}
 
+	/**
+	 * Returns the server DH parameters, consisting of p, g and Y_s.
+	 * 
+	 * @return the server DH parameters
+	 */
 	public TlsServerDhParams getServerDhParams() {
 		return new TlsServerDhParams(
 				_serverPublicKeySpec.getP().toByteArray(), 
@@ -59,6 +64,13 @@ public class TlsServerDhKeyAgreement {
 				_serverPublicKeySpec.getY().toByteArray());
 	}
 	
+	/**
+	 * Computes the pre master secret from server params and client key.
+	 * 
+	 * @return the pre master secret
+	 * 
+	 * @throws TlsAsymmetricOperationException if the operation failed due to invalid key parameters
+	 */
 	public byte[] computePreMasterSecret(TlsClientDhPublicKey clientPublicKey) throws TlsAsymmetricOperationException {
 		KeyAgreement keyAgreement;
 		try {
@@ -78,7 +90,6 @@ public class TlsServerDhKeyAgreement {
 			throw new TlsAsymmetricOperationException("DH key agreement failed! " + e.getLocalizedMessage());
 		}
 		
-		   
 		byte[] agreedKey = keyAgreement.generateSecret();
 
 		return agreedKey;

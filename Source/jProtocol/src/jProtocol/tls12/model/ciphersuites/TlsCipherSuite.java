@@ -10,12 +10,13 @@ import jProtocol.tls12.model.values.TlsCipherType;
 import jProtocol.tls12.model.values.TlsKeyExchangeAlgorithm;
 import jProtocol.tls12.model.values.TlsMacAlgorithm;
 
-/*
- * Information can be found in 
- * - appendix A.5. (cipher suite codes and stuff)
- * - appendix C (key and other sizes)
- */
 public interface TlsCipherSuite {
+	
+	/*
+	 * Information can be found in 
+	 * - appendix A.5. (cipher suite codes and stuff)
+	 * - appendix C (key and other sizes)
+	 */
 	
 	/**
 	 * Transforms a TLSPlaintext to a TLSCiphertext. The Message will be MACed and 

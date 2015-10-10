@@ -26,8 +26,7 @@ public class TlsClientDhKeyAgreement {
 	/**
 	 * Generates a new key pair with server values p and g.
 	 * 
-	 * @throws TlsAsymmetricOperationException 
-	 * 
+	 * @throws TlsAsymmetricOperationException if key generation failed due to invalid parameters
 	 */
 	public TlsClientDhKeyAgreement(TlsServerDhParams serverParams) throws TlsAsymmetricOperationException {
 		try {
@@ -52,7 +51,11 @@ public class TlsClientDhKeyAgreement {
 		}
 	}
 
-	
+	/**
+	 * Returns the clients public DH key.
+	 * 
+	 * @return the public DH key
+	 */
 	public TlsClientDhPublicKey getClientPublicKey() {
 		try {
 			KeyFactory keyFactory = KeyFactory.getInstance("DiffieHellman");
@@ -64,6 +67,13 @@ public class TlsClientDhKeyAgreement {
 		}
 	}
 	
+	/**
+	 * Computes the pre master secret from server params and client keys.
+	 * 
+	 * @return the pre master secret
+	 * 
+	 * @throws TlsAsymmetricOperationException if the operation failed due to invalid key parameters
+	 */
 	public byte[] computePreMasterSecret() throws TlsAsymmetricOperationException {
 		try {
 			KeyAgreement keyAgreement = KeyAgreement.getInstance("DiffieHellman");

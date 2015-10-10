@@ -11,14 +11,27 @@ public class TlsCertificate {
 	private String _certificateContent;
 	private byte[] _rsaPublicKey;
 	
-	public byte[] getRsaPublicKey() {
-		return _rsaPublicKey;
-	}
-
+		
+	/**
+	 * Generates a certificate from a public key.
+	 * 
+	 * @param publicKey the public key
+	 * 
+	 * @return the certificate
+	 */
 	public static TlsCertificate generateRsaCertificate(byte[] publicKey) {
 		return new TlsCertificate(CERT_HEADER, publicKey);
 	}
 	
+	/**
+	 * Parses a certificate from bytes representation.
+	 * 
+	 * @param unparsedCertificateBytes the unparsed bytes
+	 * 
+	 * @return the certificate
+	 * 
+	 * @throws TlsDecodeErrorException if the certificate contains wrong length or header fields
+	 */
 	public static TlsCertificate parseCertificate(byte[] unparsedCertificateBytes) throws TlsDecodeErrorException {
 		int certificateHeaderLength = CERT_HEADER.length();
 		int unparsedLenght = unparsedCertificateBytes.length;
@@ -46,14 +59,38 @@ public class TlsCertificate {
 		_rsaPublicKey = publicKey;
 	}
 	
+	/**
+	 * Returns the included public key.
+	 * 
+	 * @return the public key
+	 */
+	public byte[] getRsaPublicKey() {
+		return _rsaPublicKey;
+	}
+	
+	/**
+	 * Returns a byte representation of the certificate.
+	 *  
+	 * @return the bytes
+	 */
 	public byte[] getBytes() {
 		return ByteHelper.concatenate(_certificateContent.getBytes(StandardCharsets.US_ASCII), _rsaPublicKey);
 	}
 	
+	/**
+	 * Returns the certificate byte represenatation length.
+	 * 
+	 * @return the length
+	 */
 	public int getLength() {
 		return _certificateContent.length() + _rsaPublicKey.length;
 	}
 	
+	/**
+	 * Returns a readable representation of the certificate.
+	 * 
+	 * @return the readable certificate
+	 */
 	public String getReadableCertificate() {
 		return _certificateContent + "0x" + ByteHelper.bytesToHexString(_rsaPublicKey);
 	}

@@ -27,7 +27,19 @@ public interface TlsFragment {
 	 */
 	public byte[] getContent();	
 	
+	/**
+	 * Should return the view data (key value object) for the fragment and included message.
+	 * 
+	 * @param message the message view data should also be included for 
+	 *  
+	 * @return the view data
+	 */
 	public KeyValueObject getViewData(TlsMessage message);
 	
+	/**
+	 * Should return the fragment name for displaying purposes. 
+	 * 
+	 * @return the fragment name
+	 */
 	public String getFragmentName();
 }

@@ -7,6 +7,15 @@ public class TlsEncryptionParameters {
 	private byte[] _macWriteKey;
 	private byte[] _writeIv;
 
+	/**
+	 * Creates an encryption parameters object containing values 
+	 * used in the encryption operation.
+	 * 
+	 * @param sequenceNumber the current sequence number
+	 * @param encryptionWriteKey the encryption write key (server or client)
+	 * @param macWriteKey the MAC write key (server or client)
+	 * @param writeIv the write IV (server or client)
+	 */
 	public TlsEncryptionParameters(long sequenceNumber, byte[] encryptionWriteKey, byte[] macWriteKey, byte[] writeIv) {
 		_sequenceNumber = sequenceNumber;
 		_encryptionWriteKey = encryptionWriteKey;

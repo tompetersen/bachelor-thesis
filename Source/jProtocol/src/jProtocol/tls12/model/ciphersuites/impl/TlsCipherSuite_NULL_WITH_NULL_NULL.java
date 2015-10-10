@@ -6,14 +6,16 @@ import jProtocol.tls12.model.values.TlsBulkCipherAlgorithm;
 import jProtocol.tls12.model.values.TlsKeyExchangeAlgorithm;
 import jProtocol.tls12.model.values.TlsMacAlgorithm;
 
-/*
- * If the cipher suite is TLS_NULL_WITH_NULL_NULL, encryption consists of the identity operation 
- * (i.e., the data is not encrypted, and the MAC size is zero, implying that no MAC is used).
- * 
- * 6.2.3.1. p.22
- */
+
 public class TlsCipherSuite_NULL_WITH_NULL_NULL extends TlsStreamCipherSuite {
 
+	/*
+	 * If the cipher suite is TLS_NULL_WITH_NULL_NULL, encryption consists of the identity operation 
+	 * (i.e., the data is not encrypted, and the MAC size is zero, implying that no MAC is used).
+	 * 
+	 * 6.2.3.1. p.22
+	 */
+	
 	@Override
 	public String getName() {
 		return "TLS_NULL_WITH_NULL_NULL";

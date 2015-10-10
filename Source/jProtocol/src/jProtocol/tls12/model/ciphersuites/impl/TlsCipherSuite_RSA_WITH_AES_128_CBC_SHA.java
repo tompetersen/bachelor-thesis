@@ -8,15 +8,16 @@ import jProtocol.tls12.model.values.TlsBulkCipherAlgorithm;
 import jProtocol.tls12.model.values.TlsKeyExchangeAlgorithm;
 import jProtocol.tls12.model.values.TlsMacAlgorithm;
 
-/*
- *  Cipher Suite definitions
- *  appendix C, p. 83-84
- */
 public class TlsCipherSuite_RSA_WITH_AES_128_CBC_SHA extends TlsBlockCipherSuite {
 
 	private TlsMac _mac;
 	private TlsAesCbcCipher _cipher;
 	
+	/**
+	 * Creates a cipher suite object with
+	 * - RSA key exchange
+	 * - AES 128 in cbc mode encryption
+	 */
 	public TlsCipherSuite_RSA_WITH_AES_128_CBC_SHA() {
 		_mac = new TlsMac(getMacAlgorithm());
 		_cipher = new TlsAesCbcCipher();

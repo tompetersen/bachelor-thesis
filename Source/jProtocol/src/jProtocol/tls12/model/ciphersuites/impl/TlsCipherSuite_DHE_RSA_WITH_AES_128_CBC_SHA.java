@@ -13,6 +13,11 @@ public class TlsCipherSuite_DHE_RSA_WITH_AES_128_CBC_SHA extends TlsBlockCipherS
 	private TlsMac _mac;
 	private TlsAesCbcCipher _cipher;
 	
+	/**
+	 * Creates a cipher suite object with
+	 * - DHE key exchange
+	 * - AES 128 in cbc mode encryption
+	 */
 	public TlsCipherSuite_DHE_RSA_WITH_AES_128_CBC_SHA() {
 		_mac = new TlsMac(getMacAlgorithm());
 		_cipher = new TlsAesCbcCipher();

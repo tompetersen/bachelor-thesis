@@ -13,6 +13,11 @@ public class TlsAeadFragment implements TlsFragment {
 	private TlsAeadEncryptionResult _encryptionResult;
 	private byte[] _sentBytes;
 	
+	/**
+	 * Creates a AEAD fragment from AEAD encryption result.
+	 * 
+	 * @param encResult the encryption result
+	 */
 	public TlsAeadFragment(TlsAeadEncryptionResult encResult) {
 		_encryptionResult = encResult;
 		_sentBytes = ByteHelper.concatenate(encResult.nonce_explicit, encResult.aeadCiphered);

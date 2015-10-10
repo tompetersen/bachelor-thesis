@@ -23,20 +23,40 @@ public class TlsConnectionState implements Cloneable {
 	
 	private long _sequenceNumber;
 
+	/**
+	 * Creates a connection state object with an initial cipher suite object.
+	 *  
+	 * @param initialCipherSuite the initial cipher suite
+	 */
 	public TlsConnectionState(TlsCipherSuite initialCipherSuite) {
 		_cipherSuite = initialCipherSuite;
 		
 		_sequenceNumber = 0;
 	}
 	
+	/**
+	 * Returns the current sequence number.
+	 * 
+	 * @return the sequence number
+	 */
 	public long getSequenceNumber() {
 		return _sequenceNumber;
 	}
 	
+	/**
+	 * Increases the current sequence number. Should be called after receiving/sending a message.
+	 */
 	public void increaseSequenceNumber() {
 		_sequenceNumber++;
 	}
 	
+	/**
+	 * Computes encryption, MAC and AEAD keys depending on the current cipher suite.
+	 * 
+	 * @param clientRandom the client random value
+	 * @param serverRandom the server random value
+	 * @param masterSecret the master secret
+	 */
 	public void computeKeys(TlsRandom clientRandom, TlsRandom serverRandom, byte[] masterSecret) {
 		/*
 		 * Computation according to chapter 6.3 (p. 26) TLS 1.2
@@ -87,10 +107,21 @@ public class TlsConnectionState implements Cloneable {
 		pos += writeIvLength;
 	}
 	
+	/**
+	 * Returns whether the keys have been computed.
+	 * 
+	 * @return true, if the keys have been computed
+	 */
 	public boolean hasComputedKeys() {
 		return (_clientWriteEncyrptionKey != null);
 	}
 	
+	/**
+	 * Returns the client write MAC key. Must have been computed.
+	 * The length is dependent on the current cipher suite.
+	 * 
+	 * @return the client write MAC key
+	 */
 	public byte[] getClientWriteMacKey() {
 		if (_clientWriteMacKey == null) {
 			throw new RuntimeException("Key must be computed first!");
@@ -98,6 +129,12 @@ public class TlsConnectionState implements Cloneable {
 		return _clientWriteMacKey;
 	}
 
+	/**
+	 * Returns the server write MAC key. Must have been computed.
+	 * The length is dependent on the current cipher suite.
+	 * 
+	 * @return the server write MAC key
+	 */
 	public byte[] getServerWriteMacKey() {
 		if (_serverWriteMacKey == null) {
 			throw new RuntimeException("Key must be computed first!");
@@ -105,6 +142,12 @@ public class TlsConnectionState implements Cloneable {
 		return _serverWriteMacKey;
 	}
 
+	/**
+	 * Returns the client write encryption key. Must have been computed.
+	 * The length is dependent on the current cipher suite.
+	 * 
+	 * @return the client write encryption key
+	 */
 	public byte[] getClientWriteEncryptionKey() {
 		if (_clientWriteEncyrptionKey == null) {
 			throw new RuntimeException("Key must be computed first!");
@@ -112,6 +155,12 @@ public class TlsConnectionState implements Cloneable {
 		return _clientWriteEncyrptionKey;
 	}
 
+	/**
+	 * Returns the server write encryption key. Must have been computed.
+	 * The length is dependent on the current cipher suite.
+	 * 
+	 * @return the server write encryption key
+	 */
 	public byte[] getServerWriteEncryptionKey() {
 		if (_serverWriteEncyrptionKey == null) {
 			throw new RuntimeException("Key must be computed first!");
@@ -119,6 +168,12 @@ public class TlsConnectionState implements Cloneable {
 		return _serverWriteEncyrptionKey;
 	}
 
+	/**
+	 * Returns the client write IV. Must have been computed.
+	 * The length is dependent on the current cipher suite.
+	 * 
+	 * @return the client write IV
+	 */
 	public byte[] getClientWriteIv() {
 		if (_clientWriteIv == null) {
 			throw new RuntimeException("Key must be computed first!");
@@ -126,6 +181,12 @@ public class TlsConnectionState implements Cloneable {
 		return _clientWriteIv;
 	}
 
+	/**
+	 * Returns the server write IV. Must have been computed.
+	 * The length is dependent on the current cipher suite.
+	 * 
+	 * @return the server write IV
+	 */
 	public byte[] getServerWriteIv() {
 		if (_serverWriteIv == null) {
 			throw new RuntimeException("Key must be computed first!");
@@ -157,73 +218,12 @@ public class TlsConnectionState implements Cloneable {
 		return _cipherSuite;
 	}
 	
-	/*
-	 
-	public TlsBulkCipherAlgorithm getBulkCipherAlgorithm() {
-		if (_cipherSuite == null) {
-			throw new RuntimeException("Cipher Suite must be set first!");
-		}
-		return _cipherSuite.getBulkCipherAlgorithm();
-	}
-	
-	public TlsCipherType getCipherType() {
-		if (_cipherSuite == null) {
-			throw new RuntimeException("Cipher Suite must be set first!");
-		}
-		return _cipherSuite.getCipherType();
-	}
-	
-	public byte getEncKeyLength() {
-		if (_cipherSuite == null) {
-			throw new RuntimeException("Cipher Suite must be set first!");
-		}
-		return _cipherSuite.getEncryptKeyLength();
-	}
-
-	public byte getBlockLength() {
-		if (_cipherSuite == null) {
-			throw new RuntimeException("Cipher Suite must be set first!");
-		}
-		return _cipherSuite.getBlockLength();
-	}
-
-	public byte getFixedIvLength() {
-		if (_cipherSuite == null) {
-			throw new RuntimeException("Cipher Suite must be set first!");
-		}
-		return _cipherSuite.getFixedIvLength();
-	}
-
-	public byte getRecordIvLength() {
-		if (_cipherSuite == null) {
-			throw new RuntimeException("Cipher Suite must be set first!");
-		}
-		return _cipherSuite.getRecordIvLength();
-	}
-
-	public TlsMacAlgorithm getMacAlgorithm() {
-		if (_cipherSuite == null) {
-			throw new RuntimeException("Cipher Suite must be set first!");
-		}
-		return _cipherSuite.getMacAlgorithm();
-	}
-
-	public byte getMacLength() {
-		if (_cipherSuite == null) {
-			throw new RuntimeException("Cipher Suite must be set first!");
-		}
-		return _cipherSuite.getMacLength();
-	}
-	
-	public byte getMacKeyLength() {
-		if (_cipherSuite == null) {
-			throw new RuntimeException("Cipher Suite must be set first!");
-		}
-		return _cipherSuite.getMacKeyLength();
-	} 
-	 
+	/**
+	 * Returns the used key exchange algorithm for the current connection. 
+	 * The cipher suite must have been set before.
+	 * 
+	 * @return the key exchange algorithm
 	 */
-	
 	public TlsKeyExchangeAlgorithm getKeyExchangeAlgorithm() {
 		if (_cipherSuite == null) {
 			throw new RuntimeException("Cipher Suite must be set first!");

@@ -12,15 +12,16 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
-/*
- * Cipher Suite string according to:
- * http://docs.oracle.com/javase/7/docs/technotes/guides/security/StandardNames.html#Cipher
- * 
- * Other useful material:
- * http://www.javamex.com/tutorials/cryptography/block_modes_java.shtml
- * 
- */
 public class TlsAesGcmCipher {
+	
+	/*
+	 * Algorithm string according to:
+	 * http://docs.oracle.com/javase/7/docs/technotes/guides/security/StandardNames.html#Cipher
+	 * 
+	 * Other useful material:
+	 * http://www.javamex.com/tutorials/cryptography/block_modes_java.shtml
+	 * 
+	 */
 	
 	/*
 	 * RFC 5166
@@ -30,6 +31,9 @@ public class TlsAesGcmCipher {
 	
 	private Cipher _cipher;
 
+	/**
+	 * Creates a AES GCM cipher object for encryption and decryption. 
+	 */
 	public TlsAesGcmCipher() {
 		try {
 			_cipher = Cipher.getInstance("AES/GCM/NoPadding");
@@ -59,6 +63,18 @@ public class TlsAesGcmCipher {
 		}
 	}
 	
+	/**
+	 * Decryption operation for AES 128 GCM.
+	 * 
+	 * @param key the encryption key
+	 * @param nonce the nonce
+	 * @param additionalData optional additional data
+	 * @param ciphertext the ciphertext
+	 * 
+	 * @return the decrypted bytes
+	 * 
+	 * @throws TlsBadRecordMacException if an input to the cipher operation is invalid, e.g. invalid additional data
+	 */
 	public byte[] decrypt(byte[] key, byte[] nonce, byte[] additionalData, byte[] ciphertext) throws TlsBadRecordMacException {
 		return performCipherOperation(key, nonce, additionalData, ciphertext, Cipher.DECRYPT_MODE);
 	}

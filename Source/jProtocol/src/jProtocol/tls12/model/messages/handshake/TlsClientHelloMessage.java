@@ -131,7 +131,7 @@ public class TlsClientHelloMessage extends TlsHandshakeMessage {
 			byte[] csBytes = {unparsedContent[i], unparsedContent[i+1]}; 
 			short csCode = (short)ByteHelper.twoByteArrayToInt(csBytes);
 			try {
-				cipherSuites.add(registry.cipherSuiteFromValue(csCode));
+				cipherSuites.add(registry.cipherSuiteFromCode(csCode));
 			}
 			catch (TlsInvalidCipherSuiteException e) {
 				throw new TlsDecodeErrorException("CipherSuite for code [" + csCode + "] not found!");

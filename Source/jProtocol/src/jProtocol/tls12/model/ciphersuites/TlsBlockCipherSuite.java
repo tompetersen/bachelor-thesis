@@ -16,6 +16,11 @@ import java.util.Arrays;
 
 public abstract class TlsBlockCipherSuite implements TlsCipherSuite {
 	
+	/**
+	 * A class representing an encryption result of a block cipher suite operation.
+	 * 
+	 * @author Tom Petersen
+	 */
 	public class TlsBlockEncryptionResult {
 		//the plain fields
 		public byte[] iv;		
@@ -39,6 +44,7 @@ public abstract class TlsBlockCipherSuite implements TlsCipherSuite {
 		}
 	}
 	
+	@Override
 	public TlsCiphertext plaintextToCiphertext(TlsPlaintext plaintext, TlsEncryptionParameters encParam) {
 	//compute mac
 		TlsMacParameters parameters = new TlsMacParameters(encParam.getMacWriteKey(), 
@@ -75,6 +81,7 @@ public abstract class TlsBlockCipherSuite implements TlsCipherSuite {
 		return ciphertext;
 	}
 	
+	@Override
 	public TlsPlaintext ciphertextToPlaintext(byte[] ciphertextBytes,  TlsEncryptionParameters parameters, TlsCipherSuiteRegistry registry, TlsKeyExchangeAlgorithm algorithm) throws TlsBadRecordMacException, TlsBadPaddingException, TlsDecodeErrorException {
 		if (ciphertextBytes.length <= TlsPlaintext.RECORD_HEADER_LENGTH) {
 			throw new TlsDecodeErrorException("Ciphertext contains not enough information for record header and fragment!");
@@ -138,8 +145,28 @@ public abstract class TlsBlockCipherSuite implements TlsCipherSuite {
 	
 	public abstract byte[] computeMac(TlsMacParameters parameters);
 	
-	public abstract byte[] encrypt(byte[] key, byte[] iv, byte[] message);
+	/**
+	 * The encrypt operation must be implemented by concrete cipher suites. 
+	 * It encrypts plaintext bytes using a key and an IV.
+	 * 
+	 * @param key the key
+	 * @param iv the iv
+	 * @param plaintext the plaintext
+	 * 
+	 * @return the encrypted result
+	 */
+	public abstract byte[] encrypt(byte[] key, byte[] iv, byte[] plaintext);
 	
+	/**
+	 * The decrypt operation must be implemented by concrete cipher suites. 
+	 * It decrypts ciphertext bytes using a key and an IV.
+	 * 
+	 * @param key the key
+	 * @param iv the IV
+	 * @param ciphertext the ciphertext
+	 * 
+	 * @return the decrypted result
+	 */
 	public abstract byte[] decrypt(byte[] key, byte[] iv, byte[] ciphertext);
 
 	@Override

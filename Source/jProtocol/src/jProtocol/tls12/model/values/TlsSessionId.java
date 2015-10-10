@@ -6,6 +6,11 @@ public class TlsSessionId {
 
 	private byte[] _sessionId;
 	
+	/**
+	 * Creates a session ID object.
+	 * 
+	 * @param sessionId the session ID bytes. Must be between 0 and 32 bytes.
+	 */
 	public TlsSessionId(byte[] sessionId) {
 		if (sessionId == null) {
 			sessionId = new byte[0];
@@ -17,14 +22,29 @@ public class TlsSessionId {
 		_sessionId = sessionId;
 	}
 
+	/**
+	 * Returns the session ID bytes.
+	 * 
+	 * @return the bytes
+	 */
 	public byte[] getSessionId() {
 		return _sessionId;
 	}
 	
+	/**
+	 * Returns the session ID length.
+	 * 
+	 * @return the length
+	 */
 	public int getLength() {
 		return _sessionId.length;
 	}
 	
+	/**
+	 * Returns whether the session ID has no bytes set.
+	 * 
+	 * @return true, if the session ID is empty
+	 */
 	public boolean isEmpty() {
 		return _sessionId.length == 0;
 	}

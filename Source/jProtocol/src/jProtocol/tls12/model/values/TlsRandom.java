@@ -31,14 +31,29 @@ public class TlsRandom {
 		_random = random;
 	}
 
+	/**
+	 * Returns the unix time describing bytes.
+	 * 
+	 * @return the unix time bytes
+	 */
 	public byte[] getGmtUnixTime() {
 		return _gmt;
 	}
-
+	
+	/**
+	 * Returns the random bytes (not including the time bytes). 
+	 * 
+	 * @return the random bytes
+	 */
 	public byte[] getRandom() {
 		return _random;
 	}
 	
+	/**
+	 * Returns all bytes of this random object.
+	 * 
+	 * @return the bytes
+	 */
 	public byte[] getBytes() {
 		return ByteHelper.concatenate(_gmt, _random);
 	}

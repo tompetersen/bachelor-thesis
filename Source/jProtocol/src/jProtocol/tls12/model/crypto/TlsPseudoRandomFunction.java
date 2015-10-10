@@ -9,17 +9,18 @@ import java.security.NoSuchAlgorithmException;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
-/*
- * See chapter 5 of TLS 1.2 specification.
- * 
- * In this section, we define one PRF, based on HMAC.  This PRF with the
- SHA-256 hash function is used for all cipher suites defined in this
- document and in TLS documents published prior to this document when
- TLS 1.2 is negotiated.  New cipher suites MUST explicitly specify a
- PRF and, in general, SHOULD use the TLS PRF with SHA-256 or a
- stronger standard hash function.
- */
 public class TlsPseudoRandomFunction {
+	
+	/*
+	 * See chapter 5 of TLS 1.2 specification.
+	 * 
+	 * In this section, we define one PRF, based on HMAC.  This PRF with the
+	 SHA-256 hash function is used for all cipher suites defined in this
+	 document and in TLS documents published prior to this document when
+	 TLS 1.2 is negotiated.  New cipher suites MUST explicitly specify a
+	 PRF and, in general, SHOULD use the TLS PRF with SHA-256 or a
+	 stronger standard hash function.
+	 */
 	
 	/**
 	 * Computes random bytes according to the TLS 1.2PRF-SHA256 construction. 

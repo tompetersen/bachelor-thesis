@@ -11,6 +11,11 @@ import jProtocol.tls12.model.values.TlsKeyExchangeAlgorithm;
 
 public abstract class TlsStreamCipherSuite implements TlsCipherSuite {
 
+	/**
+	 * A class representing an encryption result of a stream cipher suite operation.
+	 * 
+	 * @author Tom Petersen
+	 */
 	public class TlsStreamEncryptionResult {
 		//the plain fields	
 		public byte[] content;

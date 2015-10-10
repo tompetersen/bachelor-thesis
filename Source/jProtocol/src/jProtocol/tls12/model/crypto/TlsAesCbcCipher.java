@@ -11,17 +11,21 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
-/*
- * Cipher Suite string according to:
- * http://docs.oracle.com/javase/7/docs/technotes/guides/security/StandardNames.html#Cipher
- * 
- * Other useful material:
- * http://www.javamex.com/tutorials/cryptography/block_modes_java.shtml
- * 
- */
 public class TlsAesCbcCipher {
+	/*
+	 * Algorithm string according to:
+	 * http://docs.oracle.com/javase/7/docs/technotes/guides/security/StandardNames.html#Cipher
+	 * 
+	 * Other useful material:
+	 * http://www.javamex.com/tutorials/cryptography/block_modes_java.shtml
+	 * 
+	 */
+	
 	private Cipher _cipher;
 
+	/**
+	 * Creates an AES CBC cipher object.
+	 */
 	public TlsAesCbcCipher() {
 		try {
 			_cipher = Cipher.getInstance("AES/CBC/NoPadding");
@@ -31,10 +35,28 @@ public class TlsAesCbcCipher {
 		}
 	}
 
+	/**
+	 * The AES CBC encrypt operation.
+	 * 
+	 * @param key the key 
+	 * @param iv the iv
+	 * @param plaintext the plaintext
+	 * 
+	 * @return the ciphertext
+	 */
 	public byte[] encrypt(byte[] key, byte[] iv, byte[] plaintext) {
 		return performCipherOperation(key, iv, plaintext, Cipher.ENCRYPT_MODE);
 	}
 	
+	/**
+	 * The AES CBC decrypt operation.
+	 * 
+	 * @param key the key 
+	 * @param iv the iv
+	 * @param plaintext the ciphertext
+	 * 
+	 * @return the decrypted ciphertext
+	 */
 	public byte[] decrypt(byte[] key, byte[] iv, byte[] ciphertext) {
 		return performCipherOperation(key, iv, ciphertext, Cipher.DECRYPT_MODE);
 	}

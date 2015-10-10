@@ -121,7 +121,7 @@ public class TlsServerHelloMessage extends TlsHandshakeMessage {
 		
 		TlsCipherSuite cipherSuite;
 		try {
-			cipherSuite = registry.cipherSuiteFromValue(csCode);
+			cipherSuite = registry.cipherSuiteFromCode(csCode);
 		}
 		catch (TlsInvalidCipherSuiteException e) {
 			throw new TlsDecodeErrorException("CipherSuite for code [" + csCode + "] not found!");
