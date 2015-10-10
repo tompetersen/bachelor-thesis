@@ -22,9 +22,16 @@ public class TlsCiphertext extends ProtocolDataUnit {
 
 	private byte[] _bytes;
 
+	/**
+	 * Creates a TLS ciphertext object.
+	 * 
+	 * @param message the encapsulated message for displaying purposes
+	 * @param version the used TLS version
+	 * @param fragment the fragment containing the message
+	 */
 	public TlsCiphertext(TlsMessage message, TlsVersion version, TlsFragment fragment) {
-		_message = message;
 		_version = version;
+		_message = message;
 		_contentType = message.getContentType();
 		_fragment = fragment;
 		_length = (short) _fragment.getLength();
@@ -44,16 +51,26 @@ public class TlsCiphertext extends ProtocolDataUnit {
 		_bytes = b.array();
 	}
 
+	/**
+	 * Returns the content type of the encapsulated message.
+	 * 
+	 * @return the content type
+	 */
 	public TlsContentType getContentType() {
 		return _contentType;
 	}
 
+	/**
+	 * Returns the used TLS version.
+	 * 
+	 * @return the TLS version
+	 */
 	public TlsVersion getVersion() {
 		return _version;
 	}
 
 	/**
-	 * The length sent in the TLS Record (not including content type, version
+	 * The length of the TLS record content (not including content type, version
 	 * and the length field itself).
 	 * 
 	 * @return the length
@@ -62,12 +79,14 @@ public class TlsCiphertext extends ProtocolDataUnit {
 		return _length;
 	}
 
+	/**
+	 * Returns the fragment containing the message and encryption cipher suite
+	 * values.
+	 * 
+	 * @return the fragment
+	 */
 	public TlsFragment getFragment() {
 		return _fragment;
-	}
-
-	public TlsMessage getMessage() {
-		return _message;
 	}
 
 	/**
@@ -86,6 +105,12 @@ public class TlsCiphertext extends ProtocolDataUnit {
 
 	/*
 	 * View Data
+	 */
+	/**
+	 * Returns a list of key value objects containing the in this ciphertext
+	 * contained information.
+	 * 
+	 * @return the key value object list
 	 */
 	public List<KeyValueObject> getViewData() {
 		ArrayList<KeyValueObject> result = new ArrayList<>();

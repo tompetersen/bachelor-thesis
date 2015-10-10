@@ -120,16 +120,14 @@ public class TlsServerStateMachine extends TlsStateMachine {
 	
 	@Override
 	public boolean isCorrectVerifyData(TlsVerifyData verifyData) {
-		byte[] masterSecret = _securityParameters.getMasterSecret();
-		byte[] expected = _securityParameters.getFinishedVerifyDataForClient(masterSecret);
+		byte[] expected = _securityParameters.getFinishedVerifyDataForClient();
 		
 		return Arrays.equals(expected, verifyData.getBytes());
 	}
 	
 	@Override
 	public TlsVerifyData getVerifyDataToSend() {
-		byte[] masterSecret = _securityParameters.getMasterSecret();
-		byte[] bytes = _securityParameters.getFinishedVerifyDataForServer(masterSecret);
+		byte[] bytes = _securityParameters.getFinishedVerifyDataForServer();
 		
 		return new TlsVerifyData(bytes);
 	}

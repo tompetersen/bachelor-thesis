@@ -41,7 +41,7 @@ public class CommunicationChannel<T extends ProtocolDataUnit> extends Observable
 
 	/**
 	 * Sends a protocol data unit from sender. The current thread will be paused until 
-	 * the user clicks the next message button if not sendAllMessagesWithoutBreak() has
+	 * the user clicks the next message button if sendAllMessagesWithoutBreak() has not
 	 * been called before. A channel can just deliver a single message at the same time.
 	 * 
 	 * @param pdu the protocol data unit

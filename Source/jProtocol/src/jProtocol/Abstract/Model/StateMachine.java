@@ -74,11 +74,11 @@ public abstract class StateMachine<T extends ProtocolDataUnit> extends Observabl
 	}
 
 	/**
-	 * Returns if a state is the current state.
+	 * Returns whether a state is the current state.
 	 * 
 	 * @param state the state identifier
 	 * 
-	 * @return true if the identifier is the identifier of the current state
+	 * @return true, if the identifier is the identifier of the current state
 	 */
 	public boolean isCurrentState(Integer state) {
 		return _currentState.equals(stateForValue(state));

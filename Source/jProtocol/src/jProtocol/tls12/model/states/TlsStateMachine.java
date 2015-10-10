@@ -291,7 +291,7 @@ public abstract class TlsStateMachine extends StateMachine<TlsCiphertext> {
  */
 	public void addHandshakeMessageForVerifyData(TlsHandshakeMessage message) {
 		if (isValidVerifyMessage(message)) {
-			_securityParameters.addHandshakeMessageBytes(message);
+			_securityParameters.addHandshakeMessageForVerification(message);
 		}
 		else {
 			throw new IllegalArgumentException("Messages in verification data must be handshake messages not equal to hello request or finished!");

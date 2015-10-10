@@ -37,7 +37,7 @@ public class TlsPlaintext {
 	}
 	
 	/**
-	 * Create a plaintext by parsing a decrypted message.
+	 * Creates a plaintext by parsing a decrypted message.
 	 * 
 	 * @param decryptedBytes the decrypted message bytes (including content type, version and length)
 	 * @param registry the cipher suite registry
@@ -80,22 +80,47 @@ public class TlsPlaintext {
 		_message = message;
 	}
 	
+	/**
+	 * Returns the content type of the included message.
+	 * 
+	 * @return the content type
+	 */
 	public TlsContentType getContentType() {
 		return _contentType;
 	}
 
+	/**
+	 * Returns the used TLS version.
+	 * 
+	 * @return the version
+	 */
 	public TlsVersion getVersion() {
 		return _version;
 	}
 
+	/**
+	 * Returns the length of the enclosed fragment used in the TlsPlaintext.length field.
+	 * 
+	 * @return the fragment length
+	 */
 	public short getLength() {
 		return _length;
 	}
 
+	/**
+	 * Returns the bytes of the enclosed fragment.
+	 * 
+	 * @return the fragment bytes
+	 */
 	public byte[] getFragment() {
 		return _fragment;
 	}
 
+	/**
+	 * Returns the included TLS higher level message.
+	 * 
+	 * @return the message
+	 */
 	public TlsMessage getMessage() {
 		return _message;
 	}
