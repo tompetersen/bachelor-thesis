@@ -65,9 +65,24 @@ public abstract class TlsMessage {
 	public TlsMessage() {
 	}
 
+	/**
+	 * Returns the TLS content type of the message, which is used in the TLS record header.
+	 * 
+	 * @return the content type
+	 */
 	public abstract TlsContentType getContentType();
 
+	/**
+	 * Returns the byte representation of the message.
+	 * 
+	 * @return the bytes
+	 */
 	public abstract byte[] getBytes();
 
+	/**
+	 * Returns the view data (key value object) for this message for displaying purposes.
+	 * 
+	 * @return the view data
+	 */
 	public abstract KeyValueObject getViewData();
 }

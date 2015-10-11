@@ -42,7 +42,7 @@ public class TlsWaitingForServerKeyExchangeState extends TlsState {
 			else {
 				MyLogger.info("Successfully checked server params signature.");
 			}
-			clientStateMachine.createClientDhKeyAgreementFromServerValues(serverParams);
+			clientStateMachine.performClientDhKeyAgreement(serverParams);
 		}
 		catch (TlsAsymmetricOperationException e) {
 			setTlsState(TlsStateType.DECRYPT_ERROR_OCCURED_STATE);

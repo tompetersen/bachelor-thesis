@@ -19,6 +19,11 @@ public class TlsFinishedMessage extends TlsHandshakeMessage {
 	
 	private TlsVerifyData _verifyData;
 	
+	/**
+	 * Creates a finished message.
+	 * 
+	 * @param verifyData the verify data
+	 */
 	public TlsFinishedMessage(TlsVerifyData verifyData) {
 		if (verifyData == null) {
 			throw new IllegalArgumentException("Verify data must be set!");
@@ -26,6 +31,13 @@ public class TlsFinishedMessage extends TlsHandshakeMessage {
 		_verifyData = verifyData;
 	}
 
+	/**
+	 * Creates a finished message by parsing sent bytes.
+	 * 
+	 * @param unparsedContent the sent bytes
+	 * 
+	 * @throws TlsDecodeErrorException if the message has invalid format
+	 */
 	public TlsFinishedMessage(byte[] unparsedContent) throws TlsDecodeErrorException {
 		super(unparsedContent);
 
@@ -34,6 +46,15 @@ public class TlsFinishedMessage extends TlsHandshakeMessage {
 		}
 		
 		_verifyData = new TlsVerifyData(unparsedContent);
+	}
+		
+	/**
+	 * Returns the verify data contained in this message.
+	 * 
+	 * @return the verify data
+	 */
+	public TlsVerifyData getVerifyData() {
+		return _verifyData;
 	}
 
 	@Override
@@ -46,10 +67,6 @@ public class TlsFinishedMessage extends TlsHandshakeMessage {
 		return _verifyData.getBytes(); //Fixed length VERIFY_DATA_LENGTH, therefore no length field needed
 	}
 
-	public TlsVerifyData getVerifyData() {
-		return _verifyData;
-	}
-	
 	@Override
 	public List<KeyValueObject> getBodyViewData() {
 		ArrayList<KeyValueObject> result = new ArrayList<>();

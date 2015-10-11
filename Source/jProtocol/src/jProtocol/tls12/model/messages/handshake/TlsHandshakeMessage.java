@@ -102,6 +102,9 @@ public abstract class TlsHandshakeMessage extends TlsMessage {
 		return result;
 	}
 	
+	/**
+	 * Default constructor.
+	 */
 	public TlsHandshakeMessage() {
 		super();
 	}
@@ -116,6 +119,11 @@ public abstract class TlsHandshakeMessage extends TlsMessage {
 		super(unparsedMessageBody);
 	}
 
+	/**
+	 * Returns the handshake type of this handshake message.
+	 * 
+	 * @return the handshake type
+	 */
 	public abstract TlsHandshakeType getHandshakeType();
 	
 	@Override
@@ -144,6 +152,11 @@ public abstract class TlsHandshakeMessage extends TlsMessage {
 	 */
 	public abstract byte[] getBodyBytes();
 	
+	/**
+	 * Returns the length of this handshake message body.
+	 * 
+	 * @return the length not including handshake header bytes
+	 */
 	public int getLength() {
 		return getBodyBytes().length;
 	}
@@ -177,7 +190,17 @@ public abstract class TlsHandshakeMessage extends TlsMessage {
 		return result;
 	}
 	
+	/**
+	 * Returns the view data (list of key value objects) for this handshake message content.
+	 * 
+	 * @return the view data
+	 */
 	public abstract List<KeyValueObject> getBodyViewData();
 	
+	/**
+	 * Returns the HTML info content for this handshake message type.
+	 * 
+	 * @return the HTML info content
+	 */
 	public abstract String getBodyHtmlInfo();
 }

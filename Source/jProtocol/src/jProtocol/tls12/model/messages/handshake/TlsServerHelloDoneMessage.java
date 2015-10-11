@@ -13,10 +13,20 @@ public class TlsServerHelloDoneMessage extends TlsHandshakeMessage {
 	 struct { } ServerHelloDone;
 	 */
 	
+	/**
+	 * Creates a server hello done message.
+	 */
 	public TlsServerHelloDoneMessage() {
 		super();
 	}
 	
+	/**
+	 * Creates an server hello done message by parsing sent bytes.
+	 * 
+	 * @param unparsedContent the sent bytes
+	 * 
+	 * @throws TlsDecodeErrorException if the message has invalid format
+	 */
 	public TlsServerHelloDoneMessage(byte[] unparsedContent) throws TlsDecodeErrorException {
 		super(unparsedContent);
 

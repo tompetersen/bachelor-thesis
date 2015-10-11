@@ -1,7 +1,6 @@
 package jProtocol.tls12.model.states.client;
 
 import jProtocol.helper.MyLogger;
-import jProtocol.tls12.model.crypto.TlsRsaCipher;
 import jProtocol.tls12.model.messages.TlsMessage;
 import jProtocol.tls12.model.messages.handshake.TlsCertificateMessage;
 import jProtocol.tls12.model.states.TlsClientStateMachine;
@@ -37,8 +36,7 @@ public class TlsWaitingForServerCertificateState extends TlsState {
 		
 		TlsCertificate serverCert = certificateList.get(0);
 		byte[] rsaPublicKey = serverCert.getRsaPublicKey();
-		TlsRsaCipher rsaCipher = new TlsRsaCipher(rsaPublicKey);
-		clientStateMachine.setRsaCipher(rsaCipher);
+		clientStateMachine.setRsaCipherForPublicKey(rsaPublicKey);
 		
 		_stateMachine.notifyObserversOfStateChanged();
 		

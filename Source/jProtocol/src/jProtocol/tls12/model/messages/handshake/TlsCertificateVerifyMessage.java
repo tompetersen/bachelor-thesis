@@ -16,11 +16,20 @@ public class TlsCertificateVerifyMessage extends TlsHandshakeMessage {
       } CertificateVerify;
 	 */
 	
-	//TODO: Used for authenticated client -> Implement if necessary
+	/**
+	 * Creates a certificate verify message.
+	 */
 	public TlsCertificateVerifyMessage() {
-
+		//TODO: Used for authenticated client -> Implement if necessary
 	}
 
+	/**
+	 * Creates a certificate verify message by parsing sent bytes.
+	 * 
+	 * @param unparsedContent the sent bytes
+	 * 
+	 * @throws TlsDecodeErrorException if the message has invalid format
+	 */
 	public TlsCertificateVerifyMessage(byte[] unparsedContent) throws TlsDecodeErrorException {
 		super(unparsedContent);
 		// TODO: Used for authenticated client -> Implement parsing if necessary

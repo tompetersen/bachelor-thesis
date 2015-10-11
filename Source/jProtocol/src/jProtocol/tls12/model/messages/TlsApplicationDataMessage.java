@@ -8,18 +8,25 @@ import jProtocol.tls12.model.values.TlsContentType;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
-/*
- *  Application data messages are carried by the record layer and are 
- *  fragmented, compressed, and encrypted based on the current connection 
- *  state. The messages are treated as transparent data to the record 
- *  layer.
- *  
- *  See chapter 10, p. 65 TLS 1.2
- */
+
 public class TlsApplicationDataMessage extends TlsMessage {
 
+	/*
+	 *  Application data messages are carried by the record layer and are 
+	 *  fragmented, compressed, and encrypted based on the current connection 
+	 *  state. The messages are treated as transparent data to the record 
+	 *  layer.
+	 *  
+	 *  See chapter 10, p. 65 TLS 1.2
+	 */
+	
 	private TlsApplicationData _applicationData;
 	
+	/**
+	 * Creates an application data message.
+	 * 
+	 * @param applicationData the application data. Must not be null.
+	 */
 	public TlsApplicationDataMessage(TlsApplicationData applicationData) {
 		if (applicationData == null) {
 			throw new IllegalArgumentException("Application data must not be null!");
@@ -27,12 +34,24 @@ public class TlsApplicationDataMessage extends TlsMessage {
 		_applicationData = applicationData;
 	}
 	
+	/**
+	 * Creates an application data message by parsing sent bytes.
+	 * 
+	 * @param unparsedContent the sent bytes
+	 * 
+	 * @throws TlsDecodeErrorException if the message has invalid format
+	 */
 	public TlsApplicationDataMessage(byte[] unparsedContent) throws TlsDecodeErrorException {
 		super(unparsedContent);
 		
 		_applicationData = new TlsApplicationData(unparsedContent);
 	}
 	
+	/**
+	 * Returns the application data contained in this message.
+	 * 
+	 * @return the application data
+	 */
 	public TlsApplicationData getApplicationData() {
 		return _applicationData;
 	}

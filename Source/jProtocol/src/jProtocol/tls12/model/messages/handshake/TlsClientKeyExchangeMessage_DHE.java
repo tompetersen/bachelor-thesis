@@ -23,10 +23,22 @@ public class TlsClientKeyExchangeMessage_DHE extends TlsClientKeyExchangeMessage
 	
 	private TlsClientDhPublicKey _dhPublicKey; //Yc
 	
+	/**
+	 * 
+	 * 
+	 * @param dhPublicKey
+	 */
 	public TlsClientKeyExchangeMessage_DHE(TlsClientDhPublicKey dhPublicKey) {
 		_dhPublicKey = dhPublicKey;
 	}
 
+	/**
+	 * Creates a Diffie-Hellman ephemeral client key exchange message by parsing sent bytes.
+	 * 
+	 * @param unparsedContent the sent bytes
+	 * 
+	 * @throws TlsDecodeErrorException if the message has invalid format
+	 */
 	public TlsClientKeyExchangeMessage_DHE(byte[] unparsedMessageContent) throws TlsDecodeErrorException {
 		super();
 		
@@ -48,6 +60,15 @@ public class TlsClientKeyExchangeMessage_DHE extends TlsClientKeyExchangeMessage
 		
 		_dhPublicKey = new TlsClientDhPublicKey(yc);	
 	}
+	
+	/**
+	 * Returns the client Diffie-Hellman public key.
+	 * 
+	 * @return the DH public key
+	 */
+	public TlsClientDhPublicKey getDiffieHellmanClientPublicKey() {
+		return _dhPublicKey;
+	}
 
 	@Override
 	public byte[] getBodyBytes() {
@@ -56,10 +77,6 @@ public class TlsClientKeyExchangeMessage_DHE extends TlsClientKeyExchangeMessage
 		byte[] lengthBytes = ByteHelper.intToTwoByteArray(length);
 		
 		return ByteHelper.concatenate(lengthBytes, yc);
-	}
-
-	public TlsClientDhPublicKey getDiffieHellmenClientPublicKey() {
-		return _dhPublicKey;
 	}
 	
 	@Override

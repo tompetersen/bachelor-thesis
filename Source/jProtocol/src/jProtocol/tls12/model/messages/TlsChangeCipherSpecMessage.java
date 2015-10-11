@@ -6,19 +6,27 @@ import jProtocol.tls12.model.exceptions.TlsDecodeErrorException;
 import jProtocol.tls12.model.values.TlsContentType;
 import java.util.ArrayList;
 
-
-/*
- *  The ChangeCipherSpec message is sent by both the client and the 
- *  server to notify the receiving party that subsequent records will be 
- *  protected under the newly negotiated CipherSpec and keys.
- *  
- *  See chapter 7.1, p. 27 TLS 1.2
- */
 public class TlsChangeCipherSpecMessage extends TlsMessage {
 
-
+	/*
+	 *  The ChangeCipherSpec message is sent by both the client and the 
+	 *  server to notify the receiving party that subsequent records will be 
+	 *  protected under the newly negotiated CipherSpec and keys.
+	 *  
+	 *  See chapter 7.1, p. 27 TLS 1.2
+	 */
+	/**
+	 * Default constructor.
+	 */
 	public TlsChangeCipherSpecMessage() {};
 	
+	/**
+	 * Creates a change cipher spec message by parsing sent bytes.
+	 * 
+	 * @param unparsedContent the sent bytes
+	 * 
+	 * @throws TlsDecodeErrorException if the message has invalid format
+	 */
 	public TlsChangeCipherSpecMessage(byte[] unparsedContent) throws TlsDecodeErrorException {
 		super(unparsedContent);
 
@@ -27,10 +35,12 @@ public class TlsChangeCipherSpecMessage extends TlsMessage {
 		}
 	}
 
+	@Override
 	public TlsContentType getContentType() {
 		return TlsContentType.ChangeCipherSpec;
 	}
 
+	@Override
 	public byte[] getBytes() {
 		byte[] messageBytes = {1};
 		return messageBytes;

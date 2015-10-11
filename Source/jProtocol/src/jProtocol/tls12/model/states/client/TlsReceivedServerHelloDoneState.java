@@ -69,7 +69,7 @@ public class TlsReceivedServerHelloDoneState extends TlsState {
 			_stateMachine.computeMasterSecret(premastersecret);
 			
 			TlsClientStateMachine clientStateMachine = (TlsClientStateMachine) _stateMachine;
-			byte[] encryptedPreMasterSecretBytes = clientStateMachine.getRsaCipher().encrypt(premastersecret);
+			byte[] encryptedPreMasterSecretBytes = clientStateMachine.rsaEncrypt(premastersecret);
 			TlsRsaEncryptedPreMasterSecret encPreMasterSecret = new TlsRsaEncryptedPreMasterSecret(encryptedPreMasterSecretBytes);
 			TlsClientKeyExchangeMessage_RSA message = new TlsClientKeyExchangeMessage_RSA(encPreMasterSecret);
 			

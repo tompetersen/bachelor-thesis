@@ -30,10 +30,22 @@ public class TlsClientKeyExchangeMessage_RSA extends TlsClientKeyExchangeMessage
 	
 	private TlsRsaEncryptedPreMasterSecret _encPreMasterSecret;
 
+	/**
+	 * Creates a RSA client key exchange message.
+	 * 
+	 * @param rsaEncryptedPremasterSecret the RSA encrypted premaster secret
+	 */
 	public TlsClientKeyExchangeMessage_RSA(TlsRsaEncryptedPreMasterSecret rsaEncryptedPremasterSecret) {
 		_encPreMasterSecret = rsaEncryptedPremasterSecret;
 	}
 
+	/**
+	 * Creates a RSA client key exchange message by parsing sent bytes.
+	 * 
+	 * @param unparsedContent the sent bytes
+	 * 
+	 * @throws TlsDecodeErrorException if the message has invalid format
+	 */
 	public TlsClientKeyExchangeMessage_RSA(byte[] unparsedMessageContent) throws TlsDecodeErrorException {
 		super();
 
@@ -55,16 +67,21 @@ public class TlsClientKeyExchangeMessage_RSA extends TlsClientKeyExchangeMessage
 		
 		_encPreMasterSecret = new TlsRsaEncryptedPreMasterSecret(premastersecret);
 	}
+	
+	/**
+	 * Returns the RSA encrypted pre master secret.
+	 * 
+	 * @return the encrypted pre master secret
+	 */
+	public TlsRsaEncryptedPreMasterSecret getRsaEncryptedPreMasterSecret() {
+		return _encPreMasterSecret;
+	}
 
 	@Override
 	public byte[] getBodyBytes() {
 		byte[] encPreMasterSecretBytes = _encPreMasterSecret.getEncryptedPreMasterSecret();
 		byte[] lengthBytes = ByteHelper.intToTwoByteArray(encPreMasterSecretBytes.length); 
 		return ByteHelper.concatenate(lengthBytes, encPreMasterSecretBytes);
-	}
-
-	public TlsRsaEncryptedPreMasterSecret getRsaEncryptedPreMasterSecret() {
-		return _encPreMasterSecret;
 	}
 	
 	@Override

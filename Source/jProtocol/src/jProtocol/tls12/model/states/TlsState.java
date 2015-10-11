@@ -18,6 +18,11 @@ public abstract class TlsState extends State<TlsCiphertext> {
 	
 	protected TlsStateMachine _stateMachine; 
 	
+	/**
+	 * Creates a TLS state.
+	 * 
+	 * @param stateMachine the state machine this state belongs to
+	 */
 	public TlsState(TlsStateMachine stateMachine) {
 		super(stateMachine);
 		
@@ -79,6 +84,11 @@ public abstract class TlsState extends State<TlsCiphertext> {
 	 */
 	public abstract void receivedTlsMessage(TlsMessage message);
 
+	/**
+	 * Sends a TLS message from the state machine this state belongs to.
+	 * 
+	 * @param message the TLS message
+	 */
 	public void sendTlsMessage(TlsMessage message) {
 		TlsPlaintext plaintext = new TlsPlaintext(message, _stateMachine.getVersion());
 		TlsCiphertext ciphertext = _stateMachine.plaintextToCiphertext(plaintext);
@@ -99,18 +109,47 @@ public abstract class TlsState extends State<TlsCiphertext> {
 		_stateMachine.setTlsState(type, this);
 	}
 	
+	/**
+	 * Returns whether a message is a handshake message of a specific type. Convenience method. 
+	 * 
+	 * @param m the message
+	 * @param type the handshake type
+	 * 
+	 * @return true, if the message is a handshake message of type
+	 */
 	public boolean isHandshakeMessageOfType(TlsMessage m, TlsHandshakeType type) {
 		return (m.getContentType() == TlsContentType.Handshake) && (((TlsHandshakeMessage)m).getHandshakeType() == type);
 	}
 	
+	/**
+	 * Returns whether a message is a change cipher spec message. Convenience method. 
+	 * 
+	 * @param m the message
+	 * 
+	 * @return true, if the message is a change cipher spec message
+	 */
 	public boolean isChangeCipherSpecMessage(TlsMessage m) {
 		return (m.getContentType() == TlsContentType.ChangeCipherSpec);
 	}
 	
+	/**
+	 * Returns whether a message is an alert message. Convenience method. 
+	 * 
+	 * @param m the message
+	 * 
+	 * @return true, if the message is an alert message
+	 */
 	public boolean isAlertMessageOfType(TlsMessage m, TlsAlert alert) {
 		return (m.getContentType() == TlsContentType.Alert) && (((TlsAlertMessage)m).getAlert() == alert);
 	}
 	
+	/**
+	 * Returns whether a message is an application data message. Convenience method. 
+	 * 
+	 * @param m the message
+	 * 
+	 * @return true, if the message is an application data message
+	 */
 	public boolean isApplicationDataMessage(TlsMessage m) {
 		return (m.getContentType() == TlsContentType.ApplicationData);
 	}

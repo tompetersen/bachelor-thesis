@@ -23,6 +23,11 @@ public class TlsServerStateMachine extends TlsStateMachine {
 	private List<TlsCertificate> _certificateList; 
 	private TlsRsaCipher _rsaCipher;
 	
+	/**
+	 * Creates a server state machine object.
+	 * 
+	 * @param registry a cipher suite registry
+	 */
 	public TlsServerStateMachine(TlsCipherSuiteRegistry registry) {
 		super(registry);
 		
@@ -51,40 +56,33 @@ public class TlsServerStateMachine extends TlsStateMachine {
 		return _certificateList;
 	}
 	
+	@Override
 	public TlsServerDhParams getServerDhParams() {
 		return _serverDhKeyAgreement.getServerDhParams();
 	}
 	
-	public byte[] getSignedDhParams() throws TlsAsymmetricOperationException {
-		/*  digitally-signed struct {
-              opaque client_random[32];
-              opaque server_random[32];
-              ServerDHParams params;
-          } signed_params;*/
-		
-		byte[] clientRandom = _securityParameters.getClientRandom().getBytes();
-		byte[] serverRandom = _securityParameters.getServerRandom().getBytes();
-		byte[] params = getServerDhParams().getBytes();
-
-		ByteBuffer dataToSign = ByteBuffer.allocate(clientRandom.length + serverRandom.length + params.length);
-		
-		dataToSign.put(clientRandom);
-		dataToSign.put(serverRandom);
-		dataToSign.put(params);
-		
-		return _rsaCipher.signData(dataToSign.array());
-	}
-
 	@Override
 	public TlsClientDhPublicKey getClientDhPublicKey() {
 		return _clientDhPublicKey;
 	}
 	
-	public void computePreMasterSecretForServerDhKeyAgreement(TlsClientDhPublicKey clientPublicKey) throws TlsAsymmetricOperationException {
-		_clientDhPublicKey = clientPublicKey;
-		byte[] premastersecret = _serverDhKeyAgreement.computePreMasterSecret(clientPublicKey);
-		computeMasterSecret(premastersecret);
-		MyLogger.info("[DH] Server agreed on premastersecret: " + ByteHelper.bytesToHexString(premastersecret));
+	@Override
+	public boolean isCorrectVerifyData(TlsVerifyData verifyData) {
+		byte[] expected = _securityParameters.getFinishedVerifyDataForClient();
+		
+		return Arrays.equals(expected, verifyData.getBytes());
+	}
+	
+	@Override
+	public TlsVerifyData getVerifyDataToSend() {
+		byte[] bytes = _securityParameters.getFinishedVerifyDataForServer();
+		
+		return new TlsVerifyData(bytes);
+	}
+
+	@Override
+	protected String getEntityName() {
+		return "Server";
 	}
 	
 	@Override
@@ -114,26 +112,55 @@ public class TlsServerStateMachine extends TlsStateMachine {
 		return new TlsEncryptionParameters(seqNum, encKey, macKey, iv);
 	}
 	
-	public TlsRsaCipher getRsaCipher() {
-		return _rsaCipher;
-	}
-	
-	@Override
-	public boolean isCorrectVerifyData(TlsVerifyData verifyData) {
-		byte[] expected = _securityParameters.getFinishedVerifyDataForClient();
+	/**
+	 * Returns the signature of the servers DH parameters.
+	 * 
+	 * @return the signature
+	 * 
+	 * @throws TlsAsymmetricOperationException if the signature couldn't be computed
+	 */
+	public byte[] getSignedDhParams() throws TlsAsymmetricOperationException {
+		/*  digitally-signed struct {
+              opaque client_random[32];
+              opaque server_random[32];
+              ServerDHParams params;
+          } signed_params;*/
 		
-		return Arrays.equals(expected, verifyData.getBytes());
-	}
-	
-	@Override
-	public TlsVerifyData getVerifyDataToSend() {
-		byte[] bytes = _securityParameters.getFinishedVerifyDataForServer();
-		
-		return new TlsVerifyData(bytes);
-	}
+		byte[] clientRandom = _securityParameters.getClientRandom().getBytes();
+		byte[] serverRandom = _securityParameters.getServerRandom().getBytes();
+		byte[] params = getServerDhParams().getBytes();
 
-	@Override
-	protected String getEntityName() {
-		return "Server";
+		ByteBuffer dataToSign = ByteBuffer.allocate(clientRandom.length + serverRandom.length + params.length);
+		
+		dataToSign.put(clientRandom);
+		dataToSign.put(serverRandom);
+		dataToSign.put(params);
+		
+		return _rsaCipher.signData(dataToSign.array());
+	}
+	
+	/**
+	 * Computes the pre master secret when using Diffie-Hellman key exchange.
+	 * 
+	 * @param clientPublicKey the clients DH public key
+	 * 
+	 * @throws TlsAsymmetricOperationException if the key couldn't be computed
+	 */
+	public void computePreMasterSecretForServerDhKeyAgreement(TlsClientDhPublicKey clientPublicKey) throws TlsAsymmetricOperationException {
+		_clientDhPublicKey = clientPublicKey;
+		byte[] premastersecret = _serverDhKeyAgreement.computePreMasterSecret(clientPublicKey);
+		computeMasterSecret(premastersecret);
+		MyLogger.info("[DH] Server agreed on premastersecret: " + ByteHelper.bytesToHexString(premastersecret));
+	}
+	
+	/**
+	 * Decrypts a RSA encrypted ciphertext with the servers private key.
+	 * 
+	 * @return the decrypted plaintext
+	 * 
+	 * @throws TlsAsymmetricOperationException if the operation couldn't be completed 
+	 */
+	public byte[] rsaDecrypt(byte[] ciphertext) throws TlsAsymmetricOperationException {
+		return _rsaCipher.decrypt(ciphertext);
 	}
 }

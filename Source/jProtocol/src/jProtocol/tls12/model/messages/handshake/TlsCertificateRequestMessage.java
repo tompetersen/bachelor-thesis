@@ -17,11 +17,20 @@ public class TlsCertificateRequestMessage extends TlsHandshakeMessage {
       } CertificateRequest;
 	 */
 	
-	//TODO: Used for authenticated client -> Implement if necessary
+	/**
+	 * Creates a certificate request message.
+	 */
 	public TlsCertificateRequestMessage() {
-		
+		//TODO: Used for authenticated client -> Implement if necessary
 	}
 
+	/**
+	 * Creates a certificate request message by parsing sent bytes.
+	 * 
+	 * @param unparsedContent the sent bytes
+	 * 
+	 * @throws TlsDecodeErrorException if the message has invalid format
+	 */
 	public TlsCertificateRequestMessage(byte[] unparsedContent) throws TlsDecodeErrorException {
 		super(unparsedContent);
 		// TODO: Used for authenticated client -> Implement parsing if necessary

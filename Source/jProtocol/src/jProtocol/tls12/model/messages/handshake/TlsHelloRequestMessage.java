@@ -12,10 +12,20 @@ public class TlsHelloRequestMessage extends TlsHandshakeMessage {
 	 *  struct { } HelloRequest;
 	 */
 	
+	/**
+	 * Creates a hello request message.
+	 */
 	public TlsHelloRequestMessage() {
 		super();
 	}
 
+	/**
+	 * Creates a hello request message by parsing sent bytes.
+	 * 
+	 * @param unparsedContent the sent bytes
+	 * 
+	 * @throws TlsDecodeErrorException if the message has invalid format
+	 */
 	public TlsHelloRequestMessage(byte[] unparsedContent) throws TlsDecodeErrorException {
 		super(unparsedContent);
 
