@@ -50,6 +50,18 @@ public class ImageLoader {
 		return loadImageForFileName("triangle38.png", width, height);
 	}
 	
+	public static BufferedImage getClientIcon(int width, int height) {
+		return loadImageForFileName("flatscreen.png", width, height);
+	}
+	
+	public static BufferedImage getServerIcon(int width, int height) {
+		return loadImageForFileName("servers.png", width, height);
+	}
+	
+	public static BufferedImage getMessageIcon(int width, int height) {
+		return loadImageForFileName("email19.png", width, height);
+	}
+	
 	/**
 	 * Loads images from the current package  
 	 * 

@@ -7,13 +7,17 @@ import jProtocol.helper.ButtonHelper;
 import jProtocol.tls12.model.states.TlsStateMachine;
 import jProtocol.tls12.model.states.TlsStateType;
 import jProtocol.tls12.model.values.TlsApplicationData;
+import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.nio.charset.StandardCharsets;
+import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 public class TlsClientView {
@@ -38,11 +42,23 @@ public class TlsClientView {
 		_clientStateMachine = client;
 		_view = new JPanel();
 		_view.setLayout(new BoxLayout(_view, BoxLayout.Y_AXIS));
+		_view.setBackground(UiConstants.VIEW_BACKGROUND_COLOR);
+		_view.setBorder(BorderFactory.createMatteBorder(0, 0, 0, 1, UiConstants.VIEW_BORDER_COLOR));
+		
+		JPanel headerPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+		headerPanel.add(new JLabel(new ImageIcon(ImageLoader.getClientIcon(32, 32))));
+		JLabel headerLabel = new JLabel("Client");
+		headerLabel.setFont(new Font("SansSerif", Font.BOLD, 14));
+		headerPanel.add(headerLabel);
+		headerPanel.setBackground(UiConstants.VIEW_BACKGROUND_COLOR);
+		_view.add(headerPanel);
+		
 		_treeView = new TlsStateMachineTreeView(client, htmlInfoUpdater, "Client");
 		_view.add(_treeView.getView());
 		
 		JPanel buttonPanel = new JPanel();
 		buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
+		buttonPanel.setBackground(UiConstants.VIEW_BACKGROUND_COLOR);
 		final int buttonImageSize = UiConstants.BUTTON_IMAGE_SIZE;
 		
 		_connectButton = ButtonHelper.createImageButton("Connect", 

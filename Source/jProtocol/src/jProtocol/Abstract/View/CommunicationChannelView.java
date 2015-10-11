@@ -5,6 +5,7 @@ import jProtocol.helper.ButtonHelper;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -29,6 +30,8 @@ public class CommunicationChannelView {
 	 */
 	public CommunicationChannelView(final CommunicationChannelViewListener listener) {
 		_view = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+		_view.setBackground(UiConstants.VIEW_BACKGROUND_COLOR);
+		_view.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, UiConstants.VIEW_BORDER_COLOR));
 		
 		final int buttonImageSize = UiConstants.BUTTON_IMAGE_SIZE;
 		

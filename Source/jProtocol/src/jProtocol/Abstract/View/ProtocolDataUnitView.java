@@ -9,6 +9,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -63,13 +64,26 @@ public class ProtocolDataUnitView<T extends ProtocolDataUnit> {
 		_provider = provider;
 		_htmlInfoUpdater = htmlInfoUpdater;
 
-		_view = new JPanel();
-		_view.setLayout(new BoxLayout(_view, BoxLayout.Y_AXIS));
+		_view = new JPanel(new BorderLayout(5, 5));
+		_view.setBackground(UiConstants.VIEW_BACKGROUND_COLOR);
+		
 		_currentShownPduIndex = -1;
 		_pduViews = new ArrayList<PduView>();
 
+		createHeaderPanel();
 		createPduList();
 		createPduDetailView();
+	}
+	
+	private void createHeaderPanel() {
+		JPanel headerPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+		headerPanel.add(new JLabel(new ImageIcon(ImageLoader.getMessageIcon(32, 32))));
+		JLabel headerLabel = new JLabel("Messages");
+		headerLabel.setFont(new Font("SansSerif", Font.BOLD, 14));
+		headerPanel.add(headerLabel);
+		headerPanel.setBackground(UiConstants.VIEW_BACKGROUND_COLOR);
+		
+		_view.add(headerPanel, BorderLayout.PAGE_START);
 	}
 
 	private void createPduList() {

@@ -14,4 +14,7 @@ public class UiConstants {
 	public static Color KEY_VALUE_TREE_HIGHLIGHT_COLOR = new Color(0xF0, 0xE8, 0x64);
 	
 	public static Color ALTERED_BYTES_FOREGROUND_COLOR = new Color(0xDB, 0x40, 0x38);
+	
+	public static Color VIEW_BACKGROUND_COLOR = Color.WHITE;
+	public static Color VIEW_BORDER_COLOR = Color.GRAY;
 }

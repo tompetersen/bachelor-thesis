@@ -1,5 +1,6 @@
 package jProtocol.helper;
 
+import jProtocol.Abstract.View.UiConstants;
 import java.awt.event.ActionListener;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -22,6 +23,7 @@ public class ButtonHelper {
 		result.setVerticalTextPosition(JButton.CENTER);
 //		result.setAlignmentX(Component.LEFT_ALIGNMENT);
 		result.addActionListener(listener);
+		result.setBackground(UiConstants.VIEW_BACKGROUND_COLOR);
 		
 		return result;
 	}
