@@ -56,7 +56,7 @@ public class CommunicationChannelPresenter<T extends ProtocolDataUnit> implement
 
 	@Override
 	public void showHelpClicked() {
-		_htmlInfoView.show();
+		_htmlInfoView.show(getView());
 	}
 
 }

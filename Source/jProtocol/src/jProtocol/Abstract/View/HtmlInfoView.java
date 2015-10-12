@@ -5,6 +5,7 @@ import java.awt.Desktop;
 import java.awt.Dimension;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import javax.swing.JComponent;
 import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -67,7 +68,6 @@ public class HtmlInfoView {
 		_frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		_frame.setAlwaysOnTop(true);
 		_frame.setSize(new Dimension(400, 400));
-		_frame.setLocationRelativeTo(null);
 	}
 
 	/**
@@ -95,9 +95,14 @@ public class HtmlInfoView {
 
 	/**
 	 * Makes the info view visible.
+	 * 
+	 * @param relativeToComponent the Component the info view should be placed relative to
 	 */
-	public void show() {
-		_frame.setVisible(true);
+	public void show(JComponent relativeToComponent) {
+		if (!_frame.isVisible()) {
+			_frame.setLocationRelativeTo(relativeToComponent);
+			_frame.setVisible(true);
+		}
 	}
 
 }

@@ -129,13 +129,13 @@ public class StartUp {
 
 	private void aboutClicked() {
 		_aboutView.setHtmlContent(HtmlAboutLoader.getHtmlAboutContent());
-		_aboutView.show();
+		_aboutView.show(_currentBuilder.getView());
 	}
 
 	private void aboutProtocolClicked() {
 		if (_currentBuilder != null) {
 			_aboutView.setHtmlContent(_currentBuilder.getHtmlAboutContent());
-			_aboutView.show();
+			_aboutView.show(_currentBuilder.getView());
 		}
 	}
 }
