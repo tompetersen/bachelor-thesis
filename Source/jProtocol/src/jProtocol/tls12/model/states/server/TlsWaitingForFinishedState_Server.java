@@ -12,6 +12,11 @@ import jProtocol.tls12.model.values.TlsVerifyData;
 
 public class TlsWaitingForFinishedState_Server extends TlsState {
 
+	/**
+	 * Creates a state for a specific state machine.
+	 * 
+	 * @param stateMachine the state machine 
+	 */
 	public TlsWaitingForFinishedState_Server(TlsStateMachine stateMachine) {
 		super(stateMachine);
 	}

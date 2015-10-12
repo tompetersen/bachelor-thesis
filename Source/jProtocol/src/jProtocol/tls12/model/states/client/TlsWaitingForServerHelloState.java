@@ -11,6 +11,11 @@ import jProtocol.tls12.model.values.TlsVersion;
 
 public class TlsWaitingForServerHelloState extends TlsState {
 
+	/**
+	 * Creates a state for a specific state machine.
+	 * 
+	 * @param stateMachine the state machine 
+	 */
 	public TlsWaitingForServerHelloState(TlsStateMachine stateMachine) {
 		super(stateMachine);
 	}

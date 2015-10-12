@@ -12,6 +12,11 @@ import jProtocol.tls12.model.values.TlsSessionId;
 
 public class TlsInitialServerState extends TlsState {
 
+	/**
+	 * Creates a state for a specific state machine.
+	 * 
+	 * @param stateMachine the state machine 
+	 */
 	public TlsInitialServerState(TlsStateMachine stateMachine) {
 		super(stateMachine);
 	}

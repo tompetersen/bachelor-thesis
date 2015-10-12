@@ -7,6 +7,11 @@ import jProtocol.tls12.model.states.TlsStateMachine;
 
 public abstract class TlsAlertState extends TlsState {
 
+	/**
+	 * Creates a state for a specific state machine.
+	 * 
+	 * @param stateMachine the state machine 
+	 */
 	public TlsAlertState(TlsStateMachine stateMachine) {
 		super(stateMachine);
 	}
@@ -34,6 +39,11 @@ public abstract class TlsAlertState extends TlsState {
 		//setTlsState(TlsStateType.INITIAL_SERVER_STATE);
 	}
 	
+	/**
+	 * Returns the TLS alert message, which should be send for the alert state.
+	 * 
+	 * @return the alert message
+	 */
 	public abstract TlsAlertMessage getAlertMessageToSend();
 
 }

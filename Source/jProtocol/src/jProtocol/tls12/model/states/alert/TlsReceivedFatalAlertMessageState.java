@@ -5,6 +5,11 @@ import jProtocol.tls12.model.states.TlsStateMachine;
 
 public class TlsReceivedFatalAlertMessageState extends TlsAlertState {
 
+	/**
+	 * Creates a state for a specific state machine.
+	 * 
+	 * @param stateMachine the state machine 
+	 */
 	public TlsReceivedFatalAlertMessageState(TlsStateMachine stateMachine) {
 		super(stateMachine);
 	}

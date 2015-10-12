@@ -16,6 +16,11 @@ import java.util.List;
 
 public class TlsInitialClientState extends TlsState {
 
+	/**
+	 * Creates a state for a specific state machine.
+	 * 
+	 * @param stateMachine the state machine 
+	 */
 	public TlsInitialClientState(TlsStateMachine stateMachine) {
 		super(stateMachine);
 	}
@@ -30,6 +35,9 @@ public class TlsInitialClientState extends TlsState {
 		throw new RuntimeException("Client must not receive messages in initial state.");
 	}
 	
+	/**
+	 * Starts a TLS connection.
+	 */
 	public void openConnection() {
 		setTlsState(TlsStateType.CLIENT_IS_WAITING_FOR_SERVER_HELLO_STATE);
 		

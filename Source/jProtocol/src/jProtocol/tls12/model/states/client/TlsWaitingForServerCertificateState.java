@@ -13,6 +13,11 @@ import java.util.List;
 
 public class TlsWaitingForServerCertificateState extends TlsState {
 
+	/**
+	 * Creates a state for a specific state machine.
+	 * 
+	 * @param stateMachine the state machine 
+	 */
 	public TlsWaitingForServerCertificateState(TlsStateMachine stateMachine) {
 		super(stateMachine);
 	}

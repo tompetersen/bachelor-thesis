@@ -21,6 +21,11 @@ import java.util.List;
 
 public class TlsReceivedClientHelloState extends TlsState {
 
+	/**
+	 * Creates a state for a specific state machine.
+	 * 
+	 * @param stateMachine the state machine 
+	 */
 	public TlsReceivedClientHelloState(TlsStateMachine stateMachine) {
 		super(stateMachine);
 	}

@@ -13,6 +13,11 @@ import jProtocol.tls12.model.values.TlsServerDhParams;
 
 public class TlsWaitingForServerKeyExchangeState extends TlsState {
 
+	/**
+	 * Creates a state for a specific state machine.
+	 * 
+	 * @param stateMachine the state machine 
+	 */
 	public TlsWaitingForServerKeyExchangeState(TlsStateMachine stateMachine) {
 		super(stateMachine);
 	}

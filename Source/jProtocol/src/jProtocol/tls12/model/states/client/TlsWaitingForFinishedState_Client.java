@@ -11,6 +11,11 @@ import jProtocol.tls12.model.values.TlsHandshakeType;
 
 public class TlsWaitingForFinishedState_Client extends TlsState {
 
+	/**
+	 * Creates a state for a specific state machine.
+	 * 
+	 * @param stateMachine the state machine 
+	 */
 	public TlsWaitingForFinishedState_Client(TlsStateMachine stateMachine) {
 		super(stateMachine);
 	}

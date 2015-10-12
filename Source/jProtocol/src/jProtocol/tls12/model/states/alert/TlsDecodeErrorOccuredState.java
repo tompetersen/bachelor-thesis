@@ -6,6 +6,11 @@ import jProtocol.tls12.model.values.TlsAlert;
 
 public class TlsDecodeErrorOccuredState extends TlsAlertState {
 
+	/**
+	 * Creates a state for a specific state machine.
+	 * 
+	 * @param stateMachine the state machine 
+	 */
 	public TlsDecodeErrorOccuredState(TlsStateMachine stateMachine) {
 		super(stateMachine);
 	}

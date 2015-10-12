@@ -7,6 +7,11 @@ import jProtocol.tls12.model.values.TlsAlert;
 
 public class TlsWaitingForCloseNotifyState extends TlsState {
 
+	/**
+	 * Creates a state for a specific state machine.
+	 * 
+	 * @param stateMachine the state machine 
+	 */
 	public TlsWaitingForCloseNotifyState(TlsStateMachine stateMachine) {
 		super(stateMachine);
 	}

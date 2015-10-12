@@ -8,6 +8,11 @@ import jProtocol.tls12.model.values.TlsAlert;
 
 public class TlsReceivedCloseNotifyState extends TlsState {
 
+	/**
+	 * Creates a state for a specific state machine.
+	 * 
+	 * @param stateMachine the state machine 
+	 */
 	public TlsReceivedCloseNotifyState(TlsStateMachine stateMachine) {
 		super(stateMachine);
 	}

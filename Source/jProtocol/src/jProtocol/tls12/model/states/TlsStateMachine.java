@@ -212,7 +212,11 @@ public abstract class TlsStateMachine extends StateMachine<TlsCiphertext> {
 /*
  * Values
  */
-	
+	/**
+	 * Returns the currently set TLS version.
+	 * 
+	 * @return the TLS version
+	 */
 	public TlsVersion getVersion() {
 		/*
 		 * Should return pending state version, but it's not available for client hello:
@@ -229,62 +233,132 @@ public abstract class TlsStateMachine extends StateMachine<TlsCiphertext> {
 		TlsVersion version = _securityParameters.hasVersion() ? _securityParameters.getVersion() : TlsVersion.getTls12Version();
 		return version;
 	}
-
+	
+	/**
+	 * Sets the current TLS version.
+	 * 
+	 * @param version the TLS version
+	 */
 	public void setVersion(TlsVersion version) {
 		if (isSupportedVersion(version)) {
 			_securityParameters.setVersion(version);
 		}
 		else {
+			//TODO: Used for different TLS versions -> Implement if necessary
 			_securityParameters.setVersion(getHighestSupportedVersion());
 		}
 	}
 
+	/**
+	 * Returns whether the TLS version is supported. Currently just TLS 1.2 is supported.
+	 * 
+	 * @param version the TLS version
+	 * 
+	 * @return true, if the version is supported
+	 */
 	public boolean isSupportedVersion(TlsVersion version) {
 		return version.equals(TlsVersion.getTls12Version());
 	}
 
+	/**
+	 * Returns the highest supported TLS version (currently TLS 1.2).
+	 * 
+	 * @return the highest supported version
+	 */
 	public TlsVersion getHighestSupportedVersion() {
 		return TlsVersion.getTls12Version();
 	}
 
+	/**
+	 * Returns whether an abbreviated handshake can be performed for the session ID.
+	 * 
+	 * @param sessionId the session ID
+	 * 
+	 * @return true, if an abbreviated handshake can be performed for the session ID
+	 */
 	public boolean canPerformAbbreviatedHandshakeForSessionId(TlsSessionId sessionId) {
 		// TODO: Used for abbreviated handshake -> implement if necessary
 		return false;
 	}
 
+	/**
+	 * Returns whether the negotiated cipher suite key exchange algorithm 
+	 * needs a server key exchange message.
+	 * 
+	 * @return true, if a server key exchange message is necessary
+	 */
 	public boolean needsServerKeyExchangeMessage() {
 		return (getPendingCipherSuite().getKeyExchangeAlgorithm() == TlsKeyExchangeAlgorithm.dhe_rsa);
 	}
 
+	/**
+	 * Sets the TLS session ID. 
+	 * 
+	 * @param sessionId the session ID
+	 */
 	public void setSessionId(TlsSessionId sessionId) {
 		_securityParameters.setSessionId(sessionId);
 	}
 
+	/**
+	 * Returns the currently set session ID.
+	 * 
+	 * @return the session ID
+	 */
 	public TlsSessionId getSessionId() {
 		return _securityParameters.getSessionId();
 	}
 
+	/**
+	 * Increases the sequence number of the current write state. Should be 
+	 * called after sending a message.
+	 */
 	public void increaseWriteSequenceNumber() {
 		_currentWriteConnectionState.increaseSequenceNumber();
 	}
 
+	/**
+	 * Increases the sequence number of the current read state. Should be 
+	 * called after receiving a message.
+	 */
 	public void increaseReadSequenceNumber() {
 		_currentReadConnectionState.increaseSequenceNumber();
 	}
 
+	/**
+	 * Sets the client random value.
+	 * 
+	 * @param random the client random value
+	 */
 	public void setClientRandom(TlsRandom random) {
 		_securityParameters.setClientRandom(random);
 	}
 
+	/**
+	 * Sets the server random value.
+	 * 
+	 * @param random the server random value
+	 */
 	public void setServerRandom(TlsRandom random) {
 		_securityParameters.setServerRandom(random);
 	}
 
+	/**
+	 * Computes and sets the master secret from the pre master secret.
+	 * 
+	 * @param preMasterSecret the pre master secret
+	 */
 	public void computeMasterSecret(byte[] preMasterSecret) {
 		_securityParameters.computeMasterSecret(preMasterSecret);
 		_pendingConnectionState.computeKeys(_securityParameters.getClientRandom(), _securityParameters.getServerRandom(), _securityParameters.getMasterSecret());
 	}
 
+	/**
+	 * Sets the cipher suite in the pending state by choosing the first (preferred) 
+	 * cipher suite from a list. 
+	 * 
+	 * @param list the cipher suite list
+	 */
 	public void setPendingCipherSuiteFromList(List<TlsCipherSuite> list) {
 		if (list == null || list.isEmpty()) {
 			throw new IllegalArgumentException("Cipher suite list must not be null or empty!");
@@ -294,22 +368,53 @@ public abstract class TlsStateMachine extends StateMachine<TlsCiphertext> {
 		setPendingCipherSuite(list.get(0));
 	}
 
+	/**
+	 * Sets the cipher suite in the pending state.
+	 * 
+	 * @param cipherSuite the cipher suite
+	 */
 	public void setPendingCipherSuite(TlsCipherSuite cipherSuite) {
 		_pendingConnectionState.setCipherSuite(cipherSuite);
 	}
 
+	/**
+	 * Returns the pending cipher suite.
+	 * 
+	 * @return the pending cipher suite
+	 */
 	public TlsCipherSuite getPendingCipherSuite() {
 		return _pendingConnectionState.getCipherSuite();
 	}
 
+	/**
+	 * Returns all present cipher suite not including the TLS null cipher 
+	 * suite (TLS_NULL_WITH_NULL_NULL).
+	 * 
+	 * @return the cipher suite list
+	 */
 	public List<TlsCipherSuite> allCipherSuites() {
 		return _cipherSuiteRegistry.allCipherSuites();
 	}
 
+	/**
+	 * Returns the server certificate list. 
+	 * 
+	 * @return the certificate list
+	 */
 	public abstract List<TlsCertificate> getCertificateList();
 
+	/**
+	 * Returns the clients public DH key.
+	 * 
+	 * @return the clients public DH key
+	 */
 	public abstract TlsClientDhPublicKey getClientDhPublicKey();
 
+	/**
+	 * Returns the servers DH parameters.
+	 * 
+	 * @return the servers DH parameters
+	 */
 	public abstract TlsServerDhParams getServerDhParams();
 
 	/**
@@ -328,8 +433,14 @@ public abstract class TlsStateMachine extends StateMachine<TlsCiphertext> {
 		_currentWriteConnectionState = (TlsConnectionState) _pendingConnectionState.clone();
 	}
 
-	/*
-	 * Verification data methods for finished message.
+/*
+ * Verification data methods for finished message.
+ */
+	/**
+	 * Adds a handshake message for inclusion in the verify data computation. 
+	 * Finished and hello_request messages must not be included.
+	 * 
+	 * @param message the handshake message
 	 */
 	public void addHandshakeMessageForVerifyData(TlsHandshakeMessage message) {
 		if (isValidVerifyMessage(message)) {
@@ -345,21 +456,51 @@ public abstract class TlsStateMachine extends StateMachine<TlsCiphertext> {
 		return type != TlsHandshakeType.finished && type != TlsHandshakeType.hello_request;
 	}
 
+	/**
+	 * Returns whether the verify data received in the finished message is correct. 
+	 * This means the same handshake messages were converted with the same master 
+	 * secret and label.
+	 * 
+	 * @param verifyData the verify data
+	 * 
+	 * @return true, if the verify data computed locally is equal to the verify 
+	 * 		data included in the finished message
+	 */
 	public abstract boolean isCorrectVerifyData(TlsVerifyData verifyData);
 
+	/**
+	 * Returns the verify data to include in the finished message
+	 * 
+	 * @return the verify data
+	 */
 	public abstract TlsVerifyData getVerifyDataToSend();
 
-	/*
-	 * Cached application data
+/*
+ * Cached application data
+ */
+	/**
+	 * Returns all cached application data messages.
+	 * 
+	 * @return the cached application data messages
 	 */
 	public List<TlsApplicationDataMessage> getCachedApplicationDataMessages() {
 		return _cachedApplicationDataMessages;
 	}
 
+	/**
+	 * Adds an application data message to the cached messages. This is used for 
+	 * application data messages which can be sent after the finished message before 
+	 * the communication partner is in established state. 
+	 * 
+	 * @param message the message
+	 */
 	public void addCachedApplicationDataMessage(TlsApplicationDataMessage message) {
 		_cachedApplicationDataMessages.add(message);
 	}
 
+	/**
+	 * Clears the application data message cache.
+	 */
 	public void clearCachedApplicationDataMessage() {
 		_cachedApplicationDataMessages.clear();
 	}
@@ -367,6 +508,9 @@ public abstract class TlsStateMachine extends StateMachine<TlsCiphertext> {
 /*
  * Public methods
  */
+	/**
+	 * Starts a connection to the server. Must be called in initial client state.
+	 */
 	public void openConnection() {
 		if (isCurrentState(TlsStateType.CLIENT_INITIAL_STATE.getType())) {
 			TlsInitialClientState state = (TlsInitialClientState) getCurrentState();
@@ -377,6 +521,9 @@ public abstract class TlsStateMachine extends StateMachine<TlsCiphertext> {
 		}
 	}
 
+	/**
+	 * Closes a connection. Must be called in established state.
+	 */
 	public void closeConnection() {
 		if (isCurrentState(TlsStateType.CONNECTION_ESTABLISHED_STATE.getType())) {
 			TlsConnectionEstablishedState state = (TlsConnectionEstablishedState) getCurrentState();
@@ -387,10 +534,18 @@ public abstract class TlsStateMachine extends StateMachine<TlsCiphertext> {
 		}
 	}
 
+	/**
+	 * Resets the connection.
+	 */
 	public void resetConnection() {
 		// TODO: reset connection
 	}
 
+	/**
+	 * Sends application data via an established connection.
+	 * 
+	 * @param data the application data
+	 */
 	public void sendData(TlsApplicationData data) {
 		if (isCurrentState(TlsStateType.CONNECTION_ESTABLISHED_STATE.getType())) {
 			TlsConnectionEstablishedState state = (TlsConnectionEstablishedState) getCurrentState();
@@ -401,6 +556,11 @@ public abstract class TlsStateMachine extends StateMachine<TlsCiphertext> {
 		}
 	}
 
+	/**
+	 * Receives TLS data. 
+	 * 
+	 * @param data the data
+	 */
 	public void receivedData(TlsApplicationData data) {
 		MyLogger.info(getEntityName() + " received Data: " + new String(data.getBytes(), StandardCharsets.US_ASCII));
 
@@ -412,6 +572,11 @@ public abstract class TlsStateMachine extends StateMachine<TlsCiphertext> {
 /*
  * View data
  */
+	/**
+	 * Returns the view data (list of key value objects) for displaying purposes.
+	 * 
+	 * @return the view data
+	 */
 	public List<KeyValueObject> getViewData() {
 		ArrayList<KeyValueObject> result = new ArrayList<>();
 

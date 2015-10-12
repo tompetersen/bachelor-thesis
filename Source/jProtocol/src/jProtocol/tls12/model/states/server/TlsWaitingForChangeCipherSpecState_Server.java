@@ -9,6 +9,11 @@ import jProtocol.tls12.model.states.TlsStateType;
 
 public class TlsWaitingForChangeCipherSpecState_Server extends TlsState {
 
+	/**
+	 * Creates a state for a specific state machine.
+	 * 
+	 * @param stateMachine the state machine 
+	 */
 	public TlsWaitingForChangeCipherSpecState_Server(TlsStateMachine stateMachine) {
 		super(stateMachine);
 	}

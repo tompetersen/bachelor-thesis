@@ -17,6 +17,11 @@ import jProtocol.tls12.model.values.TlsRsaEncryptedPreMasterSecret;
 
 public class TlsWaitingForClientKeyExchangeState extends TlsState {
 
+	/**
+	 * Creates a state for a specific state machine.
+	 * 
+	 * @param stateMachine the state machine 
+	 */
 	public TlsWaitingForClientKeyExchangeState(TlsStateMachine stateMachine) {
 		super(stateMachine);
 	}

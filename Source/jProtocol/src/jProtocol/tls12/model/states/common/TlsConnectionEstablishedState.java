@@ -11,6 +11,11 @@ import jProtocol.tls12.model.values.TlsApplicationData;
 
 public class TlsConnectionEstablishedState extends TlsState{
 
+	/**
+	 * Creates a state for a specific state machine.
+	 * 
+	 * @param stateMachine the state machine 
+	 */
 	public TlsConnectionEstablishedState(TlsStateMachine stateMachine) {
 		super(stateMachine);
 	}
@@ -52,11 +57,19 @@ public class TlsConnectionEstablishedState extends TlsState{
 		setTlsState(TlsStateType.RECEIVED_CLOSE_NOTIFY_STATE);
 	}
 	
+	/**
+	 * Sends a TLS message from the state machine this state belongs to.
+	 * 
+	 * @param data the application data
+	 */
 	public void sendApplicationData(TlsApplicationData data) {
 		TlsApplicationDataMessage message = new TlsApplicationDataMessage(data);
 		sendTlsMessage(message);
 	}
 	
+	/**
+	 * Closes the connetion.
+	 */
 	public void closeConnection() {
 		setTlsState(TlsStateType.WAITING_FOR_CLOSE_NOTIFY_STATE);
 		
