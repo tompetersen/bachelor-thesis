@@ -7,18 +7,20 @@ import jProtocol.helper.ButtonHelper;
 import jProtocol.tls12.model.states.TlsStateMachine;
 import jProtocol.tls12.model.states.TlsStateType;
 import jProtocol.tls12.model.values.TlsApplicationData;
+import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.nio.charset.StandardCharsets;
 import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.SwingConstants;
 
 public class TlsClientView {
 
@@ -40,8 +42,9 @@ public class TlsClientView {
 	 */
 	public TlsClientView(final TlsStateMachine client, HtmlInfoUpdater htmlInfoUpdater) {
 		_clientStateMachine = client;
+		
 		_view = new JPanel();
-		_view.setLayout(new BoxLayout(_view, BoxLayout.Y_AXIS));
+		_view.setLayout(new BorderLayout(0, 10));
 		_view.setBackground(UiConstants.VIEW_BACKGROUND_COLOR);
 		_view.setBorder(BorderFactory.createMatteBorder(0, 0, 0, 1, UiConstants.VIEW_BORDER_COLOR));
 		
@@ -51,14 +54,18 @@ public class TlsClientView {
 		headerLabel.setFont(new Font("SansSerif", Font.BOLD, 14));
 		headerPanel.add(headerLabel);
 		headerPanel.setBackground(UiConstants.VIEW_BACKGROUND_COLOR);
-		_view.add(headerPanel);
+		_view.add(headerPanel, BorderLayout.NORTH);
 		
 		_treeView = new TlsStateMachineTreeView(client, htmlInfoUpdater, "Client");
-		_view.add(_treeView.getView());
+		_view.add(_treeView.getView(), BorderLayout.CENTER);
 		
 		JPanel buttonPanel = new JPanel();
-		buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
+		GridLayout layout = new GridLayout(3, 1);
+		layout.setVgap(5);
+		buttonPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+		buttonPanel.setLayout(layout);
 		buttonPanel.setBackground(UiConstants.VIEW_BACKGROUND_COLOR);
+		
 		final int buttonImageSize = UiConstants.BUTTON_IMAGE_SIZE;
 		
 		_connectButton = ButtonHelper.createImageButton("Connect", 
@@ -111,8 +118,9 @@ public class TlsClientView {
 				});
 		_closeButton.setEnabled(false);
 		buttonPanel.add(_closeButton);
+		buttonPanel.setAlignmentX(SwingConstants.LEFT);
 		
-		_view.add(buttonPanel);
+		_view.add(buttonPanel, BorderLayout.SOUTH);
 		
 		updateView();
 	}
