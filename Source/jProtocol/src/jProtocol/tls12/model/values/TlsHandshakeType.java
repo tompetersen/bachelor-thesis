@@ -1,5 +1,7 @@
 package jProtocol.tls12.model.values;
 
+import jProtocol.tls12.model.exceptions.TlsDecodeErrorException;
+
 /**
  * An enumeration of possible TLS handshake types.
  *  
@@ -23,15 +25,16 @@ public enum TlsHandshakeType {
 	 * @param b the value
 	 * 
 	 * @return the handshake type
+	 * 
+	 * @throws TlsDecodeErrorException if the value has no connected handshake message
 	 */
-	public static TlsHandshakeType handshakeTypeFromValue(byte b) {
+	public static TlsHandshakeType handshakeTypeFromValue(byte b) throws TlsDecodeErrorException {
 		for (TlsHandshakeType t : TlsHandshakeType.values()) {
 			if (b == t.getValue()) {
 				return t;
 			}
 		}
-		//TODO: decode error
-		throw new IllegalArgumentException("No HandshakeType for value " + b + "!");
+		throw new TlsDecodeErrorException("No HandshakeType for value " + b + "!");
 	}
 	
 	private byte _value;

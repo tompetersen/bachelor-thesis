@@ -1,5 +1,7 @@
 package jProtocol.tls12.model.values;
 
+import jProtocol.tls12.model.exceptions.TlsDecodeErrorException;
+
 /**
  * An enumeration of possible TLS content types.
  *  
@@ -17,15 +19,16 @@ public enum TlsContentType {
 	 * @param b the describing value
 	 * 
 	 * @return the content type
+	 * 
+	 * @throws TlsDecodeErrorException if the value has no connected content type
 	 */
-	public static TlsContentType contentTypeFromValue(byte b) {
+	public static TlsContentType contentTypeFromValue(byte b) throws TlsDecodeErrorException {
 		for (TlsContentType t : TlsContentType.values()) {
 			if (b == t.getValue()) {
 				return t;
 			}
 		}
-		//TODO: Decode error
-		throw new IllegalArgumentException("No ContentType for value " + b + "!");
+		throw new TlsDecodeErrorException("No ContentType for value " + b + "!");
 	}
 	
 	private byte _value;

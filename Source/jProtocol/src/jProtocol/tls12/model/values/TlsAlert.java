@@ -1,5 +1,7 @@
 package jProtocol.tls12.model.values;
 
+import jProtocol.tls12.model.exceptions.TlsDecodeErrorException;
+
 /**
  * An enumeration of possible TLS alerts.
  *  
@@ -38,15 +40,16 @@ public enum TlsAlert {
 	 * @param b the value
 	 * 
 	 * @return the alert
+	 * 
+	 * @throws TlsDecodeErrorException if the value has no connected alert description
 	 */
-	public static TlsAlert alertFromValue(byte b) {
+	public static TlsAlert alertFromValue(byte b) throws TlsDecodeErrorException {
 		for (TlsAlert a : TlsAlert.values()) {
 			if (b == a.getValue()) {
 				return a;
 			}
 		}
-		//TODO: Decode error
-		throw new IllegalArgumentException("No Alert for value " + b + "!");
+		throw new TlsDecodeErrorException("No Alert for value " + b + "!");
 	}	
 		
 	private byte _value;
