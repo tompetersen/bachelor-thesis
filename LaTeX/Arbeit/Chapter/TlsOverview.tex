@@ -4,21 +4,9 @@
 
 In diesem Kapitel soll ein kurzer Überblick über die im Laufe der Arbeit relevanten kryptographischen Verfahren gegeben werden, sowie die verwendete Notation vorgestellt werden.
 
-\section{Genutzte Verfahren(?)}
-
-UML
-
-Automat
-
-
-
 \section{Kryptographische Verfahren}
 
 \todo{Nette Bildchen}
-
-\subsection{Protokoll (?)}
-
-Zwar nicht nur kryptographisch, aber ...
 
 \subsection{Symmetrische Kryptographie}
 
@@ -65,7 +53,19 @@ Ein Beispiel für einen asymmetrischen Algorithmus ist das RSA-Verfahren \cite{S
 
 \label{sec_diffie_hellman}
 
-Das Diffie-Hellmann-Verfahren (DH-Verfahren) ist ein ebenfalls auf geheimen und öffentlichen Schlüssel basierendes Verfahren, das jedoch nicht der Ver- bzw. Entschlüsselung, sondern lediglich der Schlüsselvereinbarung dient. Es ermöglicht zwei Kommunikationspartnern einen Schlüssel zu erzeugen, ohne dass dieser direkt gesendet werden muss \cite{Schneier2006}. 
+Das Diffie-Hellmann-Verfahren (DH-Verfahren) ist ein ebenfalls auf geheimen und öffentlichen Schlüssel basierendes Verfahren, das jedoch nicht der Ver- bzw. Entschlüsselung, sondern lediglich der Schlüsselvereinbarung dient. Es ermöglicht zwei Kommunikationspartnern einen Schlüssel zu erzeugen, ohne dass dieser direkt gesendet werden muss. 
+
+Die Partner \(A\) und \(B\) einigen sich auf eine Gruppe primer Ordnung \(p\) und eine Zahl \(g\), die die Gruppe erzeugt. Zusätzlich wählt jeder Partner eine große, zufällige Zahl \(X\) als privaten Schlüssel. Dann berechnet jeder Partner seinen öffentlichen Schlüssel \(Y\) folgendermaßen:
+\begin{align*}
+&Y_A = g^{X_A} \mod{n} \text{ bzw.}\\
+&Y_B = g^{X_B} \mod{n}
+\end{align*}
+Diese Werte werden nun an den anderen Partner gesendet und der gemeinsame Schlüssel \(K\) kann berechnet werden:
+\begin{align*}
+&K = Y_B^{X_A} \mod{n} = (g^{X_B})^{X_A }\mod{n} = g^{X_A X_B}\mod{n} \text{ bzw.}\\
+&K = Y_A^{X_B} \mod{n} = (g^{X_A})^{X_B }\mod{n} = g^{X_A X_B}\mod{n} 
+\end{align*}
+Ein Angreifer, der lediglich im Besitz von \(Y_A\) und \(Y_B\) ist kann den Schlüssel nicht berechnen \cite{Schneier2006}. 
 
 \todo{Mit Formeln erweitern?}
 

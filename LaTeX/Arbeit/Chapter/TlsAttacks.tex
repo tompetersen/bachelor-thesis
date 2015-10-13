@@ -152,9 +152,11 @@ In \cite{logjam15} beschreiben die Autoren mehrere Angriffe gegen die Nutzung vo
 \section{Zertifikate und Verwandtes}
 
 \label{sec_certificates}
-\todo{Klammern ausformulieren (Ephraim)}
+
 Viele Probleme, die in den letzten Jahren aufgetreten sind, betreffen nicht das TLS-Protokoll direkt, sondern die Erstellung und Validierung von (insbesondere) Server-Zertifikaten, und seien deshalb nur am Rande erwähnt. Ein guter Überblick ist in \cite{meyer13} zu finden.
 
-Oftmals richteten sich diese Angriffe gegen mangelnde Zertifikatvalidierung in TLS-Implementierungen (keine Validierung, keine Überprüfung des Servernamens, Akzeptanz unsignierter oder abgelaufener Zertifikate, ...) oder wenig Sorgfalt bei der Zertifikaterstellung durch Certificate Authorities (Nutzung von MD5, fehlerhafte Validierung von übermittelten Servernamen, fehlerhafte Ausgabe von intermediate-Zertifikaten, mangelhaft abgesicherte Server, ...).
+Oftmals richteten sich diese Angriffe gegen mangelnde Zertifikatvalidierung in TLS-Implementierungen. Fehler, die hier gemacht wurden, beinhalten unter anderem komplett fehlende Validierung, keine Überprüfung des Zertifikatsbesitzers oder die Akzeptanz unsignierter oder abgelaufener Zertifikate.
+
+Auch fehlende Sorgfalt bei der Zertifikatserstellung durch Certificate Authorities wurde schon von Angreifern ausgenutzt. Hierbei waren beispielsweise die fehlerhafte Validierung von übermittelten Servernamen, die fehlerhafte Ausgabe von intermediate-Zertifikaten\footnote{Intermediate-Zertifikate sind Zertifikate, die es erlauben, andere Zertifikate zu signieren.} und mangelhaft abgesicherte Server oder Benutzerkonten, die es Angreifern erlaubten, signierte Zertifikate auszustellen, Gründe für erfolgreiche Angriffe.
 
 Der Vollständigkeit halber sei hier auch noch die notwendige Sicherheit des privaten Serverschlüssels erwähnt. Gelangt ein Angreifer in seinen Besitz, so kann er den Datenverkehr problemlos mitlesen oder verändern.
