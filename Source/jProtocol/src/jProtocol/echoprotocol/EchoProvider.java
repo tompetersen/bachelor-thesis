@@ -5,32 +5,59 @@ import jProtocol.Abstract.ViewProvider;
 import jProtocol.Abstract.Model.StateMachine;
 import jProtocol.Abstract.View.HtmlInfoUpdater;
 import jProtocol.echoprotocol.model.EchoClient;
-import jProtocol.echoprotocol.model.EchoProtocolDataUnit;
+import jProtocol.echoprotocol.model.EchoMessage;
 import jProtocol.echoprotocol.model.EchoServer;
+import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 
-public class EchoProvider implements ViewProvider<EchoProtocolDataUnit>, StateMachineProvider<EchoProtocolDataUnit> {
+public class EchoProvider implements ViewProvider<EchoMessage>, StateMachineProvider<EchoMessage> {
 
+	private EchoClient _client;
+	private JTextArea _clientTextArea;
+	
 	@Override
-	public StateMachine<EchoProtocolDataUnit> getServerStateMachine() {
+	public StateMachine<EchoMessage> getServerStateMachine() {
 		return new EchoServer();
 	}
 
 	@Override
-	public StateMachine<EchoProtocolDataUnit> getClientStateMachine() {
-		return new EchoClient();
+	public StateMachine<EchoMessage> getClientStateMachine() {
+		_client = new EchoClient(); 
+		return _client;
 	}
 
 	@Override
-	public JComponent getDetailedViewForProtocolDataUnit(EchoProtocolDataUnit pdu, HtmlInfoUpdater htmlInfoUpdater) {
+	public JComponent getDetailedViewForProtocolDataUnit(EchoMessage pdu, HtmlInfoUpdater htmlInfoUpdater) {
 		return new JLabel(pdu.getPayload());
 	}
 
 	@Override
 	public JComponent getViewForClientStateMachine(HtmlInfoUpdater htmlInfoUpdater) {
-		return new JPanel();
+		JPanel clientPanel = new JPanel(new BorderLayout());
+		_clientTextArea = new JTextArea();
+		JButton sendButton = new JButton("Send...");
+		sendButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				new Thread(new Runnable() {
+					@Override
+					public void run() {
+						_client.sendEchoRequest("DATEN!");
+					}
+				}).start();
+			}
+		});
+		
+		clientPanel.add(_clientTextArea, BorderLayout.CENTER);
+		clientPanel.add(sendButton, BorderLayout.SOUTH);
+		
+		return clientPanel;
 	}
 
 	@Override
@@ -40,25 +67,26 @@ public class EchoProvider implements ViewProvider<EchoProtocolDataUnit>, StateMa
 
 	@Override
 	public void updateServerView() {
-		// TODO Auto-generated method stub
-		
+		// Nothing to do here
 	}
 
 	@Override
 	public void updateClientView() {
-		// TODO Auto-generated method stub
-		
+		_clientTextArea.setText("");
+		for (String text : _client.getReceivedMessages()) {
+			_clientTextArea.append(text + "\n");
+		}
 	}
 
 	@Override
 	public JComponent getSettingsView() {
-		// TODO Auto-generated method stub
-		return new JPanel();
+		// Nothing to show here
+		return new JLabel("No settings for EchoProtocol!");
 	}
 
 	@Override
 	public String getHtmlAboutContent() {
-		return "<html><head></head><body><h1>Content</h1><p>Some text...</p></body></html>";
+		return "<html><head></head><body><h1>Echo Protocol</h1><p>An example plugin!</p></body></html>";
 	}
 
 }

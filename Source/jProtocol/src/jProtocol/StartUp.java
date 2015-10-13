@@ -6,6 +6,7 @@ import jProtocol.Abstract.ProtocolRegistry;
 import jProtocol.Abstract.Model.ProtocolDataUnit;
 import jProtocol.Abstract.View.HtmlInfoView;
 import jProtocol.Abstract.View.resources.HtmlAboutLoader;
+import jProtocol.Abstract.View.resources.ImageLoader;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -40,6 +41,7 @@ public class StartUp {
 		_frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		_frame.setBackground(Color.WHITE);
 		_frame.setMinimumSize(new Dimension(800, 600));
+		_frame.setIconImages(ImageLoader.getIconFileList());
 		addMenu(_frame);
 		_frame.setVisible(true);
 

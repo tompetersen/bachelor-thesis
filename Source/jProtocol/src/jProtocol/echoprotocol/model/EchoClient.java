@@ -2,57 +2,62 @@ package jProtocol.echoprotocol.model;
 
 import jProtocol.Abstract.Model.State;
 import jProtocol.Abstract.Model.StateMachine;
+import java.util.ArrayList;
+import java.util.List;
 
-public class EchoClient extends StateMachine<EchoProtocolDataUnit> {
+public class EchoClient extends StateMachine<EchoMessage> {
 
 	public final Integer RECEIVE_STATE = 1;
 	public final Integer SEND_STATE = 2;
 
-	private String _lastSentPayload;
+	private List<String> _receivedMessages;
 
 	public EchoClient() {
+		_receivedMessages = new ArrayList<>();
+
 		addState(RECEIVE_STATE, new ReceiveState(this));
 		addState(SEND_STATE, new SendState(this));
-		
+
 		setState(SEND_STATE);
+	}
+
+	public List<String> getReceivedMessages() {
+		return _receivedMessages;
 	}
 
 	public void sendEchoRequest(String payload) {
 		setState(RECEIVE_STATE);
-		System.out.println("Client: sending request...");
 
-		_lastSentPayload = payload;
-		EchoProtocolDataUnit pdu = new EchoProtocolDataUnit();
-		pdu.setPayload(payload);
+		EchoMessage pdu = new EchoMessage(payload);
 
 		sendMessage(pdu);
 	}
 
-	private class SendState extends State<EchoProtocolDataUnit> {
-		
+	private class SendState extends State<EchoMessage> {
+
 		public SendState(EchoClient stateMachine) {
 			super(stateMachine);
 		}
 
 		@Override
-		public void receiveMessage(EchoProtocolDataUnit pdu) {
+		public void receiveMessage(EchoMessage pdu) {
 			System.err.println("Client: Unexpected message received in SendState!");
 		}
 	}
 
-	private class ReceiveState extends State<EchoProtocolDataUnit> {
-		
+	private class ReceiveState extends State<EchoMessage> {
+		private EchoClient _stateMachine;
+
 		public ReceiveState(EchoClient stateMachine) {
 			super(stateMachine);
+			_stateMachine = stateMachine;
 		}
 
 		@Override
-		public void receiveMessage(EchoProtocolDataUnit pdu) {
-			if (pdu.getPayload().equals(_lastSentPayload)) {
-				System.out.println("Client: Correct response received.");
-			} else {
-				System.err.println("Client: Incorrect response received!");
-			}
+		public void receiveMessage(EchoMessage pdu) {
+			_receivedMessages.add(pdu.getPayload());
+			_stateMachine.notifyObserversOfStateChanged();
+
 			setState(SEND_STATE);
 		}
 	}

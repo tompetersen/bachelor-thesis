@@ -1,5 +1,6 @@
 package jProtocol.Abstract.View;
 
+import jProtocol.Abstract.View.resources.ImageLoader;
 import java.awt.BorderLayout;
 import java.awt.Desktop;
 import java.awt.Dimension;
@@ -68,6 +69,7 @@ public class HtmlInfoView {
 		_frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		_frame.setAlwaysOnTop(true);
 		_frame.setSize(new Dimension(400, 400));
+		_frame.setIconImages(ImageLoader.getIconFileList());
 	}
 
 	/**

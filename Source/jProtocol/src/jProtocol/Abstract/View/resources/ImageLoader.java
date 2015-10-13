@@ -2,10 +2,13 @@ package jProtocol.Abstract.View.resources;
 
 import java.awt.AlphaComposite;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 import javax.imageio.ImageIO;
 
 public class ImageLoader {
@@ -62,6 +65,17 @@ public class ImageLoader {
 		return loadImageForFileName("email19.png", width, height);
 	}
 	
+	public static List<Image> getIconFileList(){
+		ArrayList<Image> result = new ArrayList<>();
+		
+		result.add(loadOriginalImageForFileName("icon_128.png"));
+		result.add(loadOriginalImageForFileName("icon_64.png"));
+		result.add(loadOriginalImageForFileName("icon_32.png"));
+		result.add(loadOriginalImageForFileName("icon_16.png"));
+		
+		return result;
+	}
+	
 	/**
 	 * Loads images from the current package  
 	 * 
@@ -88,6 +102,22 @@ public class ImageLoader {
 				g.dispose();
 				
 				return resizedImage;
+			}
+			catch (IOException e) {
+				return new BufferedImage(0, 0, BufferedImage.TYPE_INT_RGB);
+			}
+		}
+		else {
+			return new BufferedImage(0, 0, BufferedImage.TYPE_INT_RGB);
+		}
+	}
+	
+	private static BufferedImage loadOriginalImageForFileName(String filepath) {
+		InputStream in = ImageLoader.class.getResourceAsStream(filepath);
+
+		if (in != null) {
+			try {
+				return ImageIO.read(in);
 			}
 			catch (IOException e) {
 				return new BufferedImage(0, 0, BufferedImage.TYPE_INT_RGB);
