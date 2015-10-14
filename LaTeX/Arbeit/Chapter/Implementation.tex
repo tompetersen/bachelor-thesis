@@ -32,6 +32,7 @@ Anschließend wurde prototypisch eine Benutzeroberfläche entwickelt, die auf Ba
 Mit diesen Möglichkeiten werden auch die Forderungen an exploratives Lernen und Simulationen aus Abschnitt \ref{sec_exploration}, insbesondere der Sichtenwechsel, die Anzeige nicht sichtbarer Prozesse und die Interaktivität, erfüllt.
 
 \subsection{Erweiterung der Anwendung um TLS 1.2}
+\label{sec_analysis_tls_plugin}
 
 Für diese Arbeit wurde die TLS 1.2-Spezifikation als Erweiterung des abstrakten Rahmens umgesetzt. Hierdurch lässt sich die zum jetzigen Zeitpunkt aktuelle Version explorieren und insbesondere Abwehrmechanismen gegen Angriffe auf ältere Protokollversionen erkennen. Um diese Angriffe beobachten zu können, hätte sich auch eine ältere Protokollversion wie SSL 2.0 angeboten. Durch die Erweiterbarkeit der Anwendung wäre dieses eine Möglichkeit für spätere Arbeiten.
 
@@ -41,14 +42,23 @@ Danach wurde eine einfache Möglichkeit für die Darstellung der internen Zustä
 
 % Tls 1.2 nicht implementiert
 
-Anschließend wurde die TLS-Spezifikation auf Funktionen untersucht, die nicht implementiert werden sollten. Dies geschah aus Gründen der Komplexitätsreduktion zum besseren Verständnis oder schlicht aus Zeitgründen, insbesondere wenn die Funktion wenig zum Verständnis beigetragen hätte. Im Folgenden soll kurz auf diese Funktionen und auf die Gründe, aus denen sie ausgelassen wurden, eingegangen werden.\\
-Auf TLS-Extensions wurde komplett verzichtet, da sie nicht für das grundsätzliche Verständnis von TLS notwendig sind, sondern eher technische Erweiterungen des Standards darstellen, um bestimmte Funktionen nachzurüsten oder Verhalten zu erzwingen.\\
-Auch die Möglichkeit TLS-Plaintexte vor dem Verschlüsseln zu komprimieren wurde nicht implementiert, da die Funktion wenig zum Verständnis beiträgt und zusätzlich aufgrund ihrer Angreifbarkeit in der nächsten Protokollversion nicht mehr enthalten sein wird (vgl. Abschnitt \ref{sec_attack_crime}).\\
-TLS unterstützt optional zusätzliche Clientauthentifizierung. Diese wird allerdings in vielen Anwendungsfällen, wie beim dem verschlüsselten Abruf einer Internetseite über HTTPS, nicht genutzt und unterscheidet sich prinzipiell nicht übermäßig von der Serverauthentifizierung. Daher wurde in der Anwedung darauf verzichtet.\\
-Weiterhin wurden nur einige \ciphersuites implementiert. Hierbei wurde jedoch darauf geachtet, dass sowohl Block- und AEAD-Chiffren zur Ver- und Entschlüsselung als auch RSA und das Diffie-Hellman-Verfahren zum Schlüsselaustausch verwendet wurden. Auf die Implementierung von \ciphersuites, die sich lediglich in Schlüssellängen von bereits implementierten \ciphersuites unterscheiden oder deren Chiffren bzw. Schlüsselaustauschalgorithmen bereits durch andere \ciphersuites abgedeckt waren, wurde bewusst verzichtet. Aus Zeitgründen und da von der Verwendung bereits abgeraten wird, wurde auch auf die Implementierung einer \ciphersuite{} mit der Stromchiffre RC4 verzichtet.\\
-Auch die sichere Verwaltung von Schlüsseln im Dateisystem, sowie die Entfernung verwendeter Schlüssel aus dem Speicher, auf die in produktiv verwendeten Systemen geachtet werden muss, wurde hier aus naheliegenden Gründen vernachlässigt.\\
-Aus Zeitgründen wurde auch auf die Wiederaufnahme bestehender Sitzungen verzichtet (siehe Abschnitt \ref{sec_session_connection}). Der verkürzte Handshake hat eher praktische Bedeutung, da auf erneute Aushandlung kryptographischer Verfahren und damit mehrere Nachrichten während des Handshakes verzichtet werden kann und die Wiederaufnahme der Verbindung somit weniger Zeit in Anspruch nimmt. Eine spätere Erweiterung der Anwedung um diese Funktion wäre jedoch sinnvoll, um das Verständnis von TLS zu vertiefen.\\
-Ein letzter Punkt, der in der Anwedung nicht implementiert wurde, ist die Zertifikatsvalidierung. Diese ist zwar entscheidend für den sicheren Aufbau einer Verbindung, hat aber eher indirekt mit der der Protokollspezifikation zu tun. Daher wurde aus Zeitgründen auf diese Funktion verzichtet, die sich jedoch für spätere Arbeiten anbieten würde.
+Anschließend wurde die TLS-Spezifikation auf Funktionen untersucht, die nicht implementiert werden sollten. Dies geschah aus Gründen der Komplexitätsreduktion zum besseren Verständnis oder schlicht aus Zeitgründen, insbesondere wenn die Funktion wenig zum Verständnis beigetragen hätte. Im Folgenden soll kurz auf diese Funktionen und auf die Gründe, aus denen sie ausgelassen wurden, eingegangen werden.
+
+Auf TLS-Extensions wurde komplett verzichtet, da sie nicht für das grundsätzliche Verständnis von TLS notwendig sind, sondern eher technische Erweiterungen des Standards darstellen, um bestimmte Funktionen nachzurüsten oder Verhalten zu erzwingen.
+
+Auch die Möglichkeit TLS-Plaintexte vor dem Verschlüsseln zu komprimieren wurde nicht implementiert, da die Funktion wenig zum Verständnis beiträgt und zusätzlich aufgrund ihrer Angreifbarkeit in der nächsten Protokollversion wahrscheinlich nicht mehr enthalten sein wird (vgl. Abschnitt \ref{sec_attack_crime}).
+
+TLS unterstützt optional zusätzliche Clientauthentifizierung. Diese wird allerdings in vielen Anwendungsfällen, wie beim dem verschlüsselten Abruf einer Internetseite über HTTPS, nicht genutzt und unterscheidet sich nicht übermäßig von der Serverauthentifizierung. Daher wurde in der Anwendung darauf verzichtet.
+
+Weiterhin wurden nur einige \ciphersuites{} implementiert. Hierbei wurde jedoch darauf geachtet, dass sowohl Block- und AEAD-Chiffren zur Ver- und Entschlüsselung als auch RSA und das Diffie-Hellman-Verfahren zum Schlüsselaustausch verwendet wurden. Auf die Implementierung von \ciphersuites{}, die sich lediglich in Schlüssellängen von bereits implementierten \ciphersuites{} unterscheiden oder deren Chiffren bzw. Schlüsselaustauschalgorithmen bereits durch andere \ciphersuites{} abgedeckt waren, wurde bewusst verzichtet. Aus Zeitgründen und da von der Verwendung bereits abgeraten wird, wurde auch auf die Implementierung einer \ciphersuite{} mit der Stromchiffre RC4 verzichtet.
+
+Auch die sichere Verwaltung von Schlüsseln im Dateisystem, sowie die Entfernung verwendeter Schlüssel aus dem Speicher, auf die in produktiv verwendeten Systemen geachtet werden muss, wurde hier aus naheliegenden Gründen vernachlässigt.
+
+Zusätzlich wurde auch auf die Möglichkeit der Übertragung eigener Daten oder Simulation von auf TLS aufsetzenden Protokollen wie HTTPS bei bestehender Verbindung verzichtet. Diese Funktion wäre jedoch beispielsweise für Betrachtungen zur Erkennung der Nachrichtenlänge oder zur Darstellung von Angriffen, wie den in den Abschnitten \ref{sec_attack_beast} und \ref{sec_attack_crime} beschriebenen, hilfreich.
+
+Aus Zeitgründen wurde auch auf die Wiederaufnahme bestehender Sitzungen verzichtet (siehe Abschnitt \ref{sec_session_connection}). Der verkürzte Handshake hat eher praktische Bedeutung, da auf erneute Aushandlung kryptographischer Verfahren und damit mehrere Nachrichten während des Handshakes verzichtet werden kann und die Wiederaufnahme der Verbindung somit weniger Zeit in Anspruch nimmt. Eine spätere Erweiterung der Anwendung um diese Funktion wäre jedoch sinnvoll, um das Verständnis von TLS zu vertiefen.
+
+Ein letzter Punkt, der in der Anwendung nicht implementiert wurde, ist die Zertifikatsvalidierung. Diese ist zwar entscheidend für den sicheren Aufbau einer Verbindung, hat aber eher indirekt mit der der Protokollspezifikation zu tun. Daher wurde aus Zeitgründen auf diese Funktion verzichtet, die sich jedoch für spätere Arbeiten anbieten würde.
 
 \section{Implementierung}
 
