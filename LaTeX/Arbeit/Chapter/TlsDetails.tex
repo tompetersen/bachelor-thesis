@@ -22,7 +22,7 @@ Einige Beispiele für solche Protokolle und Anwendungen der Anwendungsschicht, d
 SSL wurde von der Firma Netscape entwickelt und zuerst in ihrem Browser, dem Netscape Navigator, verwendet. Nach mehreren neuen Protokollversionen und nachdem es starke Verbreitung gefunden hatte, wurde es durch die IETF als TLS 1.0 standardisiert (TLS 1.0 entspricht SSL 3.1). Aktuell ist die TLS-Version 1.2 und an Version 1.3 wird gearbeitet\footnote{
 	Im weiteren Verlauf dieser Arbeit wird der Einfachheit halber lediglich von TLS gesprochen. Bei etwaigen Unterschieden zwischen den Protokollversionen wird explizit auf diese eingegangen.
 }.\\
-Inzwischen ist TLS das \inquotes{gegenwärtig meistverwendete Verschlüsselungsprotokoll im Internet}\cite{schmeh09}. Gründe hierfür sind dem Autor zufolge insbesondere die leichte Integrierbarkeit in bestehende Strukturen, die \inquotes{[im Gegensatz zu IPSec] deutlich schnörkelloser[e] und einfacher[e]} Protokollspezifikation und auch die marktreife Verfügbarkeit in den frühen 90er Jahren.
+Inzwischen ist TLS das \inquotes{gegenwärtig meistverwendete Verschlüsselungsprotokoll im Internet} \cite{schmeh09}. Gründe hierfür sind dem Autor zufolge insbesondere die leichte Integrierbarkeit in bestehende Strukturen, die \inquotes{[im Gegensatz zu IPSec] deutlich schnörkelloser[e] und einfacher[e]} \cite{schmeh09} Protokollspezifikation und auch die marktreife Verfügbarkeit in den frühen 90er Jahren.
 
 In den folgenden Abschnitten wird die Funktionsweise von TLS anhand der aktuellen Version 1.2 im Detail betrachtet. Dazu wird zunächst ein Überblick über die Teilprotokolle gegeben und diese anschließend genauer beleuchtet. Abschließend werden kurz Unterschiede zu anderen Protokollversionen betrachtet und auf bestehende Implementierungen der Spezifikation eingegangen.
 
@@ -55,7 +55,7 @@ In der unteren Schicht befindet sich das \recordprotocol{}, das die Daten von de
 \section{\recordprotocol{}}
 \label{sec_record_protocol}
 
-Die zu sendenden Protokolldaten werden von dem \recordprotocol{} in maximal \(2^{14}\) Byte große Pakete fragmentiert und optional komprimiert. Danach wird je nach während des Handshakes verhandelten kryptographischen Funktionen (vgl. Abschnitt \ref{sec_tls_handshake}) die Integrität der Daten durch Berechnen und Anhängen eines MACs gesichert und die Nachricht danach zusammen mit dem MAC verschlüsselt (vgl. hierzu auch Abschnitt \ref{sec_didactics_crypto}). Auf diese Schritte wird im Folgenden genauer eingegangen.
+Die zu sendenden Protokolldaten werden von dem \recordprotocol{} in maximal \(2^{14}\) Byte große Pakete fragmentiert und optional komprimiert. Danach wird je nach während des Handshakes verhandelten kryptographischen Funktionen (vgl. Abschnitt \ref{sec_tls_handshake}) die Integrität der Daten durch Berechnen und Anhängen eines MACs gesichert und die Nachricht danach zusammen mit dem MAC verschlüsselt (MAC-then-Encrypt, vgl. hierzu auch Abschnitt \ref{sec_didactics_crypto}). Auf diese Schritte wird im Folgenden genauer eingegangen.
 
 Daten, die von einer höheren Schicht entgegengenommen werden, werden zu Beginn in ein \datafield{TLSPlaintext}-Objekt verpackt. 
 
@@ -117,7 +117,7 @@ struct {
 } TLSCiphertext;
 \end{lstlisting}
 
-Abhängig vom verwendeten Verschlüsselungsverfahren sehen diese Nachrichten unterschiedlich aus. Abbildung \ref{fig_tls_cipher_types} bietet einen Überblick über diese verschiedenen Nachrichten. Dabei sind die fett umrahmten Felder diejenigen, die mit dem jeweiligen Algorithmus verschlüsselt werden.
+Abhängig von dem verwendeten Verschlüsselungsverfahren sehen diese Nachrichten unterschiedlich aus. Abbildung \ref{fig_tls_cipher_types} bietet einen Überblick über diese verschiedenen Nachrichten. Dabei sind die fett umrahmten Felder diejenigen, die mit dem jeweiligen Algorithmus verschlüsselt werden.
 
 Bei Stromchiffren wird der MAC zusammen mit den Daten (\datafield{TLSCompressed.fragment}) verschlüsselt und übertragen. 
 
@@ -473,6 +473,35 @@ struct {
 \end{lstlisting}
 Diese Informationen enthalten Angaben zu verwendeter \ciphersuite{}, zum Kompressionsalgorithmus und das \mastersecret{}. Sie werden vom \recordprotocol{} für die Verschlüsselung und Authentifizierung von Nachrichten verwendet.
 
+\section{Sitzungen, Verbindungen und der verkürzte Handshake}
+\label{sec_session_connection}
+
+TLS erstellt beim ersten Handshake eine Sitzung zwischen Client und Server. Hierbei wird ein Sitzungsidentifikator gewählt, der beim \serverhello{} mitgesendet wird. 
+
+Ein Client kann nun später, wenn er den erhaltenen Sitzungsidentifikator in einer \clienthello{}-Nachricht mitschickt, eine alte Sitzung in Form einer neuen Verbindung wieder aufnehmen oder mehrere Verbindungen parallel aufbauen. Dabei werden die in den \datafield{SecurityParameters} hinterlegten Verfahren genutzt und aus dem ebenfalls hinterlegten \mastersecret{} sowie den in den Hello-Nachrichten übertragenen random-Werten neue Schlüssel berechnet (siehe Abschnitt \ref{sec_key_material}). Dadurch kommt der verkürzte Handshake mit weniger gesendeten Nachrichten aus, als ein neuer Handshake, wie in Abbildung \ref{fig_abbreviated_handshake} ersichtlich ist. So kann auf Neuberechnung des \mastersecret{}, Server- und Client-Validierung und Aushandlung der \ciphersuite{} verzichtet werden. Durch die \finished{}-Nachricht können sich Client und Server durch das gleiche Schlüsselmaterial, das auf dem \mastersecret{} beruht, trotzdem sicher sein, mit dem optional authentifizierten Gegenüber zu kommunizieren.
+
+\lstset{
+	style=default,
+	frame=single
+}
+\begin{figure}[H]
+	\centering
+	\begin{lstlisting}
+§\textbf{Client}§                                                §\textbf{Server}§
+
+ClientHello                   -------->
+                                                 ServerHello
+                                          [ChangeCipherSpec]
+                              <--------             Finished
+[ChangeCipherSpec]
+Finished                      -------->
+[Application Data]            <------->   [Application Data]
+	\end{lstlisting}
+	\caption{Nachrichtenverlauf beim abgekürzten TLS-Handshake. Entnommen aus \cite{tls12}.}
+	\label{fig_abbreviated_handshake}
+\end{figure}
+\lstset{style=tls}
+
 \section{\changecipherspecprotocol{}}
 \label{sec_change_cipher_spec}
 
@@ -505,7 +534,7 @@ Laut Spezifikation muss zumindest \monospace{TLS\_RSA\_WITH\_AES\_128\_CBC\_SHA}
 
 Einen Sonderfall bildet die \ciphersuite{} \monospace{TLS\_NULL\_WITH\_NULL\_NULL}, die vor der Aushandlung der \ciphersuite{} während des Handshakes als Standard festgelegt ist und weder Verschlüsselung noch MAC bietet.
 
-Kurz sei hier auch noch erwähnt, dass frühere Versionen (bis TLS 1.1) aufgrund von gesetzlichen Vorschriften zum Export von Kryptographie aus den USA \ciphersuites{} enthielten, die durch Nutzung kürzerer Schlüssel leichter zu brechen sein sollten (so genannte export-geschwächte \ciphersuites{}). Diese teilweise noch unterstützten Verfahren ermöglichen noch heute Angriffe auf SSL/TLS (z.B. der FREAK-Angriff in Abschnitt \ref{sec_attack_freak}).
+Frühere Versionen (bis TLS 1.1) enthielten aufgrund von gesetzlichen Vorschriften zum Export von Kryptographie aus den USA \ciphersuites{}, die durch Nutzung kürzerer Schlüssel leichter zu brechen sein sollten (so genannte export-geschwächte \ciphersuites{}). Diese teilweise noch unterstützten Verfahren ermöglichen noch heute Angriffe auf SSL/TLS, z.B. den FREAK-Angriff in Abschnitt \ref{sec_attack_freak}.
 
 \section{TLS-Extensions}
 
@@ -523,44 +552,14 @@ struct {
 
 Beispiele für solche Extensions sind Server Name Indication, die es einem Server erlaubt abhängig vom geforderten Host verschiedene Zertifikate auszuliefern, oder Encrypt-then-MAC, die es erlaubt, die Reihenfolge von Verschlüsselung und Authentifizierung einer Nachricht im \recordprotocol{} zu tauschen. Eine aktuelle Liste registrierter TLS-Extensions wird durch die IANA (Internet Assigned Numbers Authority) bereitgestellt\footnote{http://www.iana.org/assignments/tls-extensiontype-values/tls-extensiontype-values.xhtml}.
 
-
-\section{Sitzungen, Verbindungen und der verkürzte Handshake}
-\label{sec_session_connection}
-
-TLS erstellt beim ersten Handshake eine Sitzung zwischen Client und Server. Hierbei wird ein Sitzungsidentifikator gewählt, der beim \serverhello{} mitgesendet wird. 
-
-Ein Client kann nun später, wenn er den erhaltenen Sitzungsidentifikator in einer \clienthello{}-Nachricht mitschickt, eine alte Sitzung in Form einer neuen Verbindung wiederaufnehmen oder mehrere Verbindungen parallel aufbauen. Dabei werden die in den \datafield{SecurityParameters} hinterlegten Verfahren genutzt und aus dem ebenfalls hinterlegten \mastersecret{} sowie den in den Hello-Nachrichten übertragenen random-Werten neue Schlüssel berechnet (siehe Abschnitt \ref{sec_key_material}). Dadurch kommt der verkürzte Handshake mit weniger gesendeten Nachrichten aus, als ein neuer Handshake, wie in Abbildung \ref{fig_abbreviated_handshake} ersichtlich ist. So kann auf Neuberechnung des \mastersecret{}, Server- und Client-Validierung und Aushandlung der \ciphersuite{} verzichtet werden. Durch die \finished{}-Nachricht können sich Client und Server durch das gleiche Schlüsselmaterial, das auf dem \mastersecret{} beruht, trotzdem sicher sein, mit dem optional authentifizierten Gegenüber zu kommunizieren.
-
-\lstset{
-	style=default,
-	frame=single
-}
-\begin{figure}[H]
-	\centering
-	\begin{lstlisting}
-§\textbf{Client}§                                                §\textbf{Server}§
-
-ClientHello                   -------->
-                                                 ServerHello
-                                          [ChangeCipherSpec]
-                              <--------             Finished
-[ChangeCipherSpec]
-Finished                      -------->
-[Application Data]            <------->   [Application Data]
-	\end{lstlisting}
-	\caption{Nachrichtenverlauf beim abgekürzten TLS-Handshake. Entnommen aus \cite{tls12}.}
-	\label{fig_abbreviated_handshake}
-\end{figure}
-\lstset{style=tls}
-
 \section{Frühere SSL-/TLS-Versionen und TLS 1.3}
 \label{sec_ssl_tls_version_overview}
 
-Im Folgenden soll kurz auf frühere Versionen von TLS/SSL und die entscheidenden Unterschiede zwischen diesen Versionen eingegangen sowie ein kurzer Blick auf das noch nicht veröffentlichte TLS 1.3 geworfen werden.
+Im Folgenden soll kurz auf frühere Versionen von TLS/SSL und die entscheidenden Unterschiede zwischen diesen Versionen eingegangen sowie ein Überblick über Änderungen in dem noch nicht veröffentlichten TLS 1.3 gegeben werden.
 
 \textbf{SSL 1.0} wurde nie veröffentlicht.
 
-\textbf{SSL 2.0} war die erste Version, die öffentlich gemacht und auch patentiert wurde. In dieser Version bestanden einige große Schwachstellen: Der Handshake wurde noch nicht authentifiziert, so dass Angreifer beispielsweise die \ciphersuite-Liste unbemerkt verändern konnten, viele schwache kryptographische Algorithmen wurden unterstützt und für Verschlüsselung und MAC-Berechnung wurden die gleichen Schlüssel verwendet. Auf diese Schwachstellen wird teilweise genauer in Kapitel \ref{cha_attacks} eingegangen. Da die Spezifikation nicht veröffentlicht wurde, stammen diese Informationen aus \cite{meyer14}. Die Unterstützung von SSL 2.0 wird für TLS-Implementierungen durch RFC 6176 (\cite{prohibit_ssl20}) verboten.
+\textbf{SSL 2.0} war die erste Version, die öffentlich gemacht und auch patentiert wurde. In dieser Version bestanden einige große Schwachstellen: Der Handshake wurde noch nicht authentifiziert, so dass Angreifer beispielsweise die \ciphersuite-Liste unbemerkt verändern konnten, viele schwache kryptographische Algorithmen wurden unterstützt und für Verschlüsselung und MAC-Berechnung wurden die gleichen Schlüssel verwendet. Auf einige dieser Schwachstellen wird genauer in Kapitel \ref{cha_attacks} eingegangen. Da die Spezifikation nicht veröffentlicht wurde, stammen diese Informationen aus \cite{meyer14}. Die Unterstützung von SSL 2.0 wird für TLS-Implementierungen durch RFC 6176 (\cite{prohibit_ssl20}) verboten.
 
 In \textbf{SSL 3.0} wurden verschiedene Schlüssel zur Verschlüsselung und MAC-Berechnung eingeführt und die während der MAC-Berechnung genutzte Hashfunktion konfigurierbar gemacht (aber noch kein HMAC verwendet). Der Handshake wurde authentifiziert (durch den Inhalt der \finished{}-Nachricht) und in die Generierung des \premastersecret{} floss die Versionsnummer ein, um Version-Rollback-Angriffe zu verhindern. Außerdem wurden neue kryptographische Algorithmen eingeführt und weitere kleine Änderungen vorgenommen (vgl. \cite{ssl30}). Von der Abwärtskompabilität von TLS-Implementierungen zu SSL 3.0 wird in RFC 7568 (\cite{deprecate_ssl30}) abgeraten.
 
@@ -570,8 +569,8 @@ In \textbf{TLS 1.1} wurden explizite Initialisierungsvektoren für Blockchiffren
 
 In \textbf{TLS 1.2} wurde der Gebrauch von SHA1 und MD5 in der Pseudo Random Function durch eine \ciphersuite{}-abhängige Hashfunktion ersetzt. Zusätzlich wurde die Unterstützung von AEAD-\ciphersuites{} eingefügt. TLS-Extensions und der Gebrauch von AES als Blockchiffre wurden ergänzt. Außerdem wurden DES und IDEA als Blockchiffren aus der Spezifikation entfernt, die Unterstützung von SSL 2.0 nicht mehr empfohlen und weitere kleine Änderungen vorgenommen (vgl. \cite{tls12}).
 
-\textbf{TLS 1.3} liegt momentan lediglich als Draft vor (\cite{tls13}, Version von Juli 2015]). Die hier dargestellten Informationen stellen also lediglich den aktuellen Entwicklungsstand dar und sind daher nicht als endgültig und nur mit Vorsicht zu betrachten.\\
-In dem aktuellen Draft wird Elliptic Curve Cryptography für das Diffie-Hellman-Verfahren hinzugefügt, die Unterstützung für alle SSL-Versionen und auch Kompression komplett entfernt (wahrscheinlich als Maßnahme gegen den Angriff aus Abschnitt \ref{sec_attack_crime}). Die größte Veränderung ist die Ausmusterung von Strom- und Blockchiffren im CBC-Modus zur Verschlüsselung. Es werden nur noch AEAD-Chiffren unterstützt, womit auch die separate Berechnung eines MACs entfällt. Außerdem wurde die PRF-Konstruktion durch die Verwendung von HKDF (HMAC-based Key Derivation Function, siehe \cite{krawczyk10}) ersetzt.
+\textbf{TLS 1.3} liegt momentan als Draft vor (\cite{tls13}, Version von Oktober 2015]). Die hier dargestellten Informationen stellen also lediglich den aktuellen Entwicklungsstand dar und sind daher nicht als endgültig und nur mit Bedacht zu betrachten.\\
+In dem aktuellen Draft wird Elliptic Curve Cryptography für das Diffie-Hellman-Verfahren hinzugefügt, die Unterstützung für alle SSL-Versionen und auch Kompression komplett entfernt (wahrscheinlich als Maßnahme gegen den Angriff aus Abschnitt \ref{sec_attack_crime}). Die größte Veränderung ist die Ausmusterung von Strom- und Blockchiffren im CBC-Modus zur Verschlüsselung. Es werden nur noch AEAD-Chiffren unterstützt, womit auch die separate Berechnung eines MACs entfällt. Außerdem wurde die PRF-Konstruktion durch die Verwendung von HKDF (HMAC-based Key Derivation Function, siehe \cite{krawczyk10}) ersetzt. Zusätzlich wird der ContentType eines TLS-Record nur noch verschlüsselt übertragen und Records können zum Verstecken der Nachrichtenlänge mit Padding beliebiger Länge (unter Berücksichtigung der max. Record-Länge) versehen werden. Weitere Änderungen befassen sich mit Möglichkeiten zu schnellerem Senden von \applicationdata{}-Nachrichten während des Handshakes.
 
 \todo{https://www.trustworthyinternet.org/ssl-pulse/ - SSL-Versionsverbreitung ergänzen?}
 
@@ -590,13 +589,13 @@ In dem aktuellen Draft wird Elliptic Curve Cryptography für das Diffie-Hellman-
 
 \section{Implementierungen}
 
-Kurz sollen hier auch noch bestehende Implementierungen von SSL/TLS erwähnt werden, auch wenn der Fokus der Arbeit auf der Protokollspezifikation selber liegt.
+An dieser Stelle sollen auch noch bestehende Implementierungen von SSL/TLS erwähnt werden, auch wenn der Fokus der Arbeit auf der Protokollspezifikation selbst liegt.
 
-Die meistgenutzte Implementierung, die unter anderem auch im häufig verwendeten Apache-Webserver zum Einsatz kommt, ist OpenSSL, eine Open-Source-Implementierung in C. In Produkten von Microsoft wird die Bibliothek SChannel, in Apple-Anwendungen Secure Transport und in Google Chrome und Mozilla-Produkten NSS verwendet. Auch manche Programmiersprachen bringen eigene Implementierungen mit. Ein Beispiel hierfür ist die Java Secure Socket Extension (JSSE).
+Die meistgenutzte Implementierung, die unter anderem auch im häufig verwendeten Apache-Webserver zum Einsatz kommt, ist OpenSSL, eine Open-Source-Implementierung in C. In Produkten von Microsoft wird die Bibliothek SChannel, in Apple-Anwendungen Secure Transport und in Google Chrome und Mozilla-Produkten NSS verwendet. Auch einige Programmiersprachen bringen eigene Implementierungen mit. Ein Beispiel hierfür ist die Java Secure Socket Extension (JSSE).
 
 Zusätzlich gibt es viele weitere seltener genutzte Implementierungen wie GnuTLS, PolarSSL, LibreSSL oder Amazon s2n, die vollständig neu entwickelt wurden oder als Forks bestehender Implementierungen entstanden sind.
 
-Viele Angriffe auf TLS-gesicherte Verbindungen, die bekannt geworden sind, waren Angriffe auf Implementierungen und nicht auf die Protokollspezifikation selbst (auf diese zweite Art von Angiffen wird in Kapitel \ref{cha_attacks} eingegangen). Ein Beispiel ist der Heartbleed\footnote{http://heartbleed.com/} getaufte Bug in OpenSSL, der es wegen eines Programmierfehlers ermöglichte, Speicherinhalte des Servers auszulesen. Auf solche Angriffe, die lediglich einzelne Implementierungen betreffen, soll im Rahmen dieser Arbeit nicht weiter eingegangen werden.
+Viele Angriffe auf TLS-gesicherte Verbindungen, die bekannt geworden sind, waren Angriffe auf Implementierungen und nicht auf die Protokollspezifikation selbst (auf diese zweite Art von Angiffen wird in Kapitel \ref{cha_attacks} eingegangen). Ein Beispiel ist der Heartbleed\footnote{http://heartbleed.com/ Abgerufen am 13.8.2015} getaufte Bug in OpenSSL, der es wegen eines Programmierfehlers ermöglichte, Speicherinhalte des Servers auszulesen. Auf solche Angriffe, die lediglich einzelne Implementierungen betreffen, soll im Rahmen dieser Arbeit nicht weiter eingegangen werden.
 
 Eine gelungene Übersicht über bestehende Implementierungen, die tiefer ins Detail geht, ist in \cite{meyer14} zu finden.
 %https://en.wikipedia.org/wiki/Comparison_of_TLS_implementations

@@ -2,9 +2,10 @@
 \chapter{Angriffe gegen SSL und TLS}
 
 \todo{Mehr Visualisierungen im ganzen Kapitel, falls sich das anbietet}
-
 \label{cha_attacks}
 
+In diesem Kapitel wird auf entdeckte Angriffe gegen SSL/TLS eingegangen. Wie bereits erwähnt sollen hierbei Angriffe gegen die Spezifikation selbst und nicht gegen spezielle Implementierungen im Fokus stehen. 
+ 
 Eine gute Übersicht zu bisherigen Angriffen auf TLS findet sich in \cite{meyer13}. Viele Schwächen früherer Protokollversionen bis SSL 3 sind in \cite{wagner96} zu finden.
 
 \section{Version Rollback}
@@ -21,7 +22,7 @@ Auch in neueren Browsern kann dieser Angriff noch zum Problem werden, falls Fall
 
 \section{Ciphersuite Rollback}
 
-Ein gegen SSL 2.0 bestehender Angriff ermöglichte aktiven Angreifern die während des Handshake-Protokolls übertragenen Listen von unterstützten Cipher Suites zu verändern, so dass schwache kryptographische Verfahren erzwungen werden konnten (oftmals exportgeschwächte Verfahren mit kürzeren Schlüsselängen).
+Ein gegen SSL 2.0 bestehender Angriff ermöglichte aktiven Angreifern die während des Handshake-Protokolls übertragenen Listen von unterstützten Cipher Suites so zu verändern, dass schwache kryptographische Verfahren erzwungen werden konnten (oftmals exportgeschwächte Verfahren mit kürzeren Schlüsselängen).
 
 Ab SSL 3.0 wird dieser Angriff dadurch verhindert, dass die \finished{}-Nachrichten von Client und Server jeweils einen mit dem \mastersecret{} berechneten MAC über die Nachrichten des \handshakeprotocol{}s enthalten, der die Integrität dieser Nachrichten bestätigt.
 
@@ -31,7 +32,7 @@ Eine detaillierte Übersicht ist in \cite{wagner96} zu finden.
 
 Für den Sonderfall einer SSL-Verbindung, die lediglich die Integrität der Nachrichten schützen soll, aber nicht verschlüsselt, lässt sich ausnutzen, dass der in der \finished{}-Nachricht gesendete MAC die \changecipherspec{}-Nachricht nicht mit einschließt. Dadurch kann ein aktiver Angreifer diese Nachrichten abfangen und nicht weiterleiten, sodass die Verbindungspartner die Integritätsprüfung nicht einsetzen. Ein Angreifer ist so in der Lage, gesendete Nachrichten zu verändern. 
 
-Theoretisch wäre der Angriff unter bestimmten Voraussetzungen und schwacher Kryptographie auch bei verschlüsselten Verbindungen möglich. Dazu müsste die empfangene \finished{}-Nachricht vor dem Weiterleiten entschlüsselt werden. In bestimmten Fällen wäre zwar genug bekannter Klartext vorhanden, um einen Brute-Force-Angriff auf den Schlüssel zu erlauben, aber selbst bei exportgeschwächten 40-Bit Schlüsseln ist der Rechenaufwand hierfür sehr groß und unter praktischen Gesichtspunkten kaum unbemerkt ausführbar.
+Theoretisch ist der Angriff unter bestimmten Voraussetzungen und schwacher Kryptographie auch bei verschlüsselten Verbindungen möglich. Dazu muss die empfangene \finished{}-Nachricht vor dem Weiterleiten entschlüsselt werden. In bestimmten Fällen ist zwar genug bekannter Klartext vorhanden, um einen Brute-Force-Angriff auf den Schlüssel zu erlauben, aber selbst bei exportgeschwächten 40-Bit Schlüsseln ist der Rechenaufwand hierfür sehr groß und unter praktischen Gesichtspunkten kaum unbemerkt ausführbar.
 
 Alle TLS-Versionen verhindern diesen Angriff dadurch, dass sie eine \changecipherspec{}-Nachricht vor der \finished{}-Nachricht explizit vorschreiben.
 
@@ -47,14 +48,14 @@ Der Angriff basiert auf dem festen Format nach PKCS\#1 (siehe \cite{pkcs1}) form
 \begin{figure}[H]
 	\centering
 	\begin{tikzpicture}[node distance=0cm, outer sep = 0pt]
-		\tikzstyle{field}=[draw, rectangle, minimum height=1cm, minimum width=4cm, anchor=south west]
+		\tikzstyle{field}=[draw, rectangle, minimum height=1cm, anchor=south west]
 		\tikzstyle{byte}=[draw, rectangle, minimum height=1cm, minimum width=1.5cm, fill=blue!15, anchor=south west]
 
 		\node[byte] (first) at (0,0) {0x00};
 		\node[byte] (second) [right = of first] {0x02};
-		\node[field] (pad) [right = of second] {Padding};
+		\node[field] (pad) [right = of second, minimum width=2.5cm,] {Padding};
 		\node[byte] (sep) [right = of pad] {0x00};
-		\node[field] (data) [right = of sep] {Daten};
+		\node[field] (data) [right = of sep,  minimum width=6cm,] {Daten};
 	\end{tikzpicture}
 	\caption{PCKS \#1-Format}
 	\label{fig_pcks_padding}
@@ -71,16 +72,17 @@ In TLS ab Version 1.0 wird der Angriff dadurch verhindert, dass bei ungültigem 
 \section{Padding-Orakel-Angriff}
 \label{sec_attack_padding_oracle}
 
-In \cite{vaudenay02} beschreibt der Autor einen Angriff zur Erlangung des Klartextes, bei dem das für Blockchiffren nötige Padding im CBC-Modus ausgenutzt wird. Durch das vorgegebene Format des Paddings und da das Padding bei TLS nicht durch den MAC geschützt ist (MAC - then PAD - then Encrypt) ermöglicht es theoretisch in einer relativ kleinen Zahl von Anfragen die Berechnung des Klartextes.\\
-Praktisch konnte das Verfahren nicht eingesetzt werden, da SSL 3.0 für Paddingfehler und MAC-Überprüfung gleiche Fehlermeldungen (\badrecordmac{}) ausgibt. In TLS 1.0 und 1.1 gibt es getrennte Fehlermeldungen (\badrecordmac{} und \decryptionfailed{}), so dass der Angriff theoretisch möglich wäre. Allerdings werden die Fehler über das \alertprotocol{} verschlüsselt gesendet, so dass ein Angreifer die Fehlerart anders erhalten muss (beispielsweise über Log-Einträge). TLS 1.2 verbietet das Senden von \decryptionfailed{}-Fehlern aus diesem Grund.\\
-Ein weiterer Nachteil für den Angreifer ist, dass es sich bei \badrecordmac{}- und \decryptionfailed{}-Fehlern um fatal alerts handelt, die zum Abbruch der Sitzung führen.
-%Nichtsdestotrotz bietet die hier beschriebene Methode eine Grundlage für weitere Angriffe.
+In \cite{vaudenay02} beschreibt der Autor einen Angriff zur Erlangung des Klartextes, bei dem das für Blockchiffren nötige Padding im CBC-Modus ausgenutzt wird. Durch das vorgegebene Format des Paddings und die Tatsache, dass das Padding bei TLS nicht durch den MAC geschützt ist (vgl. Abschnitt \ref{sec_record_protocol}), ermöglicht es theoretisch in einer relativ kleinen Zahl von Anfragen die Berechnung des Klartextes.
 
 Das verwendete Padding besteht immer aus Bytes mit dem Wert \(n\), wobei \(n\) die nötige Anzahl an Paddingbytes bis zum Erreichen eines Vielfachens der Blocklänge bezeichnet. Das Padding kann also folgende Werte annehmen: \(1, 22, 333, 4444, \dots\). Voraussetzung für diesen Angriff ist der Zugriff auf ein Orakel, das dem Angreifer für eine verschlüsselte Nachricht lediglich mitteilt, ob das Padding der entschlüsselten Nachricht korrektes Format besitzt. Im Folgenden bezeichnet \(C(x)\) die Verschlüsselung des Blockes \(x\) und \(C^{-1}(y)\) die Entschlüsselung von \(y\).\\
 Wenn der Angreifer nun das letzte Byte eines Chiffretextblocks \(y\) erhalten möchte, so sendet er \(r + y\) mit \(r = r_1,  \dots , r_b\) als zufällige Bytes und \(b\) als Blocklänge (in Byte) an das Orakel. Bei der Entschlüsselung im CBC-Modus wird der letzte Chiffretextblock (hier \(y\)) entschlüsselt und mit dem vorletzten Block XOR-verknüpft, um den Klartextblock zu erhalten. Dieser Block (hier \(x\)) wird dann auf gültiges Padding überprüft:
 \[x=C^{-1}(y) \oplus r\]
 Wenn das Orakel gültiges Padding signalisiert, dann ist am wahrscheinlichsten, dass \(x\) auf \(1\) endet und somit das letzte Byte von \(C^{-1}(y)= r_b \oplus 1\) ist. Bei ungültigem Padding wird ein neuer Wert \(r_b\) gewählt und das Orakel neu befragt.\\
 In \cite{vaudenay02} wird ein Algorithmus, mit dem auch die unwahrscheinlicheren Fälle von längerem Padding abgedeckt werden, und ein Verfahren, um aus dem letzten Byte einen kompletten Block zu erhalten, angegeben. 
+
+Praktisch konnte das Verfahren nicht eingesetzt werden, da SSL 3.0 für Paddingfehler und MAC-Überprüfung gleiche Fehlermeldungen (\badrecordmac{}) ausgibt. In TLS 1.0 und 1.1 gibt es getrennte Fehlermeldungen (\badrecordmac{} und \decryptionfailed{}), so dass der Angriff theoretisch möglich wäre. Allerdings werden die Fehler über das \alertprotocol{} verschlüsselt gesendet, so dass ein Angreifer die Fehlerart anders erhalten muss (beispielsweise über Log-Einträge). TLS 1.2 verbietet aus diesem Grund das Senden von \decryptionfailed{}-Fehlern.\\
+Ein weiterer Nachteil für den Angreifer ist, dass es sich bei \badrecordmac{}- und \decryptionfailed{}-Fehlern um fatal alerts handelt, die zum Abbruch der Sitzung führen.
+%Nichtsdestotrotz bietet die hier beschriebene Methode eine Grundlage für weitere Angriffe.
 
 In \cite{canvel03} beschreiben die Autoren eine Umsetzung des Angriffs auf TLS-gesicherte IMAP-Verbindungen zur Erlangung von Passwörtern. Hierbei wird das Problem ununterscheidbarer und verschlüsselter Fehlermeldungen durch einen Timing-Angriff umgangen. Außerdem bedenken die Autoren das Abbrechen der Sitzung durch Nutzung vieler paralleler Sitzungen mit dem gleichen verschlüsselten Aufruf, wie es bei der Authentifizierung im IMAP-Protokoll der Fall ist.
 
@@ -159,4 +161,4 @@ Oftmals richteten sich diese Angriffe gegen mangelnde Zertifikatvalidierung in T
 
 Auch fehlende Sorgfalt bei der Zertifikatserstellung durch Certificate Authorities wurde schon von Angreifern ausgenutzt. Hierbei waren beispielsweise die fehlerhafte Validierung von übermittelten Servernamen, die fehlerhafte Ausgabe von intermediate-Zertifikaten\footnote{Intermediate-Zertifikate sind Zertifikate, die es erlauben, andere Zertifikate zu signieren.} und mangelhaft abgesicherte Server oder Benutzerkonten, die es Angreifern erlaubten, signierte Zertifikate auszustellen, Gründe für erfolgreiche Angriffe.
 
-Der Vollständigkeit halber sei hier auch noch die notwendige Sicherheit des privaten Serverschlüssels erwähnt. Gelangt ein Angreifer in seinen Besitz, so kann er den Datenverkehr problemlos mitlesen oder verändern.
+Der Vollständigkeit halber sei hier auch noch die notwendige Sicherheit des privaten Serverschlüssels hingewiesen. Gelangt ein Angreifer in seinen Besitz, so kann er den Datenverkehr problemlos mitlesen oder verändern.

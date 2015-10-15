@@ -6,15 +6,20 @@ In diesem Kapitel soll ein kurzer Überblick über die im Laufe der Arbeit relev
 
 \section{Kryptographische Verfahren}
 
-\todo{Nette Bildchen}
-
 \subsection{Symmetrische Kryptographie}
 
 Symmetrische Kryptographie beschreibt Verfahren, bei denen bei der Ver- und Entschlüsselung der gleiche (oder ein aus dem anderen Schlüssel leicht berechenbarer) Schlüssel verwendet wird. Vor einer Kommunikation müssen beide Kommunikationspartner im Besitz dieses Schlüssels sein, ihn also über einen sicheren Kanal ausgetauscht haben.\\
 Es gilt:
 \[E_K(M)=C\] 
 \[D_K(C)=M\] 
-Hierbei steht \(M\) für die Nachricht, \(K\) für den Schlüssel, der verwendet wird, \(C\) für den Chiffretext und \(E\) bzw. \(D\) für die Ver- bzw. Entschlüsselung.
+Hierbei steht \(M\) für die Nachricht, \(K\) für den Schlüssel, der verwendet wird, \(C\) für den Chiffretext und \(E\) bzw. \(D\) für die Ver- bzw. Entschlüsselung. Der Vorgang der symmetrischen Ver- und Entschlüsselung wird in Abbildung \ref{fig_symmetric_encryption} dargestellt.
+
+\begin{figure}
+	\centering
+	\includegraphics[width=15cm]{Diagrams/SymmetricEncryption.pdf} %
+	\caption{Symmetrische Kryptographie}
+	\label{fig_symmetric_encryption}
+\end{figure}
 
 Symmetrischen Chiffren lassen sich in Strom- und Blockchiffren unterteilen.
 
@@ -38,10 +43,17 @@ Einen Sonderfall stellen die AEAD-Chiffren (Authenticated Encryption with Associ
 
 \subsection{Asymmetrische Kryptographie}
 
-Asymmetrische Kryptographie (oftmals auch Public-Key-Kryptographie) beschreibt Verfahren, bei denen bei der Ver- und Entschlüsselung verschiedene Schlüssel verwendet werden. Diese lassen sich nicht aus dem jeweils anderen Schlüssel berechnen. Daher kann ein Empfänger seinen öffentlichen Schlüssel bekanntgeben. Nachrichten, die mit diesem Schlüssel verschlüsselt werden, kann ein Angreifer trotzdem nicht lesen, da nur der Empfänger im Besitz seines geheimen Schlüssels ist. Es gilt: 
+Asymmetrische Kryptographie (oftmals auch Public-Key-Kryptographie) beschreibt Verfahren, bei denen bei der Ver- und Entschlüsselung verschiedene Schlüssel verwendet werden. Diese lassen sich nicht aus dem jeweils anderen Schlüssel berechnen. Daher kann ein Empfänger seinen öffentlichen Schlüssel bekanntgeben. Nachrichten, die mit diesem Schlüssel verschlüsselt werden, kann ein Angreifer dennoch nicht lesen, da nur der Empfänger im Besitz seines geheimen Schlüssels ist. Es gilt: 
 \[E_{K_{\text{public}}}(M)=C\] 
 \[D_{K_{\text{private}}}(C)=M\] 
-Hierbei steht \(K_{\text{public}}\) für den öffentlichen und \(K_{\text{private}}\) für den geheimen Schlüssel des Empfängers.
+Hierbei steht \(K_{\text{public}}\) für den öffentlichen und \(K_{\text{private}}\) für den geheimen Schlüssel des Empfängers. Der Vorgang der asymmetrischen Ver- und Entschlüsselung ist in Abbildung \ref{fig_asymmetric_encryption} abgebildet.
+
+\begin{figure}
+	\centering
+	\includegraphics[width=15cm]{Diagrams/AsymmetricEncryption.pdf} %
+	\caption{Asymmetrische Kryptographie}
+	\label{fig_asymmetric_encryption}
+\end{figure}
 
 Weiterhin können asymmetrische Verfahren auch zur Signierung von Nachrichten genutzt werden, indem der Verfasser die Nachricht (bzw. aus Effizienzgründen in der Praxis einen Hashwert der Nachricht) mit seinem geheimen Schlüssel verschlüsselt und an die Nachricht anhängt. Empfänger können nun durch Entschlüsselung mit dem öffentlichen Schlüssel und Vergleich mit der empfangenen Nachricht (bzw. ihrem Hashwert) die Signatur überprüfen.
 
@@ -71,7 +83,7 @@ Ein Angreifer, der lediglich im Besitz von \(Y_A\) und \(Y_B\) ist kann den Schl
 
 Eine Hashfunktion ist eine Funktion, die eine Eingabe variabler Länge auf einen String fester Länge abbildet.
 
-In der Kryptographie werden insbesondere Einweg-Hashfunktionen eingesetzt. Bei dieser Art von Hashfunktionen ist es leicht, aus einer Eingabe den Hashwert zu berechnen, jedoch sehr schwer, zu einem gegebenen Hashwert eine Eingabe zu finden, die auf diesen Wert abgebildet wird \cite{Schneier2006}. Beispiele für heute verwendete Hashfunktionen sind MD5 und SHA256.
+In der Kryptographie werden insbesondere Einweg-Hashfunktionen eingesetzt. Bei dieser Art von Hashfunktionen ist es leicht, aus einer Eingabe den Hashwert zu berechnen, jedoch sehr schwer, zu einem gegebenen Hashwert eine Eingabe zu finden, die auf diesen Wert abgebildet wird \cite{Schneier2006}. \\Beispiele für heute verwendete Hashfunktionen sind MD5 und SHA256.
 
 \subsection{Message Authentication Code}
 
