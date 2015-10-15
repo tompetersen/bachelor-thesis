@@ -54,15 +54,8 @@ In der unteren Schicht befindet sich das \recordprotocol{}, das die Daten von de
 
 \section{\recordprotocol{}}
 \label{sec_record_protocol}
-\todo{Kapitel evtl. hinter den Handshake? Und vorher auf Schlüsselberechnung eingehen?}
 
-Die zu sendenden Protokolldaten werden von dem \recordprotocol{} in maximal \(2^{14}\) Byte große Pakete fragmentiert und optional komprimiert. Danach wird je nach während des Handshakes verhandelten kryptographischen Funktionen (vgl. Abschnitt \ref{sec_tls_handshake}) die Integrität der Daten durch Berechnen und Anhängen eines MACs gesichert und die Nachricht danach zusammen mit dem MAC verschlüsselt\footnote{
-	Diese Reihenfolge der Operationen wird MAC-then-Encrypt genannt.
-	Laut \cite{AE2000} ist Encrypt-then-MAC vorzuziehen.
-	In \cite{krawczyk01} wird dieses Ergebnis bestätigt, aber auch die Sicherheit von MAC-then-Encrypt unter bestimmten Voraussetzungen gezeigt.\\
-	In \cite{ferguson10} fügen die Autoren hinzu, dass das Erkennen und Verwerfen ungültiger Nachrichten durch Encrypt-then-MAC vereinfacht wird. Auf der anderen Seite erwähnen sie aber auch Vorteile der MAC-then-Encrypt-Reihenfolge: Die Ein- und Ausgabe der MAC-Funktion sind einem Angreifer verborgen, so dass Angriffe gegen den MAC erschwert werden und die Integrität der Nachricht damit besser geschützt ist. Außerdem führen sie das Horton-Prinzip an (siehe \cite{wagner96}), wonach eine Authentifikation dessen, was gemeint ist und nicht was gesagt wird, stattfinden sollte. %\inquotes{Authenticate what is meant, not what is said}
-	Bei der Erstellung eines Systems muss also abgewogen werden, welche Methode genutzt werden sollte.
-}. Auf diese Schritte wird im Folgenden genauer eingegangen.
+Die zu sendenden Protokolldaten werden von dem \recordprotocol{} in maximal \(2^{14}\) Byte große Pakete fragmentiert und optional komprimiert. Danach wird je nach während des Handshakes verhandelten kryptographischen Funktionen (vgl. Abschnitt \ref{sec_tls_handshake}) die Integrität der Daten durch Berechnen und Anhängen eines MACs gesichert und die Nachricht danach zusammen mit dem MAC verschlüsselt (vgl. hierzu auch Abschnitt \ref{sec_didactics_crypto}). Auf diese Schritte wird im Folgenden genauer eingegangen.
 
 Daten, die von einer höheren Schicht entgegengenommen werden, werden zu Beginn in ein \datafield{TLSPlaintext}-Objekt verpackt. 
 

@@ -174,16 +174,16 @@ In der \sourceobject{TlsState}-Klasse werden zu sendende Nachrichten durch die i
 
 % tls 12 view
 
-Für die Benutzeroberfläche wurde den Überlegungen im vorherigen Abschnitt entsprechend für Client und Server ein auf der Swing-Komponente \sourceobject{JTree} basierendes Fensterelement entwickelt. Der interne Zustand der Parteien wird durch Titel-Wert-Paare und optionale Kindelemente dargestellt. Die Klasse \sourceobject{TlsStateMachine} enthält eine Methode, die die Paare für den aktuellen Zustand zurückliefert. Bei Zustandsänderungen, die durch das Beobachter-Muster kommuniziert werden, werden der alte und neue Zustand verglichen und neue oder geänderte Einträge gekennzeichnet, sodass Auswirkungen von empfangenen Nachrichten sichtbar werden. Zusätzlich wurde zu den jeweiligen Einträgen jeweils ein erklärender Informationstext mit Auszügen aus der Spezifikation erstellt, um ein besseres Verständnis der Abläufe zu unterstützen.\\
-Zusätzlich enthalten die Fensterelemente Buttons für die verfügbaren Aktionen wie das Verbinden oder das Senden von Daten bei bestehender Verbindung.
-
-Das gleiche Fensterelement wie für Server und Client wurde auch für die Detaildarstellung von Nachrichten verwendet. Auch für die jeweiligen Nachrichtenfelder wurden Informationstexte erstellt, die beim Verstehen der Protokolls helfen sollen.
-
 \begin{figure}
 	\centering
 	\includegraphics[scale=0.7]{Diagrams/ScreenshotTLS.png} 
 	\caption{Die fertige Anwendung}
 	\label{fig_application_screenshot}
 \end{figure}
+
+Für die Benutzeroberfläche wurde den Überlegungen im vorherigen Abschnitt entsprechend für Client und Server ein auf der Swing-Komponente \sourceobject{JTree} basierendes Fensterelement entwickelt. Der interne Zustand der Parteien wird durch Titel-Wert-Paare und optionale Kindelemente dargestellt. Die Klasse \sourceobject{TlsStateMachine} enthält eine Methode, die die Paare für den aktuellen Zustand zurückliefert. Bei Zustandsänderungen, die durch das Beobachter-Muster kommuniziert werden, werden der alte und neue Zustand verglichen und neue oder geänderte Einträge gekennzeichnet, sodass Auswirkungen von empfangenen Nachrichten sichtbar werden. Zusätzlich wurde zu den jeweiligen Einträgen jeweils ein erklärender Informationstext mit Auszügen aus der Spezifikation erstellt, um ein besseres Verständnis der Abläufe zu unterstützen.\\
+Zusätzlich enthalten die Fensterelemente Buttons für die verfügbaren Aktionen wie das Verbinden oder das Senden von Daten bei bestehender Verbindung.
+
+Das gleiche Fensterelement wie für Server und Client wurde auch für die Detaildarstellung von Nachrichten verwendet. Auch für die jeweiligen Nachrichtenfelder wurden Informationstexte erstellt, die beim Verstehen der Protokolls helfen sollen.
 
 Ein Screenshot der endgültigen Anwendung mit der Erweiterung um TLS ist in Abbildung \ref{fig_application_screenshot} zu finden.

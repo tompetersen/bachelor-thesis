@@ -36,7 +36,14 @@ Dieses Prinzip kommt neben seiner Anwendung in TLS unter anderem auch in IPSec u
 
 Wie ebenfalls bereits in Kapitel \ref{cha_cryptographic_techniques} erwähnt, besteht bei der Nutzung von asymmetrischen Verfahren jedoch das Problem, die Identität des Besitzers des öffentlichen Schlüssels sicherzustellen.
 
-Dieses Problem soll kurz erläutert werden. Möchte eine Person A eine Nachricht asymmetrisch verschlüsselt mit B austauschen, so benötigt sie den öffentlichen Schlüssel \(K^B_\text{public}\) von B. Ein Angreifer M, der die Kommunikation zwischen A und B lesen und verändern kann (ein sogenannter Man-in-the-Middle), kann diesen öffentlichen Schlüssel bei der Übermittlung durch seinen eigenen \(K^M_\text{public}\) austauschen. Die Nachricht von A kann er nun mit seinem geheimen Schlüssel entschlüsseln. Damit sein Angriff unbemerkt bleibt, kann er die Nachricht nun mit \(K^B_\text{public}\) verschlüsseln und an B senden.\todo{Bild}
+Dieses Problem soll kurz erläutert werden. Möchte eine Person A eine Nachricht asymmetrisch verschlüsselt mit B austauschen, so benötigt sie den öffentlichen Schlüssel \(K^B_\text{public}\) von B. Ein Angreifer M, der die Kommunikation zwischen A und B lesen und verändern kann (ein sogenannter Man-in-the-Middle), kann diesen öffentlichen Schlüssel bei der Übermittlung durch seinen eigenen \(K^M_\text{public}\) austauschen. Die Nachricht von A kann er nun mit seinem geheimen Schlüssel entschlüsseln. Damit sein Angriff unbemerkt bleibt, kann er die Nachricht anschließend noch mit \(K^B_\text{public}\) verschlüsseln und an B senden. Dieser Angriff ist in Abbildung \ref{fig_mitm} dargestellt.
+
+\begin{figure}
+	\centering
+	\includegraphics[width=15cm]{Diagrams/mitm.pdf} %
+	\caption{Man-in-the-middle-Angriff auf den Schlüsselaustausch}
+	\label{fig_mitm}
+\end{figure}
 
 Um diesen Angriff zu verhindern, muss es eine Möglichkeit geben, den Besitzer des Schlüssels zu verifizieren. Für diese Aufgabe wird in SSL/TLS auf Zertifikate und eine Public-Key-Infrastruktur (PKI) gesetzt. Ein Zertifikat enthält den öffentlichen Schlüssel und die Informationen des Besitzers bestehend aus dem Namen oder der URL des Servers und weiteren Angaben. Dieses Zertifikat wird von einer vertrauenswürdigen Instanz, der Certificate Authority (CA), nach der Überprüfung der Besitzeridentität mit ihrem geheimen Schlüssel signiert. Ein Empfänger des Zertifikats kann nun das Zertifikat mit dem öffentlichen Schlüssel der CA überprüfen, in dessen Besitz er im Vorwege sein muss\footnote{
 	Heutige Browser und Betriebssysteme werden bereits mit Listen solcher CAs ausgeliefert.
@@ -59,12 +66,23 @@ Seitenkanalangriffe in Form von Timing-Angriffen werden auch bei einigen Angriff
 
 Bei einem Replay-Angriff sendet ein Angreifer zuvor aufgenommene Nachrichten erneut an den Empfänger. Da es sich um eine echte Nachricht handelt, müssen Gegenmaßnahmen getroffen werden, um dieses erneute Senden zu erkennen. Möglichkeiten hierfür sind beispielsweise die Einführung von Sequenznummern wie bei TLS, die Nutzung von Zeitstempeln oder ein Challenge-Response-Verfahren, dass einem Sender eine zufällige Aufgabe stellt, deren Lösung er in der Nachricht mitsenden muss \cite{ferguson10}.
 
-\subsection{Krypto-Standardvorgehen und Probleme, wenn man dagegen verstößt}
-Zufällige IVs in CBC, MAC-then-encrypt, AEAD(?)
+\subsection{Kryptographische Prinzipien}
+\label{sec_didactics_crypto}
 
-\subsection{Probleme in \inquotes{unerwarteten} Bereichen}
-Komprimierung, ...
-Prinzip des schwächsten Kettengliedes
+%Zufällige IVs in CBC, MAC-then-encrypt, AEAD(?)
+
+TLS bietet auch Beispiele für Prinzipien, die bei der Verwendung von kryptographischen Verfahren zu beachten sind. Auf zwei Beispiele soll genauer eingegangen werden.Grundsatz
+
+Ein Prinzip ist die Reihenfolge, in der Verschlüsselung und Authentifizierung einer Nachricht stattfinden. 
+In TLS wird bei Nutzung von Block- und Stream-\ciphersuites{} für eine Nachricht zuerst ein MAC berechnet, der anschließend zusammen mit der Nachricht verschlüsselt wird. Diese Reihenfolge der Operationen wird MAC-then-Encrypt genannt. Laut \cite{AE2000} ist Encrypt-then-MAC vorzuziehen. In \cite{krawczyk01} wird dieses Ergebnis bestätigt, aber auch die Sicherheit von MAC-then-Encrypt unter bestimmten Voraussetzungen gezeigt.\\
+In \cite{ferguson10} fügen die Autoren hinzu, dass das Erkennen und Verwerfen ungültiger Nachrichten durch Encrypt-then-MAC vereinfacht wird. Auf der anderen Seite erwähnen sie aber auch Vorteile der MAC-then-Encrypt-Reihenfolge: Die Ein- und Ausgabe der MAC-Funktion sind einem Angreifer verborgen, so dass Angriffe gegen den MAC erschwert werden und die Integrität der Nachricht damit besser geschützt ist. Außerdem führen sie das Horton-Prinzip an (siehe \cite{wagner96}), wonach eine Authentifikation dessen, was gemeint ist und nicht was gesagt wird, stattfinden sollte.\\ %\inquotes{Authenticate what is meant, not what is said}
+In den meisten Veröffentlichungen wird jedoch die Nutzung von Encrypt-then-MAC gefordert \footnote{
+	Siehe beispielsweise auch Moxie Malinspike: The Cryptographic Doom Principle. http://www.thoughtcrime.org/ blog/ the-cryptographic-doom-principle/ Abgerufen am 15.10.2015.
+}. In TLS hätte die Verwendung dieser Reihenfolge beispielsweise den Padding-Orakel-Angriff (siehe Abschnitt \ref{sec_attack_padding_oracle}) verhindert. Auch die Nutzung von AEAD-Chiffren verhindert Probleme mit dieser Reihenfolge, da die Authenzität einer Nachricht bereits durch die Chiffre gewährleistet wird.
+
+Ein weiteres Prinzip ist die Nutzung unvorhersagbarer Initialisierungsvektoren für Blockchiffren im CBC-Modus, die beispielsweise in \cite{ferguson10} von den Autoren gefordert wird. In TLS 1.0 wurde der letzte Chiffretextblock als IV genutzt, was den in Abschnitt \ref{sec_known_ivs} beschriebenen Angriff ermöglichte.
+
+Diese Prinzipien sind jedoch nicht TLS-spezifisch, sondern immer zu beachten, wenn Kryptographie eingesetzt werden soll.
 
 \section{Lernen durch Exploration}
 \label{sec_exploration}
