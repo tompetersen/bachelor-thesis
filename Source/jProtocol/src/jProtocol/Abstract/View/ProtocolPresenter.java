@@ -5,9 +5,9 @@ import jProtocol.Abstract.Model.CommunicationChannel;
 import jProtocol.Abstract.Model.ProtocolDataUnit;
 import javax.swing.JComponent;
 
-public class JProtocolPresenter<T extends ProtocolDataUnit> {
+public class ProtocolPresenter<T extends ProtocolDataUnit> {
 
-	private JProtocolView _view;
+	private ProtocolView _view;
 	
 	/**
 	 * Creates a complete protocol presenter.
@@ -16,14 +16,14 @@ public class JProtocolPresenter<T extends ProtocolDataUnit> {
 	 * @param channel the communication channel
 	 * @param htmlInfoUpdater an info updater
 	 */
-	public JProtocolPresenter(ViewProvider<T> provider, CommunicationChannel<T> channel, DefaultHtmlInfoUpdater htmlInfoUpdater) {
+	public ProtocolPresenter(ViewProvider<T> provider, CommunicationChannel<T> channel, DefaultHtmlInfoUpdater htmlInfoUpdater) {
 		StateMachinePresenter clientPresenter = new StateMachinePresenter(provider.getViewForClientStateMachine(htmlInfoUpdater));
 		StateMachinePresenter serverPresenter = new StateMachinePresenter(provider.getViewForServerStateMachine(htmlInfoUpdater));
 		
 		ProtocolDataUnitPresenter<T> pduPresenter = new ProtocolDataUnitPresenter<T>(provider, channel, htmlInfoUpdater); 
 		CommunicationChannelPresenter<T> ccPresenter = new CommunicationChannelPresenter<T>(channel, htmlInfoUpdater.getHtmlInfoView());
 		
-		_view = new JProtocolView(clientPresenter.getView(), serverPresenter.getView(), pduPresenter.getView(), ccPresenter.getView());
+		_view = new ProtocolView(clientPresenter.getView(), serverPresenter.getView(), pduPresenter.getView(), ccPresenter.getView());
 	}
 
 	public JComponent getView() {

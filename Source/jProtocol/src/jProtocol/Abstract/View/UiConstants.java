@@ -17,4 +17,7 @@ public class UiConstants {
 	
 	public static Color VIEW_BACKGROUND_COLOR = Color.WHITE;
 	public static Color VIEW_BORDER_COLOR = Color.GRAY;
+	
+	public static String APPLICATION_NAME = "protocol.edu";
+	public static int APPLICATION_ICON_SIZE = 32;
 }

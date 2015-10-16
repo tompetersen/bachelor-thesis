@@ -8,7 +8,7 @@ import java.awt.Insets;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 
-public class JProtocolView {
+public class ProtocolView {
 
 	private JPanel _view;
 	
@@ -20,7 +20,7 @@ public class JProtocolView {
 	 * @param pduView the protocol data unit view
 	 * @param channelView the communication channel view
 	 */
-	public JProtocolView(JComponent clientView, JComponent serverView, JComponent pduView, JComponent channelView) {
+	public ProtocolView(JComponent clientView, JComponent serverView, JComponent pduView, JComponent channelView) {
 		_view = new JPanel(new GridBagLayout());
 		_view.setBackground(Color.WHITE);
 		

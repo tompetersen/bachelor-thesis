@@ -5,6 +5,7 @@ import jProtocol.Abstract.ProtocolBuilder;
 import jProtocol.Abstract.ProtocolRegistry;
 import jProtocol.Abstract.Model.ProtocolDataUnit;
 import jProtocol.Abstract.View.HtmlInfoView;
+import jProtocol.Abstract.View.UiConstants;
 import jProtocol.Abstract.View.resources.HtmlAboutLoader;
 import jProtocol.Abstract.View.resources.ImageLoader;
 import java.awt.Color;
@@ -37,7 +38,7 @@ public class StartUp {
 		
 		_aboutView = new HtmlInfoView();
 
-		_frame = new JFrame("jProtocol");
+		_frame = new JFrame(UiConstants.APPLICATION_NAME);
 		_frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		_frame.setBackground(Color.WHITE);
 		_frame.setMinimumSize(new Dimension(800, 600));

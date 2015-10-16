@@ -65,13 +65,17 @@ public class ImageLoader {
 		return loadImageForFileName("email19.png", width, height);
 	}
 	
+	public static BufferedImage getApplicationIcon(int width, int height) {
+		return loadImageForFileName("Icon_32.png", width, height);
+	}
+	
 	public static List<Image> getIconFileList(){
 		ArrayList<Image> result = new ArrayList<>();
 		
-		result.add(loadOriginalImageForFileName("icon_128.png"));
-		result.add(loadOriginalImageForFileName("icon_64.png"));
-		result.add(loadOriginalImageForFileName("icon_32.png"));
-		result.add(loadOriginalImageForFileName("icon_16.png"));
+		result.add(loadOriginalImageForFileName("Icon_128.png"));
+		result.add(loadOriginalImageForFileName("Icon_64.png"));
+		result.add(loadOriginalImageForFileName("Icon_32.png"));
+		result.add(loadOriginalImageForFileName("Icon_16.png"));
 		
 		return result;
 	}
@@ -104,11 +108,11 @@ public class ImageLoader {
 				return resizedImage;
 			}
 			catch (IOException e) {
-				return new BufferedImage(0, 0, BufferedImage.TYPE_INT_RGB);
+				return new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
 			}
 		}
 		else {
-			return new BufferedImage(0, 0, BufferedImage.TYPE_INT_RGB);
+			return new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
 		}
 	}
 	

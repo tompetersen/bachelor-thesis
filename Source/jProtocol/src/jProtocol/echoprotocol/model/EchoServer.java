@@ -20,7 +20,6 @@ public class EchoServer extends StateMachine<EchoMessage> {
 
 		@Override
 		public void receiveMessage(EchoMessage pdu) {
-				System.out.println("Server: Received request...");
 				EchoMessage echo = new EchoMessage(pdu.getPayload());
 				sendMessage(echo);
 		}

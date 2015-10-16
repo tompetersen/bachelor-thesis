@@ -5,7 +5,7 @@ import jProtocol.Abstract.Model.ProtocolDataUnit;
 import jProtocol.Abstract.Model.StateMachine;
 import jProtocol.Abstract.Model.events.StateMachineStateChangedEvent;
 import jProtocol.Abstract.View.DefaultHtmlInfoUpdater;
-import jProtocol.Abstract.View.JProtocolPresenter;
+import jProtocol.Abstract.View.ProtocolPresenter;
 import java.util.Observable;
 import java.util.Observer;
 import javax.swing.JComponent;
@@ -16,7 +16,7 @@ public class ProtocolBuilder<T extends ProtocolDataUnit> implements Observer {
 	private StateMachine<T> _client;
 	private StateMachine<T> _server;
 
-	private JProtocolPresenter<T> _presenter;
+	private ProtocolPresenter<T> _presenter;
 
 	/**
 	 * Creates a new protocol instance.
@@ -40,7 +40,7 @@ public class ProtocolBuilder<T extends ProtocolDataUnit> implements Observer {
 
 		DefaultHtmlInfoUpdater htmlInfoUpdater = new DefaultHtmlInfoUpdater();
 
-		_presenter = new JProtocolPresenter<>(viewProvider, channel, htmlInfoUpdater);
+		_presenter = new ProtocolPresenter<>(viewProvider, channel, htmlInfoUpdater);
 	}
 
 	@Override

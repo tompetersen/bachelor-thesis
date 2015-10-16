@@ -116,15 +116,15 @@ public class TlsCiphertext extends ProtocolDataUnit {
 		ArrayList<KeyValueObject> result = new ArrayList<>();
 
 		KeyValueObject kvo = new KeyValueObject("ContentType", _contentType.toString());
-		kvo.setHtmlInfoContent(TlsHtmlInfoLoader.loadHtmlInfoForFileName("messages/Tls12_ContentType.html"));
+		kvo.setHtmlInfoContent(TlsHtmlInfoLoader.loadHtmlInfoForFileName("messages/TLS12_ContentType.html"));
 		result.add(kvo);
 
 		kvo = new KeyValueObject("Version", _version.toString());
-		kvo.setHtmlInfoContent(TlsHtmlInfoLoader.loadHtmlInfoForFileName("messages/Tls12_Version.html"));
+		kvo.setHtmlInfoContent(TlsHtmlInfoLoader.loadHtmlInfoForFileName("messages/TLS12_Version.html"));
 		result.add(kvo);
 
 		kvo = new KeyValueObject("Length", Short.toString(_length));
-		kvo.setHtmlInfoContent(TlsHtmlInfoLoader.loadHtmlInfoForFileName("messages/Tls12_MessageLength.html"));
+		kvo.setHtmlInfoContent(TlsHtmlInfoLoader.loadHtmlInfoForFileName("messages/TLS12_MessageLength.html"));
 		result.add(kvo);
 
 		result.add(_fragment.getViewData(_message));
