@@ -1,2 +1,2 @@
 # bachelor-thesis
-My bachelor thesis aboutTLS 1.3.
+My bachelor thesis about TLS use in teaching.
