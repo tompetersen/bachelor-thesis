@@ -21,7 +21,7 @@
 \chapter{Erweiterung der Anwendung}
 \label{cha_tutorial_plugin}
 
-In diesem Abschnitt soll anhand eines einfachen Beispiels gezeigt werden, was bei der Erweiterung der Anwendung um ein weiteres Protokoll zu beachten ist. Dazu wird ein einfaches Protokoll betrachtet, bei dem eine Nachricht lediglich aus einem Längenfeld und einem Nachrichteninhalt besteht. Ein Client kann Nachrichten dieses Formats an den Server senden, der diese lediglich genauso zurücksendet. Es handelt sich also um eine leicht modifizierte Variante des Echo-Protokolls\footnote{Das Echo-Protokoll wird in RFC 862 spezifiziert.}.
+In diesem Anhang soll anhand eines einfachen Beispiels gezeigt werden, was bei der Erweiterung der Anwendung um ein weiteres Protokoll zu beachten ist. Dazu wird ein einfaches Protokoll betrachtet, bei dem eine Nachricht lediglich aus einem Längenfeld und einem Nachrichteninhalt besteht. Ein Client kann Nachrichten dieses Formats an den Server senden, der diese lediglich genauso zurücksendet. Es handelt sich also um eine leicht modifizierte Variante des Echo-Protokolls\footnote{Das Echo-Protokoll wird in RFC 862 spezifiziert.}.
 
 Im ersten Schritt wird der Nachrichtentyp implementiert (siehe Listing \ref{lst_echo_message}).
 
@@ -77,7 +77,7 @@ public class ReceiveState extends State<EchoMessage> {
 }
 \end{lstlisting}
 
-Danach wird eine Klasse \sourceobject{EchoProvider} erstellt, die der Anwendung Zugriff auf die Automaten für Server und Client, sowie auf zu implementierende Fensterelemente bietet. Außerdem muss sich die Klasse auch um die Aktualisierung der Fensterelemente bei Änderung des internen Zustand von Server oder Client kümmern. Diese Klasse muss die Interfaces \sourceobject{ViewProvider} und \sourceobject{StateMachineProvider} implementieren (siehe Listing \ref{lst_echo_provider}).
+Danach wird eine Klasse \sourceobject{EchoProvider} erstellt, die der Anwendung Zugriff auf die Automaten für Server und Client sowie auf zu implementierende Fensterelemente bietet. Außerdem muss sich die Klasse auch um die Aktualisierung der Fensterelemente bei Änderung des internen Zustand von Server oder Client kümmern. Diese Klasse muss die Interfaces \sourceobject{ViewProvider} und \sourceobject{StateMachineProvider} implementieren (siehe Listing \ref{lst_echo_provider}).
 
 \begin{lstlisting}[style=java, caption={Implementierung der \sourceobject{EchoProvider}-Klasse}, label=lst_echo_provider]
 public class EchoProvider implements ViewProvider<EchoMessage>, StateMachineProvider<EchoMessage> {
@@ -91,7 +91,7 @@ public class EchoProvider implements ViewProvider<EchoMessage>, StateMachineProv
 \end{lstlisting}
 
 Für den Server wird lediglich ein leeres Fensterelement erzeugt, für den Client eine Liste mit empfangenen Serverantworten sowie ein Button, um neue Anfragen abzuschicken. Zwei Dinge sind hier zu beachten.\\
-Methoden, die aus dem UI-Thread (also beispielsweise bei Drücken eines Buttons) aufgerufen werden und dazu führen, dass eine neue Nachricht gesendet wird, müssen zwingend in einem neuen Thread aufgerufen werden, um das erfolgreiche Pausieren bei einer Nachrichtenübertragung zu ermöglichen. Die Umsetzung für den Echo-Client ist in Listing \ref{lst_echo_button_thread} zu finden.
+Methoden, die aus dem UI-Thread (also beispielsweise bei Drücken eines Buttons) aufgerufen werden und dazu führen, dass eine neue Nachricht gesendet wird, müssen zwingend in einem neuen Thread aufgerufen werden, um das erfolgreiche Pausieren bei einer Nachrichtenübertragung zu ermöglichen. Die Umsetzung für den Echo-Client zeigt Listing \ref{lst_echo_button_thread}.
 
 \lstset{style=java, caption={Starten eines neuen Threads für das Senden einer Nachricht}, label=lst_echo_button_thread}
 \begin{lstlisting}
@@ -109,7 +109,8 @@ sendButton.addActionListener(new ActionListener() {
 });
 \end{lstlisting}
 
-Außerdem kann ein bereits implementierter Mechanismus dazu genutzt werden, auf Zustandsänderungen von Server oder Client zu reagieren. Dazu muss lediglich die Methode \sourceobject{notifyObserversOfStateChanged()} aus einem Zustand heraus aufgerufen werden. Dies führt zur Ausführung von \sourceobject{updateServerView} bzw. \sourceobject{updateClientView} des \sourceobject{EchoProvider}-Objekts, in dem die erstellten Fensterelemente aktualisiert werden können. In der \sourceobject{updateClientView}-Methode der \sourceobject{EchoProvider}-Klasse wird beispielsweise die Liste der bisher empfangenen Serverantworten aktualisiert (siehe Listing \ref{lst_echo_state_changed}).
+Außerdem kann ein bereits implementierter Mechanismus dazu genutzt werden, auf Zustandsänderungen von Server oder Client zu reagieren. Dazu muss lediglich die Methode \sourceobject{notify""Observers""Of""State""Changed()} aus einem Zustand heraus aufgerufen werden. Dies führt zur Ausführung von \sourceobject{updateServerView} bzw. \sourceobject{update""Client""View} des \sourceobject{EchoProvider}-Objekts, in dem die erstellten Fensterelemente aktualisiert werden können.\\
+In der \sourceobject{updateClientView}-Methode der \sourceobject{EchoProvider}-Klasse wird beispielsweise die Liste der bisher empfangenen Serverantworten aktualisiert (siehe Listing \ref{lst_echo_state_changed}).
 
 \begin{lstlisting}[style=java, caption=Aktualisierungsmechanismus bei Zustandsänderung, label=lst_echo_state_changed]
 class ReceiveState extends State<EchoMessage> {
@@ -135,7 +136,7 @@ public class EchoProvider implements ... {
 }
 \end{lstlisting}
 
-Als letztes muss das entwickelte Protokoll noch in der Anwendung einzutragen. Dazu muss der Protokollliste in der Klasse \sourceobject{ProtocolRegistry} noch ein \sourceobject{JProtocolBuilder}-Objekt hinzugefügt werden (siehe Listing \ref{lst_echo_protocol_registry}).
+Als letztes ist das entwickelte Protokoll der Anwendung noch bekanntzumachen. Dazu muss der Protokollliste in der Klasse \sourceobject{ProtocolRegistry} noch ein \sourceobject{JProtocolBuilder}-Objekt hinzugefügt werden (siehe Listing \ref{lst_echo_protocol_registry}).
 
 \begin{lstlisting}[style=java, caption=Protokollregistrierung, label=lst_echo_protocol_registry]
 public class ProtocolRegistry {
@@ -148,4 +149,4 @@ public class ProtocolRegistry {
 }
 \end{lstlisting}
 
-Ein abschließender Hinweis: Für die Darstellung von Client, Server und den Details einer Nachricht kann auch die in dem entwickelten TLS-Plugin verwendete Baumstruktur verwendet werden, die als Klasse \sourceobject{KeyValueTree} verfügbar ist.
+Abschließend sei noch darauf hingewiesen, dass für die Darstellung von Client, Server und den Details einer Nachricht auch die in dem entwickelten TLS-Plugin verwendete Baumstruktur verwendet werden kann, die als Klasse \sourceobject{KeyValueTree} verfügbar ist.

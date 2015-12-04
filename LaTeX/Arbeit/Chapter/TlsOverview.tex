@@ -2,13 +2,13 @@
 
 \label{cha_cryptographic_techniques}
 
-In diesem Kapitel soll ein kurzer Überblick über die im Laufe der Arbeit relevanten kryptographischen Verfahren gegeben werden, sowie die verwendete Notation vorgestellt werden.\todo{um Schutzziele erweitern}
+In diesem Kapitel soll ein kurzer Überblick über die im Laufe der Arbeit relevanten kryptographischen Verfahren gegeben werden sowie die verwendete Notation vorgestellt werden.\todo{um Schutzziele erweitern}
 
 \section{Kryptographische Verfahren}
 
 \subsection{Symmetrische Kryptographie}
 
-Symmetrische Kryptographie beschreibt Verfahren, bei denen bei der Ver- und Entschlüsselung der gleiche (oder ein aus dem anderen Schlüssel leicht berechenbarer) Schlüssel verwendet wird \cite{Schneier2006}. Vor einer Kommunikation müssen beide Kommunikationspartner im Besitz dieses Schlüssels sein. Die Sicherheit der Verfahren liegt in der Geheimhaltung des Schlüssels,  der über einen sicheren Kanal ausgetauscht worden sein muss.
+Symmetrische Kryptographie beschreibt Verfahren, bei denen für Ver- und Entschlüsselung der gleiche (oder ein aus dem anderen Schlüssel leicht berechenbarer) Schlüssel verwendet wird \cite{Schneier2006}. Vor einer Kommunikation müssen beide Kommunikationspartner im Besitz dieses Schlüssels sein. Die Sicherheit der Verfahren liegt in der Geheimhaltung des Schlüssels,  der über einen sicheren Kanal ausgetauscht worden sein muss.
 Es gilt:
 \[E_K(M)=C\] 
 \[D_K(C)=M\] 
@@ -25,7 +25,7 @@ Symmetrischen Chiffren lassen sich in Strom- und Blockchiffren unterteilen.
 
 \subsubsection{Stromchiffren}
 
-Stromchiffren sind symmetrische Verschlüsselungsalgorithmen, die Klartexte bitweise zu Chiffretexten konvertieren \cite{Schneier2006}. Die einfachste Möglichkeit ist die XOR-Verknüpfung der Klartextbits mit einem schlüsselabhängig generierten Bitstrom (Schlüsselstrom). Durch erneute XOR-Verknüpfung mit dem selben Schlüsselstrom auf der Empfängerseite lässt sich der Klartext zurückerhalten. Ein Beispiel für eine heute verwendete Stromchiffre ist RC4.
+Stromchiffren sind symmetrische Verschlüsselungsalgorithmen, die Klartexte bitweise zu Chiffretexten konvertieren \cite{Schneier2006}. Die einfachste Möglichkeit ist die XOR-Verknüpfung der Klartextbits mit einem schlüsselabhängig generierten Bitstrom (Schlüsselstrom). Durch erneute XOR-Verknüpfung mit demselben Schlüsselstrom auf der Empfängerseite lässt sich der Klartext zurückerhalten. Ein Beispiel für eine heute verwendete Stromchiffre ist RC4.
 
 \subsubsection{Blockchiffren}
 
@@ -43,10 +43,10 @@ Einen Sonderfall stellen die AEAD-Chiffren (Authenticated Encryption with Associ
 
 \subsection{Asymmetrische Kryptographie}
 
-Asymmetrische Kryptographie (oftmals auch Public-Key-Kryptographie) beschreibt Verfahren, bei denen bei der Ver- und Entschlüsselung verschiedene Schlüssel verwendet werden \cite{Schneier2006}. Die Sicherheit der Verfahren beruht darauf, dass der öffentliche Schlüssel sich nicht mit vertretbarem Aufwand aus dem geheimen Schlüssel berechnen lässt. Daher kann ein Empfänger seinen öffentlichen Schlüssel bekanntgeben. Nachrichten, die mit diesem Schlüssel verschlüsselt werden, kann ein Angreifer dennoch nicht lesen, solange er nicht im Besitz des geheimen Schlüssels ist. Es gilt: 
+Asymmetrische Kryptographie (oftmals auch Public-Key-Kryptographie) beschreibt Verfahren, bei denen für Ver- und Entschlüsselung verschiedene Schlüssel verwendet werden \cite{Schneier2006}. Die Sicherheit der Verfahren beruht darauf, dass der öffentliche Schlüssel sich nicht mit vertretbarem Aufwand aus dem geheimen Schlüssel berechnen lässt. Daher kann ein Empfänger seinen öffentlichen Schlüssel bekanntgeben. Nachrichten, die mit diesem Schlüssel verschlüsselt werden, kann ein Angreifer dennoch nicht lesen, solange er nicht im Besitz des geheimen Schlüssels ist. Es gilt: 
 \[E_{K_{\text{public}}}(M)=C\] 
 \[D_{K_{\text{private}}}(C)=M\] 
-Hierbei steht \(K_{\text{public}}\) für den öffentlichen und \(K_{\text{private}}\) für den geheimen Schlüssel des Empfängers. Der Vorgang der asymmetrischen Ver- und Entschlüsselung ist in Abbildung \ref{fig_asymmetric_encryption} abgebildet.
+Hierbei steht \(K_{\text{public}}\) für den öffentlichen und \(K_{\text{private}}\) für den geheimen Schlüssel des Empfängers. Der Vorgang der asymmetrischen Ver- und Entschlüsselung ist in Abbildung \ref{fig_asymmetric_encryption} dargestellt.
 
 \begin{figure}
 	\centering
@@ -57,7 +57,7 @@ Hierbei steht \(K_{\text{public}}\) für den öffentlichen und \(K_{\text{privat
 
 Weiterhin können asymmetrische Verfahren auch zur Signierung von Nachrichten genutzt werden, indem der Verfasser die Nachricht (bzw. aus Effizienzgründen in der Praxis einen Hashwert der Nachricht) mit seinem geheimen Schlüssel verschlüsselt und an die Nachricht anhängt. Dieser Vorgang wird signieren genannt. Empfänger können nun durch Entschlüsselung mit dem öffentlichen Schlüssel und Vergleich mit der empfangenen Nachricht (bzw. ihrem Hashwert) die Signatur überprüfen. 
 
-Durch asymmetrische Kryptographie lässt sich das bei symmetrischen Algorithmen bestehende Problem des Schlüsselaustauschs durch Veröffentlichung des öffentlichen Schlüssels leicht lösen. Das Problem, das hierbei besteht, ist jedoch die Identität des Besitzers eines öffentlichen Schlüssels sicherzustellen.
+Durch asymmetrische Kryptographie lässt sich das bei symmetrischen Algorithmen bestehende Problem des Schlüsselaustauschs durch Veröffentlichung des öffentlichen Schlüssels leicht lösen. Das Problem, das hierbei besteht, ist es jedoch, die Identität des Besitzers eines öffentlichen Schlüssels sicherzustellen.
 
 Ein Beispiel für einen asymmetrischen Algorithmus ist das RSA-Verfahren \cite{Schneier2006}.
 
@@ -65,16 +65,16 @@ Ein Beispiel für einen asymmetrischen Algorithmus ist das RSA-Verfahren \cite{S
 
 \label{sec_diffie_hellman}
 
-Das Diffie-Hellmann-Verfahren (DH-Verfahren) ist ein ebenfalls auf geheimen und öffentlichen Schlüssel basierendes Verfahren, das jedoch nicht der Ver- bzw. Entschlüsselung, sondern lediglich der Schlüsselvereinbarung dient. Es ermöglicht zwei Kommunikationspartnern einen symmetrischen Schlüssel zu erzeugen, ohne dass dieser direkt gesendet werden muss \cite{dh76}. 
+Das Diffie-Hellmann-Verfahren (DH-Verfahren) ist ebenfalls ein auf geheimen und öffentlichen Schlüsseln basierendes Verfahren, das jedoch nicht der Ver- bzw. Entschlüsselung, sondern lediglich der Schlüsselvereinbarung dient. Es ermöglicht zwei Kommunikationspartnern, einen symmetrischen Schlüssel zu erzeugen, ohne dass dieser direkt gesendet werden muss \cite{dh76}. 
 
 Die Partner \(A\) und \(B\) einigen sich auf eine Gruppe primer Ordnung \(p\) und eine Zahl \(g\), die die Gruppe erzeugt. Zusätzlich wählt jeder Partner eine große, zufällige Zahl \(X\) als privaten Schlüssel. Dann berechnet jeder Partner seinen öffentlichen Schlüssel \(Y\) folgendermaßen:
 \begin{align*}
-&Y_A = g^{X_A} \mod{p} \text{ bzw.}\\
+&Y_A = g^{X_A} \mod{p} \text{ \hspace{0.5cm} bzw.}\\
 &Y_B = g^{X_B} \mod{p}
 \end{align*}
 Diese Werte werden nun an den anderen Partner gesendet und der gemeinsame Schlüssel \(K\) kann berechnet werden:
 \begin{align*}
-&K = Y_B^{X_A} \mod{p} = (g^{X_B})^{X_A }\mod{p} = g^{X_A X_B}\mod{p} \text{ bzw.}\\
+&K = Y_B^{X_A} \mod{p} = (g^{X_B})^{X_A }\mod{p} = g^{X_A X_B}\mod{p} \text{ \hspace{0.5cm} bzw.}\\
 &K = Y_A^{X_B} \mod{p} = (g^{X_A})^{X_B }\mod{p} = g^{X_A X_B}\mod{p} 
 \end{align*}
 Ein Angreifer, der lediglich im Besitz von \(Y_A\) und \(Y_B\) ist, kann den Schlüssel nur schwer berechnen. 
@@ -89,7 +89,7 @@ In der Kryptographie werden insbesondere Einweg-Hashfunktionen eingesetzt. Bei d
 
 \label{sec_mac}
 
-Ein Message Authentication Code (MAC) ist ein Verfahren, das der Authentizität und dem Schutz der Integrität einer Nachricht dient. Dazu wird vom Sender aus einem geheimen Schlüssel \(K\) und der Nachricht \(M\) eine Art Prüfsumme generiert und zusammen mit der Nachricht versendet. Der Empfänger kann den MAC überprüfen, wenn er im Besitz des gleichen geheimen Schlüssels ist, und so sicherstellen, dass die Nachricht nicht verändert wurde. Ein Beispiel für einen solchen MAC ist der auch in TLS verwendete HMAC \cite{Schneier2006, ferguson10}.
+Ein Message Authentication Code (MAC) ist ein Verfahren, das dazu dient, die Authentizität und die Integrität einer Nachricht sicherzustellen. Dazu wird vom Sender aus einem geheimen Schlüssel \(K\) und der Nachricht \(M\) eine Art Prüfsumme generiert und zusammen mit der Nachricht versendet. Der Empfänger kann den MAC überprüfen, wenn er im Besitz des gleichen geheimen Schlüssels ist, und so sicher sein, dass die Nachricht nicht verändert wurde. Ein Beispiel für einen solchen MAC ist der auch in TLS verwendete HMAC \cite{Schneier2006, ferguson10}.
 
 \section{Schutzziele}
 \todo{Schreib es auf! Werden schon in 2.1.5 (MAC) genutzt.}
