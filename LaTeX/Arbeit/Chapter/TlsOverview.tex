@@ -39,7 +39,7 @@ Der einfachste Modus ist der ECB-Modus (Electronic Codebook). In diesem Modus wi
 
 Ein weiterer, häufig verwendeter Modus ist CBC (Cipher Block Chaining). Hierbei erfolgt eine XOR-Verknüpfung des zuletzt erhaltenen Chiffretextblocks mit dem nächsten Klartextblock vor seiner Verschlüsselung. Zusätzlich wird für den ersten Klartextblock ein zusätzlicher, zufällig gewählter Block, der sogenannte Initialisierungsvektor (IV), benötigt \cite{Schneier2006}.
 
-Einen Sonderfall stellen die AEAD-Chiffren (Authenticated Encryption with Associated Data) dar. Hierbei handelt es sich um Betriebsmodi, die ohne zusätzlichen Message Authentication Code (siehe Abschnitt \ref{sec_mac}) Authentizität und Integrität bereitstellen. Beispiele für solche Modi sind CCM (Counter with CBC-MAC) oder GCM (Galois/Counter Mode). 
+Einen Sonderfall stellen die AEAD-Chiffren (Authenticated Encryption with Associated Data) dar. Hierbei handelt es sich um Betriebsmodi, die ohne zusätzlichen Message Authentication Code (siehe Abschnitt \ref{sec_mac}) Authentizität und Integrität bereitstellen. Beispiele für solche Modi sind CCM (Counter with CBC-MAC, siehe \cite{whiting03}) oder GCM (Galois/Counter Mode, siehe \cite{mcgrew05}). 
 
 \subsection{Asymmetrische Kryptographie}
 
@@ -81,7 +81,7 @@ Ein Angreifer, der lediglich im Besitz von \(Y_A\) und \(Y_B\) ist, kann den Sch
 
 \subsection{Hashfunktion}
 
-Eine Hashfunktion ist eine Funktion, die eine Eingabe variabler Länge auf eine Ausgabe fester Länge(den Hashwert) abbildet \cite{Schneier2006}.
+Eine Hashfunktion ist eine Funktion, die eine Eingabe variabler Länge auf eine Ausgabe fester Länge (den Hashwert) abbildet \cite{Schneier2006}.
 
 In der Kryptographie werden insbesondere Einweg-Hashfunktionen eingesetzt. Bei dieser Art von Hashfunktionen ist es leicht, aus einer Eingabe den Hashwert zu berechnen, jedoch sehr schwer, zu einem gegebenen Hashwert eine Eingabe zu finden, die auf diesen Wert abgebildet wird \cite{Schneier2006}. \\Ein Beispiel für heute verwendete Hashfunktionen ist SHA256.
 
@@ -89,16 +89,9 @@ In der Kryptographie werden insbesondere Einweg-Hashfunktionen eingesetzt. Bei d
 
 \label{sec_mac}
 
-Ein Message Authentication Code (MAC) ist ein Verfahren, das dazu dient, die Authentizität und die Integrität einer Nachricht sicherzustellen. Dazu wird vom Sender aus einem geheimen Schlüssel \(K\) und der Nachricht \(M\) eine Art Prüfsumme generiert und zusammen mit der Nachricht versendet. Der Empfänger kann den MAC überprüfen, wenn er im Besitz des gleichen geheimen Schlüssels ist, und so sicher sein, dass die Nachricht nicht verändert wurde. Ein Beispiel für einen solchen MAC ist der auch in TLS verwendete HMAC \cite{Schneier2006, ferguson10}.
-
-\section{Schutzziele}
-\todo{Schreib es auf! Werden schon in 2.1.5 (MAC) genutzt.}
-
-\subsection{Vertraulichkeit}
-
-\subsection{Integrität}
-
-\subsection{Verfügbarkeit}
+Ein Message Authentication Code (MAC) ist ein Verfahren, das dazu dient, die Authentizität und die Integrität\footnote{
+	Integrität beschreibt die Eigenschaft, dass vom Empfänger überprüft werden kann, ob eine Nachricht verändert wurde. Authentizität bedeutet, dass der Absender einer Nachricht ermittelt werden kann und dass ein Angreifer sich nicht als jemand anderes ausgeben kann \cite{Schneier2006}.
+} einer Nachricht sicherzustellen. Dazu wird vom Sender aus einem geheimen Schlüssel \(K\) und der Nachricht \(M\) eine Art Prüfsumme generiert und zusammen mit der Nachricht versendet. Der Empfänger kann den MAC überprüfen, wenn er im Besitz des gleichen geheimen Schlüssels ist, und so sicher sein, dass die Nachricht nicht verändert wurde. Ein Beispiel für einen solchen MAC ist der auch in TLS verwendete HMAC \cite{Schneier2006, ferguson10}.
 
 \section{Verwendete Notationen}
 

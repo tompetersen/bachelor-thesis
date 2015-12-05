@@ -47,7 +47,7 @@ Dieses Problem soll kurz erläutert werden. Möchte eine Person A eine Nachricht
 	\label{fig_mitm}
 \end{figure}
 
-Um diesen Angriff zu verhindern, muss es eine Möglichkeit geben, den Besitzer des Schlüssels zu verifizieren. Für diese Aufgabe wird in SSL/TLS auf Zertifikate und eine Public-Key-Infrastruktur (PKI) gesetzt. Ein Zertifikat enthält den öffentlichen Schlüssel und die Informationen des Besitzers - bestehend aus dem Namen oder der URL des Servers und weiteren Angaben. Dieses Zertifikat wird von einer vertrauenswürdigen Instanz, der Certificate Authority (CA), nach der Überprüfung der Besitzeridentität mit ihrem geheimen Schlüssel signiert. Ein Empfänger des Zertifikats kann nun das Zertifikat mit dem öffentlichen Schlüssel der CA überprüfen, in dessen Besitz er im Vorwege sein muss\footnote{
+Um diesen Angriff zu verhindern, muss es eine Möglichkeit geben, den Besitzer des Schlüssels zu verifizieren. Für diese Aufgabe wird in SSL/TLS auf Zertifikate und eine Public-Key-Infrastruktur (PKI) gesetzt (für Details siehe \cite{schmeh09}). Ein Zertifikat enthält den öffentlichen Schlüssel und die Informationen des Besitzers - bestehend aus dem Namen oder der URL des Servers und weiteren Angaben. Dieses Zertifikat wird von einer vertrauenswürdigen Instanz, der Certificate Authority (CA), nach der Überprüfung der Besitzeridentität mit ihrem geheimen Schlüssel signiert. Ein Empfänger des Zertifikats kann nun das Zertifikat mit dem öffentlichen Schlüssel der CA überprüfen, in dessen Besitz er im Vorwege sein muss\footnote{
 	Heutige Browser und Betriebssysteme werden bereits mit Listen solcher CAs ausgeliefert.
 }. Danach sind der Besitzer und der zugehörige öffentliche Schlüssel verifiziert und der Schlüssel kann zum Verschlüsseln von Nachrichten genutzt werden\footnote{
 	Die Schwächen, die in diesem System bestehen können, sind vielfältig, liegen jedoch nicht im Fokus dieser Arbeit. Erste Hinweise sind in Abschnitt \ref{sec_certificates} und in \cite{ferguson10} zu finden.
@@ -56,7 +56,7 @@ Um diesen Angriff zu verhindern, muss es eine Möglichkeit geben, den Besitzer d
 Die Nutzung von Zertifikaten und PKIs findet unter anderem auch in IPSec oder S/MIME Verwendung. 
 
 \subsection{Seitenkanalangriffe}
-Seitenkanalangriffe sind Angriffe, die nicht das kryptographische Verfahren direkt angreifen, sondern versuchen, Informationen über die Nachricht oder verwendete Schlüssel aus anderen Kanälen zu erhalten. Hierbei kann es sich beispielsweise um Zeit- oder Stromverbrauchsmessung handeln, aber auch um die Messung der elektromagnetischen Abstrahlung, des Schalls oder sogar des Erdungspotentials eines Rechners. 
+Seitenkanalangriffe sind Angriffe, die nicht das kryptographische Verfahren direkt angreifen, sondern versuchen, Informationen über die Nachricht oder verwendete Schlüssel aus anderen Kanälen zu erhalten. Hierbei kann es sich beispielsweise um Zeit- oder Stromverbrauchsmessung handeln (siehe \cite{kocher96, kocher99}), aber auch um die Messung der elektromagnetischen Abstrahlung oder der Schallaussendung eines Rechners (siehe \cite{vaneck85, genkin14}). 
 
 Wenn sich unterschiedliche Schlüssel- oder Nachrichtenbits verschieden auf die Werte des Seitenkanals auswirken, so lassen sich Schlüssel bzw. Nachricht oftmals aus den gemessenen Informationen ableiten. Gerade bei einfachen Geräten wie Smartcards können schon einfache Angriffe erfolgreich sein.
 
@@ -85,7 +85,7 @@ In \cite{ferguson10} fügen die Autoren hinzu, dass das Erkennen und Verwerfen u
 In den meisten Veröffentlichungen wird jedoch die Nutzung von Encrypt-then-MAC gefordert \footnote{
 	Siehe beispielsweise auch Moxie Marlinspike: The Cryptographic Doom Principle. \\
 	http://www.thoughtcrime.org/ blog/ the-cryptographic-doom-principle/ Abgerufen am 15.10.2015.
-}. In TLS hätte die Verwendung dieser Reihenfolge beispielsweise den Padding-Orakel-Angriff (siehe Abschnitt \ref{sec_attack_padding_oracle}) verhindert. Auch die Nutzung von AEAD-Chiffren verhindert Probleme mit dieser Reihenfolge, da die Authentizität einer Nachricht bereits durch die Chiffre gewährleistet wird.
+}. In TLS hätte die Verwendung dieser Reihenfolge beispielsweise den Padding-Orakel-Angriff (siehe Abschnitt \ref{sec_attack_padding_oracle}) verhindert. Auch die Nutzung von AEAD-Chiffren verhindert Probleme mit dieser Reihenfolge, da die Integrität einer Nachricht bereits durch die Chiffre gewährleistet wird.
 
 Ein weiteres Prinzip ist die Nutzung unvorhersagbarer Initialisierungsvektoren für Blockchiffren im CBC-Modus, die beispielsweise in \cite{ferguson10} von den Autoren gefordert wird. In TLS 1.0 wurde der letzte Chiffretextblock als IV genutzt, was den in Abschnitt \ref{sec_known_ivs} beschriebenen Angriff ermöglichte.
 
@@ -97,7 +97,7 @@ Diese Prinzipien sind nicht TLS-spezifisch, sondern sollten in allen Fällen bea
 Wie im letzten Abschnitt exemplarisch deutlich wurde, eignet sich TLS aus vielerlei Gründen für den Einsatz in der Hochschullehre.\\
 Eine spezielle Methode, die in der Lehre zum Einsatz kommen kann und mit der sich diese Arbeit beschäftigen wird, ist die Exploration.
 
-Exploratives Lernen, also \inquotes{entdeckendes, forschendes oder autonomes Lernen}, empfiehlt sich für Bereiche, deren \inquotes{Abstraktion oder Komplexität mit anderen Lernmaterialien schwerer erfassbar oder schwerer darstellbar [ist]} \cite{schubert11}. 
+Exploratives Lernen, also \inquotes{entdeckendes, forschendes oder autonomes Lernen} \cite{schubert11}, empfiehlt sich für Bereiche, deren \inquotes{Abstraktion oder Komplexität mit anderen Lernmaterialien schwerer erfassbar oder schwerer darstellbar [ist]} \cite{schubert11}. 
 Allerdings wird geeignete Software (Explorationsmodule bzw. lernförderliche Software) benötigt, die den Lernenden beim explorativen Lernen unterstützt. Hierfür bieten sich oftmals Simulationen an. 
 
 \begin{quote}

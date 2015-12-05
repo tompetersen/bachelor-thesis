@@ -18,7 +18,7 @@ Durch die \finished{}-Nachricht ab SSL 3.0, die alle Handshake-Nachrichten authe
 
 Um Kompatibilität mit der älteren Version erhalten, aber Version-Rollback-Angriffe trotzdem zu erkennen, wurde in der SSL 3.0-Spezifikation \cite{ssl30} vorgeschrieben, dass bestimmte Bytes des PKCS\#1-Paddings (siehe \cite{pkcs1}) einen festen Wert erhalten sollten, falls der Client SSL 3.0 unterstützt. Ein Schwachpunkt könnte laut \cite{wagner96} immer noch die Wiederaufnahme einer SSL 3.0-Sitzung durch eine SSL 2.0 \clienthello{}-Nachricht sein. Dieses sollte in Implementierungen verhindert werden.
 
-Auch in neueren Browsern kann dieser Angriff noch zum Problem werden, falls Fallback-Lösungen auf SSL 2.0 implementiert sind, wenn ein Verbindungsversuch scheitert. Durch das Verbot von SSL 2.0-Unterstützung (vgl. Abschnitt \ref{sec_ssl_tls_version_overview}) sollte dieser Angriff für TLS-Versionen keine Auswirkungen mehr haben. 
+Auch in neueren Browsern kann dieser Angriff noch zum Problem werden, falls Fallback-Lösungen auf SSL 2.0 implementiert sind, wenn ein Verbindungsversuch scheitert (siehe Abschnitt \ref{sec_attack_poodle}). Durch das Verbot von SSL 2.0-Unterstützung (vgl. Abschnitt \ref{sec_ssl_tls_version_overview}) sollte dieser Angriff für TLS-Versionen jedoch eigentlich keine Auswirkungen mehr haben. 
 
 \section{Ciphersuite Rollback}
 
@@ -88,23 +88,26 @@ In \cite{canvel03} beschreiben die Autoren eine Umsetzung des Angriffs auf TLS-g
 
 %Nicht-Überprüfen des Paddings auch keine Option, siehe https://www.openssl.org/~bodo/tls-cbc.txt (Letzte EMail)
 
-\section{Lucky Thirteen}
+% ez: zu kurz; entweder weglassen oder kurz erlaeutern, worum es bei Lucky Thirteen geht
 
-In \cite{paterson13} stellen die Autoren weitere auf \cite{vaudenay02} basierende Angriffe vor, die ebenfalls auf Timing-Angriffen zur Erkennung falschen Paddings und mehrere Verbindungen setzen.
+%\section{Lucky Thirteen}
+%
+%In \cite{paterson13} stellen die Autoren weitere auf \cite{vaudenay02} basierende Angriffe vor, die ebenfalls auf Timing-Angriffen zur Erkennung falschen Paddings und mehrere Verbindungen setzen.
 
 \section{Chosen-Plaintext-Angriff gegen bekannte IVs}
 \label{sec_known_ivs}
 
 In \cite{bard04} stellt der Autor einen Angriff vor, der die Art ausnutzt, wie die für den CBC-Modus nötigen Initialisierungsvektoren (IV) von TLS bereitgestellt wurden. Durch die Nutzung des letzten Ciphertextblocks der letzten Nachricht als IV der neuen Nachricht lässt sich unter bestimmten Voraussetzungen ein Chosen-Plaintext-Angriff durchführen. Der Autor beschreibt eine Möglichkeit, wie unter Nutzung von Browser-Plugins über HTTPS übertragene Passwörter oder PINs herausgefunden werden können. In \cite{bard06} verbessert der Autor seinen Angriff durch die Nutzung von Java-Applets anstelle von Browser-Plugins.
 
-Der eigentliche Angriff entspricht dem folgenden Prinzip: Wenn eine Nachricht \(C = C_0,\dots,C_l\) gesendet wurde, wird für die nächste Nachricht \(C_l\) als IV verwendet werden. Wenn der Angreifer überprüfen möchte, ob ein Klartextblock \(P^*=P_j\) zu \(C_j\) verschlüsselt wurde, so bringt er einen Sender dazu, eine Nachricht \(P'\) mit dem ersten Block \(P_1'=C_{j-1} \oplus C_l \oplus P^*\) zu verschlüsseln, und erhält als ersten Chiffretextblock:
+Der eigentliche Angriff entspricht dem folgenden Prinzip: Wenn eine Nachricht \(C = C_0,\dots,C_l\) gesendet wurde, wird für die nächste Nachricht \(C_l\) als IV verwendet werden.\\
+Ein Angreifer möchte nun überprüfen, ob ein von ihm gewählter Block \(P^*\) dem Klartextblock \(P_j\) entspricht, der zu \(C_j\) verschlüsselt wurde. Er bringt den Sender dazu, eine Nachricht \(P'\) mit dem ersten Block \(P_1'=C_{j-1} \oplus C_l \oplus P^*\) zu verschlüsseln und zu senden. Damit erhält er als ersten Chiffretextblock:
 \begin{align*}
 C_1' &= C_{K}(P_1' \oplus \text{IV})\\
 	&= C_{K}(P_1' \oplus C_l)\\
 	&= C_{K}(C_{j-1} \oplus C_l \oplus P^* \oplus C_l)\\
 	&= C_{K}(C_{j-1} \oplus P^*)
 \end{align*}
-Außerdem gilt auch \(C_j= C_{K}(P_j \oplus C_{j-1})\). Der Angreifer kann nun überprüfen, ob \(C_1'=C_j\) und damit \(P^*=P_j\) gilt, ob also seine Wahl für den gesuchten Klartextblock stimmt.
+Für die ursprünglich verschlüsselte Nachricht gilt \(C_j= C_{K}(P_j \oplus C_{j-1})\). Der Angreifer kann nun überprüfen, ob \(C_1'=C_j\) und damit \(P^*=P_j\) gilt, ob also seine Wahl für den gesuchten Klartextblock stimmt.
 
 Seit TLS 1.1 werden explizite IV vorgeschrieben. Hierzu besteht jede verschlüsselte Nachricht aus einem Block mehr als Klartextblöcken. Dieser erste Block bildet den IV für die restliche Verschlüsselung. Da dieser IV nicht vor dem Empfang der Nachricht bekannt ist, wird der hier beschriebene Chosen-Plaintext-Angriff verhindert.
 
@@ -118,7 +121,6 @@ In \cite{duong11} und in einem Konferenzbeitrag auf der ekoparty Security Confer
 %http://blog.ivanristic.com/2013/09/is-beast-still-a-threat.html %??
 
 \section{CRIME}
-
 \label{sec_attack_crime}
 
 Auf der ekoparty Security Conference 2012 stellten die Entdecker des BEAST-Angriffs einen weiteren Angriff vor, der die (optionale) Kompression in TLS nutzt, um beispielsweise Cookiedaten zu stehlen. 
@@ -130,6 +132,7 @@ Dabei wird ausgenutzt, dass Kompressionsalgorithmen bereits verwendete Zeichenke
 Als Folge wurde Kompressionsunterstützung in Firefox und Chrome deaktiviert. Kompression ist im aktuellen Draft von TLS 1.3 nicht mehr enthalten \cite{tls13}.
 
 \section{Poodle}
+\label{sec_attack_poodle}
 
 In \cite{moeller14} nutzen die Autoren den erneuten Verbindungsversuch mit älteren Protokollversionen, wenn der Handshake fehlschlägt (SSL 3.0-Fallback), der in vielen TLS-Implementierungen eingesetzt wird. Darauf aufbauend beschreiben sie einen Angriff, der bestehende Schwächen in der RC4-Chiffre \todo{RC4 noch irgendwo unterbringen? Vllt bei den Ciphersuites? http://www.isg.rhul.ac.uk/tls/} bzw. in der Nicht-Prüfung von Padding im CBC-Modus in SSL 3.0 ausnutzt, um Cookiedaten zu stehlen.
 %https://poodlebleed.com/

@@ -4,7 +4,7 @@
 Dieses Kapitel widmet sich der im Rahmen dieser Arbeit entwickelten Anwendung. 
 Die Anwendung ist speziell für den Einsatz in der Hochschullehre gedacht. Sie soll dazu dienen, Protokolle und ihre internen Abläufe darzustellen, und soll durch zusätzliche Interaktivität exploratives Lernen ermöglichen. Eine Vorgabe war es, die Möglichkeit zur Erweiterung der Anwendung um weitere Protokolle vorzusehen. 
 
-Im ersten Abschnitt werden allgemeine Entscheidungen erläutert, die getroffen wurden, um diese Vorgabe zu berücksichtigen.Außerdem werden Überlegungen für die Erweiterung der Anwendung um das TLS-Protokoll dargelegt.\\
+Im ersten Abschnitt werden allgemeine Entscheidungen erläutert, die getroffen wurden, um diese Vorgabe zu berücksichtigen. Außerdem werden Überlegungen für die Erweiterung der Anwendung um das TLS-Protokoll dargelegt.\\
 Anschließend wird die Implementation beschrieben, wobei zuerst auf die Umsetzung der allgemeinen Anwendung eingegangen wird und dann auf die konkrete Umsetzung des TLS-Protokolls.
 
 In Anhang \ref{cha_tutorial_plugin} werden anhand eines Beispiels einige Hinweise gegeben, was bei der Erweiterung der Anwendung um weitere Protokolle zu beachten ist.
@@ -16,13 +16,13 @@ In Anhang \ref{cha_tutorial_plugin} werden anhand eines Beispiels einige Hinweis
 Um die Vorgabe der Erweiterbarkeit zu ermöglichen, wurden zu Beginn der Entwicklungsarbeit die Gemeinsamkeiten von Protokollen herausgearbeitet, um diese abstrakt umsetzen zu können. So müssen anschließend lediglich protokollspezifische Eigenschaften in Erweiterungen implementiert werden.
 
 Die Anwendung beschränkt sich auf Protokolle mit zwei Parteien. Zwischen diesen Parteien werden Nachrichten eines festen Formats (sogenannte Protokolldateneinheiten) über einen Kanal ausgetauscht. Die Abfolge verschiedener Nachrichtentypen und die bei ihrem Empfang stattfindenden Verarbeitungsschritte sind durch das Protokoll festgelegt. Zusätzlich besitzen die Parteien einen internen Zustand\footnote{
-	Um Verwechslungen mit den im nächsten Absatz eingeführten Automatenzuständen zu vermeiden, wird der Zustand einer Partei im Folgenden immer als interner Zustand bezeichnet.
+	Um Verwechslungen mit den im nächsten Absatz eingeführten Automatenzuständen zu vermeiden, wird der Zustand einer Partei (also die Menge der gesetzten Werte, Schlüssel, Verfahren, ...) im Folgenden immer als interner Zustand bezeichnet.
 }, der beispielsweise als Resultat empfangener Nachrichten verändert werden kann. 
 
 Aus diesen Voraussetzungen wurde ein abstrakter Rahmen entwickelt, der für konkrete Protokolle erweitert werden muss.\\
-Für ein Protokoll sollte ein Nachrichtentyp bestehen, der von den Parteien gesendet und empfangen werden kann. Dazu muss ein Kanal zwischen den Parteien vorhanden sein, über den das Senden geschehen kann.
+Für ein Protokoll sollte ein Nachrichtentyp definiert werden, der von den Parteien gesendet und empfangen werden kann. Dazu muss ein Kanal zwischen den Parteien vorhanden sein, über den das Senden geschehen kann.
 
-Um die Parteien, ihre internen Zustände und die Verarbeitungsschritte bei Nachrichtenempfang strukturiert entwickeln zu können, werden die Parteien als endliche Automaten betrachtet. Es können verschiedene Zustände implementiert werden, um strukturiert unterschiedliches Verhalten bei dem Erhalt von Nachrichten zu erreichen. Der Automat besitzt jeweils immer genau einen aktuellen Zustand, an den eingehende Nachrichten weitergeleitet werden. Abhängig vom gewünschten Verhalten können aus dem aktuellen Zustand heraus der aktuelle Zustand neu gesetzt und Nachrichten gesendet werden. Der Automat kann seinen Zuständen zusätzlich Zugriff auf den internen Zustand der Partei bereitstellen.
+Um die Parteien, ihre internen Zustände und die Verarbeitungsschritte bei Nachrichtenempfang strukturiert entwickeln zu können, werden die Parteien als endliche Automaten betrachtet. Es können verschiedene Zustände implementiert werden, um unterschiedliches Verhalten bei dem Erhalt von Nachrichten zu erreichen. Der Automat besitzt jeweils immer genau einen aktuellen Zustand, an den eingehende Nachrichten weitergeleitet werden. Abhängig vom gewünschten Verhalten können aus dem aktuellen Zustand heraus der aktuelle Zustand neu gesetzt und Nachrichten gesendet werden. Der Automat kann seinen Zuständen zusätzlich Zugriff auf den internen Zustand der Partei bereitstellen.
 
 \begin{figure}
 	\centering
@@ -40,9 +40,20 @@ Mit diesen Möglichkeiten werden die Forderungen an exploratives Lernen und an S
 
 Für diese Arbeit wurde die TLS 1.2-Spezifikation als Erweiterung des abstrakten Rahmens umgesetzt. Hierdurch können die zum jetzigen Zeitpunkt aktuelle Version exploriert und insbesondere Abwehrmechanismen gegen Angriffe auf ältere Protokollversionen erkannt werden. Um diese Angriffe beobachten zu können, wäre auch die Umsetzung einer älteren Protokollversion wie SSL 2.0 nützlich. Durch die Erweiterbarkeit der Anwendung bietet sich hier die Möglichkeit für spätere Arbeiten.
 
-Im ersten Schritt wurden für Client und Server auf Basis der TLS-Spezifikation Automatenmodelle entwickelt, die abhängig von empfangenen Nachrichten Zustandswechsel und gesendete Nachrichten abbilden. Die Modelle sind im Anhang \ref{cha_tls_state_machines} zu finden.\\
-An den Zustandsübergängen sind jeweils die empfangenen Nachrichten in orange dargestellt, die zu diesem Übergang führen. Ist keine Nachricht angegeben, so findet direkt nach Eintritt in den Zustand der Zustandswechsel statt. Mit OnEnter gekennzeichnete Kästen an Zuständen zeigen in blau Nachrichten, die gesendet werden sollen, wenn ein Zustand aktueller Zustand wird. Kästen an Zustandsübergängen stehen für Aktionen, die von außen von dem Automaten verlangt werden (beispielsweise ein Verbindungsaufbauwunsch). In diese Kästen werden zu sendende Nachrichten ebenfalls in blau dargestellt. In eckigen Klammern werden Bedingungen für Zustandsübergänge und andere Aktionen angegeben. Der Startzustand wird durch die Unterstreichung des Namens gekennzeichnet.
- 
+Im ersten Schritt wurden für Client und Server auf Basis der TLS-Spezifikation Automatenmodelle entwickelt, die abhängig von empfangenen Nachrichten Zustandswechsel und gesendete Nachrichten abbilden. In Abbildung \ref{fig_state_machine_server_part} ist ein Ausschnitt aus dem Automatenmodell des Servers dargestellt, an dem der Aufbau exemplarisch betrachtet werden soll. Die vollständigen Modelle sind im Anhang \ref{cha_tls_state_machines} zu finden.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=15cm]{Diagrams/statemachines/server_state_machine_AUSSCHNITT.pdf} %
+	\caption{Ausschnitt aus dem Automatenmodell des Servers}
+	\label{fig_state_machine_server_part}
+\end{figure}
+
+Der Startzustand wird durch die Unterstreichung des Namens gekennzeichnet. An den Zustandsübergängen sind jeweils die empfangenen Nachrichten in orange dargestellt, die zu diesem Übergang führen. Empfängt der Server in seinem Anfangszustand eine ClientHello-Nachricht, so folgt ein Übergang in den ClientHelloReceived-Zustand. Ist keine Nachricht angegeben, so findet direkt nach Eintritt in den Zustand der Zustandswechsel statt, wie es im Beispiel bei dem Übergang in den WaitingForClientKeyExchange-Zustand der Fall ist.\\
+Mit OnEnter gekennzeichnete Kästen an Zuständen zeigen in blau Nachrichten, die gesendet werden sollen, wenn ein Zustand zum aktuellen Zustand wird. Bei dem Übergang in den ClientHelloReceived-Zustand im Beispiel werden also die ServerHello-Nachricht und weitere Nachrichten gesendet.\\
+Kästen an Zustandsübergängen stehen für Aktionen, die von außen von dem Automaten verlangt werden (beispielsweise ein Verbindungsaufbauwunsch). In diesen Kästen werden zu sendende Nachrichten ebenfalls in blau dargestellt.\\
+In eckigen Klammern werden Bedingungen für Zustandsübergänge und andere Aktionen angegeben. Im Beispiel soll die ServerKeyExchange-Nachricht beispielsweise nur gesendet werden, falls das Diffie-Hellman-Verfahren zum Schlüsselaustausch genutzt wird.
+
 Im zweiten Schritt wurde eine einfache Möglichkeit für die Darstellung der internen Zustände von Server und Client sowie für die Bedeutungsdarstellung von Nachrichten ausgearbeitet. Hierbei sollten insbesondere auch die Zustandsveränderungen kenntlich gemacht werden, um abgelaufene Vorgänge zu verdeutlichen. Die Wahl fiel auf eine baumartige Struktur aus Objekten, denen ein Titel und ein Wert sowie eine optionale Liste von Kindelementen zugewiesen werden kann. Veränderungen zwischen zwei Zuständen sollten durch Kennzeichnung der geänderten Objekte geschehen.
 
 % Tls 1.2 nicht implementiert
@@ -63,21 +74,21 @@ Zusätzlich wurden auch die Möglichkeit der Übertragung eigener Daten und zur 
 
 Aus Zeitgründen wurde auch auf die Wiederaufnahme bestehender Sitzungen verzichtet (siehe Abschnitt \ref{sec_session_connection}). Der verkürzte Handshake hat eher praktische Bedeutung, da auf erneute Aushandlung kryptographischer Verfahren und damit mehrere Nachrichten während des Handshakes verzichtet werden kann und die Wiederaufnahme der Verbindung somit weniger Zeit in Anspruch nimmt. Eine spätere Erweiterung der Anwendung um diese Funktion wäre jedoch sinnvoll, um das Verständnis von TLS zu vertiefen.
 
-Ein letzter Punkt, der in der Anwendung nicht implementiert wurde, ist die Zertifikatsvalidierung. Diese ist zwar entscheidend für den sicheren Aufbau einer Verbindung, hat aber eher indirekt mit der der Protokollspezifikation zu tun. Daher wurde zunächst auf diese Funktion verzichtet, die sich jedoch für spätere Arbeiten anbietet.
+Ein letzter Punkt, der in der Anwendung nicht implementiert wurde, ist die Zertifikatsvalidierung. Diese ist zwar entscheidend für den sicheren Aufbau einer Verbindung, hat aber eher indirekt mit der Protokollspezifikation zu tun. Daher wurde zunächst auf diese Funktion verzichtet, die sich jedoch für spätere Arbeiten anbietet.
 
 \section{Implementierung}
 
-Die Wahl der Programmiersprache für die Anwendung fiel auf Java, da diese Sprache an der Universität Hamburg in der ersten Semestern zum Einsatz kommt und von den Studierenden zwingend gelernt werden muss. Auf diese Weise sollte die entwickelte Anwendung auch von anderen Studierenden erweitert oder zumindest problemlos verstanden werden können. Zur Erzeugung der Benutzeroberfläche wurde die in der Java-Runtime verfügbare Bibliothek Swing genutzt, da diese ebenfalls in einigen Veranstaltungen an der Universität Hamburg verwendet wird.
+Die Wahl der Programmiersprache für die Anwendung fiel auf Java, da diese Sprache an der Universität Hamburg in den ersten Semestern zum Einsatz kommt. Auf diese Weise sollte die entwickelte Anwendung auch von anderen Studierenden erweitert oder zumindest problemlos verstanden werden können. Zur Erzeugung der Benutzeroberfläche wurde die in der Java-Runtime verfügbare Bibliothek Swing genutzt, da diese ebenfalls in einigen Veranstaltungen an der Universität Hamburg verwendet wird.
 
-\subsection{Abstrakter Rahmen für die Anwendung}
+\subsection{Implementierung des abstrakten Rahmens}
 
 % abstract model
 Ein UML-Diagramm der entwickelten Klassen für den abstrakten Rahmen ist in Abbildung \ref{fig_uml_abstract_state_machine} aufgeführt. Diese Klassen sollen hier im Detail betrachtet.
 
 Protokollnachrichten werden durch die abstrakte Klasse \sourceobject{ProtocolDataUnit} dargestellt. In Unterklassen muss die Byte-Repräsentation einer Nachricht sowie Titel und Untertitel für die Darstellung auf der Benutzeroberfläche implementiert werden.
 
-Für den abstrakten Rahmen wurden die Parteien als endliche Automaten modelliert. Für diese Modellierung wurde das Entwurfsmuster Zustand eingesetzt. Details hierzu sind \cite{freeman04} zu entnehmen.\\
-Die abstrakte Klasse \sourceobject{StateMachine} bildet das Grundgerüst für einen Automaten und die abstrakte Klasse \sourceobject{State} wurde zur Implementierung der jeweiligen Automatenzustände benutzt. In einem \sourceobject{StateMachine}-Objekt können der aktuelle Zustand gesetzt und abgefragt sowie Nachrichten gesendet werden. Die möglichen Zustände müssen dem Objekt vorher mitgeteilt werden. Zur Beobachtung von Zustandsänderungen wurde das Beobachter-Muster verwendet. Dieses Entwurfsmuster ist ebenfalls in \cite{freeman04} zu finden.\\
+Für den abstrakten Rahmen wurden die Parteien als endliche Automaten modelliert. Für diese Modellierung wurde das Entwurfsmuster Zustand eingesetzt. Dieses ermöglicht es, die Automatenlogik von dem spezifischen Verhalten der Zustände zu trennen. Details hierzu sind \cite{freeman04} zu entnehmen.\\
+Die abstrakte Klasse \sourceobject{StateMachine} bildet das Grundgerüst für einen Automaten und die abstrakte Klasse \sourceobject{State} wurde zur Implementierung der jeweiligen Automatenzustände benutzt. In einem \sourceobject{StateMachine}-Objekt können der aktuelle Zustand gesetzt und abgefragt sowie Nachrichten gesendet werden. Die möglichen Zustände müssen dem Objekt vorher mitgeteilt werden. Zur Beobachtung von Zustandsänderungen wurde das Beobachter-Muster verwendet. Dieses Muster führt zu einer losen Kopplung der beteiligten Komponenten und vermeidet häufige Aufrufe zur Zustandsermittlung, wie es bei Polling-Ansätzen der Fall ist. Dieses Entwurfsmuster ist ebenfalls in \cite{freeman04} zu finden.\\
 Unterklassen von \sourceobject{State} implementieren das Verhalten bei Empfang einer Nachricht und bei Betreten und Verlassen des Zustand. Außerdem ermöglichen sie das Senden von Nachrichten und das Setzen des aktuellen Zustands des zugehörigen \sourceobject{StateMachine}-Objekts.
 
 \begin{figure}
@@ -96,7 +107,7 @@ Um Protokollerweiterungen eine typsichere Umgebung zu bieten, besitzen die \sour
 \subsubsection{Abstrakte Benutzeroberfläche}
 Für die Darstellung des Protokollablaufs wurde ein Gerüst entwickelt, das die im vorherigen Abschnitt beschriebenen Gemeinsamkeiten von Protokollen abbildet. Für die internen Zustände der Parteien wurden zwei Bereiche angelegt, die durch konkrete Protokolle bereitgestellt werden müssen. Außerdem wird eine Liste von bereits gesendeten bzw. als nächstes gesendeten Nachrichten angezeigt, die es  bei Auswahl einer Nachricht ermöglicht, ihre Details anzuzeigen. Dabei wird für jede Nachricht die Darstellung als Bytekette und eine protokollspezifische Detailansicht, die ebenfalls durch konkrete Protokolle bereitgestellt werden muss, angeboten. Zusätzlich kann ein weiteres Fenster angezeigt werden, das es ermöglicht, Informationen zu gewünschten zustands- oder nachrichtenabhängigen Daten darzustellen. Für die Interaktion wurde ein Bedienfeld entwickelt, das die Nachrichtensteuerung bereitstellt und das Informationsfenster öffnet. In der Nachrichtendetaildarstellung können die Bytes einer Nachricht vor dem Senden verändert werden.
 
-Für die Verknüpfung der Datenschicht mit der Benutzeroberfläche wurde das Entwurfsmuster Model-View-Presenter (siehe \cite{potel96}) gewählt, um eine strukturierte Trennung der Schichten zu ermöglichen.
+Für die Verknüpfung der Datenschicht mit der Benutzeroberfläche wurde das Entwurfsmuster Model-View-Presenter (siehe \cite{potel96}) gewählt, um eine strukturierte Trennung der Schichten zu ermöglichen. Bei diesem Entwurfsmuster werden Klassen, die für die Darstellung der Benutzeroberfläche zuständig sind, von der Daten- und Logikschicht getrennt und durch ein Presenter-Objekt verknüpft, so dass eine klare Trennung der Schichten mit loser Kopplung ermöglicht wird. 
 
 % abstract provider and builder
 \subsubsection{Erweiterung der Anwendung}
@@ -118,7 +129,7 @@ Beim Laden einer neuen Protokollsimulation wird eine Liste vorhandener Protokoll
 
 	% TlsCiphertext and included fragment/message
 \subsubsection{Nachrichten}
-Als Protokollnachricht dient die Klasse \sourceobject{TlsCiphertext}. Bei ihrer Modellierung wurde versucht, analog zu der Spezifikation vorzugehen und auch Benennungen möglichst einheitlich zu halten. Sie enthält Felder für den \sourceobject{TlsContentType}, die \sourceobject{TlsVersion} und ihre Länge sowie ein \sourceobject{TlsFragment}, das die eigentliche Nachricht der oberen TLS-Protokollschicht enthält.
+Als Protokollnachricht dient die Klasse \sourceobject{TlsCiphertext}. Bei ihrer Modellierung wurde versucht, analog zu der Spezifikation vorzugehen und auch Benennungen möglichst einheitlich zu halten. Die Klasse enthält Felder für den \sourceobject{TlsContentType}, die \sourceobject{TlsVersion} und ihre Länge sowie ein \sourceobject{TlsFragment}, das die eigentliche Nachricht der oberen TLS-Protokollschicht enthält.
 Abhängig von der aktuellen \ciphersuite{} wird dieses \sourceobject{TlsFragment} verschlüsselt und mit einem MAC versehen. Zusätzlich kann es weitere Felder für bei der Verschlüsselung benötigte Werte enthalten (siehe Abschnitt \ref{sec_record_protocol} und insbesondere Abbildung \ref{fig_tls_cipher_types}). 
 
 Die Nachrichten der oberen Schicht werden durch für jedes Teilprotokoll bestehende Unterklassen von \sourceobject{TlsMessage} dargestellt. Neben \sourceobject{TlsAlertMessage}, \sourceobject{Tls""Change""Cipher""Spec""Message} und \sourceobject{TlsApplicationDataMessage} wurde zusätzlich für jeden HandshakeType eine eigene Klasse erstellt. Alle diese Nachrichten enthalten zwei Konstruktoren, die ihre Erzeugung sowohl aus benötigten Werten als auch durch das Parsen übertragener Bytes ermöglichen. 
@@ -127,16 +138,16 @@ Die Nachrichten der oberen Schicht werden durch für jedes Teilprotokoll bestehe
 \subsubsection{Automatenimplementierung}
 Im Folgenden werden die implementierten Klassen für das TLS-Automatenmodell beschrieben. Ein UML-Diagramm dieser Klassen ist in Abbildung \ref{fig_uml_tls_state_machine} zu finden.
 
-Als Unterklasse der \sourceobject{StateMachine}-Klasse wurde \sourceobject{TlsStateMachine} implementiert. Diese Klasse bietet Zugriff auf alle notwendigen, internen Zustandsinformationen von TLS-Client und -Server. Ein Objekt vom Typ \sourceobject{TlsSecurityParameters} bietet Zugriff auf während des Handshakes ausgehandelte Verfahren und Informationen wie SessionId, Random-Werte und das berechnete \mastersecret{}. Objekte vom Type \sourceobject{TlsConnectionState} bilden den current read state und den current write state, sowie den pending state (vgl. Abschnitt \ref{sec_change_cipher_spec}). In ihnen werden ausgehandelte \ciphersuite{} und Schlüssel sowie die aktuelle Sequenznummer verwaltet. Bei Empfang oder nach dem Senden einer \changecipherspec{}-Nachricht kann der pending state zum current state gemacht werden.
-
-Für Client und Server wurden die Unterklassen \sourceobject{TlsClientStateMachine} und \sourceobject{Tls""Server""State""Machine} erstellt, die unterschiedliches Verhalten der beiden Parteien spezifizieren. Insbesondere im Bereich der asymmetrischen Kryptographie sind diese Unterschiede so groß, dass der Mehraufwand gerechtfertigt ist. Beispielsweise besitzt der Server ein RSA-Schlüsselpaar, dessen geheimer Schlüssel zum Entschlüsseln des vom Client ausgewählten \premastersecret{} oder zum Signieren der Diffie-Hellman-Parameter genutzt wird. Der Client ist im Gegensatz dazu lediglich im Besitz des öffentlichen Serverschlüssels zum Verschlüsseln des \premastersecret{}s oder zum Überprüfen der Parametersignatur.
-
 \begin{figure}
 	\centering
 	\includegraphics[scale=0.9]{Diagrams/uml/tls_state_machine.pdf} 
 	\caption{UML-Diagramm der Klassen für das Tls-Automatenmodell}
 	\label{fig_uml_tls_state_machine}
 \end{figure}
+
+Als Unterklasse der \sourceobject{StateMachine}-Klasse wurde \sourceobject{TlsStateMachine} implementiert. Diese Klasse bietet Zugriff auf alle notwendigen, internen Zustandsinformationen von TLS-Client und -Server. Ein Objekt vom Typ \sourceobject{TlsSecurityParameters} bietet Zugriff auf während des Handshakes ausgehandelte Verfahren und Informationen wie SessionId, Random-Werte und das berechnete \mastersecret{}. Objekte vom Type \sourceobject{TlsConnectionState} bilden den current read state und den current write state, sowie den pending state (vgl. Abschnitt \ref{sec_change_cipher_spec}). In ihnen werden ausgehandelte \ciphersuite{} und Schlüssel sowie die aktuelle Sequenznummer verwaltet. Bei Empfang oder nach dem Senden einer \changecipherspec{}-Nachricht kann der pending state zum current state gemacht werden.
+
+Für Client und Server wurden die Unterklassen \sourceobject{TlsClientStateMachine} und \sourceobject{Tls""Server""State""Machine} erstellt, die unterschiedliches Verhalten der beiden Parteien spezifizieren. Insbesondere im Bereich der asymmetrischen Kryptographie sind diese Unterschiede so groß, dass der Mehraufwand gerechtfertigt ist. Beispielsweise besitzt der Server ein RSA-Schlüsselpaar, dessen geheimer Schlüssel zum Entschlüsseln des vom Client ausgewählten \premastersecret{} oder zum Signieren der Diffie-Hellman-Parameter genutzt wird. Der Client ist im Gegensatz dazu lediglich im Besitz des öffentlichen Serverschlüssels zum Verschlüsseln des \premastersecret{}s oder zum Überprüfen der Parametersignatur.
 
 Entsprechend den Automatenmodellen im Anhang \ref{cha_tls_state_machines} wurden für alle Zustände entsprechende Unterklassen von \sourceobject{TlsState}, einer Unterklasse von \sourceobject{State}, erstellt. Jede dieser Unterklassen definiert die Typen von TLS-Nachrichten der oberen Schicht, die sie erwartet, und implementiert das Verhalten bei Empfang einer solchen Nachricht. Beispielsweise erwartet der Clientzustand \sourceobject{TlsWaitingForServerHelloState} lediglich Handshake-Nachrichten vom Typ \serverhello{}. Bei Empfang einer solchen Nachricht werden die entsprechenden Felder für TlsVersion, ServerRandom, SessionID und \ciphersuite{} gesetzt und der aktuelle Zustand der \sourceobject{TlsClientStateMachine} auf den nachfolgenden Zustand gesetzt. Diese Umsetzung ist in Listing \ref{lst_state_example} zu finden. Nach dem gleichen Prinzip wurde das Verhalten in allen anderen Zuständen implementiert. 
 
@@ -187,12 +198,6 @@ In der \sourceobject{TlsState}-Klasse werden zu sendende Nachrichten durch die i
 
 % tls 12 view
 \subsubsection{Benutzeroberfläche}
-\begin{figure}
-	\centering
-	\includegraphics[scale=0.7]{Diagrams/ScreenshotTLS.png} 
-	\caption{Die fertige Anwendung}
-	\label{fig_application_screenshot}
-\end{figure}
 
 Den Überlegungen im vorherigen Abschnitt entsprechend wurde für die Benutzeroberfläche von Client und Server ein auf der Swing-Komponente \sourceobject{JTree} basierendes Fensterelement entwickelt. Der interne Zustand der Parteien wird durch Titel-Wert-Paare und optionale Kindelemente dargestellt. Die Klasse \sourceobject{TlsStateMachine} enthält eine Methode, die die Paare für den aktuellen Zustand zurückliefert.\\
 Bei Zustandsänderungen, die durch das Beobachter-Muster kommuniziert werden, werden der alte und neue Zustand verglichen und neue oder geänderte Einträge gekennzeichnet, sodass Auswirkungen von empfangenen Nachrichten sichtbar werden.\\
@@ -202,3 +207,20 @@ Zusätzlich enthalten die Fensterelemente Buttons für die verfügbaren Aktionen
 Das gleiche Fensterelement wie für Server und Client wurde auch für die Detaildarstellung von Nachrichten verwendet. Auch für die jeweiligen Nachrichtenfelder sind Informationstexte erstellt worden, die beim Verstehen der Protokolls helfen sollen.
 
 Ein Screenshot der endgültigen Anwendung mit der Erweiterung um TLS ist in Abbildung \ref{fig_application_screenshot} zu finden.
+
+\begin{figure}
+	\centering
+	\includegraphics[scale=0.7]{Diagrams/ScreenshotTLS.png} 
+	\caption{Die fertige Anwendung}
+	\label{fig_application_screenshot}
+\end{figure}
+
+\section{Test}
+\label{sec_impl_test}
+Nachdem die Entwicklung beendet war, wurde die Anwendung einigen Studenten der Informatik ohne weitere Vorgaben zum Testen vorgelegt. Die Rückmeldungen sollen hier aufgeführt werden, um Hinweise auf weitere mögliche Entwicklungsschritte, aber auch auf gelungene Teile der Anwendung zu geben.
+
+Unabhängig von konkreten Anmerkungen gefiel den Testpersonen die Idee der Anwendung, Protokollabläufe schrittweise inklusive der internen Zustände von beteiligten Parteien beobachten zu können. Die Anwendung machte auf alle Testpersonen einen guten Gesamteindruck. Insbesondere wurde die klare Struktur und Trennung der Komponenten (Server, Client und Nachrichten) hervorgehoben. Außerdem bewerteten die Testpersonen auch die Darstellung der Komponenten in der Baumstruktur sowie die Darstellung von Änderungen an den Zuständen von Client und Server sehr positiv.
+
+Bemängelt wurde das Editieren der Bytes einer Nachricht. Hier würde es sich in späteren Programmversionen anbieten, das Editieren protokollabhängig feldweise zu ermöglichen, um auch einzelne Felder direkt bearbeiten und das Protokollverhalten beobachten zu können. 
+Außerdem gaben einige Testpersonen an, dass die Anzeige von Informationstexten noch verbessert werden könnte, indem diese Funktion prominenter dargestellt würde oder auch durch Klicken auf die Hinweisicons an den Feldern aufgerufen werden könnte.
+Weitere kleine Verbesserungsvorschläge betrafen die Gestaltung bestimmter Detailansichten.
