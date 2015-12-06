@@ -3,18 +3,18 @@
 %Warum diese Arbeit (Motivation), Thema eingrenzen \& Ziel der BA, Methodik
 
 %Thematische Hinführung
-TLS ist eines der bedeutendsten Sicherheitsprotokolle, das heute verwendet wird. Viele andere Protokolle setzen darauf auf, um ihre Kommunikation abzusichern. Aufgrund seiner Bedeutung wurde es im Laufe seiner Entwicklung oft untersucht und angegriffen. Dabei sind viele einfache und elegante Angriffe gefunden worden, die zeigen, wie wirksam die kleinsten Schwächen in Protokollen ausgenutzt werden können. Ebenso bieten Änderungen in der TLS-Spezifikation auch Beispiele für erfolgreiche Gegenmaßnahmen, die diese Angriffe verhindern.
+TLS ist eines der heute meist verwendeten Sicherheitsprotokolle \cite{schmeh09}. Viele andere Protokolle setzen darauf auf, um ihre Kommunikation abzusichern. Aufgrund seiner Bedeutung wurde es im Laufe seiner Entwicklung oft untersucht und angegriffen. Dabei sind viele einfache und elegante Angriffe gefunden worden, die zeigen, wie wirksam die kleinsten Schwächen in Protokollen ausgenutzt werden können. Ebenso bieten Änderungen in der TLS-Spezifikation auch Beispiele für erfolgreiche Gegenmaßnahmen, die diese Angriffe verhindern.
 
 %...
 
 %inhaltlichen und welche methodischen Aspekte
-In dieser Arbeit soll das TLS-Protokoll auf seine Eignung für den Einsatz in der Hochschullehre überprüft und dafür aufbereitet werden. 
-Neben einer ausführlichen Betrachtung der Funktionsweise von TLS und existierenden Angriffen gegen die Protokollfamilie werden Empfehlungen für die Nutzung in der Lehre herausgearbeitet. Außerdem wird eine interaktive Anwendung entwickelt, die die Protokollabläufen während einer TLS-Verbindung simuliert und damit ein vertieftes Verständnis von TLS unterstützt.
+In dieser Arbeit soll das TLS-Protokoll auf seine Eignung für den Einsatz in der Hochschullehre überprüft und dafür aufbereitet werden. Dazu ist ein vertieftes Verständnis der Grundlagen von TLS unerlässlich, die zu Beginn gelegt werden. Auch die Betrachtung von bisher gegen SSL/TLS entdeckten Angriffen und Gegenmaßnahmen wird  erfolgen, um Entscheidungen in und Veränderungen an der Protokollspezifikation zu verstehen. \\
+Anschließend soll kurz auf grundsätzliche Empfehlungen für die (Hochschul-)Didaktik eingegangen werden und darauf aufbauend betrachtet werden, was diese Empfehlungen für den Einsatz von TLS in der Lehre bedeuten. Ebenfalls werden Empfehlungen für die Entwicklung lernunterstützender Anwendungen herausgearbeitet, die darauffolgend für die Entwicklung einer interaktive Anwendung genutzt werden, die die Protokollabläufe während einer TLS-Verbindung veranschaulicht und damit ein vertieftes Verständnis von TLS unterstützen soll.
 
 %Kapitelweises Vorgehen erläutern
 In Kapitel \ref{cha_cryptographic_techniques} werden in TLS zur Anwendung kommende kryptographische Verfahren eingeführt und die in dieser Arbeit verwendete Notation erläutert. \\
-Der erste Teil der Arbeit behandelt die Grundlagen von TLS und von bisher gegen SSL/TLS entdeckten Angriffen. Kapitel \ref{sec_tls_overview} beschäftigt sich ausführlich mit der Funktionsweise von TLS anhand der aktuellen Protokollversion TLS 1.2. In Kapitel \ref{cha_attacks} wird auf bisher entdeckte Angriffe gegen SSL und TLS und auf getroffene Abwehrmechanismen eingegangen.\\
-Im zweiten Teil der Arbeit geht es um den Einsatz von TLS in der Hochschullehre. Dazu werden in Kapitel \ref{cha_tls_teaching} Schwerpunkte für die Lehre herausgearbeitet, die am Beispiel von TLS erläutert werden können. Außerdem werden didaktische Grundlagen für die im Rahmen dieser Bachelorarbeit entwickelte Protokollsimulation gelegt. In Kapitel \ref{cha_implementation} wird dann der Aufbau der Anwendung und der Erweiterung um TLS beschrieben.
+Kapitel \ref{sec_tls_overview} beschäftigt sich mit der Funktionsweise von TLS anhand der aktuellen Protokollversion TLS 1.2. In Kapitel \ref{cha_attacks} wird auf Angriffe gegen SSL und TLS und auf getroffene Abwehrmechanismen eingegangen.\\
+In Kapitel \ref{cha_tls_teaching} werden Schwerpunkte für die Lehre herausgearbeitet, für deren Vermittlung TLS geeignet ist. Außerdem werden didaktische Grundlagen für die im Rahmen dieser Bachelorarbeit entwickelte Protokollsimulation gelegt. In Kapitel \ref{cha_implementation} wird dann der Aufbau der Anwendung und der Erweiterung um TLS beschrieben.
 
 %Hauptsächlich verwendete Literatur?
 Ein Großteil dieser Arbeit stützt sich direkt auf die TLS 1.2-Spezifikation in \cite{tls12}. Für die Grundlagen zu verwendeten kryptographischen Verfahren wurden insbesondere \cite{Schneier2006} und \cite{ferguson10} zu Hilfe genommen. 
