@@ -52,7 +52,7 @@ public class TlsRsaCipher {
 	 * side).
 	 * Only encrypt should be called.
 	 * 
-	 * @param encodedPublicKey 
+	 * @param encodedPublicKey the public RSA key
 	 */
 	public TlsRsaCipher(byte[] encodedPublicKey) {
 		createCipher();

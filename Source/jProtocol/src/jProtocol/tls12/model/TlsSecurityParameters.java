@@ -133,7 +133,7 @@ public class TlsSecurityParameters {
 	/**
 	 * Sets the server random value.
 	 * 
-	 * @param clientRandom the server random. Must not be null.
+	 * @param serverRandom the server random. Must not be null.
 	 */
 	public void setServerRandom(TlsRandom serverRandom) {
 		if (serverRandom == null) {

@@ -24,9 +24,9 @@ public class TlsClientKeyExchangeMessage_DHE extends TlsClientKeyExchangeMessage
 	private TlsClientDhPublicKey _dhPublicKey; //Yc
 	
 	/**
+	 * Creates a Diffie-Hellman ephemeral client key exchange message from a DH public key.
 	 * 
-	 * 
-	 * @param dhPublicKey
+	 * @param dhPublicKey the public key
 	 */
 	public TlsClientKeyExchangeMessage_DHE(TlsClientDhPublicKey dhPublicKey) {
 		_dhPublicKey = dhPublicKey;
@@ -35,7 +35,7 @@ public class TlsClientKeyExchangeMessage_DHE extends TlsClientKeyExchangeMessage
 	/**
 	 * Creates a Diffie-Hellman ephemeral client key exchange message by parsing sent bytes.
 	 * 
-	 * @param unparsedContent the sent bytes
+	 * @param unparsedMessageContent the sent bytes
 	 * 
 	 * @throws TlsDecodeErrorException if the message has invalid format
 	 */

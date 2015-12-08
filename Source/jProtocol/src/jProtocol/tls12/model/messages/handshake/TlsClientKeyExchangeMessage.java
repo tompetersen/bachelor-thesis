@@ -24,10 +24,12 @@ public abstract class TlsClientKeyExchangeMessage extends TlsHandshakeMessage {
 	/**
 	 * Creates a client key exchange message by parsing sent bytes dependent on the current key exchange algorithm.
 	 * 
-	 * @param unparsedContent the sent bytes
+	 * @param unparsedMessage the sent bytes
 	 * @param algorithm the key exchange algorithm used in this connection
 	 * 
 	 * @throws TlsDecodeErrorException if the message has invalid format
+	 * 
+	 * @return the parsed client key exchange message
 	 */
 	public static TlsClientKeyExchangeMessage parseClientKeyExchangeMessage(byte[] unparsedMessage, TlsKeyExchangeAlgorithm algorithm) throws TlsDecodeErrorException {
 		if (algorithm == TlsKeyExchangeAlgorithm.rsa) {

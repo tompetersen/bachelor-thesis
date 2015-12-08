@@ -42,7 +42,7 @@ public class TlsClientKeyExchangeMessage_RSA extends TlsClientKeyExchangeMessage
 	/**
 	 * Creates a RSA client key exchange message by parsing sent bytes.
 	 * 
-	 * @param unparsedContent the sent bytes
+	 * @param unparsedMessageContent the sent bytes
 	 * 
 	 * @throws TlsDecodeErrorException if the message has invalid format
 	 */

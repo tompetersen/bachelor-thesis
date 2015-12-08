@@ -93,6 +93,7 @@ public class TlsClientHelloMessage extends TlsHandshakeMessage {
 	 * Creates a client hello message by parsing sent bytes.
 	 * 
 	 * @param unparsedContent the sent bytes
+	 * @param registry a cipher suite registry
 	 * 
 	 * @throws TlsDecodeErrorException if the message has invalid format
 	 */

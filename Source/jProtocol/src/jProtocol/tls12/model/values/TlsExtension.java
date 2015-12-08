@@ -2,7 +2,7 @@ package jProtocol.tls12.model.values;
 
 /**
  * A class representing possible TlsExtensions.
- * TODO: Used for tls extensions -> implement subclasses if necessary or do it your way
+ * TODO: Used for tls extensions - implement subclasses if necessary or do it your way
  * 
  * @author Tom Petersen
  */

@@ -54,7 +54,6 @@ public class TlsMac {
 	/**
 	 * Computes a MAC according to the TLS 1.2 specification.
 	 * 
-	 * @param macWriteKey the MAC write key	
 	 * @param parameters the parameters necessary to compute the TLS MAC
 	 * 
 	 * @return the MAC

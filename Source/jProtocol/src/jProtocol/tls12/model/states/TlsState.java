@@ -103,7 +103,7 @@ public abstract class TlsState extends State<TlsCiphertext> {
 	/**
 	 * Sets the current state of the state machine to state.
 	 * 
-	 * @param state the state describing value (TlsStateMachine.TLS_STATE)
+	 * @param type the state describing value (TlsStateMachine.TLS_STATE)
 	 */
 	public void setTlsState(TlsStateType type) {
 		_stateMachine.setTlsState(type, this);
@@ -136,6 +136,7 @@ public abstract class TlsState extends State<TlsCiphertext> {
 	 * Returns whether a message is an alert message. Convenience method. 
 	 * 
 	 * @param m the message
+	 * @param alert the alert
 	 * 
 	 * @return true, if the message is an alert message
 	 */

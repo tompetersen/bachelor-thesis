@@ -43,7 +43,7 @@ public class TlsPlaintext {
 	 * @param registry the cipher suite registry
 	 * @param algorithm the used key exchange algorithm
 	 * 
-	 * @throws TlsDecodeErrorException
+	 * @throws TlsDecodeErrorException if the message could not be parsed
 	 */
 	public TlsPlaintext(byte[] decryptedBytes, TlsCipherSuiteRegistry registry, TlsKeyExchangeAlgorithm algorithm) throws TlsDecodeErrorException {
 		if (decryptedBytes.length < RECORD_HEADER_LENGTH) {

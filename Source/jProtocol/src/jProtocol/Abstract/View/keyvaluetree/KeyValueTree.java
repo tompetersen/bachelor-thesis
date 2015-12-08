@@ -35,28 +35,29 @@ public class KeyValueTree implements TreeSelectionListener {
 	private class KeyValueCellRenderer extends DefaultTreeCellRenderer {
 		JLabel keyLabel = new JLabel(" ");
 		JLabel valueLabel = new JLabel(" ");
-		JPanel renderer = new JPanel();
+		JPanel rendererPanel = new JPanel();
 		JLabel infoImage = new JLabel(new ImageIcon(ImageLoader.getInfoIcon(12, 12)));
 
 		DefaultTreeCellRenderer defaultRenderer = new DefaultTreeCellRenderer();
-		Color backgroundSelectionColor;
 		Color backgroundNonSelectionColor;
+		Color borderSelectionColor;
 
 		public KeyValueCellRenderer() {
-			renderer.add(keyLabel);
+			rendererPanel.add(keyLabel);
 			keyLabel.setFont(new Font("SansSerif", Font.BOLD, 12));
 			keyLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 5));
 
-			renderer.add(infoImage);
+			rendererPanel.add(infoImage);
 			infoImage.setVisible(true);
 
-			renderer.add(valueLabel);
+			rendererPanel.add(valueLabel);
 			valueLabel.setFont(new Font("Monospaced", Font.PLAIN, 12));
 			valueLabel.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 0));
 
-			renderer.setLayout(new BoxLayout(renderer, BoxLayout.X_AXIS));
-
-			backgroundSelectionColor = defaultRenderer.getBackgroundSelectionColor();
+			rendererPanel.setLayout(new BoxLayout(rendererPanel, BoxLayout.X_AXIS));
+			
+			borderSelectionColor = defaultRenderer.getBorderSelectionColor();
+			//backgroundSelectionColor = defaultRenderer.getBackgroundSelectionColor();
 			backgroundNonSelectionColor = defaultRenderer.getBackgroundNonSelectionColor();
 		}
 
@@ -74,20 +75,24 @@ public class KeyValueTree implements TreeSelectionListener {
 					infoImage.setVisible(showInfoButton);
 
 					int neededWidth = keyLabel.getPreferredSize().width + valueLabel.getPreferredSize().width + infoImage.getPreferredSize().width + 10;
-					renderer.setPreferredSize(new Dimension(neededWidth, 20));
+					rendererPanel.setPreferredSize(new Dimension(neededWidth, 20));
 
 					if (selected) {
-						renderer.setBackground(backgroundSelectionColor);
-					}
-					else if (kvo.getBackgroundColor() != null) {
-						renderer.setBackground(kvo.getBackgroundColor());
+						rendererPanel.setBorder(BorderFactory.createLineBorder(borderSelectionColor));
 					}
 					else {
-						renderer.setBackground(backgroundNonSelectionColor);
+						rendererPanel.setBorder(BorderFactory.createEmptyBorder());
+					}
+					
+					if (kvo.getBackgroundColor() != null) {
+						rendererPanel.setBackground(kvo.getBackgroundColor());
+					}
+					else {
+						rendererPanel.setBackground(backgroundNonSelectionColor);
 					}
 
-					renderer.setEnabled(tree.isEnabled());
-					returnValue = renderer;
+					rendererPanel.setEnabled(tree.isEnabled());
+					returnValue = rendererPanel;
 				}
 				else if (!leaf) {
 					String title = (String) userObject;

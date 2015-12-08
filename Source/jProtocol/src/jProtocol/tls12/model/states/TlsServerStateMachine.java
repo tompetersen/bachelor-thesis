@@ -156,6 +156,8 @@ public class TlsServerStateMachine extends TlsStateMachine {
 	/**
 	 * Decrypts a RSA encrypted ciphertext with the servers private key.
 	 * 
+	 * @param ciphertext the ciphertext bytes
+	 * 
 	 * @return the decrypted plaintext
 	 * 
 	 * @throws TlsAsymmetricOperationException if the operation couldn't be completed 

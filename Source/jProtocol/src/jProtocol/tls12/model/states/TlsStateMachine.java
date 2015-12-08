@@ -69,7 +69,7 @@ public abstract class TlsStateMachine extends StateMachine<TlsCiphertext> {
 	 * Creates a state machine object. Registers states. Initial states must be
 	 * set in subclasses.
 	 * 
-	 * @param cipherSuiteRegistry
+	 * @param cipherSuiteRegistry a cipher suite registry
 	 */
 	public TlsStateMachine(TlsCipherSuiteRegistry cipherSuiteRegistry) {
 		_cipherSuiteRegistry = cipherSuiteRegistry;

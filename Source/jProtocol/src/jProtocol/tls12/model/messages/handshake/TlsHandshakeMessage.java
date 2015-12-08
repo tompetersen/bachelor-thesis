@@ -148,7 +148,7 @@ public abstract class TlsHandshakeMessage extends TlsMessage {
 	/**
 	 * Returns the handshake message body not including handshake header (handshake type and length field).
 	 * 
-	 * @return
+	 * @return the message body
 	 */
 	public abstract byte[] getBodyBytes();
 	

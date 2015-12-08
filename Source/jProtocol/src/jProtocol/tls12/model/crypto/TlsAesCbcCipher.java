@@ -53,7 +53,7 @@ public class TlsAesCbcCipher {
 	 * 
 	 * @param key the key 
 	 * @param iv the iv
-	 * @param plaintext the ciphertext
+	 * @param ciphertext the ciphertext
 	 * 
 	 * @return the decrypted ciphertext
 	 */

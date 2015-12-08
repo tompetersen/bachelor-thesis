@@ -67,6 +67,8 @@ public class TlsServerDhKeyAgreement {
 	/**
 	 * Computes the pre master secret from server params and client key.
 	 * 
+	 * @param clientPublicKey the clients public DH key 
+	 * 
 	 * @return the pre master secret
 	 * 
 	 * @throws TlsAsymmetricOperationException if the operation failed due to invalid key parameters

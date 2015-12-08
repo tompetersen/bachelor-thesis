@@ -26,6 +26,8 @@ public class TlsClientDhKeyAgreement {
 	/**
 	 * Generates a new key pair with server values p and g.
 	 * 
+	 * @param serverParams the DH params provided by the server
+	 * 
 	 * @throws TlsAsymmetricOperationException if key generation failed due to invalid parameters
 	 */
 	public TlsClientDhKeyAgreement(TlsServerDhParams serverParams) throws TlsAsymmetricOperationException {

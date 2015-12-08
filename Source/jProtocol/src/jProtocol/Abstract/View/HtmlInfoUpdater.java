@@ -5,7 +5,7 @@ public interface HtmlInfoUpdater {
 	/**
 	 * Sets the HTML body of the info view. A default Header will be added.
 	 * 
-	 * @param htmlInfoContent the body content
+	 * @param infoHtmlBodyContent the body content
 	 */
 	public void setInfoHtmlBodyContent(String infoHtmlBodyContent);
 	

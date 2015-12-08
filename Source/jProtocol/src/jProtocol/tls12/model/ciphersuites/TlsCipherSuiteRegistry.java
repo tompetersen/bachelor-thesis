@@ -61,6 +61,8 @@ public class TlsCipherSuiteRegistry {
 		catch (Exception e) {
 			MyLogger.info("Couldn't register TLS_DHE_RSA_WITH_AES_128_CBC_SHA: " + e.getLocalizedMessage());
 		}
+		
+		_preferredCipherSuite = cs.getCode();
 	}
 
 	/**

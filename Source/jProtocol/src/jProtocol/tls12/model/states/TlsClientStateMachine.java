@@ -146,6 +146,8 @@ public class TlsClientStateMachine extends TlsStateMachine {
 	/**
 	 * Encrypts the plaintext with the public server RSA key. The RSA cipher suite must be set first.
 	 * 
+	 * @param plaintextData the plaintext bytes
+	 * 
 	 * @return the encrypted data
 	 * 
 	 * @throws TlsAsymmetricOperationException if the encryption process failed 

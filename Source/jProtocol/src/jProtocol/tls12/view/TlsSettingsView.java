@@ -30,8 +30,7 @@ public class TlsSettingsView implements ActionListener {
 		_settingsView = new JPanel();
 		_settingsView.setLayout(new BoxLayout(_settingsView, BoxLayout.Y_AXIS));
 		_settingsView.setBackground(Color.WHITE);
-
-		_settingsView.add(new JLabel("Choose the used cipher suite:"));
+		_settingsView.add(new JLabel("<html><h1>TLS</h1>TLS (called SSL in earlier versions) is a protocol providing a secure connection over a network. It is used by a lot of application layer protocols like HTTPS or SFTP.<br />TLS cipher suites include the the asymmetric algorithm for exchanging keys and the symmetric cipher for message encryption. Please choose the cipher suite the connection should use:</html>"));
 
 		ButtonGroup group = new ButtonGroup();
 		List<TlsCipherSuite> cipherSuiteList = cipherSuiteRegistry.allCipherSuites();
@@ -47,7 +46,6 @@ public class TlsSettingsView implements ActionListener {
 			if (_cipherSuiteRegistry.getPreferredCipherSuite() == cs.getCode()) {
 				rb.setSelected(true);
 			}
-			// _cipherSuiteRegistry.setPreferredCipherSuite(cs.getCode());
 		}
 	}
 
