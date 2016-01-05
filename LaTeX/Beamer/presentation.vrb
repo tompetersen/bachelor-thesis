@@ -1,0 +1,28 @@
+\frametitle{Message flow}
+
+\lstset{
+style=default,
+frame=none
+}
+\begin{figure}[H]
+\centering
+\begin{lstlisting}
+§\textbf{Client}§                                       §\textbf{Server}§
+                   <--------        HelloRequest*
+ClientHello        -------->
+                                      ServerHello
+                               ClientCertificate*
+                               ServerKeyExchange*
+                              CertificateRequest*
+                   <--------      ServerHelloDone
+ServerCertificate*
+ClientKeyExchange
+CertificateVerify*
+[ChangeCipherSpec]
+Finished           -------->
+                               [ChangeCipherSpec]
+                   <--------             Finished
+[Application Data] <------->   [Application Data]
+\end{lstlisting}
+\end{figure}
+

@@ -1,0 +1,123 @@
+% ===============================================================================
+% = LaTeX Beamer Template des Arbeitsbereichs Sicherheit in verteilten Systemem
+% = (c) 2012 Prof. Dr. Hannes Federrath, Uni Hamburg, Fachbereich Informatik
+% = http://www.informatik.uni-hamburg.de/svs/
+% ===============================================================================
+%
+\documentclass[t]{beamer} 
+% Option t              Place text of slides at the (vertical) top of the slides.
+% Option handout        Ein PDF ohne Pausen und Overlayeffekte erzeugen.
+% Option aspectratio=43 169 => 16:9, 1610 => 16:10, 43 => 4:3
+\usepackage[utf8]{inputenc}
+%\usepackage[ngerman]{babel}
+\usepackage{graphicx,xcolor}
+\usepackage[T1]{fontenc} % 8-Bit-Zeichen; ermöglicht korrektes Kopieren von Umlauten aus dem pdf 
+\usepackage[scaled]{helvet}
+
+\usepackage{beamerthemedefault}
+
+% Ränder definieren
+\setbeamersize{text margin left=5ex, text margin right=5ex}
+
+% Farbdefinitionen
+\definecolor{svsgrau1}{RGB}{191,191,191} % Balken in Kopfzeile
+\definecolor{svsgrau2}{RGB}{123,123,123} % Folienüberschriften
+\definecolor{svsrot}{RGB}{255,0,0} % Bullets
+\definecolor{svshellblau1}{RGB}{153,204,255} % Block Hintergrund
+\definecolor{svshellblau2}{RGB}{24,113,248} % Anstrich Ebene 2
+\definecolor{svsdunkelblau}{RGB}{38,82,128} % Text der Ebene 1
+
+% Navigationsleiste ausblenden
+\beamertemplatenavigationsymbolsempty 
+
+% Farben der Bullets der Ebenen
+\setbeamercolor{itemize item}{fg=svsrot}
+\setbeamercolor{itemize subitem}{fg=svshellblau2}
+\setbeamercolor{enumerate item}{parent=itemize item}
+\setbeamercolor{enumerate subitem}{parent=itemize subitem}
+
+% Formen der Bullets der Ebenen
+\setbeamertemplate{itemize item}[circle] 
+\setbeamertemplate{itemize subitem}{--} 
+\setbeamertemplate{itemize subsubitem}[circle] 
+
+% Farben der Texte 
+\setbeamercolor{title}{fg=black}
+\setbeamercolor{structure}{fg=svsgrau2}
+\setbeamercolor{section in toc}{fg=black}
+\setbeamercolor{framesubtitle}{fg=svsdunkelblau}
+\setbeamercolor{itemize/enumerate body}{fg=svsdunkelblau}
+\setbeamercolor{itemize/enumerate subbody}{fg=black}
+\setbeamercolor{itemize/enumerate subsubbody}{fg=black}
+
+% Zeichensätze der Texte
+\setbeamerfont{author}{size=\normalsize}
+\setbeamerfont{institute}{size=\normalsize}
+\setbeamerfont{date}{size=\normalsize}
+\setbeamerfont{frametitle}{size=\large}
+\setbeamerfont{framesubtitle}{size=\footnotesize\raggedleft}
+\setbeamerfont{sections/subsections in toc}{size=\normalsize}
+\setbeamerfont{itemize/enumerate body}{size=\normalsize}
+\setbeamerfont{itemize/enumerate subbody}{size=\normalsize}
+\setbeamerfont{itemize/enumerate subsubbody}{size=\normalsize}
+
+% Definitionen für farbig hinterlegten Block 
+\setbeamertemplate{blocks}[rounded]
+\setbeamercolor{block title}{fg=black,bg=svshellblau1}
+\setbeamercolor{block body}{parent=normal text,use=block title,bg=block title.bg!25!bg}
+\setbeamerfont{block title}{size=\normalsize}
+\setbeamerfont{block body}{size=\normalsize}
+
+% Definitionen für Agenda (FIXME: noch stärker an normale Listendefs. anpassen)
+\setbeamertemplate{section in toc}[sections numbered]
+\setbeamertemplate{subsection in toc}[square]
+
+% Kopfzeile
+\setbeamertemplate{headline}{
+	\includegraphics[height=8mm]{pic/UHH-Logo_2010_ohneText.png}%
+	\color{svsgrau1}\rule{\paperwidth}{8mm}\newline
+	\mbox{}\rule{1em}{0pt}\rule{0pt}{8ex}
+	\dotfill\newline\vspace{-7.3ex}
+}
+
+% Fusszeile
+\setbeamertemplate{footline}[text line]{
+	\parbox[b]{50mm}{\insertframenumber\\[1ex]}
+}
+
+% Hintergrund Titelseite
+\defbeamertemplate{background canvas}{titlepage}{%
+	{\color{svsgrau1}\vrule width\paperwidth height0.7\paperheight}%
+	{\color{white}\vrule width\paperwidth height0.3\paperheight}%
+}
+
+%--------------------------
+% listings
+\usepackage{listings}
+\lstset{                %  ...Quelltextformatierung.
+        language=C,
+        breaklines=true,
+        breakatwhitespace=true,
+        frame=L,
+        captionpos=b,
+        xleftmargin=6ex,
+        tabsize=4,
+        numbers=left,
+        numberstyle=\ttfamily\footnotesize,
+        basicstyle=\ttfamily\footnotesize,
+        keywordstyle=\bfseries\color{black},%green!50!black},
+        commentstyle=\itshape\color{black!70},%magenta!90!black},
+        identifierstyle=\ttfamily,
+        stringstyle=\color{black},%orange!90!black},
+        showstringspaces=false,
+        }
+\lstdefinestyle{default}{
+	numbers=none,
+	frame=leftline,
+	escapeinside={§}{§},
+	emph={}
+}
+
+% tikz
+\usepackage{tikz}
+\usetikzlibrary{positioning}

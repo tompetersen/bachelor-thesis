@@ -1,0 +1,262 @@
+\input{preambel.tex}
+
+% =============================
+% = Ab hier Inhalte ändern... 
+% =============================
+
+\title{Working principle, attacks\\ and defenses of SSL/TLS}
+\author[Tom Petersen]{Tom Petersen}
+\institute[Uni Hamburg]{University of Hamburg\\ Department of Informatics}
+\date{}%12.01.2016}
+
+\begin{document}
+
+\begingroup
+	\setbeamertemplate{background canvas}[titlepage]
+	\begin{frame}[plain]
+		\vskip8mm
+		\includegraphics[width=2.2cm]{pic/svs_logo_hires-ohne-was.png}
+		 \vskip-20mm % dies geht nur bei kurzen Vortragstiteln
+		\titlepage
+		\vspace{\fill}
+		\includegraphics[width=2.9cm]{pic/UHH-Logo_2010_Farbe_RGB_hires_nomargin.png}
+		\vskip20pt
+	\end{frame}
+\endgroup
+
+\begin{frame}{Agenda}
+	\tableofcontents
+\end{frame}
+
+\section{Transport Layer Security}
+
+- brief overview (usage, historical version history)
+- working principle 
+	- message overview image from RFC, subprotocols
+	- key material
+	- cipher suites
+
+\begin{frame}{Overview}
+
+- authentication of communication partners, encryption and integrity check of sent messages
+
+- widely used in HTTPS, SFTP, SMTPS, ... 
+
+- developed as a part of netscape navigator in the early 90s (1994) as SSL (v1, v2, v3) and was soon used in other browsers and applications
+
+- 1999 IETF standardized it as TLS 1.0
+
+- current 1.2, 1.3 in progress
+
+\end{frame}
+
+\begin{frame}{Protocol hierarchie}
+
+	\begin{figure}[H]
+		\centering
+		\begin{tikzpicture}[node distance=0cm,outer sep = 0pt]
+			\tikzstyle{protocol}=[draw, rectangle, minimum height=1cm, minimum width=2.5cm, fill=blue!15, anchor=south west]
+			\tikzstyle{row}=[draw, rectangle, minimum height=1cm, minimum width=10cm, anchor=south west]
+	
+			\node[protocol] (handshake) at (0,2) {Handshake};
+			\node[protocol] (change) [right = of handshake] {Change Cipher Spec};
+			\node[protocol] (alert) [right = of change] {Alert};
+			\node[protocol] (application) [right = of alert] {Application Data};
+	
+			\node[row, fill=gray!20,] (record) at (0,1) {Record Protocol};
+			\node[row] (tcp) at (0,0) {TCP};
+		\end{tikzpicture}
+	\end{figure}
+
+\end{frame}
+
+\begin{frame}[fragile]{Message flow}
+
+\lstset{
+	style=default,
+	frame=none
+}
+\begin{figure}[H]
+		\centering
+\begin{lstlisting}
+§\textbf{Client}§                                       §\textbf{Server}§
+                   <--------        HelloRequest*
+ClientHello        -------->
+                                      ServerHello
+                               ClientCertificate*
+                               ServerKeyExchange*
+                              CertificateRequest*
+                   <--------      ServerHelloDone
+ServerCertificate*           
+ClientKeyExchange
+CertificateVerify*
+[ChangeCipherSpec]
+Finished           -------->
+                               [ChangeCipherSpec]
+                   <--------             Finished
+[Application Data] <------->   [Application Data]
+\end{lstlisting}
+\end{figure}
+
+\end{frame}
+
+\section{University teaching}
+
+- reasons for using TLS in university teaching
+- fundamental ideas/ didactic reduction
+
+- advantages of using exploration/simulations in teaching ->
+
+\section{Simulating protocols}
+
+protocol.edu
+	- TLS plugin
+	- extensions/plugins
+
+
+
+% Original
+% --------------------------------------
+
+\section{Der Arbeitsbereich SVS} % erscheint in Agenda
+\subsection{Mission} % erscheint in Agenda
+\subsection{Themen} % erscheint in Agenda
+\subsection{Kontakt} % erscheint in Agenda
+
+\begin{frame}
+	\frametitle{Der Arbeitsbereich Sicherheit in Verteilten Systemen (SVS)}
+	\begin{block}{Lorem ipsum dolor}
+		Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. 
+	\end{block}
+	\begin{itemize}
+		\item Themen
+			\begin{enumerate}
+				\item Privacy Enhancing Technologies (PET)
+				\item Security Management \& Risk Management
+				\item Security of Mobile Systems
+			\end{enumerate}
+		\item Weitere Informationen
+			\begin{itemize}
+				\item http://www.informatik.uni-hamburg.de/svs
+			\end{itemize}
+	\end{itemize}
+\end{frame}
+
+\section{Beispiel für eine Abbildung} % erscheint in Agenda
+
+\subsection{Zugangskontrolle} % erscheint in Agenda
+\begin{frame}
+	\frametitle{Beispiel für eine Abbildung}
+	\begin{itemize}
+		\item Zweck
+			\begin{itemize}
+				\item Nur mit \alert{berechtigten Partnern} weiter kommunizieren
+				\item Verhindert unbefugte Inanspruchnahme von Betriebsmitteln
+			\end{itemize}
+	\end{itemize}
+	\vspace{\fill}
+	\pause % Das Nachfolgende erst nach Klick einblenden...
+	\begin{center}
+		\includegraphics[width=0.8\textwidth]{pic/abbildung1.pdf}
+	\end{center}
+\end{frame}
+
+\subsection{DRM-Systeme} % erscheint in Agenda
+
+\begin{frame}
+	\transwipe % funktioniert nur bei Anzeige mit Acrobat Reader
+	\frametitle{Beispiel für eine Abbildung}
+	\begin{itemize}
+		\item Zweck
+			\begin{itemize}
+				\item Einem Kunden \emph{\color[RGB]{0,128,0} K} einen Inhalt \emph{\color{red} I} in einer bestimmten Weise zugänglich machen, ihn aber daran hindern, \emph{alles} damit tun zu können.
+			\end{itemize}
+	\end{itemize}
+	\vspace{\fill}
+	\begin{center}
+		\includegraphics[width=0.8\textwidth]{pic/abbildung2.pdf}
+	\end{center}
+\end{frame}
+
+\section{Weiteres Beispiel für eine Abbildung} % erscheint in Agenda
+
+\begin{frame}
+	\frametitle{Weiteres Beispiel für eine Abbildung}
+	\framesubtitle{[John Doe, 1966] }
+	\begin{itemize}
+		\item Voraussetzung: {\color{black} Angreifer} 
+			\begin{itemize}
+				\item betreibt täuschend echte Webseite der Bank
+				\item bewegt den Kunden zum Besuch dieser Seite
+			\end{itemize}
+	\end{itemize}
+	\vspace{\fill}
+	\begin{center}
+		\includegraphics[width=\textwidth]{pic/abbildung3.pdf}
+	\end{center}
+\end{frame}
+
+\section{Ebenen} % erscheint in Agenda
+
+\begin{frame}
+	\frametitle{Ebenen}
+	\begin{itemize}
+		\item Erste Ebene
+			\begin{itemize}
+				\item Zweite Ebene
+				\begin{itemize}
+					\item Dritte Ebene
+				\end{itemize}
+				\item Zweite Ebene
+			\end{itemize}
+		\item Erste Ebene
+	\end{itemize}
+	\begin{enumerate}	
+		\item Erste Ebene
+			\begin{enumerate}
+				\item Zweite Ebene
+				\begin{enumerate}
+					\item Dritte Ebene
+				\end{enumerate}
+				\item Zweite Ebene
+			\end{enumerate}
+		\item Erste Ebene
+	\end{enumerate}
+\end{frame}
+
+\section{Spalten} % erscheint in Agenda
+
+\begin{frame}{Spalten}
+	\begin{columns}[T]
+		\begin{column}{.6\textwidth}
+			\begin{itemize}
+				\item Linke Spalte
+				\begin{itemize}
+					\item Lorem ipsum dolor sit amet, 
+					\item consectetur adipisicing elit, 
+					\item sed do eiusmod tempor incididunt ut 
+					\item labore et dolore magna aliqua. 
+				\end{itemize}
+				\item Erste Ebene
+				\begin{itemize}
+					\item Zweite Ebene
+					\item Zweite Ebene
+				\end{itemize}
+				\item Erste Ebene
+				\begin{itemize}
+					\item Zweite Ebene
+					\item Zweite Ebene
+				\end{itemize}
+			\end{itemize}
+		\end{column}		
+		\begin{column}{.4\textwidth}
+			\begin{center}
+				\vspace{1cm}
+				\includegraphics[width=2.2cm]{pic/svs_logo_hires-ohne-was.png} \\
+				Das SVS-Logo				
+			\end{center}
+		\end{column}
+	\end{columns}	
+\end{frame}
+
+\end{document}
