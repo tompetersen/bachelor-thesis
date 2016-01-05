@@ -1,5 +1,6 @@
 \frametitle{Message flow}
 
+%TODO: Vllt auf "Standardfall" wie im Programm einschränken
 \lstset{
 style=default,
 frame=none
@@ -8,16 +9,13 @@ frame=none
 \centering
 \begin{lstlisting}
 §\textbf{Client}§                                       §\textbf{Server}§
-                   <--------        HelloRequest*
+
 ClientHello        -------->
                                       ServerHello
-                               ClientCertificate*
+                               ServerCertificate*
                                ServerKeyExchange*
-                              CertificateRequest*
                    <--------      ServerHelloDone
-ServerCertificate*
 ClientKeyExchange
-CertificateVerify*
 [ChangeCipherSpec]
 Finished           -------->
                                [ChangeCipherSpec]
@@ -25,4 +23,8 @@ Finished           -------->
 [Application Data] <------->   [Application Data]
 \end{lstlisting}
 \end{figure}
+
+\begin{flushright}
+\tiny \textit{Based on the TLS 1.2 specification, RFC 5246.}
+\end{flushright}
 
