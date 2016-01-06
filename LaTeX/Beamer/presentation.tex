@@ -63,7 +63,7 @@
 			\node[protocol] (application) [right = of alert] {Application Data};
 	
 			\node[row, fill=gray!20,] (record) at (0,1) {Record Protocol};
-			\node[row] (tcp) at (0,-0.5) {TCP};
+			\node[row] (tcp) at (0,-0.5) {TCP, ...};
 		\end{tikzpicture}
 	\end{figure}
 
@@ -101,13 +101,22 @@ Finished           -------->
 
 \end{frame}
 
+\begin{frame}{Key material(?)}
+
+\end{frame}
+
 \begin{frame}[c]{Cipher suites}
-\centering
+
+\begin{center}
+
 TLS\_{\color{svshellblau2}RSA}\_WITH\_{\color{svsrot}AES\_128\_CBC}\_{\color{svsgrau2}SHA}
 
 \vspace{1cm}
 
 TLS\_{\color{svshellblau2}DHE\_RSA}\_WITH\_{\color{svsrot}AES\_128\_GCM}\_{\color{svsgrau2}SHA256}
+
+\end{center}
+
 \end{frame}
 
 \section{University teaching}
@@ -147,13 +156,11 @@ TLS\_{\color{svshellblau2}DHE\_RSA}\_WITH\_{\color{svsrot}AES\_128\_GCM}\_{\colo
 %	- extensions/plugins
 
 \begin{frame} {Developed application}
-- application for simulating two party protocol flows
 
-- extendable (requirement)
+- application for simulating two party protocol flows
 
 - TLS plugin
 
-	- not implemented in TLS plugin (?) p. 39  
 \end{frame}
 
 \begin{frame} {Live demo}
@@ -162,6 +169,8 @@ TLS\_{\color{svshellblau2}DHE\_RSA}\_WITH\_{\color{svsrot}AES\_128\_GCM}\_{\colo
 - server/client views
 
 - start connection 
+
+- updated values in tree view
 
 - message and message details view
 
@@ -175,8 +184,23 @@ TLS\_{\color{svshellblau2}DHE\_RSA}\_WITH\_{\color{svsrot}AES\_128\_GCM}\_{\colo
 
 \end{frame}
 
+\begin{frame} {Possible extensions}
+
+- extendable (requirement)
+
+- not implemented in TLS plugin (?) p. 39  
+
+\begin{itemize}
+	\item TLS extensions
+	\item client authentication
+	\item session resuming
+	\item certificate validation
+\end{itemize}
+
+\end{frame}
+
 \begin{frame}{Conclusion}
-whatever
+whatever, maybe previous slide as part of the conclusion?
 \end{frame}
 
 \end{document}
