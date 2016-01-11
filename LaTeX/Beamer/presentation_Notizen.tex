@@ -1,0 +1,178 @@
+\input{preambel.tex}
+
+% =============================
+% = Ab hier Inhalte ändern... 
+% =============================
+
+\title{Working principle, attacks\\ and defenses of SSL/TLS}
+\author[Tom Petersen]{Tom Petersen}
+\institute[Uni Hamburg]{University of Hamburg\\ Department of Informatics}
+\date{}%12.01.2016}
+
+\begin{document}
+
+\begingroup
+	\setbeamertemplate{background canvas}[titlepage]
+	\begin{frame}[plain]
+		\vskip8mm
+		\includegraphics[width=2.2cm]{pic/svs_logo_hires-ohne-was.png}
+		 \vskip-20mm % dies geht nur bei kurzen Vortragstiteln
+		\titlepage
+		\vspace{\fill}
+		\includegraphics[width=2.9cm]{pic/UHH-Logo_2010_Farbe_RGB_hires_nomargin.png}
+		\vskip20pt
+	\end{frame}
+\endgroup
+
+%\begin{frame}{Agenda}
+%	\tableofcontents
+%\end{frame}
+
+\section{Motivation}
+%- brief overview (usage, historical version history)
+%- working principle 
+%	- message overview image from RFC, subprotocols
+%	- key material
+%	- cipher suites
+
+\begin{frame}{Motivation}
+\textbf{Why is it important to know TLS?}
+
+- security protocol above the transport layer of the OSI model
+
+- authentication of communication partners, encryption and integrity check of sent messages
+
+- used by HTTPS, SFTP, OpenVPN... 
+
+- "most used security protocol today" 
+
+%- developed as a part of netscape navigator in the early 90s (1994) as SSL (v1, v2, v3) and was soon used in other browsers and applications
+%
+%- 1999 IETF standardized it as TLS 1.0
+%
+%- current 1.2, 1.3 in progress
+
+\end{frame}
+
+\section{TLS overview}
+
+\begin{frame}[c]{Protocol hierarchie}
+	\begin{figure}[H]
+		\centering
+		\begin{tikzpicture}[node distance=0cm,outer sep = 0pt]
+			\tikzstyle{protocol}=[draw, rectangle, minimum width=3.5cm, fill=blue!15, anchor=south west]
+			\tikzstyle{row}=[draw, rectangle, minimum width=14cm, anchor=south west]
+	
+			\node[protocol] (handshake) at (0,2) {Handshake};
+			\node[protocol] (change) [right = of handshake] {ChangeCipherSpec};
+			\node[protocol] (alert) [right = of change] {Alert};
+			\node[protocol] (application) [right = of alert] {ApplicationData};
+	
+			\node[row, fill=gray!20,] (record) at (0,1) {Record Protocol};
+			\node[row] (tcp) at (0,0) {Transport Layer};
+		\end{tikzpicture}
+	\end{figure}
+
+	- consists of 5 subprotocols
+
+	- on the lower layer -> Record protocol which is responsible for encrypting and authenticating messages and sending these over the transport layer e.g. TCP protocol
+
+	- on the upper layer -> 
+		- handshake protocol: choosing ciphers and exchanging keys when starting a connection
+		- change cipher spec protocol: telling the partner to use the ciphers agreed on from now on
+		- alert protocol: sending error messages when an error occurs, for example when a message has a bad MAC
+		- application data protocol: sending the data from higher layer protocols or applications, when the connection has been established
+\end{frame}
+
+
+\section{University teaching}
+%- briefly: reasons for using TLS in university teaching
+%- fundamental ideas/ didactic reduction
+%
+%- advantages of using exploration/simulations in teaching ->
+
+\begin{frame}{Didactic reduction (?)}
+
+- J S Bruner, an american psychologist
+
+- concrete methods (like protocols) should be abstracted -> general concepts
+
+- long-lasting principles, which are used in multiple fields
+
+	\begin{itemize}
+		\item hybrid cryptosystems: using symmetric ciphers for encrypting the communication (faster than asymmetric ciphers) and asymmetric cryptography to exchange a symmetric key
+		\item authenticated key exchange: authenticating the public key of the receiver to prevent man-in-the-middle-attacks
+		\item side-channel attacks: getting information about the encrypted data or key through other channels like power consumption or time measurement
+		\item cryptographic principles: just as an example: in the first TLS version the initialisation vector for AES in CBC mode was not unpredictable like it should be. Instead the last block of the previous message was used as IV which led to a chosen-plaintext-attack against TLS.
+	\end{itemize}
+
+-> didactic reduction is a general recommendation for teaching, one concrete approach for learning is discovery learning.
+\end{frame}
+
+\begin{frame}{Discovery learning with simulations}
+\textbf{Discovery learning} (sometimes referred to as exploratory learning)
+
+= learning by interacting with the world by exploring and manipulating objects and performing experiments. One approach for discovery learning is simulation-based learning.
+
+- useful for complex topics, which are hard to understand with other learning materials
+
+\textbf{Simulations}
+= interactive computer programs modelling activities, which enable us to observe normally hidden processes.
+
+\end{frame}
+
+\section{Simulating protocols}
+
+%protocol.edu
+%	- TLS plugin
+%	- extensions/plugins
+
+\begin{frame} {Developed application}
+- Simulating TLS
+
+- extendable (requirement) -> with this in mind i developed the application plugin-ready 
+
+-> general application for simulating two party protocol flows (usually client and server)
+
+- observable internal party states to understand the processes happening during a protocol flow
+
+- interactive to see consequences of messages or changes of messages
+\end{frame}
+
+\begin{frame} {Live demo}
+- cipher suite choosing: cipher suite tells you which cryptographic primitives (key exchange algorithm, symmetric cipher and hash function) is used for securing the communication
+
+- server/client views: show the values of internal state fields of client and server 
+
+- start connection
+
+- message and message details view: starts with a client hello message, you can see the sent bytes and there is a detailed view with the values of the single fields of the message
+
+- info view: maybe this little information-icons have catched your eyes. They provide brief explanations for every field, mostly just citing the specification. Show an example.
+
+- finish handshake -> connection established (client server agreed on crypto algorithms and have the same key material)
+
+- send data -> successful
+
+- edit bytes and watch error occur
+
+- echo plugin (?)
+
+\end{frame}
+
+\begin{frame}{Conclusion}
+\textbf{---TLS is great for using it in university teaching}
+
+\textbf{Unimplemented in TLS plugin}
+
+\begin{itemize}
+	\item certificate validation
+	\item session resumption
+	\item client authentication
+	\item TLS extensions
+\end{itemize}
+
+\textbf{Implement other protocols}
+\end{frame}
+
+\end{document}

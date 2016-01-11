@@ -24,91 +24,57 @@
 	\end{frame}
 \endgroup
 
-\begin{frame}{Agenda}
-	\tableofcontents
-\end{frame}
+%\begin{frame}{Agenda}
+%	\tableofcontents
+%\end{frame}
 
-\section{Transport Layer Security}
+\section{Motivation}
 %- brief overview (usage, historical version history)
 %- working principle 
 %	- message overview image from RFC, subprotocols
 %	- key material
 %	- cipher suites
 
-\begin{frame}{TLS Overview}
+\begin{frame}{Motivation TLS}
 
-- authentication of communication partners, encryption and integrity check of sent messages
+\begin{itemize}
+\item security protocol above the transport layer of the OSI model
 
-- widely used in HTTPS, SFTP, SMTPS, ... 
+\item provides authentication of communication partners, encryption and integrity check of sent messages
 
-- developed as a part of netscape navigator in the early 90s (1994) as SSL (v1, v2, v3) and was soon used in other browsers and applications
+\item used by many higher layer protocols and applications 
 
-- 1999 IETF standardized it as TLS 1.0
+\item SSL/TLS is the most used security protocol today. \footnote{[Jörg Schwenk. Sicherheit und Kryptographie im Internet. 4. Auflage Springer Vieweg, 2014.}
+\end{itemize}
 
-- current 1.2, 1.3 in progress
+%- developed as a part of netscape navigator in the early 90s (1994) as SSL (v1, v2, v3) and was soon used in other browsers and applications
+%
+%- 1999 IETF standardized it as TLS 1.0
+%
+%- current 1.2, 1.3 in progress
 
 \end{frame}
 
-\begin{frame}[c]{Protocol hierarchie}
+\section{TLS overview}
 
+\begin{frame}[c]{Protocol hierarchie}
 	\begin{figure}[H]
 		\centering
 		\begin{tikzpicture}[node distance=0cm,outer sep = 0pt]
-			\tikzstyle{protocol}=[draw, rectangle, minimum height=1cm, fill=blue!15, anchor=south west]
-			\tikzstyle{row}=[draw, rectangle, minimum height=1cm, minimum width=10cm, anchor=south west]
+			\tikzstyle{protocol}=[draw, rectangle, minimum height=1cm, minimum width=3.5cm, fill=blue!15, anchor=south west]
+			\tikzstyle{row}=[draw, rectangle, minimum height=1cm, minimum width=14cm, anchor=south west]
 	
 			\node[protocol] (handshake) at (0,2) {Handshake};
-			\node[protocol] (change) [right = of handshake] {Change Cipher Spec};
-			\node[protocol] (alert) [right = of change, minimum width=1.38cm] {Alert};
-			\node[protocol] (application) [right = of alert] {Application Data};
+			\node[protocol] (change) [right = of handshake] {ChangeCipherSpec};
+			\node[protocol] (alert) [right = of change] {Alert};
+			\node[protocol] (application) [right = of alert] {ApplicationData};
 	
 			\node[row, fill=gray!20,] (record) at (0,1) {Record Protocol};
-			\node[row] (tcp) at (0,-0.5) {TCP};
+			\node[row] (tcp) at (0,-0.5) {Transport Layer};
 		\end{tikzpicture}
 	\end{figure}
-
 \end{frame}
 
-\begin{frame}[fragile, c]{Message flow}
-
-%TODO: Vllt auf "Standardfall" wie im Programm einschränken
-\lstset{
-	style=default,
-	frame=none
-}
-\begin{figure}[H]
-\centering
-\begin{lstlisting}
-§\textbf{Client}§                                       §\textbf{Server}§
-
-ClientHello        -------->
-                                      ServerHello
-                               ServerCertificate*
-                               ServerKeyExchange*
-                   <--------      ServerHelloDone          
-ClientKeyExchange
-[ChangeCipherSpec]
-Finished           -------->
-                               [ChangeCipherSpec]
-                   <--------             Finished
-[Application Data] <------->   [Application Data]
-\end{lstlisting}
-\end{figure}
-
-\begin{flushright}
-\tiny \textit{Based on the TLS 1.2 specification, RFC 5246.}
-\end{flushright}
-
-\end{frame}
-
-\begin{frame}[c]{Cipher suites}
-\centering
-TLS\_{\color{svshellblau2}RSA}\_WITH\_{\color{svsrot}AES\_128\_CBC}\_{\color{svsgrau2}SHA}
-
-\vspace{1cm}
-
-TLS\_{\color{svshellblau2}DHE\_RSA}\_WITH\_{\color{svsrot}AES\_128\_GCM}\_{\color{svsgrau2}SHA256}
-\end{frame}
 
 \section{University teaching}
 %- briefly: reasons for using TLS in university teaching
@@ -116,28 +82,48 @@ TLS\_{\color{svshellblau2}DHE\_RSA}\_WITH\_{\color{svsrot}AES\_128\_GCM}\_{\colo
 %
 %- advantages of using exploration/simulations in teaching ->
 
-\begin{frame}{Didactic reduction (?)}
-- concrete methods (like protocols) should be abstracted
+\begin{frame}{Fundamental ideas}
 
-- long-lasting principles, which are used in multiple fields
+	\begin{block}{\textbf{Fundamental ideas}}
+	long-lasting principles, which are applicable or observable in multiple contexts.
+		\begin{flushright}
+		\tiny \color{svsgrau2}Andreas Schwill. Computer Science Education based on Fundamental Ideas. \textit{http://ddi.uni-muenster.de/didaktik/Forschung/Israel97.pdf} (Retrieved 07.1.2016)
+		\end{flushright}
+	\end{block}
+	
+	Examples:
 
-\begin{itemize}
-	\item hybrid cryptosystems 
-	\item authenticated key exchange
-	\item side-channel attacks
-	\item cryptographic principles
-\end{itemize}
+	\pause
 
+	\begin{itemize}
+		\item hybrid cryptosystems
+		\pause
+		\item authenticated key exchange
+		\pause
+		\item side-channel attacks
+		\pause
+		\item cryptographic principles, e.g. unpredictable IVs
+	\end{itemize}
 \end{frame}
 
-\begin{frame}{Explorative learning}
+\begin{frame}{Discovery learning with simulations}
+	
+	\begin{block}{\textbf{Discovery learning} (also \textbf{exploratory learning})}
+	learning by interacting with the world by exploring and manipulating objects and performing experiments.
+		\begin{flushright}
+		\tiny \color{svsgrau2} J. S. Bruner. On Knowing: Essays for the left hand. Harvard University press, 1979.
+		\end{flushright}
+	\end{block}
 
-- discovering and studying a topic by oneself
+\vspace{1cm}
 
-- useful for complex topics, which are hard to understand with other learning materials
+	\begin{block}{\textbf{Simulations}}
+	interactive computer programs modelling activities, which enable us to observe normally hidden processes.
+		\begin{flushright}
+		\tiny  \color{svsgrau2} Helmut M. Niegemann et al. Kompendium multimediales Lernen. Springer, 2008.
+		\end{flushright}
+	\end{block}
 
-- requires appropriate software: often simulations are used = interactive computer programs modelling activities, which enable us to observe normally hidden processes
- 
 \end{frame}
 
 \section{Simulating protocols}
@@ -146,37 +132,46 @@ TLS\_{\color{svshellblau2}DHE\_RSA}\_WITH\_{\color{svsrot}AES\_128\_GCM}\_{\colo
 %	- TLS plugin
 %	- extensions/plugins
 
-\begin{frame} {Developed application}
-- application for simulating two party protocol flows
+%\begin{frame} {Developed application}
+%- simulating TLS
+%
+%- extendable (requirement) -> with this in mind i developed the application plugin-ready 
+%
+%- general application for simulating two party protocol flows (usually client and server)
+%
+%- observable internal party states to understand the processes happening during a protocol flow
+%
+%- interactive to see consequences of messages or changes of messages
+%\end{frame}
 
-- extendable (requirement)
+\begin{frame}[c] {Live demo}
 
-- TLS plugin
-
-	- not implemented in TLS plugin (?) p. 39  
-\end{frame}
-
-\begin{frame} {Live demo}
-- cipher suite chosing
-
-- server/client views
-
-- start connection 
-
-- message and message details view
-
-- info view
-
-- finish handshake
-
-- edit bytes and watch occuring error
-
-- echo plugin (?)
+	\begin{center}
+			\includegraphics[width=8cm]{pic/ScreenshotTLS.png}
+	\end{center}
 
 \end{frame}
 
-\begin{frame}{Conclusion}
-whatever
+\begin{frame}{Possible next steps}
+
+	\begin{itemize}
+		\item Unimplemented in TLS plugin
+			\begin{itemize}
+			\item certificate validation
+			\item session resumption
+			\item client authentication
+			\item TLS extensions
+			\end{itemize}
+		\item Implement other protocols
+	\end{itemize}
+
 \end{frame}
+
+\begin{frame}[c]{}
+\begin{center}
+\LARGE Thank you!
+\end{center}
+\end{frame}
+
 
 \end{document}
