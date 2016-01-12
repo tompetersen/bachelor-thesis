@@ -35,16 +35,25 @@
 %	- key material
 %	- cipher suites
 
-\begin{frame}{Motivation TLS}
+\begin{frame}{TLS}
 
 \begin{itemize}
-\item security protocol above the transport layer of the OSI model
+\item security protocol above the transport layer
 
-\item provides authentication of communication partners, encryption and integrity check of sent messages
+\item authentication of communication partner(s)
+
+\item encryption and integrity check
 
 \item used by many higher layer protocols and applications 
 
+\vspace{0.5cm}
+\pause
+
 \item SSL/TLS is the most used security protocol today. \footnote{[Jörg Schwenk. Sicherheit und Kryptographie im Internet. 4. Auflage Springer Vieweg, 2014.}
+
+\item many attacks and countermeasures
+
+\item easy specification
 \end{itemize}
 
 %- developed as a part of netscape navigator in the early 90s (1994) as SSL (v1, v2, v3) and was soon used in other browsers and applications
@@ -60,21 +69,20 @@
 \begin{frame}[c]{Protocol hierarchie}
 	\begin{figure}[H]
 		\centering
-		\begin{tikzpicture}[node distance=0cm,outer sep = 0pt]
-			\tikzstyle{protocol}=[draw, rectangle, minimum height=1cm, minimum width=3.5cm, fill=blue!15, anchor=south west]
-			\tikzstyle{row}=[draw, rectangle, minimum height=1cm, minimum width=14cm, anchor=south west]
+		\begin{tikzpicture}[node distance=0cm,outer sep = 0pt, rounded corners=3pt]
+			\tikzstyle{protocol}=[fill, rectangle, minimum height=1cm, minimum width=3.5cm, fill=svshellblau1, anchor=south west, node distance=0.1cm]
+			\tikzstyle{row}=[fill, rectangle, minimum height=1cm, minimum width=14.3cm, anchor=south west]
 	
 			\node[protocol] (handshake) at (0,2) {Handshake};
 			\node[protocol] (change) [right = of handshake] {ChangeCipherSpec};
 			\node[protocol] (alert) [right = of change] {Alert};
 			\node[protocol] (application) [right = of alert] {ApplicationData};
 	
-			\node[row, fill=gray!20,] (record) at (0,1) {Record Protocol};
-			\node[row] (tcp) at (0,-0.5) {Transport Layer};
+			\node[row, fill=svshellblau3] (record) at (0,1) {Record Protocol};
+			\node[row, fill=svsgrau1] (tcp) at (0,-0.5) {Transport Layer};
 		\end{tikzpicture}
 	\end{figure}
 \end{frame}
-
 
 \section{University teaching}
 %- briefly: reasons for using TLS in university teaching
@@ -106,7 +114,7 @@
 	\end{itemize}
 \end{frame}
 
-\begin{frame}{Discovery learning with simulations}
+\begin{frame}{Discovery learning and simulations}
 	
 	\begin{block}{\textbf{Discovery learning} (also \textbf{exploratory learning})}
 	learning by interacting with the world by exploring and manipulating objects and performing experiments.
@@ -116,6 +124,7 @@
 	\end{block}
 
 \vspace{1cm}
+\pause
 
 	\begin{block}{\textbf{Simulations}}
 	interactive computer programs modelling activities, which enable us to observe normally hidden processes.
@@ -145,26 +154,24 @@
 %\end{frame}
 
 \begin{frame}[c] {Live demo}
-
-	\begin{center}
+\begin{columns}[c]
+		\begin{column}{.4\textwidth}
+			\begin{itemize}
+				\item Simulating TLS
+				\item Observable message flow
+				\item Extendable 
+			\end{itemize}
+		\end{column}		
+		\begin{column}{.6\textwidth}
 			\includegraphics[width=8cm]{pic/ScreenshotTLS.png}
-	\end{center}
-
+		\end{column}
+	\end{columns}
 \end{frame}
 
-\begin{frame}{Possible next steps}
-
-	\begin{itemize}
-		\item Unimplemented in TLS plugin
-			\begin{itemize}
-			\item certificate validation
-			\item session resumption
-			\item client authentication
-			\item TLS extensions
-			\end{itemize}
-		\item Implement other protocols
-	\end{itemize}
-
+\begin{frame}[c]{Possible next steps}
+	\begin{center}
+		\includegraphics[width=5cm]{pic/TODO.pdf}
+	\end{center}
 \end{frame}
 
 \begin{frame}[c]{}
@@ -172,6 +179,5 @@
 \LARGE Thank you!
 \end{center}
 \end{frame}
-
 
 \end{document}
